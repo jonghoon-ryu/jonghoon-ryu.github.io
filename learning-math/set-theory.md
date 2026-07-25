@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Set Theory
-permalink: /learning-cs/learning-math/set-theory/
+permalink: /learning-math/set-theory/
 ---
 # Set Theory
 
