@@ -7,7 +7,7 @@ permalink: /learning-cs/os/
 
 왜 하필이면 많고 많은 것 중에 OS 일까 ?
 
-<div style="margin-top: 60px;"></div>
+<div style="margin-top: 100px;"></div>
 
 ## 왜 OS 부터 시작하는 것일까 ?
 
@@ -16,12 +16,16 @@ permalink: /learning-cs/os/
 - 좋은 자료 많음.
 - Better late than never !
 
+<div style="margin-top: 100px;"></div>
+
 ## OSTEP 으로 결정 
 
 - Operating Systems: Three Easy Pieces
 - 평이 좋음
 - 무료 전자책 ( 그러나 종이책 구매함,  불평 : 활자가 너무 작음 )
 - 숙제로 xv6 활용, 구현이 주어지는데 xv6 자체도 평이 좋음
+
+<div style="margin-top: 100px;"></div>
 
 ## 참고
 
@@ -33,6 +37,8 @@ permalink: /learning-cs/os/
 - xv6 강의 :  꽤 상세한 것 같음
   - [youtu.be/xieHeMeu1HQ?si=tyNzh3_0uSzrCJ9J](https://youtu.be/xieHeMeu1HQ?si=tyNzh3_0uSzrCJ9J)
 
+<div style="margin-top: 100px;"></div>
+
 ## Claude 로 숙제 가능한지 미리 한 번 해 볼까요?
 
 - 숙제하라고 하고 동영상 까지 만들어 보라고 함.
@@ -41,5 +47,3 @@ permalink: /learning-cs/os/
 <video controls width="100%">
   <source src="{{ '/assets/video/xv6-demo.mp4' | relative_url }}" type="video/mp4">
 </video>
-
--

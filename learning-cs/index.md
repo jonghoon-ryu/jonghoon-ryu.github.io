@@ -8,7 +8,7 @@ permalink: /learning-cs/
 
 독학 + 취미로 공부해 보자 ! 
 
-
+<div style="margin-top: 100px;"></div>
 
 ## 왜 취미로 컴퓨터 공학을 공부할까요 ?
 
@@ -19,7 +19,7 @@ permalink: /learning-cs/
   * 안되면 말고 라고 생각하면 마음이 편해짐
 * 개인적인 사유 : 누워서 할 수 있는 뭔가가 있어야 한다
 
-
+<div style="margin-top: 100px;"></div>
 
 ## 컴퓨터 공학을  독학한다는 이야기는 언제 나왔을까 ?
 
@@ -30,7 +30,7 @@ permalink: /learning-cs/
   * 취업 희망자, 이직 희망자
   * 자기 계발
 
-
+<div style="margin-top: 100px;"></div>
 
 ## 컴퓨터 공학을 공부하고 싶다면 아래와 같은 곳을 참고해 보자
 
@@ -38,7 +38,7 @@ permalink: /learning-cs/
 * [ossu.firebaseapp.com](https://ossu.firebaseapp.com/#/)
 * MOOC, youtube 등등 널려 있다
 
-
+<div style="margin-top: 100px;"></div>
 
 ## 그러나, 망설였거나 중도 포기한 이유는 ?
 
@@ -47,7 +47,7 @@ permalink: /learning-cs/
 * 공부한다고 해서 달라질 것은 없다.
   * 공부는 보약과도 같아서 몇 개월 안에 눈에 띄는 효과 나오지 않는다
 
-
+<div style="margin-top: 100px;"></div>
 
 ## 이 때 AI 등장
 
