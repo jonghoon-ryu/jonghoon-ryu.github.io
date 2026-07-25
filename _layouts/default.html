@@ -25,7 +25,7 @@
               <ul class="nav-subitems">
                 <li><a href="{{ '/about/' | relative_url }}">About</a></li>
                 <li>
-                  <details class="nav-group">
+                  <details class="nav-group"{% if page.layout == 'post' or page.url == '/archive/' %} open{% endif %}>
                     <summary><a href="{{ '/archive/' | relative_url }}">Archive</a></summary>
                     <ul class="nav-subitems">
                       {% for post in site.posts %}
@@ -35,7 +35,7 @@
                   </details>
                 </li>
                 <li>
-                  <details class="nav-group">
+                  <details class="nav-group"{% if page.url contains '/learning-cs/' %} open{% endif %}>
                     <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
                     <ul class="nav-subitems">
                       <li><a href="{{ '/learning-cs/os/' | relative_url }}">OS</a></li>
