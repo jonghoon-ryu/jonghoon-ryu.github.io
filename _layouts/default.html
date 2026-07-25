@@ -20,19 +20,19 @@
         <p class="sidebar-tagline">{{ site.description }}</p>
         <ul class="sidebar-nav">
           <li>
-            <details class="nav-group"{% if page.url contains '/learning-cs/' %} open{% endif %}>
+            <details class="nav-group"{% if page.url == '/learning-cs/' or page.url == '/learning-cs/os/' or page.url == '/learning-cs/computation-theory/' %} open{% endif %}>
               <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
               <ul class="nav-subitems">
                 <li><a href="{{ '/learning-cs/os/' | relative_url }}">OS</a></li>
                 <li><a href="{{ '/learning-cs/computation-theory/' | relative_url }}">Computation Theory</a></li>
-                <li>
-                  <details class="nav-group"{% if page.url contains '/learning-cs/learning-math/' %} open{% endif %}>
-                    <summary><a href="{{ '/learning-cs/learning-math/' | relative_url }}">Learning Math</a></summary>
-                    <ul class="nav-subitems">
-                      <li><a href="{{ '/learning-cs/learning-math/set-theory/' | relative_url }}">Set Theory</a></li>
-                    </ul>
-                  </details>
-                </li>
+              </ul>
+            </details>
+          </li>
+          <li>
+            <details class="nav-group"{% if page.url contains '/learning-cs/learning-math/' %} open{% endif %}>
+              <summary><a href="{{ '/learning-cs/learning-math/' | relative_url }}">Learning Math</a></summary>
+              <ul class="nav-subitems">
+                <li><a href="{{ '/learning-cs/learning-math/set-theory/' | relative_url }}">Set Theory</a></li>
               </ul>
             </details>
           </li>
