@@ -1,6 +1,6 @@
 title: Jonghoon Ryu
 description: Notes and writing from Jonghoon Ryu.
-theme: minima
+theme: jekyll-theme-slate
 
 plugins:
   - jekyll-feed
