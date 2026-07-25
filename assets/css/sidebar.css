@@ -59,13 +59,13 @@
   display: none;
 }
 
-.nav-group summary::before {
+.nav-group > summary::before {
   content: "▸ ";
   color: #888;
   font-size: 0.8em;
 }
 
-.nav-group[open] summary::before {
+.nav-group[open] > summary::before {
   content: "▾ ";
 }
 
