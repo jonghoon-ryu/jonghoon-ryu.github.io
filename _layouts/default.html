@@ -51,5 +51,17 @@
         <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
+
+    <script>
+      document.querySelectorAll('.nav-group > summary > a').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          var details = link.closest('details');
+          if (details.open) {
+            e.preventDefault();
+            details.open = false;
+          }
+        });
+      });
+    </script>
   </body>
 </html>
