@@ -17,7 +17,6 @@
     <div class="page-wrap">
       <nav class="sidebar">
         <h1 class="sidebar-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
-        <p class="sidebar-tagline">{{ site.description }}</p>
         <ul class="sidebar-nav">
           <li>
             <details class="nav-group"{% if page.url == '/learning-cs/' or page.url == '/learning-cs/os/' or page.url == '/learning-cs/computation-theory/' %} open{% endif %}>
@@ -36,7 +35,6 @@
               </ul>
             </details>
           </li>
-          <li><a href="{{ '/about/' | relative_url }}">About</a></li>
         </ul>
       </nav>
 
