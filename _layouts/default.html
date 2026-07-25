@@ -20,32 +20,14 @@
         <p class="sidebar-tagline">{{ site.description }}</p>
         <ul class="sidebar-nav">
           <li>
-            <details class="nav-group" open>
-              <summary><a href="{{ '/' | relative_url }}">Home</a></summary>
+            <details class="nav-group"{% if page.url contains '/learning-cs/' %} open{% endif %}>
+              <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
               <ul class="nav-subitems">
-                <li><a href="{{ '/about/' | relative_url }}">About</a></li>
-                <li>
-                  <details class="nav-group"{% if page.layout == 'post' or page.url == '/archive/' %} open{% endif %}>
-                    <summary><a href="{{ '/archive/' | relative_url }}">Archive</a></summary>
-                    <ul class="nav-subitems">
-                      {% for post in site.posts %}
-                      <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  </details>
-                </li>
-                <li>
-                  <details class="nav-group"{% if page.url contains '/learning-cs/' %} open{% endif %}>
-                    <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
-                    <ul class="nav-subitems">
-                      <li><a href="{{ '/learning-cs/os/' | relative_url }}">OS</a></li>
-                    </ul>
-                  </details>
-                </li>
+                <li><a href="{{ '/learning-cs/os/' | relative_url }}">OS</a></li>
               </ul>
             </details>
           </li>
-          <li><a href="{{ '/feed.xml' | relative_url }}">RSS</a></li>
+          <li><a href="{{ '/about/' | relative_url }}">About</a></li>
         </ul>
       </nav>
 
