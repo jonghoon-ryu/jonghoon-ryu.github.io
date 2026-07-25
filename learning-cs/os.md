@@ -3,65 +3,41 @@ layout: default
 title: OS
 permalink: /learning-cs/os/
 ---
-# Operating Systems
+# Operating Systems 를 공부해보자
 
-Notes on core operating system concepts.
+왜 하필이면 많고 많은 것 중에 OS 일까 ?
 
-## What an OS Does
+## 왜 OS 부터 시작하는 것일까 ?
 
-An operating system manages hardware resources (CPU, memory, disk, I/O devices) and provides a stable, convenient interface for programs to run on top of. Its core jobs are:
+- 한 번도 완주해 보지 못함. ( 부분 부분만 그 때 그 때 학습  )
+- FTL 에 도움된다고 들음 : 유사 개념 다수
+- 좋은 자료 많음.
+- Better late than never !
 
-- **Process management** — deciding what runs, when, and for how long
-- **Memory management** — allocating and protecting memory between programs
-- **File systems** — organizing persistent storage
-- **I/O handling** — talking to devices through drivers
-- **Security/isolation** — keeping processes from interfering with each other
+## OSTEP 으로 결정 
 
-## Processes vs. Threads
+- Operating Systems: Three Easy Pieces
+- 평이 좋음
+- 무료 전자책 ( 그러나 종이책 구매함,  불평 : 활자가 너무 작음 )
+- 숙제로 xv6 활용, 구현이 주어지는데 xv6 자체도 평이 좋음
 
-A **process** is a running program: its own address space, open file handles, and at least one thread of execution. A **thread** is a unit of execution within a process — threads in the same process share memory (heap, globals) but each has its own stack and registers.
+## 참고
 
-| | Process | Thread |
-|---|---|---|
-| Memory | Isolated address space | Shared within process |
-| Creation cost | Expensive | Cheap |
-| Communication | IPC (pipes, sockets, shared memory) | Direct (shared variables) |
-| Crash impact | Isolated to that process | Can crash the whole process |
+- OSTEP : [pages.cs.wisc.edu/~remzi/OSTEP](https://pages.cs.wisc.edu/~remzi/OSTEP/)
+  - 공짜 pdf 및 숙제
+  - 저자직강 : [youtu.be/NKSdWvrvovw?si=u8nTCZLe9AjEpvYD](https://youtu.be/NKSdWvrvovw?si=u8nTCZLe9AjEpvYD)
+    - 강의 1 차에서는 음량이 일정하지 않는 소소한 문제가 있긴 하지만 있는 게 어딤 ?
+- xv6 : [pdos.csail.mit.edu/6.1810/2024/xv6.html](https://pdos.csail.mit.edu/6.1810/2024/xv6.html)
+- xv6 강의 :  꽤 상세한 것 같음
+  - [youtu.be/xieHeMeu1HQ?si=tyNzh3_0uSzrCJ9J](https://youtu.be/xieHeMeu1HQ?si=tyNzh3_0uSzrCJ9J)
 
-## Scheduling
+## Claude 로 숙제 가능한지 미리 한 번 해 볼까요?
 
-The scheduler decides which process/thread gets the CPU next. Common approaches:
+- 숙제하라고 하고 동영상 까지 만들어 보라고 함.
+- 잘 된건지는 공부하면서 확인해 봐야 함
 
-- **FCFS (First-Come, First-Served)** — simple, but can cause long waits (convoy effect)
-- **Round Robin** — each process gets a fixed time slice, then goes to the back of the queue; good for responsiveness
-- **Priority Scheduling** — higher-priority tasks run first; risks starvation of low-priority tasks unless aging is used
-- **Multilevel Feedback Queue** — combines multiple queues with different priorities/time slices, adapting to a process's behavior over time (used by most modern general-purpose OSes)
+<video controls width="100%">
+  <source src="{{ '/assets/video/xv6-demo.mp4' | relative_url }}" type="video/mp4">
+</video>
 
-## Memory Management
-
-- **Virtual memory**: each process sees its own contiguous address space, translated to physical memory (or disk) by the MMU using page tables. This gives isolation and lets total virtual memory exceed physical RAM.
-- **Paging**: memory is split into fixed-size pages; a page fault occurs when a page needed isn't in physical memory and must be loaded (possibly evicting another page).
-- **Segmentation**: divides memory into logical segments (code, stack, heap) — largely superseded by paging in modern systems but still conceptually present.
-
-## Concurrency & Synchronization
-
-Running multiple threads safely requires coordinating access to shared data:
-
-- **Race condition** — outcome depends on timing of concurrent access to shared state
-- **Mutex/lock** — ensures only one thread accesses a critical section at a time
-- **Semaphore** — a counter-based primitive for controlling access to a limited number of resources
-- **Deadlock** — two or more threads waiting on each other's locks forever; classic prevention is to always acquire locks in the same global order
-
-## File Systems
-
-A file system organizes how data is stored and retrieved from disk:
-
-- Tracks free vs. used space
-- Maps filenames/paths to physical blocks (via inodes, FAT tables, etc.)
-- Provides metadata: permissions, timestamps, ownership
-- Journaling file systems (ext4, NTFS) log changes before applying them, so a crash mid-write doesn't corrupt the whole filesystem
-
-## Further Reading
-
-- *Operating Systems: Three Easy Pieces* (free online) — great practical intro
-- *Modern Operating Systems* by Tanenbaum — more textbook-style depth
+-
