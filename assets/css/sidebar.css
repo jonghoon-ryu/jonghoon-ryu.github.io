@@ -53,6 +53,12 @@
 .nav-group summary {
   cursor: pointer;
   list-style: none;
+  color: #ddd;
+  font-size: 1.05rem;
+}
+
+.nav-group summary:hover {
+  color: #fff;
 }
 
 .nav-group summary::-webkit-details-marker {
