@@ -50,6 +50,46 @@
   text-decoration: underline;
 }
 
+.nav-group summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.nav-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-group summary::before {
+  content: "▸ ";
+  color: #888;
+  font-size: 0.8em;
+}
+
+.nav-group[open] summary::before {
+  content: "▾ ";
+}
+
+.nav-subitems {
+  list-style: none;
+  margin: 0.5rem 0 0 1.1rem;
+  padding: 0;
+}
+
+.nav-subitems li {
+  margin-bottom: 0.5rem;
+}
+
+.nav-subitems a {
+  color: #bbb;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.nav-subitems a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
 body {
   font-size: 19px;
 }
