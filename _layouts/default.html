@@ -24,7 +24,16 @@
               <summary><a href="{{ '/' | relative_url }}">Home</a></summary>
               <ul class="nav-subitems">
                 <li><a href="{{ '/about/' | relative_url }}">About</a></li>
-                <li><a href="{{ '/archive/' | relative_url }}">Archive</a></li>
+                <li>
+                  <details class="nav-group">
+                    <summary><a href="{{ '/archive/' | relative_url }}">Archive</a></summary>
+                    <ul class="nav-subitems">
+                      {% for post in site.posts %}
+                      <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  </details>
+                </li>
                 <li>
                   <details class="nav-group">
                     <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
