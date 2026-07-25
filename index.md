@@ -1,8 +1,6 @@
 ---
 layout: default
 ---
-<p><a href="{{ '/about/' | relative_url }}">About</a></p>
-
 <ul class="post-list">
   {% for post in site.posts %}
   <li>
