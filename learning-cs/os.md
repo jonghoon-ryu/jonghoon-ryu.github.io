@@ -7,6 +7,8 @@ permalink: /learning-cs/os/
 
 왜 하필이면 많고 많은 것 중에 OS 일까 ?
 
+<div style="margin-top: 60px;"></div>
+
 ## 왜 OS 부터 시작하는 것일까 ?
 
 - 한 번도 완주해 보지 못함. ( 부분 부분만 그 때 그 때 학습  )
