@@ -14,7 +14,8 @@
 
 .sidebar-title {
   margin: 0 0 0.5rem;
-  font-size: 1.4rem;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
 .sidebar-title a {
@@ -24,7 +25,7 @@
 
 .sidebar-tagline {
   color: #bbb;
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -40,6 +41,7 @@
 
 .sidebar-nav a {
   color: #ddd;
+  font-size: 1.05rem;
   text-decoration: none;
 }
 
@@ -48,9 +50,19 @@
   text-decoration: underline;
 }
 
+body {
+  font-size: 19px;
+}
+
 #main_content_wrap {
   flex: 1;
   min-width: 0;
+}
+
+#main_content_wrap.outer .inner {
+  max-width: 800px;
+  margin: 0;
+  padding: 40px 40px;
 }
 
 .tag-list {
@@ -64,7 +76,7 @@
   border-radius: 999px;
   padding: 0.2rem 0.7rem;
   margin: 0 0.4rem 0.4rem 0;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   text-decoration: none;
 }
 
