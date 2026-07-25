@@ -1,0 +1,8 @@
+title: Jonghoon Ryu
+description: Notes and writing from Jonghoon Ryu.
+theme: minima
+
+plugins:
+  - jekyll-feed
+
+markdown: kramdown
