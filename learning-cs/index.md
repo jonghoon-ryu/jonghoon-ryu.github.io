@@ -9,3 +9,4 @@ Notes from studying computer science topics.
 
 - [OS](/learning-cs/os/)
 - [Computation Theory](/learning-cs/computation-theory/)
+- [Learning Math](/learning-cs/learning-math/)
