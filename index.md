@@ -1,11 +1,9 @@
 ---
 layout: default
+title: Welcome
 ---
-<ul class="post-list">
-  {% for post in site.posts %}
-  <li>
-    <span class="post-meta">{{ post.date | date: "%B %-d, %Y" }}</span>
-    <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-  </li>
-  {% endfor %}
-</ul>
+# Welcome
+
+This is J. Ryu's blog — notes on computer science, math, and whatever else comes up along the way.
+
+Use the sidebar to browse by topic.
