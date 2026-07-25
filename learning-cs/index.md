@@ -8,3 +8,4 @@ permalink: /learning-cs/
 Notes from studying computer science topics.
 
 - [OS](/learning-cs/os/)
+- [Computation Theory](/learning-cs/computation-theory/)
