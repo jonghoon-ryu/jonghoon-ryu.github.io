@@ -25,7 +25,14 @@
               <ul class="nav-subitems">
                 <li><a href="{{ '/about/' | relative_url }}">About</a></li>
                 <li><a href="{{ '/archive/' | relative_url }}">Archive</a></li>
-                <li><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></li>
+                <li>
+                  <details class="nav-group">
+                    <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
+                    <ul class="nav-subitems">
+                      <li><a href="{{ '/learning-cs/os/' | relative_url }}">OS</a></li>
+                    </ul>
+                  </details>
+                </li>
               </ul>
             </details>
           </li>
