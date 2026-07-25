@@ -53,6 +53,33 @@
   min-width: 0;
 }
 
+.tag-list {
+  margin-bottom: 1.5rem;
+}
+
+.tag-pill {
+  display: inline-block;
+  background: #eee;
+  color: #333;
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  margin: 0 0.4rem 0.4rem 0;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.tag-pill:hover {
+  background: #ddd;
+}
+
+.tag-count {
+  color: #888;
+}
+
+.post-tags {
+  margin-top: -0.5rem;
+}
+
 @media (max-width: 700px) {
   .page-wrap {
     flex-direction: column;
