@@ -1,6 +1,7 @@
 title: Jonghoon Ryu
 description: Notes and writing from Jonghoon Ryu.
 theme: jekyll-theme-slate
+timezone: Asia/Seoul
 
 plugins:
   - jekyll-feed
