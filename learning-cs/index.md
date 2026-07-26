@@ -43,9 +43,16 @@ permalink: /learning-cs/
 ## 그러나, 망설였거나 중도 포기한 이유는 ?
 
 * 시간이 없음. 당장 급한 밥벌이
+* 같아서 몇 개월 안에 눈에 띄는 효과 나오지 않는다
 * 환경 설정 등 실제로 공부하기 전 준비과정 복잡
-* 공부한다고 해서 달라질 것은 없다.
-  * 공부는 보약과도 같아서 몇 개월 안에 눈에 띄는 효과 나오지 않는다
+* 사례 : mikanOS, 유지 보수가 되지 않아 최신으로 git clone 하더라도 빌드 안됨
+그러나 Claude 가 빌드 해 줌. 
+
+<video controls width="100%">
+  <source src="{{ '/assets/video/mikanos-boot.mp4' | relative_url }}" type="video/mp4">
+</video>
+
+
 
 <div style="margin-top: 100px;"></div>
 
