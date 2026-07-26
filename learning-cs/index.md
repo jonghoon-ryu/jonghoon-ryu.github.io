@@ -3,10 +3,9 @@ layout: default
 title: Learning CS
 permalink: /learning-cs/
 ---
-
 # 독학으로 컴퓨터 공학 공부하기
 
-독학 + 취미로 공부해 보자 ! 
+독학 + 취미로 공부해 보자 !
 
 <div style="margin-top: 100px;"></div>
 
@@ -46,13 +45,14 @@ permalink: /learning-cs/
 * 같아서 몇 개월 안에 눈에 띄는 효과 나오지 않는다
 * 환경 설정 등 실제로 공부하기 전 준비과정 복잡
 * 사례 : mikanOS, 유지 보수가 되지 않아 최신으로 git clone 하더라도 빌드 안됨
-그러나 Claude 가 빌드 해 줌. 
+  그러나 Claude 가 빌드 해 줌.
+  * [wikidocs.net/164069](https://wikidocs.net/164069)
+  * [github.com/uchan-nos/mikanos](https://github.com/uchan-nos/mikanos)
+  * [product.kyobobook.co.kr/detail/S000061352307](https://product.kyobobook.co.kr/detail/S000061352307)
 
 <video controls width="100%">
   <source src="{{ '/assets/video/mikanos-boot.mp4' | relative_url }}" type="video/mp4">
 </video>
-
-
 
 <div style="margin-top: 100px;"></div>
 
