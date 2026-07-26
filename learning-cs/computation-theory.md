@@ -20,5 +20,4 @@ permalink: /learning-cs/computation-theory/
 ## 당연히 수학도 잘 한다
 
 - Spivak, Calculus
-
   - [Sipser Chapter 1 solutions (PDF)]({{ '/assets/pdf/chapter1_solutions.pdf' | relative_url }})
