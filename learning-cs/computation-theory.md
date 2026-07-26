@@ -12,7 +12,7 @@ permalink: /learning-cs/computation-theory/
 
 ## Sipser, Introduction to computation theory
 
-* **답안을 PoC 해 보자**
+* **Claude 가 답을 잘 도출해 내는지 PoC 해 보자**
   - [Sipser Chapter 1 solutions (PDF)]({{ '/assets/pdf/chapter1_solutions.pdf' | relative_url }})
 <div style="margin-top: 100px;"></div>
 
