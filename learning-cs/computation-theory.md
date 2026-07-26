@@ -13,11 +13,12 @@ permalink: /learning-cs/computation-theory/
 ## Sipser, Introduction to computation theory
 
 * **답안을 PoC 해 보자**
-  - [Chapter 19 Appendix solutions (PDF)]({{ '/assets/pdf/chapter19appendix_solutions.pdf' | relative_url }})
+  - [Sipser Chapter 1 solutions (PDF)]({{ '/assets/pdf/chapter1_solutions.pdf' | relative_url }})
 <div style="margin-top: 100px;"></div>
 
 
 ## 당연히 수학도 잘 한다
 
 - Spivak, Calculus
-  - [Sipser Chapter 1 solutions (PDF)]({{ '/assets/pdf/chapter1_solutions.pdf' | relative_url }})
+  - [Chapter 19 Appendix solutions (PDF)]({{ '/assets/pdf/chapter19appendix_solutions.pdf' | relative_url }})
+
