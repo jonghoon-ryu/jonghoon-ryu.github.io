@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Weekend Study Plan
-permalink: /os/study-plan/
+permalink: /learning-cs/os/study-plan/
 ---
 # xv6 × OSTEP × Lecture series — Weekend Study Plan
 

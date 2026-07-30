@@ -19,18 +19,12 @@
         <h1 class="sidebar-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
         <ul class="sidebar-nav">
           <li>
-            <details class="nav-group"{% if page.url == '/learning-cs/' or page.url == '/learning-cs/computation-theory/' %} open{% endif %}>
+            <details class="nav-group"{% if page.url == '/learning-cs/' or page.url == '/learning-cs/computation-theory/' or page.url contains '/learning-cs/os/' %} open{% endif %}>
               <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
               <ul class="nav-subitems">
+                <li><a href="{{ '/learning-cs/os/' | relative_url }}">OS</a></li>
+                <li><a href="{{ '/learning-cs/os/study-plan/' | relative_url }}">OS Study Plan</a></li>
                 <li><a href="{{ '/learning-cs/computation-theory/' | relative_url }}">Computation Theory</a></li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <details class="nav-group"{% if page.url contains '/os/' %} open{% endif %}>
-              <summary><a href="{{ '/os/' | relative_url }}">OS</a></summary>
-              <ul class="nav-subitems">
-                <li><a href="{{ '/os/study-plan/' | relative_url }}">Weekend Study Plan</a></li>
               </ul>
             </details>
           </li>
