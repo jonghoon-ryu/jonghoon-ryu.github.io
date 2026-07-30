@@ -47,6 +47,16 @@ permalink: /learning-cs/os/study-plan/
 .session.done {
   opacity: 0.6;
 }
+.session {
+  margin-top: 70px;
+  padding-top: 32px;
+  border-top: 1px solid #ddd;
+}
+.session:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
 </style>
 
 # xv6 × OSTEP × Lecture series — Weekend Study Plan
