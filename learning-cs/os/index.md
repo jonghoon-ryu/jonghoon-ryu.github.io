@@ -1,7 +1,7 @@
 ---
 layout: default
 title: OS
-permalink: /os/
+permalink: /learning-cs/os/
 ---
 # Operating Systems 를 공부해보자
 
@@ -52,4 +52,4 @@ permalink: /os/
 
 ## 진행 계획
 
-- [Weekend Study Plan](/os/study-plan/) — xv6 소스 코드 + xv6 강의 시리즈 + OSTEP 숙제, 주말 6시간 기준 15세션 커리큘럼
+- [Weekend Study Plan](/learning-cs/os/study-plan/) — xv6 소스 코드 + xv6 강의 시리즈 + OSTEP 숙제, 주말 6시간 기준 15세션 커리큘럼
