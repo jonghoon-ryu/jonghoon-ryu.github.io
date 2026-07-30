@@ -87,7 +87,7 @@ If a weekend only gives 3–4 hours, protect the trace — let the simulator and
   <span class="progress-bar-track"><span class="progress-bar-fill" id="progress-fill"></span></span>
 </div>
 
-<div class="session" data-session="1">
+<div class="session" data-session="1" markdown="1">
 
 ### 1. The process, from the outside
 
@@ -100,7 +100,7 @@ Get fluent with xv6's tooling and see what a process looks like before opening a
 
 </div>
 
-<div class="session" data-session="2">
+<div class="session" data-session="2" markdown="1">
 
 ### 2. Boot: machine mode to supervisor mode
 
@@ -113,7 +113,7 @@ One clean pass on power-on to the first process's memory being set up.
 
 </div>
 
-<div class="session" data-session="3">
+<div class="session" data-session="3" markdown="1">
 
 ### 3. Traps & the syscall path
 
@@ -127,7 +127,7 @@ How a user-mode `ecall` becomes a kernel function call and back — the mechanis
 
 </div>
 
-<div class="session" data-session="4">
+<div class="session" data-session="4" markdown="1">
 
 ### 4. Scheduling — xv6's round robin vs. the real thing
 
@@ -140,7 +140,7 @@ See how little xv6 does to schedule processes, then use the simulators to explor
 
 </div>
 
-<div class="session" data-session="5">
+<div class="session" data-session="5" markdown="1">
 
 ### 5. fork / exec / wait / exit, end to end
 
@@ -153,7 +153,7 @@ Close the process-lifecycle loop — verify the fork() mechanics carefully, line
 
 </div>
 
-<div class="session" data-session="6">
+<div class="session" data-session="6" markdown="1">
 
 ### 6. Physical memory & page-table mechanics
 
@@ -166,7 +166,7 @@ xv6 jumps straight to paging. See the base/bounds and segmentation steps it skip
 
 </div>
 
-<div class="session" data-session="7">
+<div class="session" data-session="7" markdown="1">
 
 ### 7. Address translation, deep dive
 
@@ -179,7 +179,7 @@ The real three-level Sv39 walk, and the TRAMPOLINE/TRAPFRAME double-mapping tric
 
 </div>
 
-<div class="session" data-session="8">
+<div class="session" data-session="8" markdown="1">
 
 ### 8. What xv6 leaves out: swap & page replacement
 
@@ -191,7 +191,7 @@ xv6 never pages memory out to disk. Understand the simplification, and what real
 
 </div>
 
-<div class="session" data-session="9">
+<div class="session" data-session="9" markdown="1">
 
 ### 9. Locks
 
@@ -204,7 +204,7 @@ Ground lock theory in xv6's two real primitives and the specific races they exis
 
 </div>
 
-<div class="session" data-session="10">
+<div class="session" data-session="10" markdown="1">
 
 ### 10. sleep()/wakeup() as xv6's condition variable
 
@@ -216,7 +216,7 @@ Compare xv6's channel-based sleep/wakeup against textbook condition variables �
 
 </div>
 
-<div class="session" data-session="11">
+<div class="session" data-session="11" markdown="1">
 
 ### 11. Interrupts & device drivers
 
@@ -229,7 +229,7 @@ The other half of trap.c: external interrupts instead of syscalls, and what a mi
 
 </div>
 
-<div class="session" data-session="12">
+<div class="session" data-session="12" markdown="1">
 
 ### 12. Buffer cache & on-disk layout
 
@@ -242,7 +242,7 @@ How xv6 turns a raw disk into a structured filesystem, and where a disk schedule
 
 </div>
 
-<div class="session" data-session="13">
+<div class="session" data-session="13" markdown="1">
 
 ### 13. Files, directories & layout policy
 
@@ -254,7 +254,7 @@ xv6's flat, no-locality layout against a real implementation's directory structu
 
 </div>
 
-<div class="session" data-session="14">
+<div class="session" data-session="14" markdown="1">
 
 ### 14. Crash consistency — and actually crashing it
 
@@ -267,7 +267,7 @@ This repo already has crash-recovery test infrastructure — use it. Read the lo
 
 </div>
 
-<div class="session" data-session="15">
+<div class="session" data-session="15" markdown="1">
 
 ### 15. Capstone — one request, every layer
 
