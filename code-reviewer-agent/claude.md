@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Agent Instructions (CLAUDE.md)
+title: 4주차 교육
 permalink: /code-reviewer-agent/claude-md/
 ---
 ## 4주차 교육
