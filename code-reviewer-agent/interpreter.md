@@ -12,7 +12,7 @@ permalink: /code-reviewer-agent/interpreter/
 
 ## 프로젝트를 위한 언어 문법
 
-문법 트리는 Token → Expr/Stmt 두 종류의 노드로 구성되며, 규칙은 다음 원칙을 따름
+규칙은 다음 원칙을 따름
 
 - Expr(표현식): 실행하면 값 하나로 평가(evaluate)되는 단위. Expr과 Token을 조합해서 만든다.
 - Stmt(문장): 값 반환 없이 동작을 수행하는 단위. Expr, Stmt, Token을 조합해서 만든다.
@@ -67,17 +67,22 @@ permalink: /code-reviewer-agent/interpreter/
 
 # 실행결과
 
-* 입력
-  ![입력]({{ '/code-reviewer-agent/image/interpreter/1785721055882.png' | relative_url }})
-* 출력
-  ![출력]({{ '/code-reviewer-agent/image/interpreter/1785721084221.png' | relative_url }})
+**입력**
 
+![입력]({{ '/code-reviewer-agent/image/interpreter/1785721055882.png' | relative_url }})
 
+**출력**
 
+![출력]({{ '/code-reviewer-agent/image/interpreter/1785721084221.png' | relative_url }})
 
-
+<div style="margin-top: 100px;"></div>
 
 # 뭘 배웠나 ?
 
 * Interpreter 라는 것의 기본 동작 원리 ( 상세 내용은 이해 못함 )
-*
+* Vibe coding ( Claude 에 대한 기본 개념 없이 일단 시작 )
+* Claude 의 강력함
+* TDD + Claude
+
+  * fail TC 를 만들라고 지시후, 이 fail TC  를 pass  하게 한 후 refactoring
+  * 이 과정을 점진적으로 반복
