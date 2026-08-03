@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/>
+    </marker>
+  </defs>
+
+  <style>
+    .box { fill:#eef2f7; stroke:#34495e; stroke-width:2; }
+    .title { fill:#2c3e50; font-size:18px; font-weight:700; text-anchor:middle; }
+    .divider { stroke:#c7d0da; stroke-width:1; }
+    .body { fill:#3d4a5a; font-size:12.5px; text-anchor:middle; }
+    .flow { stroke:#7f8c8d; stroke-width:2; marker-end:url(#arrow); fill:none; }
+    .arrowlabel { fill:#5a6472; font-size:12px; text-anchor:middle; }
+    .endlabel { fill:#2c3e50; font-size:14px; font-weight:700; text-anchor:middle; }
+  </style>
+
+  <!-- 입력 -->
+  <text x="45" y="145" class="endlabel">소스</text>
+  <text x="45" y="163" class="endlabel">코드</text>
+  <line x1="10" y1="150" x2="95" y2="150" class="flow"/>
+
+  <!-- Box 1: Assembler Unit -->
+  <rect x="100" y="90" width="200" height="120" rx="10" class="box"/>
+  <text x="200" y="115" class="title">Assembler Unit</text>
+  <line x1="115" y1="128" x2="285" y2="128" class="divider"/>
+  <text x="200" y="150" class="body">소스코드 → Token 분해</text>
+  <text x="200" y="170" class="body">Token → Expr/Stmt 조립</text>
+  <text x="200" y="190" class="body">(문법 트리 구성)</text>
+
+  <!-- arrow 1 -->
+  <text x="345" y="130" class="arrowlabel">문법 트리</text>
+  <text x="345" y="145" class="arrowlabel">(AST)</text>
+  <line x1="300" y1="150" x2="390" y2="150" class="flow"/>
+
+  <!-- Box 2: Checker Unit -->
+  <rect x="395" y="90" width="200" height="120" rx="10" class="box"/>
+  <text x="495" y="115" class="title">Checker Unit</text>
+  <line x1="410" y1="128" x2="580" y2="128" class="divider"/>
+  <text x="495" y="150" class="body">문법 트리 DFS 순회</text>
+  <text x="495" y="170" class="body">의미 오류 검사</text>
+  <text x="495" y="190" class="body">(중복 선언, 자기참조 등)</text>
+
+  <!-- arrow 2 -->
+  <text x="640" y="130" class="arrowlabel">검증된</text>
+  <text x="640" y="145" class="arrowlabel">문법 트리</text>
+  <line x1="595" y1="150" x2="685" y2="150" class="flow"/>
+
+  <!-- Box 3: Executor Unit -->
+  <rect x="690" y="90" width="200" height="120" rx="10" class="box"/>
+  <text x="790" y="115" class="title">Executor Unit</text>
+  <line x1="705" y1="128" x2="875" y2="128" class="divider"/>
+  <text x="790" y="150" class="body">문법 트리 DFS 순회</text>
+  <text x="790" y="170" class="body">실제 실행</text>
+  <text x="790" y="190" class="body">(변수 저장소 읽기/쓰기 등)</text>
+
+  <!-- 출력 -->
+  <line x1="890" y1="150" x2="965" y2="150" class="flow"/>
+  <text x="957" y="145" class="endlabel">실행</text>
+  <text x="957" y="163" class="endlabel">결과</text>
+
+  <!-- interface caption -->
+  <text x="500" y="260" text-anchor="middle" fill="#7f8c8d" font-size="12px">Assembler Unit ↔ Checker Unit ↔ Executor Unit 사이의 interface : AST (Abstract Syntax Tree)</text>
+</svg>
