@@ -5,6 +5,6 @@ permalink: /code-reviewer-agent/
 ---
 # Code Reviewer Agent
 
-- [Outline](/code-reviewer-agent/outline/)
-- [Interpreter Kata](/code-reviewer-agent/interpreter/)
-- [Agent Instructions (CLAUDE.md)](/code-reviewer-agent/claude-md/)
+- [CRA 란?](/code-reviewer-agent/outline/)
+- [3주차 : Interpreter](/code-reviewer-agent/interpreter/)
+- [4주차 : Claude 개념](/code-reviewer-agent/claude-md/)

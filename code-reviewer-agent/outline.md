@@ -17,12 +17,15 @@ permalink: /code-reviewer-agent/outline/
 
 - 총 3주 반 ( working day 18 일 )
 - 첫 2주는 C++  문법 ( smart pointer ), refactoring, TDD
-  - - 모두 다 알고 있는 건 아니고 새로 배운 것도 있긴 하다.
-    - 그러나 이미 어느 정도는 알고 있는 내용이라서 별 감흥은 없다.
-    - 복습 개념.   refactoring, TDD  에 대한 내용 없이 바로 프로젝트로 넘어가는 건 다소 비약
+
+  - 모두 다 알고 있는 건 아니고 새로 배운 것도 있긴 하다.
+  - 그러나 이미 어느 정도는 알고 있는 내용이라서 별 감흥은 없다.
+  - 복습 개념.   refactoring, TDD  에 대한 내용 없이 바로 프로젝트로 넘어가는 건 다소 비약
 - 3주차 :  조별 과제
+
   - 내용 : TDD 를 이용한 interpreter  구현
 - 4주차 : 3일
+
   - Claude  기본 내용
   - 이미 다들 알고 있는 내용이긴 하나 Claudle 에 익숙하지 않은 사람들에게는 도움이 됨
   - Claude 를 먼저 사용하여 3주차 조별 과제를 한 이후 Claude 사용법을 알려줌.
