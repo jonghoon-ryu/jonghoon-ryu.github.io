@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Outline
+title: CRA 교육 개요
 permalink: /code-reviewer-agent/outline/
 ---
 # CRA 란 ?
