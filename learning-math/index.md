@@ -2,6 +2,7 @@
 layout: default
 title: Learning Math
 permalink: /learning-math/
+published: false
 ---
 # Learning Math
 
