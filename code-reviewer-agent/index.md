@@ -9,5 +9,4 @@ Notes on building an AI code-reviewer agent as part of the fixes-and-reliability
 
 - [Outline](/code-reviewer-agent/outline/)
 - [Interpreter Kata](/code-reviewer-agent/interpreter/)
-- [C++ Refactoring & TDD](/code-reviewer-agent/cpp-refactoring-tdd/)
 - [Agent Instructions (CLAUDE.md)](/code-reviewer-agent/claude-md/)

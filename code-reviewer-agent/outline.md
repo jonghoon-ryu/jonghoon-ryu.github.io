@@ -3,26 +3,34 @@ layout: default
 title: Outline
 permalink: /code-reviewer-agent/outline/
 ---
-# Outline
+# CRA 란 ?
 
-Plan for the code-reviewer-agent project: use an AI agent to review and drive incremental improvements on a small C++ codebase, practicing the fixes-and-reliability-improvements workflow from the course.
+* Code Reviewer Agent 의 약자.
+* Code Review 능력 향상 및 절차 / 과정 등에 관해 교육
+* 2026년 부터  AI (  Claude ) 관련 교육 추가
 
-## Goals
 
-- Build a small interpreter in C++ as a realistic, non-trivial review target.
-- Configure an agent (via `CLAUDE.md`) with review conventions specific to this project.
-- Practice a refactor → test → review loop rather than one-shot code generation.
-- Compare agent-suggested fixes against manual review to see where the agent helps and where it misses things.
+## 교육 과정
 
-## Phases
+- 총 3주 반 ( working day 18 일 )
+- 첫 2주는 C++  문법 ( smart pointer ), refactoring, TDD
+  - - 모두 다 알고 있는 건 아니고 새로 배운 것도 있긴 하다.
+    - 그러나 이미 어느 정도는 알고 있는 내용이라서 별 감흥은 없다.
+    - 복습 개념.   refactoring, TDD  에 대한 내용 없이 바로 프로젝트로 넘어가는 건 다소 비약
+- 3주차 :  조별 과제
+  - 내용 : TDD 를 이용한 interpreter  구현
+- 4주차 : 3일
+  - Claude  기본 내용
+  - 이미 다들 알고 있는 내용이긴 하나 Claudle 에 익숙하지 않은 사람들에게는 도움이 됨
+  - Claude 를 먼저 사용하여 3주차 조별 과제를 한 이후 Claude 사용법을 알려줌.
 
-1. **Baseline** — get a minimal interpreter working (lexer → parser → evaluator) with no tests, to have something worth reviewing.
-2. **Add tests first** — backfill unit tests before touching structure, so refactors are ever a regression against something.
-3. **Refactor with TDD** — apply small, test-covered refactoring steps (see [C++ Refactoring & TDD](/code-reviewer-agent/cpp-refactoring-tdd/)).
-4. **Agent-assisted review** — have the agent review each change for correctness, readability, and reliability issues; compare against the [outline of agent instructions](/code-reviewer-agent/claude-md/).
-5. **Retrospective** — note where the agent's review caught real issues vs. false positives.
 
-## Open Questions
+## 현업 과제 진행
 
-- How much project-specific context does the agent need in `CLAUDE.md` before its reviews stop being generic?
-- Where's the right boundary between "agent flags it" and "agent fixes it automatically"?
+- Code Reviwer 교육을 현업에 적용
+- 양질의 Code Review 진행
+- Code reviewer 교육 전파
+- 개인 과제
+  - 몇몇 옵션이 있음
+  - TDD 를 이용한 코드 작성
+  - 현업에 사용될 수 있는 Tool

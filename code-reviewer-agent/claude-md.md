@@ -3,21 +3,27 @@ layout: default
 title: Agent Instructions (CLAUDE.md)
 permalink: /code-reviewer-agent/claude-md/
 ---
-# Agent Instructions (CLAUDE.md)
+## 4주차 교육
 
-The project-specific `CLAUDE.md` used to configure the reviewer agent for the [interpreter kata](/code-reviewer-agent/interpreter/) codebase, and the reasoning behind each section.
+- 첫 2일 간 :  단순 Vibe coding 이 아닌 높은 품질을 유지하면서 Claude 를 사용할 수 있는 방법 고민
 
-## What Goes In It
+  - skill / MCP / subagent 사용법
+  - CLAUDE.md 만드는 법
+- **마지막 날**
 
-- **Build/test commands** — how to compile and run the interpreter's test suite, so the agent can verify a refactor didn't break anything before commenting on style.
-- **Review priorities, in order** — correctness first (does it still evaluate the same test cases), then memory safety (no raw owning pointers, no leaks introduced), then readability, then style.
-- **Refactoring conventions specific to this project** — e.g. "prefer a visitor over a growing switch once a node type gets a fourth case," matching the moves in [C++ Refactoring & TDD](/code-reviewer-agent/cpp-refactoring-tdd/).
-- **Things not to flag** — deliberately simple/minimal v1 code (see the interpreter's scope) that's simple on purpose, not by oversight, so the agent doesn't push premature abstraction.
+  - 개인 과제 ( 8 시간 ) :  Claude 를 사용하여 반도체 공장 생산 관리하는 프로그램 작성
 
-## Why a Project-Specific File Instead of Generic Instructions
+## Claude 사용 소감
 
-A generic "review this C++ code" prompt tends to produce generic feedback — naming nits, boilerplate suggestions. Pointing the agent at this project's actual TDD workflow and refactoring conventions makes its review comparable to a teammate who's read the [outline](/code-reviewer-agent/outline/): it knows which step of red-green-refactor a given diff is in, and reviews accordingly instead of asking for tests that already exist elsewhere in the cycle.
+* 딸깍 하면 코드가 완성된다.
+* Clause 가 뭘 하고 있는지 잘 모른다
+  * 3주차 과제에서 아무 것도 모르는 상태에서 프로그램 사양만 입력하니 Claude 가 알아서 완성
+* 코드 생성 및 결과 확인은 쉽지만 유지/보수/관리는 어렵다
 
-## Retro Notes
 
-Fill in here as the project progresses — where the agent's review matched a human reviewer's judgment, and where the `CLAUDE.md` needed a follow-up rule to stop a repeated false positive.
+## Claude 와 협업하기
+
+* AI 와 사람의 역할을 구분 ( Agentic Engineering )
+* AI 의 역할은 초안 작성 / 코드 개발
+* 사람의 역할은 설계, 기획,  AI  작업물에 대한 리뷰 / 승인
+* AI  세상은 빨리 변한다. 방법론을 받아 들이되 비판적 수용
