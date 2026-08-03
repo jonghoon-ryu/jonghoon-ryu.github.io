@@ -10,6 +10,9 @@ permalink: /code-reviewer-agent/outline/
 * 2026년 부터  AI (  Claude ) 관련 교육 추가
 
 
+
+<div style="margin-top: 100px;"></div>
+
 ## 교육 과정
 
 - 총 3주 반 ( working day 18 일 )
@@ -24,6 +27,8 @@ permalink: /code-reviewer-agent/outline/
   - 이미 다들 알고 있는 내용이긴 하나 Claudle 에 익숙하지 않은 사람들에게는 도움이 됨
   - Claude 를 먼저 사용하여 3주차 조별 과제를 한 이후 Claude 사용법을 알려줌.
 
+
+<div style="margin-top: 100px;"></div>
 
 ## 현업 과제 진행
 
