@@ -13,6 +13,9 @@ permalink: /code-reviewer-agent/claude-md/
 
   - 개인 과제 ( 8 시간 ) :  Claude 를 사용하여 반도체 공장 생산 관리하는 프로그램 작성
 
+
+<div style="margin-top: 100px;"></div>
+
 ## Claude 사용 소감
 
 * 딸깍 하면 코드가 완성된다.
@@ -20,6 +23,9 @@ permalink: /code-reviewer-agent/claude-md/
   * 3주차 과제에서 아무 것도 모르는 상태에서 프로그램 사양만 입력하니 Claude 가 알아서 완성
 * 코드 생성 및 결과 확인은 쉽지만 유지/보수/관리는 어렵다
 
+
+
+<div style="margin-top: 100px;"></div>
 
 ## Claude 와 협업하기
 
