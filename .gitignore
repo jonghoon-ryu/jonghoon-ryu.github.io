@@ -4,3 +4,5 @@ _site/
 .jekyll-metadata
 vendor/
 Gemfile.lock
+assets/pdf/chapter1_solutions.pdf
+assets/pdf/chapter19appendix_solutions.pdf
