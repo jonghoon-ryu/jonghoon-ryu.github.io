@@ -92,7 +92,9 @@ table.plan-calendar .buffer-mark {
 - 10/5(월), 10/9(금) 은 공휴일이라 평일이지만 주말과 동일하게 5시간 작업일로 포함
 - **10/11 이 1차 마감** — 이 날짜 안에 "동작하는 배포본"을 만드는 것이 최우선이고, 그 다음 리뷰 결과에 따라 10/17~10/25 에 수정
 - 세션 순서가 날짜보다 중요함. 한 세션이 밀리면 다음 세션도 그만큼 밀린다고 생각하고, 억지로 두 세션을 하루에 몰아넣지 않기
-- **Session 3~10 은 코드 구현을 Claude 가 담당** — 사용자는 방향 지시, 코드/결과 리뷰, 브라우저에서 직접 테스트를 담당. 각 세션에 남는 시간은 해당 단계와 연결된 MQSim/FTL 개념을 더 깊이 파는 데 사용
+- **구현은 전부 Claude 담당** — Ryu 는 visual simulator 를 만드는 방법을 몰라도 됨. 설계·코딩·빌드·배포 등 구체적인 작업은 모두 Claude 가 하고, 여러 방식 중 선택이 필요한 지점( 예 : 매핑 방식, 색상 스킴, GC 정책 이름 등 )에서만 Claude 가 Ryu 에게 옵션을 제시해 결정을 구함
+- **모든 세션에 FTL 개념 공부 + MQSim 코드 이해가 들어감** — Ryu 의 역할은 방향 결정, 코드/결과 리뷰, 브라우저 테스트에 더해 **매 세션 그 단계와 연결된 FTL 개념과 MQSim 실제 소스코드를 함께 이해하는 것**( 각 세션의 "MQSim/FTL 심화" 항목 )
+- **( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기** — 조사 결과 MQSim 은 GC 정책으로 GREEDY/RGA/RANDOM/RANDOM_P/RANDOM_PP/FIFO 만 지원하고 **Cost-Benefit GC**( LFS/Rosenblum 방식, valid page 비율과 block age 를 함께 고려하는 정책, Session 1/5 에서 배운 "greedy vs cost-benefit" 비교의 그 cost-benefit )는 없음 → 시간이 남으면 13~16번 버퍼 기간에 이 정책을 새로 구현해 RGA 와 비교해보는 것을 확장 목표로 삼음
 
 <div style="margin-top: 40px;"></div>
 
@@ -126,7 +128,7 @@ table.plan-calendar .buffer-mark {
 
 <div style="margin-top: 20px;"></div>
 
-**13~16번은 계획 외 버퍼** — 10/11 리뷰에서 나온 피드백을 반영하는 용도. 별도 세부 세션 내용 없이, 리뷰 결과에 따라 자유롭게 사용.
+**13~16번은 계획 외 버퍼** — 10/11 리뷰에서 나온 피드백을 반영하는 용도. 여유가 있으면 확장 목표( Cost-Benefit GC 정책 구현 등 MQSim 에 없는 기능 추가 )에도 사용. 별도 세부 세션 내용 없이 자유롭게 사용.
 
 <div style="margin-top: 60px;"></div>
 
@@ -155,11 +157,12 @@ table.plan-calendar .buffer-mark {
 
 <div class="session" data-session="2" markdown="1">
 
-### 2. (9/6) MQSim 빌드 · 실행 · 구조 분석
+### 2. (9/6) MQSim 개괄 학습
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="2"> 완료 체크</label>
 
 **Ryu 가 할 일**
+- **MQSim/FTL 심화** : [MQSim 문서](/ftl-visual-simulator/mqsim/) 를 읽으며 MQSim 이 뭘 모델링하는지, 어떤 기능이 있는지, 다른 오픈소스 시뮬레이터와 비교했을 때 왜 이걸 골랐는지 개괄적으로 이해
 - Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해
 
 **Claude 가 할 일**
@@ -332,6 +335,7 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 **Ryu 가 할 일**
 - 브라우저에서 직접 확인하며 리뷰·피드백
+- **MQSim/FTL 심화** : 지금까지 추가된 hook 들( 매핑, GC, 마모평준화 )이 실제 FTL 동작을 빠짐없이 반영하는지 처음부터 끝까지 전체적으로 재점검
 
 **Claude 가 할 일**
 - UI 다듬기 ( 범례, 툴팁, 반응형 레이아웃, 색상 접근성 )
@@ -348,6 +352,7 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 **Ryu 가 할 일**
 - 배포된 사이트를 직접 리뷰 — 1차 완성본 리뷰, 여기서 나온 피드백은 10/17 이후 버퍼 기간에 반영
+- **MQSim/FTL 심화(캡스톤)** : host write 요청 하나를 골라, 매핑 조회 → GC 트리거 여부 → flash 물리 동작까지 전체 경로를 도움 없이 처음부터 끝까지 설명해보기 — 설명이 막힘없이 이어지면 이번 1차 완성 목표가 제대로 달성된 것
 
 **Claude 가 할 일**
 - 최종 테스트, GitHub Pages 배포
