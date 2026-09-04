@@ -126,6 +126,17 @@ Host_Interface <-> Data_Cache_Manager <-> NVM_Firmware(FTL) <-> NVM_PHY <-> NVM_
 2. hook 이 보내는 이벤트 로그를 최종 통계와 대조 — 예를 들어 hook 이 카운트한 GC 실행 횟수가 결과 XML 의 `Total_GC_Executions` 와 정확히 일치해야 함( Session 5 에서 실제로 검증할 항목 )
 3. WASM 빌드 자체가 원본 네이티브 빌드와 동일한 결과를 내는지도 별도로 확인( Emscripten 컴파일 과정에서 부동소수점/타입 크기 차이로 결과가 미묘하게 달라질 수 있음 )
 
+### Google Test / Google Mock 으로 TDD 가 가능한가
+
+가능하다 — 그것도 꽤 잘 맞는 편이다.
+
+- **왜 되는가** : `Address_Mapping_Unit_Base`, `Flash_Block_Manager_Base`, `GC_and_WL_Unit_Base`, `TSU_Base` 가 전부 순수 가상 함수로만 이루어진 추상 베이스 클래스다. 즉 처음부터 "인터페이스"로 설계돼 있어서, Google Mock 으로 예를 들어 `Flash_Block_Manager_Base` 를 mock 으로 갈아끼우고 `GC_and_WL_Unit_Page_Level` 의 victim 선정 로직만 떼어내 단위 테스트하는 게 구조적으로 가능하다. 지금까지 아무도 그렇게 안 썼을 뿐.
+- **걸림돌** : `main()` 이 `main.cpp` 안에 그대로 박혀 있어서 테스트 바이너리가 링크할 라이브러리가 없다. 다만 이건 우리가 WASM 임베딩을 위해 어차피 해야 하는 리팩터링( CLI 진입점을 라이브러리 형태로 분리 )과 정확히 같은 작업이라, 테스트 스위트 추가가 별도 비용이 아니라 같은 리팩터링을 두 번 활용하는 셈이 된다.
+- **두 단계로 나눌 수 있다** :
+  1. **골든/회귀 테스트**( GMock 불필요 ) — 고정 시나리오를 실행해 결과 통계가 기존과 완전히 같은지 스냅샷 비교. hook 추가로 인한 부작용을 잡는 용도로, 지금 이 문서의 회귀 테스트 방식을 GTest 프레임워크 위에 올리는 정도.
+  2. **진짜 단위 테스트**( GMock 필요 ) — 위 4개 베이스 클래스를 mock 으로 갈아끼워 매핑/GC 로직만 격리해서 테스트. Cost-Benefit GC 확장 기능처럼 새로 짜는 로직을 검증할 때 특히 유용.
+- **아직 실제로 도입하지는 않았음** — 가능성만 확인한 상태이고, 이번 프로젝트 계획에 정식으로 넣을지는 별도로 결정할 사항.
+
 <div style="margin-top: 60px;"></div>
 
 ## 참고
