@@ -91,4 +91,4 @@ FTL 을 시뮬레이션하는 오픈소스 도구는 MQSim 말고도 여럿 있�
 - GitHub : [github.com/CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim)
 - 논문(PDF) : [MQSim: A Framework for Enabling Realistic Studies of Modern Multi-Queue SSD Devices](https://people.inf.ethz.ch/omutlu/pub/MQSim-SSD-simulation-framework_fast18.pdf)
 - 비교 대상 중 하나, 실제 임베디드용 FTL 라이브러리 : [github.com/dlbeer/dhara](https://github.com/dlbeer/dhara)
-- 관련 프로젝트 : [통합 계획 (Plan)](/ftl-visual-simulator/plan/)
+- 관련 프로젝트 : [개발 계획](/ftl-visual-simulator/plan/)

@@ -524,5 +524,5 @@ TSU 가 어느 채널·칩에 read/write/erase 를 배정했는지, 어디가 �
 
 ## 참고
 
-- 이 초안의 근거가 된 설계 결정 : [통합 계획 (Plan)](/ftl-visual-simulator/plan/) Session 3
+- 이 초안의 근거가 된 설계 결정 : [개발 계획](/ftl-visual-simulator/plan/) Session 3
 - 실제 구현 시 데이터 출처 : MQSim WASM 모듈의 hook 이벤트 / `getState()` — [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)
