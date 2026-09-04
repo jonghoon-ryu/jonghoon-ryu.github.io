@@ -82,6 +82,7 @@ table.plan-calendar .buffer-mark {
 - **구현은 전부 Claude 담당** — Ryu 는 visual simulator 를 만드는 방법을 몰라도 됨. 설계·코딩·빌드·배포 등 구체적인 작업은 모두 Claude 가 하고, 여러 방식 중 선택이 필요한 지점( 예 : 매핑 방식, 색상 스킴, GC 정책 이름 등 )에서만 Claude 가 Ryu 에게 옵션을 제시해 결정을 구함
 - **모든 세션에 FTL 개념 공부 + MQSim 코드 이해가 들어감** — Ryu 의 역할은 방향 결정, 코드/결과 리뷰, 브라우저 테스트에 더해 **매 세션 그 단계와 연결된 FTL 개념과 MQSim 실제 소스코드를 함께 이해하는 것**( 각 세션의 "MQSim/FTL 심화" 항목 )
 - **( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기** — 조사 결과 MQSim 은 GC 정책으로 GREEDY/RGA/RANDOM/RANDOM_P/RANDOM_PP/FIFO 만 지원하고 **Cost-Benefit GC**( LFS/Rosenblum 방식, valid page 비율과 block age 를 함께 고려하는 정책, Session 1/5 에서 배운 "greedy vs cost-benefit" 비교의 그 cost-benefit )는 없음 → 시간이 남으면 13~16번 버퍼 기간에 이 정책을 새로 구현해 RGA 와 비교해보는 것을 확장 목표로 삼음
+- **( 시간이 여유로울 때 ) Google Test/Mock 기반 테스트 스위트 추가** — MQSim 은 테스트가 전혀 없지만 `Address_Mapping_Unit_Base`/`Flash_Block_Manager_Base`/`GC_and_WL_Unit_Base`/`TSU_Base` 가 이미 추상 인터페이스라 GMock 으로 단위 테스트가 가능함. **Session 4 가 최적 타이밍** — WASM 임베딩용 라이브러리 분리 리팩터링과 테스트 바이너리에 필요한 리팩터링이 동일하기 때문( 자세한 이유는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim-code-analysis/) 참고 ). 시간이 부족하면 골든/회귀 테스트만 먼저 걸고, 진짜 단위 테스트는 13~16번 버퍼로 미룸
 - **초심자 학습 환경이라는 목표를 설계 단계부터 반영** — MQSim 의 raw 파라미터/통계를 그대로 노출하면 초심자에게는 그냥 숫자 나열일 뿐임. Session 3 설계 때부터 "쉬운 용어로 된 툴팁", "개념별 프리셋 시나리오( 매핑 기본 / GC 시연 / 마모평준화 시연 )", "지금 무슨 일이 일어나고 있는지 평범한 말로 알려주는 설명 패널" 을 MVP 범위에 포함시킴 — Session 11(다듬기)의 "툴팁/범례" 는 이 원칙을 마무리하는 단계일 뿐, 처음부터 있어야 하는 요구사항
 
 <div style="margin-top: 40px;"></div>
@@ -203,6 +204,7 @@ table.plan-calendar .buffer-mark {
 - Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 )
 - `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성
 - host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인
+- ( 시간이 여유로울 때 ) 위에서 만든 라이브러리 분리 구조에 **GTest 프레임워크를 바로 연결** — main.cpp 리팩터링을 두 번 하지 않으려면 지금이 최적의 타이밍( 자세한 이유는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim-code-analysis/) 참고 )
 
 </div>
 
