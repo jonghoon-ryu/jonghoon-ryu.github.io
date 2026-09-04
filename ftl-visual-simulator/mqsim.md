@@ -69,6 +69,7 @@ FTL 을 시뮬레이션하는 오픈소스 도구는 MQSim 말고도 여럿 있�
 <tr><td>SimpleSSD</td><td>gem5 등 full-system 시뮬레이터와 연동하는 고정밀 SSD 스택 모델. GPLv3. 54 stars, 마지막 커밋 2022-11</td><td>❌ 부적합 — 단독 실행 목적이 아니라 다른 시뮬레이터에 붙는 구조라 복잡도가 높고, 최근 유지보수도 뜸함</td></tr>
 <tr><td>VSSIM</td><td>QEMU/KVM 기반 virtual machine SSD 시뮬레이터. IDE 인터페이스만 지원. 2013년 전후 연구, 사실상 유지보수 종료</td><td>❌ 부적합 — VM 기반이라 WASM 화 불가능, 기술도 오래됨</td></tr>
 <tr><td>Amber</td><td>SSD 리소스를 매우 정밀하게 모델링하는 학술 연구용 full-system 시뮬레이터( arXiv 논문 )</td><td>❌ 부적합 — 공개된 유지보수 오픈소스 저장소로 보기 어렵고, 목적 자체가 이번 프로젝트보다 훨씬 무거움</td></tr>
+<tr><td>Dhara</td><td>시뮬레이터가 아니라 실제 MCU 임베디드 기기에 올라가는 <b>진짜 FTL 라이브러리</b>( Daniel Beer, C, ~2,000 줄 ). Perfect wear-levelling, trim, 전원 차단에도 안전한 원자적 쓰기, O(log n) 연산을 제공. ISC 계열 라이선스. 502 stars, 마지막 커밋 2022-03</td><td>❌ 부적합 — 타이밍/큐잉/host 프로토콜을 시뮬레이션하지 않고 GC 정책도 하나로 고정돼 있어 "정책 비교/시각화" 목적에는 안 맞음. 다만 논문 기반 시뮬레이터가 아닌 <i>진짜로 동작하는</i> FTL 코드를 보고 싶을 때 참고하기 좋음</td></tr>
 </table>
 </div>
 
@@ -89,4 +90,5 @@ FTL 을 시뮬레이션하는 오픈소스 도구는 MQSim 말고도 여럿 있�
 
 - GitHub : [github.com/CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim)
 - 논문(PDF) : [MQSim: A Framework for Enabling Realistic Studies of Modern Multi-Queue SSD Devices](https://people.inf.ethz.ch/omutlu/pub/MQSim-SSD-simulation-framework_fast18.pdf)
+- 비교 대상 중 하나, 실제 임베디드용 FTL 라이브러리 : [github.com/dlbeer/dhara](https://github.com/dlbeer/dhara)
 - 관련 프로젝트 : [일정 및 계획 (Plan)](/ftl-visual-simulator/plan/)
