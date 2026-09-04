@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MQSim 개요
-permalink: /ftl-visual-simulator/mqsim/
+permalink: /ftl-visual-simulator/mqsim/overview/
 ---
 # MQSim 이란?
 

@@ -325,4 +325,4 @@ permalink: /ftl-visual-simulator/visual-simulator-interface-draft/
 ## 참고
 
 - 이 초안의 근거가 된 설계 결정 : [통합 계획 (Plan)](/ftl-visual-simulator/plan/) Session 3
-- 실제 구현 시 데이터 출처 : MQSim WASM 모듈의 hook 이벤트 / `getState()` — [MQSim 코드 분석](/ftl-visual-simulator/mqsim-code-analysis/)
+- 실제 구현 시 데이터 출처 : MQSim WASM 모듈의 hook 이벤트 / `getState()` — [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)
