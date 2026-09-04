@@ -57,4 +57,5 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 
 - [MQSim 개요](/ftl-visual-simulator/mqsim/) — MQSim 이 뭔지, 다른 오픈소스 SSD 시뮬레이터와 비교해서 왜 이걸 골랐는지
 - [MQSim 코드 분석](/ftl-visual-simulator/mqsim-code-analysis/) — 코드 구조, 클래스별 역할, 동작 방식, 테스트 방식
-- [일정 및 계획 (Plan)](/ftl-visual-simulator/plan/) — 9/4 ~ 10/11, 12세션 계획 ( 1차 완성 목표 )
+- [MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim-code-analysis-plan/) — MQSim 소스코드를 처음부터 끝까지 읽는 12세션 커리큘럼
+- [통합 계획 (Plan)](/ftl-visual-simulator/plan/) — 9/4 ~ 10/11, 12세션 계획 ( 1차 완성 목표 )
