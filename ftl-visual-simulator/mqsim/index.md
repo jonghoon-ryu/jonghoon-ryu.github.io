@@ -20,4 +20,4 @@ permalink: /ftl-visual-simulator/mqsim/
 ## 관련 문서
 
 - [Visual Simulator Interface (초안)](/ftl-visual-simulator/visual-simulator-interface-draft/)
-- [통합 계획 (Plan)](/ftl-visual-simulator/plan/)
+- [개발 계획](/ftl-visual-simulator/plan/)

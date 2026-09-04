@@ -60,4 +60,4 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 - [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) — 코드 구조, 클래스별 역할, 동작 방식, 테스트 방식
 - [MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim/code-analysis-plan/) — MQSim 소스코드를 처음부터 끝까지 읽는 16세션 커리큘럼
 - [Visual Simulator Interface (초안)](/ftl-visual-simulator/visual-simulator-interface-draft/) — 화면 레이아웃 mockup 초안
-- [통합 계획 (Plan)](/ftl-visual-simulator/plan/) — 9/4 ~ 10/11, 12세션 계획 ( 1차 완성 목표 )
+- [개발 계획](/ftl-visual-simulator/plan/) — 9/4 ~ 10/11, 12세션 계획 ( 1차 완성 목표 )
