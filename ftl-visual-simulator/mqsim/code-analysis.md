@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MQSim 코드 분석
-permalink: /ftl-visual-simulator/mqsim-code-analysis/
+permalink: /ftl-visual-simulator/mqsim/code-analysis/
 ---
 # MQSim 코드 분석
 
@@ -146,5 +146,5 @@ Host_Interface <-> Data_Cache_Manager <-> NVM_Firmware(FTL) <-> NVM_PHY <-> NVM_
 
 ## 참고
 
-- 관련 문서 : [MQSim 개요](/ftl-visual-simulator/mqsim/) · [통합 계획 (Plan)](/ftl-visual-simulator/plan/)
+- 관련 문서 : [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [통합 계획 (Plan)](/ftl-visual-simulator/plan/)
 - GitHub : [github.com/CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim)

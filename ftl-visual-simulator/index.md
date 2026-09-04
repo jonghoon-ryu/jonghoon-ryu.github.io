@@ -26,7 +26,7 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 4. **초심자도 FTL 개념을 쉽게 익힐 수 있는 학습 환경 만들기** — 나만 이해하는 도구가 아니라, MQSim 의 raw 통계/설정을 잘 모르는 사람도 화면만 보고 "아, 이게 GC 구나" 하고 감을 잡을 수 있어야 함
 5. **2026-10-11 까지 1차 완성** → 직접 리뷰하고 필요하면 10/17~10/25 사이에 수정
 6. ( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기 — 예 : Cost-Benefit GC 정책
-7. ( 시간이 여유로울 때 ) Google Test/Mock 기반 테스트 스위트 추가 — MQSim 자체엔 테스트가 없지만, 4개 핵심 클래스가 이미 추상 인터페이스라 GMock 으로 단위 테스트가 가능함( [MQSim 코드 분석](/ftl-visual-simulator/mqsim-code-analysis/) 참고 )
+7. ( 시간이 여유로울 때 ) Google Test/Mock 기반 테스트 스위트 추가 — MQSim 자체엔 테스트가 없지만, 4개 핵심 클래스가 이미 추상 인터페이스라 GMock 으로 단위 테스트가 가능함( [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) 참고 )
 
 <div style="margin-top: 60px;"></div>
 
@@ -56,8 +56,8 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 
 ## 진행 계획
 
-- [MQSim 개요](/ftl-visual-simulator/mqsim/) — MQSim 이 뭔지, 다른 오픈소스 SSD 시뮬레이터와 비교해서 왜 이걸 골랐는지
-- [MQSim 코드 분석](/ftl-visual-simulator/mqsim-code-analysis/) — 코드 구조, 클래스별 역할, 동작 방식, 테스트 방식
-- [MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim-code-analysis-plan/) — MQSim 소스코드를 처음부터 끝까지 읽는 16세션 커리큘럼
+- [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) — MQSim 이 뭔지, 다른 오픈소스 SSD 시뮬레이터와 비교해서 왜 이걸 골랐는지
+- [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) — 코드 구조, 클래스별 역할, 동작 방식, 테스트 방식
+- [MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim/code-analysis-plan/) — MQSim 소스코드를 처음부터 끝까지 읽는 16세션 커리큘럼
 - [Visual Simulator Interface (초안)](/ftl-visual-simulator/visual-simulator-interface-draft/) — 화면 레이아웃 mockup 초안
 - [통합 계획 (Plan)](/ftl-visual-simulator/plan/) — 9/4 ~ 10/11, 12세션 계획 ( 1차 완성 목표 )
