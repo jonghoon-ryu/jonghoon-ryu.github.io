@@ -143,7 +143,9 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="2"> 완료 체크</label>
 
-- [CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim) clone, 빌드, 샘플 설정으로 실행
+- [CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim) clone, 빌드, 샘플 설정으로 실행 ✅ ( 9/4 에 미리 진행 — g++13 에서 수정 없이 바로 빌드/실행 됨, `/home/ryuj/Ryu/MQSim` )
+  - 샘플 `ssdconfig.xml` + `workload.xml` 로 3개 시나리오(synthetic 2개 + trace 기반 tpcc-small) 모두 정상 실행, 결과는 `workload_scenario_*.xml` 로 출력
+  - 주목할 점 : 기본 설정(75% occupancy, 짧은 워크로드)으로는 `Total_GC_Executions="0"` — GC 가 한 번도 안 일어남. Session 5 에서 GC 를 실제로 보려면 occupancy 를 높이거나 워크로드를 늘려야 함
 - XML 설정 구조( Flash parameter, FTL parameter, GC 정책, cache ) 파악
 - 주요 모듈 : Host_Interface, IO_Flow, Address_Mapping_Unit, Flash_Block_Manager, GC_and_WL_Unit, NVM_PHY_ONFI
 - 결과물 : Host request → FTL 매핑 → Flash controller → NAND 로 이어지는 파이프라인 다이어그램, "시각화에 그대로 가져갈 부분 / 단순화할 부분" 정리
