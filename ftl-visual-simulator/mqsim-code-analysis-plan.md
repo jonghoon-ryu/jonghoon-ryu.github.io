@@ -90,11 +90,73 @@ table.plan-calendar .row-mark {
 
 ### 1. 전체 그림 잡기 — 디렉터리 구조와 파이프라인
 
-읽을 파일 : `src/` 디렉터리 구조 훑어보기, `src/exec/SSD_Device.h`( 주석의 파이프라인 다이어그램 ), `src/ssd/FTL.h`
+읽을 파일 : `src/` 디렉터리 구조 훑어보기, `src/exec/SSD_Device.h`( 주석의 파이프라인 다이어그램 ), `src/ssd/FTL.h`, `src/exec/Host_System.h`
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 1200 260" style="width:100%;max-width:900px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrow-p1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/>
+    </marker>
+  </defs>
+  <style>
+    .box { fill:#eef2f7; stroke:#34495e; stroke-width:2; }
+    .title { fill:#2c3e50; font-size:15px; font-weight:700; text-anchor:middle; }
+    .divider { stroke:#c7d0da; stroke-width:1; }
+    .body { fill:#3d4a5a; font-size:11px; text-anchor:middle; }
+    .flow { stroke:#7f8c8d; stroke-width:2; marker-end:url(#arrow-p1); fill:none; }
+    .endlabel { fill:#2c3e50; font-size:13px; font-weight:700; text-anchor:middle; }
+  </style>
+
+  <text x="35" y="140" class="endlabel">Host</text>
+  <line x1="5" y1="135" x2="95" y2="135" class="flow"/>
+
+  <rect x="100" y="80" width="160" height="110" rx="8" class="box"/>
+  <text x="180" y="102" class="title">Host_Interface</text>
+  <line x1="112" y1="112" x2="248" y2="112" class="divider"/>
+  <text x="180" y="132" class="body">NVMe / SATA</text>
+  <text x="180" y="150" class="body">요청 큐 관리</text>
+
+  <line x1="260" y1="135" x2="300" y2="135" class="flow"/>
+
+  <rect x="300" y="80" width="160" height="110" rx="8" class="box"/>
+  <text x="380" y="102" class="title">Data_Cache</text>
+  <text x="380" y="118" class="title">_Manager</text>
+  <line x1="312" y1="130" x2="448" y2="130" class="divider"/>
+  <text x="380" y="150" class="body">SSD 내부 DRAM</text>
+  <text x="380" y="166" class="body">쓰기 캐시</text>
+
+  <line x1="460" y1="135" x2="500" y2="135" class="flow"/>
+
+  <rect x="500" y="40" width="230" height="190" rx="8" class="box"/>
+  <text x="615" y="62" class="title">FTL</text>
+  <line x1="512" y1="72" x2="718" y2="72" class="divider"/>
+  <text x="615" y="95" class="body">Address_Mapping_Unit</text>
+  <text x="615" y="115" class="body">Flash_Block_Manager</text>
+  <text x="615" y="135" class="body">GC_and_WL_Unit</text>
+  <text x="615" y="155" class="body">TSU</text>
+  <text x="615" y="178" class="body" font-style="italic">(Session 3~6에서 hook 추가)</text>
+
+  <line x1="730" y1="135" x2="770" y2="135" class="flow"/>
+
+  <rect x="770" y="80" width="180" height="110" rx="8" class="box"/>
+  <text x="860" y="102" class="title">NVM_PHY_ONFI</text>
+  <line x1="782" y1="112" x2="938" y2="112" class="divider"/>
+  <text x="860" y="132" class="body">+ ONFI_Channel</text>
+  <text x="860" y="150" class="body">타이밍 · 버스 경합</text>
+
+  <line x1="950" y1="135" x2="990" y2="135" class="flow"/>
+
+  <text x="1080" y="128" class="endlabel">Flash_Chip</text>
+  <text x="1080" y="146" class="endlabel">(Die→Plane→</text>
+  <text x="1080" y="164" class="endlabel">Block→Page)</text>
+</svg>
+</div>
 
 - `exec/host/nvm_chip/sim/ssd/utils` 6개 디렉터리가 각각 뭘 담당하는지 감 잡기
 - `FTL` 클래스가 `Address_Mapping_Unit` / `Flash_Block_Manager` / `GC_and_WL_Unit` / `TSU` 4개를 들고 있다는 구조부터 확인
-- 체크포인트 : "SSD_Device 하나가 조립되면 그 안에 뭐가 들어있는지" 를 그림으로 그려볼 수 있으면 통과
+- `SSD_Device`( 위 그림 전체 조립 )와 `Host_System`( workload 로부터 요청 생성 )이 어떻게 서로를 참조하는지( `host.Attach_ssd_device(&ssd)` )
+- 체크포인트 : "SSD_Device 하나가 조립되면 그 안에 뭐가 들어있는지" 를 위 그림 없이 직접 그려볼 수 있으면 통과
 
 </div>
 
@@ -104,9 +166,47 @@ table.plan-calendar .row-mark {
 
 읽을 파일 : `src/sim/Sim_Object.h`, `src/sim/Engine.h`, `src/sim/EventTree.h`, `src/main.cpp`
 
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 700 320" style="width:100%;max-width:560px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrow-p2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/>
+    </marker>
+  </defs>
+  <style>
+    .box2 { fill:#eef2f7; stroke:#34495e; stroke-width:2; }
+    .title2 { fill:#2c3e50; font-size:14px; font-weight:700; text-anchor:middle; }
+    .body2 { fill:#3d4a5a; font-size:11px; text-anchor:middle; }
+    .flow2 { stroke:#7f8c8d; stroke-width:2; marker-end:url(#arrow-p2); fill:none; }
+    .lbl2 { fill:#5a6472; font-size:10.5px; text-anchor:middle; }
+  </style>
+
+  <rect x="270" y="20" width="180" height="70" rx="8" class="box2"/>
+  <text x="360" y="45" class="title2">EventTree</text>
+  <text x="360" y="65" class="body2">시각순 이벤트 보관</text>
+
+  <path d="M 450 60 Q 560 100 500 170" class="flow2"/>
+  <text x="560" y="120" class="lbl2">가장 이른</text>
+  <text x="560" y="134" class="lbl2">이벤트 pop</text>
+
+  <rect x="270" y="170" width="180" height="80" rx="8" class="box2"/>
+  <text x="360" y="195" class="title2">Sim_Object</text>
+  <text x="360" y="215" class="body2">Execute_simulator</text>
+  <text x="360" y="230" class="body2">_event() 호출</text>
+
+  <path d="M 270 220 Q 150 190 250 90" class="flow2"/>
+  <text x="150" y="150" class="lbl2">필요하면 새</text>
+  <text x="150" y="164" class="lbl2">이벤트 등록</text>
+  <text x="150" y="178" class="lbl2">(Register_sim_event)</text>
+
+  <text x="360" y="295" class="body2" font-style="italic">Engine( = Simulator 매크로 )이 이 루프 전체를 소유하는 싱글턴</text>
+</svg>
+</div>
+
 - `Sim_Object::Execute_simulator_event()` 가 모든 구성요소의 공통 진입점이라는 것 확인
-- `Engine`( `Simulator` 매크로 )이 싱글턴이고 `EventTree` 로 이벤트를 시간순 관리한다는 것 확인
+- `Engine`( `Simulator` 매크로 )이 싱글턴이고 `EventTree` 로 이벤트를 시간순 관리한다는 것 확인 — 위 그림의 루프가 사실상 MQSim 전체의 심장박동
 - `main.cpp` 에서 설정 파싱 → 워크로드 파싱 → 시나리오 루프( `Simulator->Reset()` → `SSD_Device` 생성 → `Host_System` 생성 → `Simulator->Start_simulation()` ) 흐름을 코드에서 직접 짚어보기
+- 실시간 개념이 없고 "다음 이벤트 시각"만 따라가는 구조라서, 90만 건 요청도 몇 초 만에 끝나는 이유가 여기 있다는 것 확인
 - 체크포인트 : "이벤트 하나가 등록되고 실행되는 과정"을 코드 줄 번호로 설명할 수 있으면 통과
 
 </div>
@@ -117,9 +217,48 @@ table.plan-calendar .row-mark {
 
 읽을 파일 : `src/ssd/Address_Mapping_Unit_Base.h`, `src/ssd/Address_Mapping_Unit_Page_Level.h`, `src/ssd/Flash_Block_Manager_Base.h`
 
-- `Block_Pool_Slot_Type`( `Invalid_page_bitmap`, `Erase_count`, `Current_status` 상태 머신 )가 실제 block 상태를 어떻게 들고 있는지
-- `PlaneBookKeepingType` 의 `Data_wf` / `GC_wf` / `Translation_wf`( double write frontier ) 구조 이해
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 720 260" style="width:100%;max-width:600px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <style>
+    .plane3 { fill:#fbfbfb; stroke:#34495e; stroke-width:2; }
+    .valid3 { fill:#bfe3c8; stroke:#2f8f4e; }
+    .invalid3 { fill:#f3c6c6; stroke:#c0392b; }
+    .free3 { fill:#e9ecef; stroke:#9aa4ad; }
+    .lbl3 { fill:#2c3e50; font-size:12px; font-weight:700; }
+    .small3 { fill:#3d4a5a; font-size:10.5px; }
+  </style>
+
+  <rect x="20" y="20" width="330" height="220" rx="8" class="plane3"/>
+  <text x="35" y="42" class="lbl3">Plane ( PlaneBookKeepingType )</text>
+
+  <text x="35" y="65" class="small3">Data_wf( 사용자 쓰기 block )</text>
+  <rect x="35" y="72" width="24" height="24" class="valid3"/><rect x="61" y="72" width="24" height="24" class="valid3"/>
+  <rect x="87" y="72" width="24" height="24" class="invalid3"/><rect x="113" y="72" width="24" height="24" class="free3"/>
+
+  <text x="35" y="120" class="small3">GC_wf( GC 쓰기 block )</text>
+  <rect x="35" y="127" width="24" height="24" class="valid3"/><rect x="61" y="127" width="24" height="24" class="free3"/>
+  <rect x="87" y="127" width="24" height="24" class="free3"/><rect x="113" y="127" width="24" height="24" class="free3"/>
+
+  <text x="35" y="175" class="small3">Translation_wf( 매핑 테이블용 block )</text>
+  <rect x="35" y="182" width="24" height="24" class="invalid3"/><rect x="61" y="182" width="24" height="24" class="valid3"/>
+
+  <text x="35" y="225" class="small3">□ valid  □ invalid  □ free — 각 칸 = Page, 색은 Invalid_page_bitmap 기준</text>
+
+  <rect x="380" y="20" width="320" height="220" rx="8" class="plane3"/>
+  <text x="395" y="42" class="lbl3">Block_Pool_Slot_Type ( block 1개 )</text>
+  <text x="395" y="70" class="small3">Current_status : IDLE / GC_WL / USER / ...</text>
+  <text x="395" y="95" class="small3">Invalid_page_bitmap : 0101...</text>
+  <text x="395" y="120" class="small3">Erase_count : N</text>
+  <text x="395" y="145" class="small3">Current_page_write_index</text>
+  <text x="395" y="180" class="small3" font-style="italic">→ 우리 grid 색상은</text>
+  <text x="395" y="198" class="small3" font-style="italic">  결국 이 구조체를 읽으면 됨</text>
+</svg>
+</div>
+
+- `Block_Pool_Slot_Type`( `Invalid_page_bitmap`, `Erase_count`, `Current_status` 상태 머신 )가 실제 block 상태를 어떻게 들고 있는지 — 위 그림 오른쪽
+- `PlaneBookKeepingType` 의 `Data_wf` / `GC_wf` / `Translation_wf`( double write frontier ) 구조 이해 — 사용자 쓰기와 GC 쓰기가 같은 block 을 안 쓰는 이유( hot/cold 분리 ), 위 그림 왼쪽
 - CMT( Cached Mapping Table ) 관련 메서드( `Exists`, `Retrieve_ppa`, `Reserve_slot_for_lpn` )가 매핑 테이블 전체를 캐싱하지 않는 이유
+- `Free_block_pool`( `std::multimap`, erase count 기준 정렬 )이 마모 평준화와 어떻게 연결되는지 미리 확인( Session 6 예고 )
 - 체크포인트 : "매핑 테이블 하나의 엔트리가 무엇을 저장하는지" 정확히 설명
 
 </div>
@@ -142,9 +281,61 @@ table.plan-calendar .row-mark {
 
 읽을 파일 : `src/ssd/GC_and_WL_Unit_Base.h`, `src/ssd/GC_and_WL_Unit_Page_Level.cpp`( `Check_gc_required`, `GC_is_in_urgent_mode`, victim selection 부분 )
 
-- free block pool 이 줄어들 때 `Check_gc_required()` 가 왜/어떻게 불리는지
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 900 200" style="width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrow-p5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/>
+    </marker>
+  </defs>
+  <style>
+    .box5 { fill:#eef2f7; stroke:#34495e; stroke-width:2; }
+    .diamond5 { fill:#fff6df; stroke:#b8860b; stroke-width:2; }
+    .title5 { fill:#2c3e50; font-size:12px; font-weight:700; text-anchor:middle; }
+    .body5 { fill:#3d4a5a; font-size:10px; text-anchor:middle; }
+    .flow5 { stroke:#7f8c8d; stroke-width:2; marker-end:url(#arrow-p5); fill:none; }
+    .lbl5 { fill:#5a6472; font-size:10px; text-anchor:middle; }
+  </style>
+
+  <rect x="10" y="70" width="140" height="60" rx="8" class="box5"/>
+  <text x="80" y="95" class="title5">Free block pool</text>
+  <text x="80" y="112" class="body5">쓰기로 인해 감소</text>
+
+  <line x1="150" y1="100" x2="200" y2="100" class="flow5"/>
+
+  <polygon points="290,60 380,100 290,140 200,100" class="diamond5"/>
+  <text x="290" y="95" class="title5">GC_Exec_Threshold</text>
+  <text x="290" y="112" class="body5">넘었나?</text>
+
+  <line x1="290" y1="140" x2="290" y2="175" class="flow5"/>
+  <text x="290" y="192" class="lbl5">아니오 — 계속 진행</text>
+
+  <line x1="380" y1="100" x2="430" y2="100" class="flow5"/>
+  <text x="405" y="88" class="lbl5">예</text>
+
+  <rect x="430" y="70" width="130" height="60" rx="8" class="box5"/>
+  <text x="495" y="95" class="title5">Victim 선정</text>
+  <text x="495" y="112" class="body5">( GC_Block_Selection</text>
+  <text x="495" y="124" class="body5" font-size="9">_Policy = RGA )</text>
+
+  <line x1="560" y1="100" x2="610" y2="100" class="flow5"/>
+
+  <rect x="610" y="70" width="130" height="60" rx="8" class="box5"/>
+  <text x="675" y="95" class="title5">Valid page</text>
+  <text x="675" y="112" class="body5">migration</text>
+
+  <line x1="740" y1="100" x2="790" y2="100" class="flow5"/>
+
+  <rect x="790" y="70" width="100" height="60" rx="8" class="box5"/>
+  <text x="840" y="95" class="title5">Block</text>
+  <text x="840" y="112" class="body5">erase</text>
+</svg>
+</div>
+
+- free block pool 이 줄어들 때 `Check_gc_required()` 가 왜/어떻게 불리는지 — 위 그림의 첫 판단 지점
+- `GC_is_in_urgent_mode()` 가 `GC_Hard_Threshold` 로 "긴급 GC"( preemptible 하지 않게 강제 )를 어떻게 구분하는지
 - `GC_Block_Selection_Policy`( GREEDY/RGA/RANDOM 계열/FIFO ) 중 실제 설정값( RGA )의 코드 분기 추적
-- victim block 선정 → valid page migration → block erase, 3단계를 코드에서 순서대로 확인
+- victim block 선정 → valid page migration → block erase, 3단계를 코드에서 순서대로 확인 — 위 그림의 나머지 3개 박스
 - 체크포인트 : "GC 가 왜 지금 시작됐는지" 를 코드 조건문 기준으로 설명
 
 </div>
@@ -234,7 +425,56 @@ table.plan-calendar .row-mark {
 6. `Flash_Block_Manager` 의 free block pool 이 줄어 `GC_and_WL_Unit.Check_gc_required()` 가 트리거될 수도 있다
 7. `Stats` 에 결과가 집계되고 `main.cpp` 의 `collect_results()` 가 XML 로 쓴다
 
-이 7단계가 막힘없이 나오면 MQSim 코드 이해는 끝난 것.
+이 7단계가 막힘없이 나오면 MQSim 코드 이해는 끝난 것. 통합 계획의 10/11 1차 마감과 같은 날 — 여기까지가 핵심 커리큘럼이고, 13~16번은 리뷰 이후 버퍼 기간에 진행하는 확장 학습이다.
+
+</div>
+
+<div class="session" data-session="13" markdown="1">
+
+### 13. Cost-Benefit GC 이론 복습과 설계 지점 파악
+
+읽을 파일 : `src/ssd/GC_and_WL_Unit_Page_Level.cpp` 의 `GC_Block_Selection_Policy` switch-case 전체, `SSD_Defs.h` 의 `GC_Block_Selection_Policy_Type` enum
+
+- LFS/Rosenblum cost-benefit 공식( `age × (1-u)/(1+u)`, u = valid page 비율 ) 복습 — Session 1/5 에서 배운 이론을 실제 수식으로
+- 기존 GREEDY/RGA 케이스가 어떤 정보( invalid page 수, block age )를 쓰는지 vs cost-benefit 이 추가로 필요한 정보( block 의 마지막 접근 시각 등 )
+- enum 에 새 값을 추가하고 switch-case 에 새 분기를 넣는 지점을 미리 표시해두기( 실제 구현은 Claude 담당 )
+- 체크포인트 : cost-benefit 정책이 greedy 와 다르게 "오래됐지만 invalid page 는 적은 block"을 왜 고르려 하는지 설명
+
+</div>
+
+<div class="session" data-session="14" markdown="1">
+
+### 14. Cost-Benefit GC 코드 리뷰와 비교 검증
+
+Claude 가 추가한 `COST_BENEFIT` 정책 코드를 리뷰
+
+- 새로 추가된 분기가 13번에서 확인한 지점에 정확히 들어갔는지 확인
+- 같은 workload 로 RGA 와 COST_BENEFIT 을 각각 돌려서 `Total_GC_Executions`, WAF, 평균 응답시간을 비교
+- 체크포인트 : 두 정책의 결과 차이를 "왜 그런 차이가 나는지" 코드 근거로 설명
+
+</div>
+
+<div class="session" data-session="15" markdown="1">
+
+### 15. 전체 hook 코드 최종 재점검
+
+11번에서 한 번 훑었던 hook 코드 전체( 매핑/GC/WL/hybrid )와, 13~14번에서 추가된 Cost-Benefit 관련 코드까지 포함해서 다시 한 번 통독
+
+- ( 시간이 되면 ) GTest 로 만들어둔 골든/회귀 테스트가 있다면, 그 테스트가 실제로 무엇을 검증하는지 코드로 확인
+- 체크포인트 : hook + 확장 코드를 합쳐서 전체 diff 를 설명할 수 있으면 통과
+
+</div>
+
+<div class="session" data-session="16" markdown="1">
+
+### 16. 최종 캡스톤 — 확장 기능까지 포함한 전체 관통
+
+12번의 7단계 설명에 다음을 추가해서 다시 한 번, 이번엔 확장 기능까지 포함해서 설명
+
+8. GC 정책을 RGA 대신 COST_BENEFIT 으로 바꾸면 6번 단계의 victim 선정 결과가 어떻게 달라지는가
+9. ( 있다면 ) GTest/GMock 스위트가 이 전체 경로 중 어디를 커버하고 있는가
+
+이번 프로젝트에서 MQSim 코드를 공부한 여정의 종착점.
 
 </div>
 
