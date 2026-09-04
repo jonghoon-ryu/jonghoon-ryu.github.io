@@ -131,7 +131,7 @@ table.plan-calendar .buffer-mark {
 ## 세션
 
 <div class="progress-box">
-  <span>진행률: <span id="progress-count">0 / 12</span></span>
+  <span>진행률: <span id="progress-count">0 / 16</span></span>
   <span class="progress-bar-track"><span class="progress-bar-fill" id="progress-fill"></span></span>
 </div>
 
@@ -179,6 +179,7 @@ table.plan-calendar .buffer-mark {
 - 기술 스택 결정 : TypeScript + React + Vite, 시뮬레이션 코어는 UI 와 분리된 순수 TS 모듈, Canvas/SVG 렌더링, GitHub Pages 정적 배포
 - 데이터 모델 설계( Flash array, Block, Page, MappingTable, FTL controller — step() 기반 ) 와 화면 와이어프레임( flash grid, 매핑 테이블 패널, 파라미터 패널, 이벤트 로그, 통계 대시보드 )
 - **MQSim/FTL 심화** : `Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 를 더 자세히 읽고, 우리가 설계하는 데이터 모델이 MQSim 구조와 어디서 같고 어디서 단순화되는지 정리
+- **코드 스터디** : TypeScript 기본 문법( interface/type, class ), Vite + React 프로젝트 구조 관례 — Claude 가 만든 scaffold 를 보며 폴더/파일 역할 이해
 - 결과물 : 설계 문서 + 와이어프레임, 프로젝트 뼈대(scaffold) 커밋
 
 </div>
@@ -195,6 +196,7 @@ table.plan-calendar .buffer-mark {
 - NAND flash array 자료구조, page-level FTL 매핑 테이블 구현
 - host write 경로 ( 매핑 조회 → free page 할당 → 매핑 갱신 → 기존 page invalidate ), read 경로 구현
 - **MQSim/FTL 심화** : MQSim 의 `Address_Mapping_Unit_Page_Level.cpp` 에서 실제 lookup/allocate 로직을 읽고 우리 구현과 비교
+- **코드 스터디** : TypeScript 클래스/배열 기반 자료구조 — Claude 가 작성한 Flash array, MappingTable 클래스 코드를 한 줄씩 같이 읽고 이해
 
 </div>
 
@@ -210,6 +212,7 @@ table.plan-calendar .buffer-mark {
 - GC 알고리즘 구현 : victim block 선정, valid page migration, block erase
 - UI 없이 시뮬레이션 코어만 단위 테스트 ( 샘플 write 시퀀스로 WAF 등 기대값 검증 )
 - **MQSim/FTL 심화** : MQSim 의 `GC_and_WL_Unit_Page_Level.cpp` 에서 실제 victim selection( `GC_Block_Selection_Policy=RGA` 등 ) 코드를 읽고, 방금 배운 이론과 대조
+- **코드 스터디** : 정렬/탐색 기반 알고리즘 구현 패턴 — Claude 의 victim block 선정 코드를 pseudo-code 와 나란히 놓고 비교
 
 </div>
 
@@ -225,6 +228,7 @@ table.plan-calendar .buffer-mark {
 - **Hybrid(log-block, FAST) mapping 이론 학습** ( Session 1 에서 미뤄둔 부분, 사용자 직접 ), 비교용으로 hybrid/log-block 매핑을 대안 옵션으로 구현
 - 시뮬레이션 엔진 API 확정 ( step, reset, configure )
 - **MQSim/FTL 심화** : MQSim 의 `Address_Mapping_Unit_Hybrid.cpp` 를 읽고 log-block merge(switch/partial/full merge) 가 실제로 어떻게 도는지 확인
+- **코드 스터디** : 상태 머신/조건 분기 설계 — hybrid 매핑과 wear leveling 코드의 분기 구조를 같이 읽고 왜 그렇게 나눴는지 이해
 - 결과물 : UI 없이도 동작·테스트가 끝난 시뮬레이션 엔진
 
 </div>
@@ -240,6 +244,7 @@ table.plan-calendar .buffer-mark {
 - flash array grid 시각화 ( block/page 상태별 색상 구분 ), 시뮬레이션 엔진과 연결해 write/GC 실시간 애니메이션
 - 매핑 테이블 뷰어 패널
 - **MQSim/FTL 심화** : 지금 만든 시각화 요소가 MQSim 의 `Stats.cpp` 에서 어떤 통계 항목에 대응하는지 매핑해보기
+- **코드 스터디** : Canvas/SVG 렌더링 기초, React state → 화면 반영 원리 — 엔진 상태가 어떻게 grid 색상으로 그려지는지 실제 렌더링 코드 읽기
 
 </div>
 
@@ -254,6 +259,7 @@ table.plan-calendar .buffer-mark {
 - 이벤트 로그 / 타임라인, 통계 대시보드 ( WAF, valid page 비율, GC 발생 횟수, erase 횟수 )
 - step / play·pause / 속도 조절 슬라이더, write/invalidate/erase/migrate 애니메이션 다듬기
 - **MQSim/FTL 심화** : 9/4 에 실행했던 MQSim 결과( `workload_scenario_*.xml` 의 `Total_GC_Executions`, WAF 관련 카운터 )와 우리 대시보드 지표를 1:1로 대조
+- **코드 스터디** : `requestAnimationFrame` 기반 애니메이션, React state 업데이트/재렌더링 패턴 — 재생 컨트롤 코드가 시간 흐름을 어떻게 다루는지 읽기
 - 결과물 : 고정 기본 파라미터로 브라우저에서 처음부터 끝까지 동작하는 시각화 시뮬레이터
 
 </div>
@@ -269,6 +275,7 @@ table.plan-calendar .buffer-mark {
 - page 크기, block/page 개수, OP 비율, GC 임계값, 매핑 방식 선택 UI
 - 파라미터 변경 시 엔진을 실시간으로 reset/reconfigure 하도록 연동
 - **MQSim/FTL 심화** : `ssdconfig.xml` 의 실제 파라미터 범위/의미( `Overprovisioning_Ratio`, `GC_Exec_Threshold`, `GC_Hard_Threshold` 등 )를 다시 확인하고 우리 UI 파라미터와 1:1 대응시키기
+- **코드 스터디** : React controlled component 패턴( input/slider 가 state 와 어떻게 묶이는지 ) — 파라미터 패널 코드를 직접 읽고 이해
 
 </div>
 
@@ -284,6 +291,7 @@ table.plan-calendar .buffer-mark {
 - ( 선택 ) 간단한 CSV/텍스트 형식의 커스텀 trace 업로드
 - 입력값 검증 및 파라미터 범위 제한
 - **MQSim/FTL 심화** : `workload.xml` 의 synthetic vs trace-based 워크로드 정의 방식을 비교하고, `tpcc-small.trace` 포맷을 다시 훑어보기
+- **코드 스터디** : 브라우저 파일 입력( `FileReader` API ), 입력 검증 로직 — 커스텀 trace 업로드/검증 코드를 직접 읽고 이해
 - 결과물 : 파라미터와 workload 를 바꿔가며 동작 차이를 직접 관찰할 수 있는 완전한 인터랙티브 시뮬레이터
 
 </div>
@@ -294,9 +302,12 @@ table.plan-calendar .buffer-mark {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="11"> 완료 체크</label>
 
+**역할** : 구현은 Claude → 사용자는 브라우저에서 직접 확인하며 리뷰·피드백
+
 - UI 다듬기 ( 범례, 툴팁, 반응형 레이아웃, 색상 접근성 )
 - 버그 수정, 크로스 브라우저 확인
 - README / 동작 원리 문서 작성
+- **코드 스터디** : 반응형 CSS( flexbox/grid, 미디어 쿼리 ), 웹 접근성(a11y) 기초 — 다듬기 코드가 실제로 뭘 바꾸는지 비교해보기
 
 </div>
 
@@ -306,7 +317,10 @@ table.plan-calendar .buffer-mark {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="12"> 완료 체크</label>
 
+**역할** : 배포 작업은 Claude → 사용자는 배포된 사이트를 직접 리뷰
+
 - 최종 테스트, GitHub Pages 배포
+- **코드 스터디** : Vite 빌드 산출물 구조, GitHub Pages 배포 워크플로( 정적 파일 배포 원리 ) — 배포 과정을 직접 따라가며 이해
 - 1차 완성본 리뷰 — 여기서 나온 피드백은 10/17 이후 버퍼 기간에 반영
 
 </div>
@@ -334,9 +348,10 @@ table.plan-calendar .buffer-mark {
 
   document.addEventListener('DOMContentLoaded', function () {
     var boxes = Array.prototype.slice.call(document.querySelectorAll('.session-checkbox'));
+    var bufferMarks = Array.prototype.slice.call(document.querySelectorAll('.buffer-mark'));
     var countEl = document.getElementById('progress-count');
     var fillEl = document.getElementById('progress-fill');
-    var total = boxes.length;
+    var total = boxes.length + bufferMarks.length;
     var state = load();
 
     function render() {
@@ -351,6 +366,12 @@ table.plan-calendar .buffer-mark {
         if (mark) mark.textContent = isDone ? '✅' : '☐';
         if (isDone) done++;
       });
+      bufferMarks.forEach(function (mark) {
+        var id = mark.getAttribute('data-session');
+        var isDone = !!state[id];
+        mark.textContent = isDone ? '✅' : '☐';
+        if (isDone) done++;
+      });
       if (countEl) countEl.textContent = done + ' / ' + total;
       if (fillEl) fillEl.style.width = (total ? (done / total) * 100 : 0) + '%';
     }
@@ -363,14 +384,12 @@ table.plan-calendar .buffer-mark {
       });
     });
 
-    var bufferMarks = Array.prototype.slice.call(document.querySelectorAll('.buffer-mark'));
     bufferMarks.forEach(function (mark) {
-      var id = mark.getAttribute('data-session');
-      mark.textContent = state[id] ? '✅' : '☐';
       mark.addEventListener('click', function () {
+        var id = mark.getAttribute('data-session');
         state[id] = !state[id];
         save(state);
-        mark.textContent = state[id] ? '✅' : '☐';
+        render();
       });
     });
 
