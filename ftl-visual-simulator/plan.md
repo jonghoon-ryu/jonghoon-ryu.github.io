@@ -26,19 +26,6 @@ permalink: /ftl-visual-simulator/plan/
   background: #3a7d44;
   transition: width 0.2s ease;
 }
-.session-check {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  color: #777;
-  cursor: pointer;
-  user-select: none;
-  margin: 0.2rem 0 0.6rem;
-}
-.session-check input {
-  cursor: pointer;
-}
 .session.done h3 {
   color: #999;
   text-decoration: line-through;
@@ -104,22 +91,22 @@ table.plan-calendar .buffer-mark {
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>세션</th><th>날짜</th><th>구분</th><th>단계</th><th>완료</th></tr>
-<tr><td>1</td><td>9/4 (금)</td><td>평일 (시작일)</td><td>Phase 1 — FTL 개념</td><td class="table-mark" data-session="1">☐</td></tr>
-<tr><td>2</td><td>9/6 (일)</td><td>주말</td><td>Phase 2 — MQSim 분석</td><td class="table-mark" data-session="2">☐</td></tr>
+<tr><td>1</td><td>9/4 (금)</td><td>평일 (시작일)</td><td>Phase 1 — FTL 개념</td><td class="table-mark buffer-mark" data-session="1">☐</td></tr>
+<tr><td>2</td><td>9/6 (일)</td><td>주말</td><td>Phase 2 — MQSim 분석</td><td class="table-mark buffer-mark" data-session="2">☐</td></tr>
 <tr><td>-</td><td>9/12 (토)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td></tr>
 <tr><td>-</td><td>9/13 (일)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td></tr>
-<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td><td class="table-mark" data-session="3">☐</td></tr>
-<tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td><td class="table-mark" data-session="4">☐</td></tr>
+<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td><td class="table-mark buffer-mark" data-session="3">☐</td></tr>
+<tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td><td class="table-mark buffer-mark" data-session="4">☐</td></tr>
 <tr><td>-</td><td>9/24 (목)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td></tr>
 <tr><td>-</td><td>9/25 (금)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td></tr>
-<tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td><td class="table-mark" data-session="5">☐</td></tr>
-<tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td><td class="table-mark" data-session="6">☐</td></tr>
-<tr><td>7</td><td>10/3 (토)</td><td>주말</td><td>Phase 5 — 시각화 (1)</td><td class="table-mark" data-session="7">☐</td></tr>
-<tr><td>8</td><td>10/4 (일)</td><td>주말</td><td>Phase 5 — 시각화 (2)</td><td class="table-mark" data-session="8">☐</td></tr>
-<tr><td>9</td><td>10/5 (월)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (1)</td><td class="table-mark" data-session="9">☐</td></tr>
-<tr><td>10</td><td>10/9 (금)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (2)</td><td class="table-mark" data-session="10">☐</td></tr>
-<tr><td>11</td><td>10/10 (토)</td><td>주말</td><td>Phase 7 — 마무리 (1)</td><td class="table-mark" data-session="11">☐</td></tr>
-<tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td><td class="table-mark" data-session="12">☐</td></tr>
+<tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td><td class="table-mark buffer-mark" data-session="5">☐</td></tr>
+<tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td><td class="table-mark buffer-mark" data-session="6">☐</td></tr>
+<tr><td>7</td><td>10/3 (토)</td><td>주말</td><td>Phase 5 — 시각화 (1)</td><td class="table-mark buffer-mark" data-session="7">☐</td></tr>
+<tr><td>8</td><td>10/4 (일)</td><td>주말</td><td>Phase 5 — 시각화 (2)</td><td class="table-mark buffer-mark" data-session="8">☐</td></tr>
+<tr><td>9</td><td>10/5 (월)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (1)</td><td class="table-mark buffer-mark" data-session="9">☐</td></tr>
+<tr><td>10</td><td>10/9 (금)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (2)</td><td class="table-mark buffer-mark" data-session="10">☐</td></tr>
+<tr><td>11</td><td>10/10 (토)</td><td>주말</td><td>Phase 7 — 마무리 (1)</td><td class="table-mark buffer-mark" data-session="11">☐</td></tr>
+<tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td><td class="table-mark buffer-mark" data-session="12">☐</td></tr>
 <tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="13">☐</td></tr>
 <tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="14">☐</td></tr>
 <tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="15">☐</td></tr>
@@ -144,7 +131,6 @@ table.plan-calendar .buffer-mark {
 
 ### 1. (9/4) FTL 개념 — 매핑 · GC · 마모 평준화 · Over-provisioning
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="1"> 완료 체크</label>
 
 - NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write" — 이미 잘 알고 있음 ✅
 - 주소 매핑 방식 : page-level, block-level mapping — 이미 잘 알고 있음 ✅
@@ -160,7 +146,6 @@ table.plan-calendar .buffer-mark {
 
 ### 2. (9/6) MQSim 개괄 학습
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="2"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - **MQSim/FTL 심화** : [MQSim 문서](/ftl-visual-simulator/mqsim/) 를 읽으며 MQSim 이 뭘 모델링하는지, 어떤 기능이 있는지, 다른 오픈소스 시뮬레이터와 비교했을 때 왜 이걸 골랐는지 개괄적으로 이해
@@ -180,7 +165,6 @@ table.plan-calendar .buffer-mark {
 
 ### 3. (9/19) 시뮬레이터 설계 — 범위 · 스택 · 데이터 모델
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="3"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - MVP 범위, 사용자 조절 파라미터 방향 결정 및 Claude 초안 검토·조정
@@ -208,7 +192,6 @@ table.plan-calendar .buffer-mark {
 
 ### 4. (9/20) 시뮬레이션 엔진 (1) — MQSim WASM 빌드 · 매핑 상태 노출
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="4"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - 빌드 결과·테스트 확인 ( WASM 모듈이 실제로 브라우저에서 로드/실행되는지 )
@@ -227,7 +210,6 @@ table.plan-calendar .buffer-mark {
 
 ### 5. (9/26) 시뮬레이션 엔진 (2) — GC 이벤트 노출
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="5"> 완료 체크</label>
 
 GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_Page_Level.cpp` ) — 새로 짜는 게 아니라, 그 기존 로직이 실행되는 시점을 JS 로 노출하는 hook 을 추가하는 세션.
 
@@ -247,7 +229,6 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 ### 6. (9/27) 시뮬레이션 엔진 (3) — hybrid/마모평준화 노출과 바인딩 마무리
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="6"> 완료 체크</label>
 
 Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Address_Mapping_Unit_Hybrid.cpp`, wear-leveling 로직 ) — 마찬가지로 hook 추가와 WASM 바인딩 API 마무리가 중심.
 
@@ -269,7 +250,6 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 ### 7. (10/3) 시각화 (1) — flash grid · 매핑 테이블 뷰
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="7"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - 브라우저에서 직접 조작해보며 리뷰·피드백
@@ -286,7 +266,6 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 ### 8. (10/4) 시각화 (2) — 로그 · 통계 · 재생 컨트롤
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="8"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - 브라우저에서 직접 조작해보며 리뷰·피드백
@@ -304,7 +283,6 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 ### 9. (10/5, 공휴일) 인터랙션 (1) — 파라미터 컨트롤 패널
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="9"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - UI 를 직접 조작해보며 리뷰·피드백
@@ -321,7 +299,6 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 ### 10. (10/9, 공휴일) 인터랙션 (2) — workload 컨트롤
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="10"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - UI 를 직접 조작해보며 리뷰·피드백
@@ -340,7 +317,6 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 ### 11. (10/10) 마무리 (1) — 다듬기
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="11"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - 브라우저에서 직접 확인하며 리뷰·피드백
@@ -357,7 +333,6 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 ### 12. (10/11) 마무리 (2) — 최종 테스트 · 배포 · 리뷰
 
-<label class="session-check"><input type="checkbox" class="session-checkbox" data-session="12"> 완료 체크</label>
 
 **Ryu 가 할 일**
 - 배포된 사이트를 직접 리뷰 — 1차 완성본 리뷰, 여기서 나온 피드백은 10/17 이후 버퍼 기간에 반영
@@ -391,44 +366,27 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    var boxes = Array.prototype.slice.call(document.querySelectorAll('.session-checkbox'));
-    var bufferMarks = Array.prototype.slice.call(document.querySelectorAll('.buffer-mark'));
+    var marks = Array.prototype.slice.call(document.querySelectorAll('.buffer-mark'));
     var countEl = document.getElementById('progress-count');
     var fillEl = document.getElementById('progress-fill');
-    var total = boxes.length + bufferMarks.length;
+    var total = marks.length;
     var state = load();
 
     function render() {
       var done = 0;
-      boxes.forEach(function (cb) {
-        var id = cb.getAttribute('data-session');
-        var isDone = !!state[id];
-        cb.checked = isDone;
-        var wrap = cb.closest('.session');
-        if (wrap) wrap.classList.toggle('done', isDone);
-        var mark = document.querySelector('.table-mark[data-session="' + id + '"]');
-        if (mark) mark.textContent = isDone ? '✅' : '☐';
-        if (isDone) done++;
-      });
-      bufferMarks.forEach(function (mark) {
+      marks.forEach(function (mark) {
         var id = mark.getAttribute('data-session');
         var isDone = !!state[id];
         mark.textContent = isDone ? '✅' : '☐';
+        var wrap = document.querySelector('.session[data-session="' + id + '"]');
+        if (wrap) wrap.classList.toggle('done', isDone);
         if (isDone) done++;
       });
       if (countEl) countEl.textContent = done + ' / ' + total;
       if (fillEl) fillEl.style.width = (total ? (done / total) * 100 : 0) + '%';
     }
 
-    boxes.forEach(function (cb) {
-      cb.addEventListener('change', function () {
-        state[cb.getAttribute('data-session')] = cb.checked;
-        save(state);
-        render();
-      });
-    });
-
-    bufferMarks.forEach(function (mark) {
+    marks.forEach(function (mark) {
       mark.addEventListener('click', function () {
         var id = mark.getAttribute('data-session');
         state[id] = !state[id];
