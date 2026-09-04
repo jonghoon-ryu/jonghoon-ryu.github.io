@@ -95,6 +95,7 @@ table.plan-calendar .buffer-mark {
 - **구현은 전부 Claude 담당** — Ryu 는 visual simulator 를 만드는 방법을 몰라도 됨. 설계·코딩·빌드·배포 등 구체적인 작업은 모두 Claude 가 하고, 여러 방식 중 선택이 필요한 지점( 예 : 매핑 방식, 색상 스킴, GC 정책 이름 등 )에서만 Claude 가 Ryu 에게 옵션을 제시해 결정을 구함
 - **모든 세션에 FTL 개념 공부 + MQSim 코드 이해가 들어감** — Ryu 의 역할은 방향 결정, 코드/결과 리뷰, 브라우저 테스트에 더해 **매 세션 그 단계와 연결된 FTL 개념과 MQSim 실제 소스코드를 함께 이해하는 것**( 각 세션의 "MQSim/FTL 심화" 항목 )
 - **( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기** — 조사 결과 MQSim 은 GC 정책으로 GREEDY/RGA/RANDOM/RANDOM_P/RANDOM_PP/FIFO 만 지원하고 **Cost-Benefit GC**( LFS/Rosenblum 방식, valid page 비율과 block age 를 함께 고려하는 정책, Session 1/5 에서 배운 "greedy vs cost-benefit" 비교의 그 cost-benefit )는 없음 → 시간이 남으면 13~16번 버퍼 기간에 이 정책을 새로 구현해 RGA 와 비교해보는 것을 확장 목표로 삼음
+- **초심자 학습 환경이라는 목표를 설계 단계부터 반영** — MQSim 의 raw 파라미터/통계를 그대로 노출하면 초심자에게는 그냥 숫자 나열일 뿐임. Session 3 설계 때부터 "쉬운 용어로 된 툴팁", "개념별 프리셋 시나리오( 매핑 기본 / GC 시연 / 마모평준화 시연 )", "지금 무슨 일이 일어나고 있는지 평범한 말로 알려주는 설명 패널" 을 MVP 범위에 포함시킴 — Session 11(다듬기)의 "툴팁/범례" 는 이 원칙을 마무리하는 단계일 뿐, 처음부터 있어야 하는 요구사항
 
 <div style="margin-top: 40px;"></div>
 
@@ -194,7 +195,11 @@ table.plan-calendar .buffer-mark {
   - `Flash_Block_Manager.cpp` : block/page 상태(free/valid/invalid) 변경 시점
   - 이 지점들에서 이벤트를 JS 로 넘기는 방식 결정 ( Emscripten `EM_ASM`/exported 콜백으로 즉시 통지 vs. 주기적 상태 스냅샷 )
 - 파라미터/워크로드 입력 방식 설계 : 파라미터 패널에서 만든 값을 실제 `ssdconfig.xml`/`workload.xml` 형식 텍스트로 만들어 Emscripten 가상 파일시스템(MEMFS)에 써넣고, MQSim 기존 XML 파싱 코드를 그대로 재사용
-- 화면 와이어프레임( flash grid, 매핑 테이블 패널, 파라미터 패널, 이벤트 로그, 통계 대시보드 )
+- **초심자 학습 요소를 MVP 범위에 포함** :
+  - 개념별 프리셋 시나리오 설계( 예 : "매핑 기본" — 쓰기 몇 번으로 페이지 매핑만 보여주기, "GC 시연" — occupancy 를 높여 GC 가 빨리 일어나게, "마모평준화 시연" — 특정 block 에 쓰기를 몰아서 WL 개입을 보여주기 )
+  - hook 이벤트를 "지금 무슨 일이 일어나는지" 쉬운 말로 바꿔주는 설명 문구 초안( 예 : "block 12 의 유효한 페이지들을 새 block 으로 옮기는 중이에요(GC)" )
+  - 용어 툴팁에 들어갈 쉬운 설명 초안( 매핑, GC, 마모 평준화, over-provisioning 등 )
+- 화면 와이어프레임( flash grid, 매핑 테이블 패널, 파라미터 패널, 이벤트 로그, 통계 대시보드, 설명 패널, 프리셋 선택 UI )
 - 결과물 : 설계 문서 + 와이어프레임, 프로젝트 뼈대(scaffold) 커밋
 
 </div>
@@ -273,6 +278,7 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 **Claude 가 할 일**
 - flash array grid 시각화 ( block/page 상태별 색상 구분 ), WASM 모듈이 보내는 hook 이벤트를 구독해 write/GC 실시간 애니메이션으로 연결
 - 매핑 테이블 뷰어 패널 ( WASM 의 `getState()` 로 매핑 테이블 스냅샷을 읽어와 표시 )
+- **범례(legend) + 색상/상태 툴팁을 처음부터 붙여서 구현** ( "나중에 다듬기"가 아니라 초심자 학습 환경의 기본 요구사항 )
 
 </div>
 
@@ -287,9 +293,10 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 - **MQSim/FTL 심화** : 9/4 에 실행했던 MQSim 결과( `workload_scenario_*.xml` 의 `Total_GC_Executions`, WAF 관련 카운터 )와 우리 대시보드 지표를 1:1로 대조
 
 **Claude 가 할 일**
-- 이벤트 로그 / 타임라인 ( hook 이벤트를 그대로 나열 ), 통계 대시보드 ( WAF, valid page 비율, GC 발생 횟수, erase 횟수 — WASM 내부 통계를 그대로 노출 )
+- 이벤트 로그 / 타임라인 — hook 이벤트를 그대로 나열하지 않고, Session 3 에서 만든 쉬운 말 설명 문구로 바꿔서 표시( 예 : "block 12 GC 시작" 이 아니라 "block 12 가 꽉 차서 정리를 시작해요" )
+- 통계 대시보드 ( WAF, valid page 비율, GC 발생 횟수, erase 횟수 ) — 숫자만 나열하지 않고 각 지표 옆에 "이게 왜 중요한지" 한 줄 설명 추가
 - step / play·pause / 속도 조절 슬라이더 — WASM 실행을 Web Worker 로 돌리고 진행 속도를 조절하는 방식으로 구현, write/invalidate/erase/migrate 애니메이션 다듬기
-- 결과물 : 고정 기본 파라미터로 브라우저에서 처음부터 끝까지 동작하는 시각화 시뮬레이터
+- 결과물 : 고정 기본 파라미터로 브라우저에서 처음부터 끝까지 동작하는 시각화 시뮬레이터, 초심자가 설명만 보고도 따라올 수 있는 수준
 
 </div>
 
@@ -304,8 +311,9 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 - **MQSim/FTL 심화** : `ssdconfig.xml` 의 실제 파라미터 범위/의미( `Overprovisioning_Ratio`, `GC_Exec_Threshold`, `GC_Hard_Threshold` 등 )를 다시 확인하고 우리 UI 파라미터와 1:1 대응시키기
 
 **Claude 가 할 일**
-- page 크기, block/page 개수, OP 비율, GC 임계값, 매핑 방식 선택 UI
+- page 크기, block/page 개수, OP 비율, GC 임계값, 매핑 방식 선택 UI — 각 항목에 Session 3 에서 만든 쉬운 설명 툴팁 연결
 - 파라미터 변경 시 값들을 `ssdconfig.xml` 형식 텍스트로 만들어 MEMFS 에 다시 써넣고 WASM 모듈을 재시작(reset/reconfigure)하도록 연동
+- **개념별 프리셋 버튼 구현** ( "매핑 기본" / "GC 시연" / "마모평준화 시연" ) — 클릭 한 번으로 해당 개념이 잘 보이는 파라미터 조합으로 바로 전환. 초심자는 파라미터를 직접 안 만져도 프리셋만으로 각 개념을 볼 수 있게 함
 
 </div>
 
@@ -321,9 +329,10 @@ Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Addr
 
 **Claude 가 할 일**
 - workload 생성기 컨트롤 ( sequential/random, read/write 비율, burst 크기 ) — 값을 `workload.xml` 형식으로 만들어 MEMFS 에 전달
+- Session 9 의 개념별 프리셋에 맞는 workload 도 함께 세팅( 예 : "GC 시연" 프리셋은 파라미터뿐 아니라 occupancy 를 빠르게 채우는 workload 도 자동으로 같이 걸리게 )
 - ( 선택 ) 커스텀 trace 파일 업로드 → MEMFS 에 그대로 마운트해서 MQSim 의 기존 trace 파싱 코드로 실행
 - 입력값 검증 및 파라미터 범위 제한
-- 결과물 : 파라미터와 workload 를 바꿔가며 동작 차이를 직접 관찰할 수 있는 완전한 인터랙티브 시뮬레이터
+- 결과물 : 프리셋으로 개념을 빠르게 보거나, 파라미터/workload 를 직접 바꿔가며 동작 차이를 관찰할 수 있는 완전한 인터랙티브 시뮬레이터
 
 </div>
 
