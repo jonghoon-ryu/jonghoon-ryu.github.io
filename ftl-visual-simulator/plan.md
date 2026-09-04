@@ -184,65 +184,76 @@ table.plan-calendar .buffer-mark {
 
 **Claude 가 할 일**
 - MVP 범위 초안 : flash block/page grid ( free / valid / invalid / erasing 상태 ), 매핑 테이블, GC 이벤트, 통계( WAF, valid page 비율 )
-- 기술 스택 제안 : TypeScript + React + Vite, 시뮬레이션 코어는 UI 와 분리된 순수 TS 모듈, Canvas/SVG 렌더링, GitHub Pages 정적 배포
-- 데이터 모델 설계( Flash array, Block, Page, MappingTable, FTL controller — step() 기반 ) 와 화면 와이어프레임( flash grid, 매핑 테이블 패널, 파라미터 패널, 이벤트 로그, 통계 대시보드 )
+- **엔진 아키텍처 확정** : 자체 TS 엔진을 새로 짜지 않고, **MQSim C++ 코드를 Emscripten 으로 WASM 컴파일해서 그대로 사용**. UI 는 React + Vite, WASM 모듈과는 얇은 JS/TS 바인딩 레이어로 연결, GitHub Pages 정적 배포
+- **계측(instrumentation) 지점 설계** : MQSim 은 XML → 실행 → 결과 XML 이라는 일괄 실행 구조라 중간 상태를 못 봄. 시각화를 위해 어디에 hook 을 심어야 하는지 설계 —
+  - `Address_Mapping_Unit_Page_Level.cpp`, `Address_Mapping_Unit_Hybrid.cpp` : 매핑 갱신 시점
+  - `GC_and_WL_Unit_Page_Level.cpp` : GC 시작/victim 선정/migration/erase 시점
+  - `Flash_Block_Manager.cpp` : block/page 상태(free/valid/invalid) 변경 시점
+  - 이 지점들에서 이벤트를 JS 로 넘기는 방식 결정 ( Emscripten `EM_ASM`/exported 콜백으로 즉시 통지 vs. 주기적 상태 스냅샷 )
+- 파라미터/워크로드 입력 방식 설계 : 파라미터 패널에서 만든 값을 실제 `ssdconfig.xml`/`workload.xml` 형식 텍스트로 만들어 Emscripten 가상 파일시스템(MEMFS)에 써넣고, MQSim 기존 XML 파싱 코드를 그대로 재사용
+- 화면 와이어프레임( flash grid, 매핑 테이블 패널, 파라미터 패널, 이벤트 로그, 통계 대시보드 )
 - 결과물 : 설계 문서 + 와이어프레임, 프로젝트 뼈대(scaffold) 커밋
 
 </div>
 
 <div class="session" data-session="4" markdown="1">
 
-### 4. (9/20) 시뮬레이션 엔진 (1) — 매핑 테이블과 read/write 경로
+### 4. (9/20) 시뮬레이션 엔진 (1) — MQSim WASM 빌드 · 매핑 상태 노출
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="4"> 완료 체크</label>
 
 **Ryu 가 할 일**
-- 코드 리뷰, 실행 결과·테스트 확인
-- **MQSim/FTL 심화** : MQSim 의 `Address_Mapping_Unit_Page_Level.cpp` 에서 실제 lookup/allocate 로직을 읽고 우리 구현과 비교
-- **코드 스터디** : Claude 가 작성한 매핑 테이블 코드(lookup/allocate/invalidate)를 한 줄씩 같이 읽으며, FTL 주소 변환이 실제로 어떻게 동작하는지 이해
+- 빌드 결과·테스트 확인 ( WASM 모듈이 실제로 브라우저에서 로드/실행되는지 )
+- **MQSim/FTL 심화** : `Address_Mapping_Unit_Page_Level.cpp` 의 실제 lookup/allocate 로직을 다시 읽고, Claude 가 추가한 hook 이 정확히 그 지점을 포착하는지 확인
+- **코드 스터디** : Claude 가 `Address_Mapping_Unit_Page_Level.cpp` 에 추가한 계측 코드(hook)를 원본 로직과 나란히 읽으며, FTL 매핑 갱신이 코드 상 어느 시점인지 이해
 
 **Claude 가 할 일**
 - 프로젝트 scaffold ( Vite + React + TS )
-- NAND flash array 자료구조, page-level FTL 매핑 테이블 구현
-- host write 경로 ( 매핑 조회 → free page 할당 → 매핑 갱신 → 기존 page invalidate ), read 경로 구현
+- Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 )
+- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성
+- host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인
 
 </div>
 
 <div class="session" data-session="5" markdown="1">
 
-### 5. (9/26) 시뮬레이션 엔진 (2) — GC 알고리즘
+### 5. (9/26) 시뮬레이션 엔진 (2) — GC 이벤트 노출
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="5"> 완료 체크</label>
 
+GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_Page_Level.cpp` ) — 새로 짜는 게 아니라, 그 기존 로직이 실행되는 시점을 JS 로 노출하는 hook 을 추가하는 세션.
+
 **Ryu 가 할 일**
 - **GC 이론 학습** ( Session 1 에서 미뤄둔 부분 ) : victim block 선정 알고리즘( greedy vs cost-benefit ), GC 트리거 정책과 WAF 관계
-- 테스트 결과(WAF 등)로 검증
-- **MQSim/FTL 심화** : MQSim 의 `GC_and_WL_Unit_Page_Level.cpp` 에서 실제 victim selection( `GC_Block_Selection_Policy=RGA` 등 ) 코드를 읽고, 방금 배운 이론과 대조
-- **코드 스터디** : Claude 가 구현한 victim block 선정 코드를 직접 읽으며, 방금 배운 GC 이론이 코드로 어떻게 옮겨지는지 확인
+- 테스트 결과(WAF, GC 발생 횟수 등)로 hook 이 실제 GC 실행과 정확히 맞아떨어지는지 검증
+- **MQSim/FTL 심화** : `GC_and_WL_Unit_Page_Level.cpp` 에서 실제 victim selection( `GC_Block_Selection_Policy=RGA` 등 ) 코드를 읽고, 방금 배운 이론과 대조
+- **코드 스터디** : Claude 가 추가한 GC hook 코드를 원본 victim selection 로직과 나란히 읽으며, 방금 배운 GC 이론이 실제 코드 어디에 해당하는지 확인
 
 **Claude 가 할 일**
-- GC 알고리즘 구현 : victim block 선정, valid page migration, block erase
-- UI 없이 시뮬레이션 코어만 단위 테스트 ( 샘플 write 시퀀스로 WAF 등 기대값 검증 )
+- `GC_and_WL_Unit_Page_Level.cpp` 에 hook 추가 : GC 시작 / victim block 선정 / valid page migration / block erase 각 시점에서 JS 로 이벤트 통지
+- WASM 모듈만 따로 단위 테스트 ( 샘플 write 시퀀스를 흘려보내 WAF, GC 발생 횟수 등이 hook 을 통해 정확히 잡히는지 검증 )
 
 </div>
 
 <div class="session" data-session="6" markdown="1">
 
-### 6. (9/27) 시뮬레이션 엔진 (3) — 마모 평준화와 엔진 마무리
+### 6. (9/27) 시뮬레이션 엔진 (3) — hybrid/마모평준화 노출과 바인딩 마무리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="6"> 완료 체크</label>
+
+Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Address_Mapping_Unit_Hybrid.cpp`, wear-leveling 로직 ) — 마찬가지로 hook 추가와 WASM 바인딩 API 마무리가 중심.
 
 **Ryu 가 할 일**
 - **Hybrid(log-block, FAST) mapping 이론 학습** ( Session 1 에서 미뤄둔 부분 )
 - 리뷰·테스트
-- **MQSim/FTL 심화** : MQSim 의 `Address_Mapping_Unit_Hybrid.cpp` 를 읽고 log-block merge(switch/partial/full merge) 가 실제로 어떻게 도는지 확인
-- **코드 스터디** : Claude 가 구현한 hybrid 매핑·마모 평준화 코드를 직접 읽으며, 방금 배운 이론이 코드로 어떻게 구현되는지 확인
+- **MQSim/FTL 심화** : `Address_Mapping_Unit_Hybrid.cpp` 를 읽고 log-block merge(switch/partial/full merge) 가 실제로 어떻게 도는지 확인
+- **코드 스터디** : Claude 가 추가한 hybrid 매핑·마모 평준화 hook 코드를 원본 로직과 나란히 읽으며, 방금 배운 이론이 코드 어디에 해당하는지 확인
 
 **Claude 가 할 일**
-- 기본적인 dynamic wear leveling, bad block 표시 구현
-- 비교용으로 hybrid/log-block 매핑을 대안 옵션으로 구현
-- 시뮬레이션 엔진 API 확정 ( step, reset, configure )
-- 결과물 : UI 없이도 동작·테스트가 끝난 시뮬레이션 엔진
+- dynamic wear leveling, bad block 관련 코드에 상태 변경 hook 추가
+- `Address_Mapping_Unit_Hybrid.cpp` 에도 동일하게 hook 추가해서 사용자가 매핑 방식을 page-level ↔ hybrid 로 전환해볼 수 있게 함
+- WASM 바인딩 API 확정 ( init(config), step()/run(n), getState(), configure() )
+- 결과물 : UI 없이도 동작·테스트가 끝난 WASM 엔진 + 바인딩
 
 </div>
 
@@ -257,8 +268,8 @@ table.plan-calendar .buffer-mark {
 - **MQSim/FTL 심화** : 지금 만든 시각화 요소가 MQSim 의 `Stats.cpp` 에서 어떤 통계 항목에 대응하는지 매핑해보기
 
 **Claude 가 할 일**
-- flash array grid 시각화 ( block/page 상태별 색상 구분 ), 시뮬레이션 엔진과 연결해 write/GC 실시간 애니메이션
-- 매핑 테이블 뷰어 패널
+- flash array grid 시각화 ( block/page 상태별 색상 구분 ), WASM 모듈이 보내는 hook 이벤트를 구독해 write/GC 실시간 애니메이션으로 연결
+- 매핑 테이블 뷰어 패널 ( WASM 의 `getState()` 로 매핑 테이블 스냅샷을 읽어와 표시 )
 
 </div>
 
@@ -273,8 +284,8 @@ table.plan-calendar .buffer-mark {
 - **MQSim/FTL 심화** : 9/4 에 실행했던 MQSim 결과( `workload_scenario_*.xml` 의 `Total_GC_Executions`, WAF 관련 카운터 )와 우리 대시보드 지표를 1:1로 대조
 
 **Claude 가 할 일**
-- 이벤트 로그 / 타임라인, 통계 대시보드 ( WAF, valid page 비율, GC 발생 횟수, erase 횟수 )
-- step / play·pause / 속도 조절 슬라이더, write/invalidate/erase/migrate 애니메이션 다듬기
+- 이벤트 로그 / 타임라인 ( hook 이벤트를 그대로 나열 ), 통계 대시보드 ( WAF, valid page 비율, GC 발생 횟수, erase 횟수 — WASM 내부 통계를 그대로 노출 )
+- step / play·pause / 속도 조절 슬라이더 — WASM 실행을 Web Worker 로 돌리고 진행 속도를 조절하는 방식으로 구현, write/invalidate/erase/migrate 애니메이션 다듬기
 - 결과물 : 고정 기본 파라미터로 브라우저에서 처음부터 끝까지 동작하는 시각화 시뮬레이터
 
 </div>
@@ -291,7 +302,7 @@ table.plan-calendar .buffer-mark {
 
 **Claude 가 할 일**
 - page 크기, block/page 개수, OP 비율, GC 임계값, 매핑 방식 선택 UI
-- 파라미터 변경 시 엔진을 실시간으로 reset/reconfigure 하도록 연동
+- 파라미터 변경 시 값들을 `ssdconfig.xml` 형식 텍스트로 만들어 MEMFS 에 다시 써넣고 WASM 모듈을 재시작(reset/reconfigure)하도록 연동
 
 </div>
 
@@ -306,8 +317,8 @@ table.plan-calendar .buffer-mark {
 - **MQSim/FTL 심화** : `workload.xml` 의 synthetic vs trace-based 워크로드 정의 방식을 비교하고, `tpcc-small.trace` 포맷을 다시 훑어보기
 
 **Claude 가 할 일**
-- workload 생성기 컨트롤 ( sequential/random, read/write 비율, burst 크기 )
-- ( 선택 ) 간단한 CSV/텍스트 형식의 커스텀 trace 업로드
+- workload 생성기 컨트롤 ( sequential/random, read/write 비율, burst 크기 ) — 값을 `workload.xml` 형식으로 만들어 MEMFS 에 전달
+- ( 선택 ) 커스텀 trace 파일 업로드 → MEMFS 에 그대로 마운트해서 MQSim 의 기존 trace 파싱 코드로 실행
 - 입력값 검증 및 파라미터 범위 제한
 - 결과물 : 파라미터와 workload 를 바꿔가며 동작 차이를 직접 관찰할 수 있는 완전한 인터랙티브 시뮬레이터
 
@@ -349,8 +360,9 @@ table.plan-calendar .buffer-mark {
 
 - 12세션( 9/4 ~ 10/11 ) 을 다 채우면 정확히 1차 마감일에 맞음 → 여유가 거의 없는 일정
 - 가장 위험한 구간은 **Phase 4 (시뮬레이션 엔진, 세션 4~6)**. 여기서 밀리면 Phase 5(시각화) 범위를 줄여서 흡수하고( 예 : 이벤트 로그 생략, grid+매핑테이블+통계만 유지 ), 엔진 정확성과 세션 11~12( 다듬기·배포 ) 는 타협하지 않기
+- **엔진을 MQSim C++ 원본을 WASM 으로 컴파일해서 그대로 쓰기로 결정** — TS 로 새로 짜는 것보다 훨씬 정확하지만( MQSim 논문/코드와 100% 동일한 동작 ), Emscripten 빌드 자체가 가능한지, CLI 진입점을 라이브러리 형태로 바꿀 수 있는지가 세션 4의 첫 번째 관문. 만약 WASM 빌드가 예상보다 오래 걸리면 세션 4 안에서 "빌드만 되는 것"을 최소 목표로 잡고, hook 추가는 세션 5~6 으로 늦추기
 - 세션 11~12( 마무리·배포 ) 는 일부러 축소하지 않음 — 10/11 에 "리뷰할 수 있는 배포된 결과물" 이 있는 것이 이번 계획의 핵심 목표이기 때문
-- 평일에 시간이 나면 : 다음 세션 내용을 미리 당기거나, 확장 기능( hybrid 매핑 비교, DFTL 매핑 캐시 시각화, MQSim 을 WASM 으로 컴파일해서 코어로 사용, 실제 SSD trace 재생 ) 에 투자하거나, 그냥 버퍼로 저축
+- 평일에 시간이 나면 : 다음 세션 내용을 미리 당기거나, 확장 기능( DFTL 매핑 캐시 시각화, 실제 SSD trace 재생 ) 에 투자하거나, 그냥 버퍼로 저축
 - 세션이 통째로 날아가면 억지로 다음 세션에 두 개를 몰아넣지 말고, 세션 11~12 버퍼로 흡수하는 쪽을 우선. 그래도 안 되면 10/11 리뷰 범위를 줄이고 10/17 이후로 일부 항목을 미루기
 
 <script>
