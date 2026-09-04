@@ -139,7 +139,7 @@ table.plan-calendar .buffer-mark {
 - Hybrid(log-block, FAST) mapping — **Session 6(엔진에 hybrid 매핑 추가) 때 실습과 함께 다루기로 미룸**
 - Garbage Collection ( victim block 선정 알고리즘 등 ) — **Session 5(GC 알고리즘 구현) 때 실습과 함께 깊이 다루기로 미룸**
 - DFTL 같은 demand-based 매핑 캐싱 — **확장 기능으로 나중에 실습할 때(DFTL 매핑 캐시 시각화) 같이 다루기로 미룸**
-- 결과물 : visual simulator 를 만들면서 FTL 핵심 개념 이해, FTL 이해 내용을 visual simulator 에 적용
+- 결과물 : 개발 계획 수립
 
 </div>
 
