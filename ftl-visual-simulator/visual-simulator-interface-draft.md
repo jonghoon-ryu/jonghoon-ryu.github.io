@@ -225,6 +225,34 @@ permalink: /ftl-visual-simulator/visual-simulator-interface-draft/
   border-bottom: 1px dashed #2d3142;
 }
 .log-time { color: #7d8296; margin-right: 8px; }
+
+.wl-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.wl-label { width: 62px; font-size: 11px; color: #c7cbe0; flex-shrink: 0; }
+.wl-track { flex: 1; height: 14px; background: #2d3142; border-radius: 4px; overflow: hidden; }
+.wl-fill { height: 100%; border-radius: 4px; }
+.wl-fill.cool { background: #4fd18b; }
+.wl-fill.warm { background: #f5b942; }
+.wl-fill.hot { background: #f16d75; }
+.wl-count { width: 78px; text-align: right; font-size: 11px; color: #9aa0b0; flex-shrink: 0; }
+
+.queue-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.queue-label { width: 40px; font-size: 11px; color: #9aa0b0; flex-shrink: 0; }
+.queue-reqs { display: flex; gap: 3px; flex-wrap: wrap; }
+.req-chip { width: 13px; height: 13px; border-radius: 3px; background: #4a6cf7; }
+.req-chip.sata { background: #6a7085; }
+
+.chip-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.chip-row-label { width: 32px; font-size: 10.5px; color: #7d8296; flex-shrink: 0; }
+.chip-cell {
+  width: 34px; height: 26px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #1c1e26;
+}
+.chip-cell.idle { background: #383c4d; color: #7d8296; }
+.chip-cell.read { background: #6ea8ff; }
+.chip-cell.write { background: #b98cf0; }
+.chip-cell.erase { background: #f5b942; }
+.preset-block { margin-bottom: 46px; }
 </style>
 
 # Visual Simulator Interface (초안)
@@ -233,7 +261,62 @@ permalink: /ftl-visual-simulator/visual-simulator-interface-draft/
 
 <div style="margin-top: 40px;"></div>
 
-## 전체 화면 mockup
+## 프리셋별 화면
+
+프리셋 버튼을 누르면 이런 식으로 보이지 않을까 — 3가지 스냅샷.
+
+<div class="preset-block">
+
+### 프리셋 1 — 매핑 기본
+
+막 시작한 상태. 몇 번 쓰기만 했고 아직 GC 는 필요 없다. 주소 매핑이라는 개념 자체에 집중할 수 있게 화면이 단순하다.
+
+<div class="sim-mockup">
+  <div class="sim-toolbar">
+    <div class="sim-presets">
+      <button class="active">매핑 기본</button><button>GC 시연</button><button>마모평준화 시연</button>
+    </div>
+    <div class="sim-playback">
+      <button>⏮</button><button>⏸</button><button>⏭</button>
+      <span>속도</span><span class="sim-speed-track"></span><span>1×</span>
+    </div>
+  </div>
+  <div class="sim-body">
+    <div class="sim-grid-panel">
+      <div class="sim-panel-title">Flash Array — Block × Page</div>
+      <div class="sim-caption">🔵 LPA 0x001 을 처음 썼어요 — 비어있던 Block 0 · Page 0 에 매핑되고, 매핑 테이블에 새 항목이 생겨요</div>
+      <div class="grid-row"><div class="row-label">Block 0</div><div class="row-cells"><div class="cell valid" title="Block 0 / Page 0 — valid">V</div><div class="cell valid" title="Block 0 / Page 1 — valid">V</div><div class="cell valid" title="Block 0 / Page 2 — valid">V</div><div class="cell free" title="Block 0 / Page 3 — free"></div><div class="cell free" title="Block 0 / Page 4 — free"></div><div class="cell free" title="Block 0 / Page 5 — free"></div><div class="cell free" title="Block 0 / Page 6 — free"></div><div class="cell free" title="Block 0 / Page 7 — free"></div><div class="cell free" title="Block 0 / Page 8 — free"></div><div class="cell free" title="Block 0 / Page 9 — free"></div><div class="cell free" title="Block 0 / Page 10 — free"></div><div class="cell free" title="Block 0 / Page 11 — free"></div><div class="cell free" title="Block 0 / Page 12 — free"></div><div class="cell free" title="Block 0 / Page 13 — free"></div><div class="cell free" title="Block 0 / Page 14 — free"></div><div class="cell free" title="Block 0 / Page 15 — free"></div></div></div>
+      <div class="grid-row"><div class="row-label">Block 1</div><div class="row-cells"><div class="cell free" title="Block 1 / Page 0 — free"></div><div class="cell free" title="Block 1 / Page 1 — free"></div><div class="cell free" title="Block 1 / Page 2 — free"></div><div class="cell free" title="Block 1 / Page 3 — free"></div><div class="cell free" title="Block 1 / Page 4 — free"></div><div class="cell free" title="Block 1 / Page 5 — free"></div><div class="cell free" title="Block 1 / Page 6 — free"></div><div class="cell free" title="Block 1 / Page 7 — free"></div><div class="cell free" title="Block 1 / Page 8 — free"></div><div class="cell free" title="Block 1 / Page 9 — free"></div><div class="cell free" title="Block 1 / Page 10 — free"></div><div class="cell free" title="Block 1 / Page 11 — free"></div><div class="cell free" title="Block 1 / Page 12 — free"></div><div class="cell free" title="Block 1 / Page 13 — free"></div><div class="cell free" title="Block 1 / Page 14 — free"></div><div class="cell free" title="Block 1 / Page 15 — free"></div></div></div>
+      <div class="sim-legend">
+        <span><span class="swatch valid"></span>valid ( 유효한 데이터 )</span>
+        <span><span class="swatch free"></span>free ( 빈 페이지 )</span>
+      </div>
+    </div>
+    <div class="sim-sidebar">
+      <div class="sim-panel">
+        <div class="sim-panel-title">매핑 테이블 ( 일부 )</div>
+        <table class="mini-table">
+          <tr><th>LPA</th><th>PPA</th><th>상태</th></tr>
+          <tr><td>0x001</td><td>B0·P0</td><td>valid</td></tr>
+          <tr><td>0x002</td><td>B0·P1</td><td>valid</td></tr>
+          <tr><td>0x003</td><td>B0·P2</td><td>valid</td></tr>
+        </table>
+      </div>
+      <div class="sim-panel">
+        <div class="sim-panel-title">통계</div>
+        <div class="stat-row"><span>WAF</span><span class="stat-value">1.0×</span></div>
+        <div class="stat-hint" style="margin-top:-6px; margin-bottom:8px;">아직 재기록이 없어서 이상적인 값</div>
+        <div class="stat-row"><span>GC 실행 횟수</span><span class="stat-value">0</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="preset-block">
+
+### 프리셋 2 — GC 시연
 
 <div class="sim-mockup">
   <div class="sim-toolbar">
@@ -309,16 +392,133 @@ permalink: /ftl-visual-simulator/visual-simulator-interface-draft/
   </div>
 </div>
 
+</div>
+
+<div class="preset-block">
+
+### 프리셋 3 — 마모 평준화 시연
+
+이번엔 페이지 격자 대신 **block 별 erase count**( 몇 번 지워졌는지 )를 보여주는 화면. Block 2 는 유독 자주 지워졌고( hot ), Block 5 는 거의 안 지워졌다( cold ) — 마모가 한쪽으로 쏠리는 걸 색으로 바로 보여준다.
+
+<div class="sim-mockup">
+  <div class="sim-toolbar">
+    <div class="sim-presets">
+      <button>매핑 기본</button><button>GC 시연</button><button class="active">마모평준화 시연</button>
+    </div>
+    <div class="sim-playback">
+      <button>⏮</button><button>⏸</button><button>⏭</button>
+      <span>속도</span><span class="sim-speed-track"></span><span>1×</span>
+    </div>
+  </div>
+  <div class="sim-body">
+    <div class="sim-grid-panel">
+      <div class="sim-panel-title">Block 별 Erase Count ( 마모 평준화 대상 )</div>
+      <div class="sim-caption">🟨 Block 2(118회)는 마모가 심하고 Block 5(9회)는 거의 안 닳았어요 — static WL 이 Block 5 의 cold 데이터를 옮겨서 Block 5 를 free pool 로 돌려보내는 중</div>
+      <div class="wl-row"><div class="wl-label">Block 0</div><div class="wl-track"><div class="wl-fill warm" style="width:35%"></div></div><div class="wl-count">42 회 erase</div></div>
+      <div class="wl-row"><div class="wl-label">Block 1</div><div class="wl-track"><div class="wl-fill warm" style="width:46%"></div></div><div class="wl-count">55 회 erase</div></div>
+      <div class="wl-row"><div class="wl-label">Block 2</div><div class="wl-track"><div class="wl-fill hot" style="width:98%"></div></div><div class="wl-count">118 회 erase 🔥</div></div>
+      <div class="wl-row"><div class="wl-label">Block 3</div><div class="wl-track"><div class="wl-fill warm" style="width:39%"></div></div><div class="wl-count">47 회 erase</div></div>
+      <div class="wl-row"><div class="wl-label">Block 4</div><div class="wl-track"><div class="wl-fill cool" style="width:25%"></div></div><div class="wl-count">30 회 erase</div></div>
+      <div class="wl-row"><div class="wl-label">Block 5</div><div class="wl-track"><div class="wl-fill cool" style="width:8%"></div></div><div class="wl-count">9 회 erase ❄️</div></div>
+      <div class="sim-legend">
+        <span><span class="swatch valid"></span>cool ( 적게 닳음 )</span>
+        <span><span class="swatch moving"></span>warm</span>
+        <span><span class="swatch invalid"></span>hot ( 많이 닳음 )</span>
+      </div>
+    </div>
+    <div class="sim-sidebar">
+      <div class="sim-panel">
+        <div class="sim-panel-title">파라미터</div>
+        <div class="param-row">
+          <div class="param-label"><span>Static WL 임계값</span><span>erase count 차이 100</span></div>
+          <div class="param-hint">이 차이를 넘으면 cold 데이터를 강제로 옮김</div>
+        </div>
+      </div>
+      <div class="sim-panel">
+        <div class="sim-panel-title">통계</div>
+        <div class="stat-row"><span>최대-최소 erase 차이</span><span class="stat-value">109</span></div>
+        <div class="stat-hint" style="margin-top:-6px; margin-bottom:8px;">이 값이 클수록 마모가 한쪽으로 쏠린 것</div>
+        <div class="stat-row"><span>WL 발동 횟수</span><span class="stat-value">3</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="sim-log">
+    <div class="sim-panel-title">이벤트 로그</div>
+    <div class="log-entry"><span class="log-time">12:05:02</span>Block 2 와 Block 5 의 erase count 차이(109)가 임계값을 넘어 static WL 트리거됨</div>
+    <div class="log-entry"><span class="log-time">12:05:03</span>Block 5 의 cold 데이터를 Block 2 로 이동 — Block 5 가 free pool 로 돌아감</div>
+  </div>
+</div>
+
+</div>
+
+<div style="margin-top: 60px;"></div>
+
+## 그 외 MQSim 이 보여줄 수 있는 다른 기능들
+
+3개 프리셋 말고도, MQSim 이 실제로 모델링하는 것 중 화면으로 보여주면 재미있을 만한 것들.
+
+<div class="preset-block">
+
+### Host Interface — NVMe Multi-Queue
+
+MQSim 논문의 핵심 주장 중 하나가 "최신 multi-queue 프로토콜을 제대로 모델링한다"는 것 — NVMe 는 큐가 여러 개라 요청이 동시에 여러 갈래로 처리된다. SATA 의 단일 큐와 나란히 보여주면 그 차이가 바로 느껴진다.
+
+<div class="sim-mockup">
+  <div class="sim-body">
+    <div class="sim-grid-panel" style="flex: 1 1 100%; border-right: none;">
+      <div class="sim-panel-title">NVMe ( 큐 4개, 동시에 처리 )</div>
+      <div class="queue-row"><div class="queue-label">Q0</div><div class="queue-reqs"><div class="req-chip"></div><div class="req-chip"></div><div class="req-chip"></div></div></div>
+      <div class="queue-row"><div class="queue-label">Q1</div><div class="queue-reqs"><div class="req-chip"></div><div class="req-chip"></div></div></div>
+      <div class="queue-row"><div class="queue-label">Q2</div><div class="queue-reqs"><div class="req-chip"></div><div class="req-chip"></div><div class="req-chip"></div><div class="req-chip"></div><div class="req-chip"></div></div></div>
+      <div class="queue-row"><div class="queue-label">Q3</div><div class="queue-reqs"><div class="req-chip"></div></div></div>
+      <div class="sim-panel-title" style="margin-top:16px;">SATA ( 큐 1개, 순서대로 )</div>
+      <div class="queue-row"><div class="queue-label">Q0</div><div class="queue-reqs"><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div><div class="req-chip sata"></div></div></div>
+      <div class="sim-caption" style="margin-top:12px;">NVMe 는 4개 큐에 나눠 담겨 있던 11개 요청을 동시에 처리하지만, SATA 는 같은 11개를 한 줄로 세워 순서대로 처리해요</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="preset-block">
+
+### 채널 / 칩 사용률 ( TSU 스케줄링 )
+
+TSU 가 어느 채널·칩에 read/write/erase 를 배정했는지, 어디가 비어있고 어디가 바쁜지 한눈에 보여주는 화면. GC 로 인한 erase 가 사용자 요청과 자원을 다투는 모습도 여기서 보인다.
+
+<div class="sim-mockup">
+  <div class="sim-body">
+    <div class="sim-grid-panel" style="flex: 1 1 100%; border-right: none;">
+      <div class="sim-panel-title">Channel × Chip 상태</div>
+      <div class="chip-row"><div class="chip-row-label">Ch0</div><div class="chip-cell read" title="Channel 0 / Chip 0 — read">R</div><div class="chip-cell read" title="Channel 0 / Chip 1 — read">R</div><div class="chip-cell write" title="Channel 0 / Chip 2 — write">W</div><div class="chip-cell read" title="Channel 0 / Chip 3 — read">R</div></div>
+      <div class="chip-row"><div class="chip-row-label">Ch1</div><div class="chip-cell write" title="Channel 1 / Chip 0 — write">W</div><div class="chip-cell read" title="Channel 1 / Chip 1 — read">R</div><div class="chip-cell idle" title="Channel 1 / Chip 2 — idle">-</div><div class="chip-cell read" title="Channel 1 / Chip 3 — read">R</div></div>
+      <div class="chip-row"><div class="chip-row-label">Ch2</div><div class="chip-cell read" title="Channel 2 / Chip 0 — read">R</div><div class="chip-cell write" title="Channel 2 / Chip 1 — write">W</div><div class="chip-cell erase" title="Channel 2 / Chip 2 — erase (GC)">E</div><div class="chip-cell idle" title="Channel 2 / Chip 3 — idle">-</div></div>
+      <div class="chip-row"><div class="chip-row-label">Ch3</div><div class="chip-cell idle" title="Channel 3 / Chip 0 — idle">-</div><div class="chip-cell write" title="Channel 3 / Chip 1 — write">W</div><div class="chip-cell read" title="Channel 3 / Chip 2 — read">R</div><div class="chip-cell write" title="Channel 3 / Chip 3 — write">W</div></div>
+      <div class="sim-legend" style="margin-top:12px;">
+        <span><span class="swatch free"></span>idle</span>
+        <span style="background:#6ea8ff; width:12px; height:12px; border-radius:3px; display:inline-block;"></span><span>read</span>
+        <span style="background:#b98cf0; width:12px; height:12px; border-radius:3px; display:inline-block;"></span><span>write</span>
+        <span style="background:#f5b942; width:12px; height:12px; border-radius:3px; display:inline-block;"></span><span>erase (GC)</span>
+      </div>
+      <div class="sim-caption" style="margin-top:12px;">Channel 2 · Chip 2 에서 GC 로 인한 erase 가 실행 중 — 이 채널의 다른 칩들은 여전히 사용자 요청을 처리할 수 있어요( 채널 단위가 아니라 칩 단위로 병렬 )</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
 <div style="margin-top: 20px;"></div>
 
 ## 각 영역 설명
 
 - **상단 툴바** : 개념별 프리셋 버튼( 매핑 기본 / GC 시연 / 마모평준화 시연 )과 재생 컨트롤( step / play·pause / 속도 ). 초심자는 프리셋만 눌러도 각 개념을 바로 볼 수 있음
-- **왼쪽 — Flash grid** : block × page 격자, 상태별 색상( valid/invalid/free ) + GC 로 이동 중인 페이지는 별도 색. 상단의 캡션이 "지금 무슨 일이 일어나는지" 쉬운 말로 설명
-- **오른쪽 — 매핑 테이블 / 파라미터 / 통계 패널** : 매핑 테이블은 LPA→PPA 일부만 스크롤 형태로, 파라미터는 슬라이더 밑에 쉬운 설명 한 줄씩, 통계도 숫자만이 아니라 "왜 중요한지" 캡션 포함
-- **하단 — 이벤트 로그** : hook 이벤트를 그대로 나열하지 않고 자연어 문장으로 변환해서 표시
+- **프리셋 1( 매핑 기본 )** : occupancy 가 낮고 GC 가 없는 가장 단순한 상태 — 주소 매핑이라는 개념 하나에만 집중
+- **프리셋 2( GC 시연 )** : block × page 격자에서 valid/invalid/free + GC 로 이동 중인 페이지를 색으로 구분, 매핑 테이블·파라미터·통계·이벤트 로그까지 전체 레이아웃을 보여주는 기준 화면
+- **프리셋 3( 마모 평준화 시연 )** : page 격자 대신 **block 별 erase count 막대**로 전환 — 마모 평준화는 페이지 단위가 아니라 block 단위 개념이라 아예 다른 시각화를 씀
+- **그 외 기능** : NVMe multi-queue( vs SATA 단일 큐 ), Channel×Chip 사용률( TSU 스케줄링, GC erase 가 자원을 다투는 모습 ) — 3개 프리셋에는 안 들어가지만 MQSim 이 실제로 모델링하는 것들이라 별도 화면으로 넣어볼 만함
+- **공통 원칙** : 숫자나 raw 이벤트를 그대로 보여주지 않고, 캡션·이벤트 로그·통계 옆 설명을 전부 쉬운 말로 바꿔서 표시
 
-이 배치와 색상, 톤( 다크 테마 )은 전부 초안이라 바뀔 수 있다.
+이 배치와 색상, 톤( 다크 테마 )은 전부 초안이라 바뀔 수 있다. 프리셋 3, NVMe multi-queue, 채널/칩 화면은 MVP 범위에 넣을지 확장 기능으로 미룰지도 아직 미정.
 
 <div style="margin-top: 60px;"></div>
 
