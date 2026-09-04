@@ -107,6 +107,8 @@ table.plan-calendar .buffer-mark {
 <tr><td>-</td><td>9/13 (일)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td></tr>
 <tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td><td class="table-mark" data-session="3">☐</td></tr>
 <tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td><td class="table-mark" data-session="4">☐</td></tr>
+<tr><td>-</td><td>9/24 (목)</td><td>평일 (휴업)</td><td>추석</td><td>—</td></tr>
+<tr><td>-</td><td>9/25 (금)</td><td>평일 (휴업)</td><td>추석</td><td>—</td></tr>
 <tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td><td class="table-mark" data-session="5">☐</td></tr>
 <tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td><td class="table-mark" data-session="6">☐</td></tr>
 <tr><td>7</td><td>10/3 (토)</td><td>주말</td><td>Phase 5 — 시각화 (1)</td><td class="table-mark" data-session="7">☐</td></tr>
