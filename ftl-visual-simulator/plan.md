@@ -90,29 +90,33 @@ table.plan-calendar th {
 
 <div style="margin-top: 40px;"></div>
 
-## 날짜표 ( 12 세션 )
+## 날짜표 ( 12 세션 + 리뷰/수정 버퍼 4일 )
 
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
-<tr><th>세션</th><th>날짜</th><th>구분</th><th>단계</th></tr>
-<tr><td>1</td><td>9/4 (금)</td><td>평일 (시작일)</td><td>Phase 1 — FTL 개념</td></tr>
-<tr><td>2</td><td>9/6 (일)</td><td>주말</td><td>Phase 2 — MQSim 분석</td></tr>
-<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td></tr>
-<tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td></tr>
-<tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td></tr>
-<tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td></tr>
-<tr><td>7</td><td>10/3 (토)</td><td>주말</td><td>Phase 5 — 시각화 (1)</td></tr>
-<tr><td>8</td><td>10/4 (일)</td><td>주말</td><td>Phase 5 — 시각화 (2)</td></tr>
-<tr><td>9</td><td>10/5 (월)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (1)</td></tr>
-<tr><td>10</td><td>10/9 (금)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (2)</td></tr>
-<tr><td>11</td><td>10/10 (토)</td><td>주말</td><td>Phase 7 — 마무리 (1)</td></tr>
-<tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td></tr>
+<tr><th>세션</th><th>날짜</th><th>구분</th><th>단계</th><th>완료</th></tr>
+<tr><td>1</td><td>9/4 (금)</td><td>평일 (시작일)</td><td>Phase 1 — FTL 개념</td><td class="table-mark" data-session="1">☐</td></tr>
+<tr><td>2</td><td>9/6 (일)</td><td>주말</td><td>Phase 2 — MQSim 분석</td><td class="table-mark" data-session="2">☐</td></tr>
+<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td><td class="table-mark" data-session="3">☐</td></tr>
+<tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td><td class="table-mark" data-session="4">☐</td></tr>
+<tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td><td class="table-mark" data-session="5">☐</td></tr>
+<tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td><td class="table-mark" data-session="6">☐</td></tr>
+<tr><td>7</td><td>10/3 (토)</td><td>주말</td><td>Phase 5 — 시각화 (1)</td><td class="table-mark" data-session="7">☐</td></tr>
+<tr><td>8</td><td>10/4 (일)</td><td>주말</td><td>Phase 5 — 시각화 (2)</td><td class="table-mark" data-session="8">☐</td></tr>
+<tr><td>9</td><td>10/5 (월)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (1)</td><td class="table-mark" data-session="9">☐</td></tr>
+<tr><td>10</td><td>10/9 (금)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (2)</td><td class="table-mark" data-session="10">☐</td></tr>
+<tr><td>11</td><td>10/10 (토)</td><td>주말</td><td>Phase 7 — 마무리 (1)</td><td class="table-mark" data-session="11">☐</td></tr>
+<tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td><td class="table-mark" data-session="12">☐</td></tr>
+<tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>—</td></tr>
+<tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td>—</td></tr>
+<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>—</td></tr>
+<tr><td>16</td><td>10/25 (일)</td><td>주말</td><td>리뷰 및 수정</td><td>—</td></tr>
 </table>
 </div>
 
 <div style="margin-top: 20px;"></div>
 
-**리뷰 후 버퍼 (계획 외)** : 10/17(토)~10/18(일), 10/24(토)~10/25(일) — 10/11 리뷰에서 나온 피드백을 반영하는 용도. 별도 세션 번호 없이, 리뷰 결과에 따라 자유롭게 사용.
+**13~16번은 계획 외 버퍼** — 10/11 리뷰에서 나온 피드백을 반영하는 용도. 별도 세부 세션 내용 없이, 리뷰 결과에 따라 자유롭게 사용.
 
 <div style="margin-top: 60px;"></div>
 
@@ -309,6 +313,8 @@ table.plan-calendar th {
         cb.checked = isDone;
         var wrap = cb.closest('.session');
         if (wrap) wrap.classList.toggle('done', isDone);
+        var mark = document.querySelector('.table-mark[data-session="' + id + '"]');
+        if (mark) mark.textContent = isDone ? '✅' : '☐';
         if (isDone) done++;
       });
       if (countEl) countEl.textContent = done + ' / ' + total;
