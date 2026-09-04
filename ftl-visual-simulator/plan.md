@@ -72,6 +72,10 @@ table.plan-calendar th {
   background: #f5f5f5;
   color: #333;
 }
+table.plan-calendar .buffer-mark {
+  cursor: pointer;
+  user-select: none;
+}
 </style>
 
 # FTL 시각화 시뮬레이터 — 일정 계획
@@ -111,10 +115,10 @@ table.plan-calendar th {
 <tr><td>10</td><td>10/9 (금)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (2)</td><td class="table-mark" data-session="10">☐</td></tr>
 <tr><td>11</td><td>10/10 (토)</td><td>주말</td><td>Phase 7 — 마무리 (1)</td><td class="table-mark" data-session="11">☐</td></tr>
 <tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td><td class="table-mark" data-session="12">☐</td></tr>
-<tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td><input type="checkbox" class="buffer-checkbox" data-session="13"></td></tr>
-<tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td><input type="checkbox" class="buffer-checkbox" data-session="14"></td></tr>
-<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td><input type="checkbox" class="buffer-checkbox" data-session="15"></td></tr>
-<tr><td>16</td><td>10/25 (일)</td><td>주말</td><td>리뷰 및 수정</td><td><input type="checkbox" class="buffer-checkbox" data-session="16"></td></tr>
+<tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="13">☐</td></tr>
+<tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="14">☐</td></tr>
+<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="15">☐</td></tr>
+<tr><td>16</td><td>10/25 (일)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="16">☐</td></tr>
 </table>
 </div>
 
@@ -359,13 +363,14 @@ table.plan-calendar th {
       });
     });
 
-    var bufferBoxes = Array.prototype.slice.call(document.querySelectorAll('.buffer-checkbox'));
-    bufferBoxes.forEach(function (cb) {
-      var id = cb.getAttribute('data-session');
-      cb.checked = !!state[id];
-      cb.addEventListener('change', function () {
-        state[id] = cb.checked;
+    var bufferMarks = Array.prototype.slice.call(document.querySelectorAll('.buffer-mark'));
+    bufferMarks.forEach(function (mark) {
+      var id = mark.getAttribute('data-session');
+      mark.textContent = state[id] ? '✅' : '☐';
+      mark.addEventListener('click', function () {
+        state[id] = !state[id];
         save(state);
+        mark.textContent = state[id] ? '✅' : '☐';
       });
     });
 
