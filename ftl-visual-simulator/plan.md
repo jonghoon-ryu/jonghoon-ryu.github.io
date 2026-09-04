@@ -129,10 +129,11 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="1"> 완료 체크</label>
 
-- NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write" ✅ ( 9/4 짜투리 시간에 진행 )
-- 주소 매핑 방식 : page-level, block-level, hybrid(log-block, FAST) mapping ✅ ( 9/4 짜투리 시간에 진행 )
-- Garbage Collection ( greedy, cost-benefit victim block 선정 ), 마모 평준화( static/dynamic ), bad block 관리, over-provisioning, DFTL 같은 demand-based 매핑 캐싱 — 남은 부분, 시간 날 때 이어서 진행 ( 9/5 는 쉬는 날이므로 급하게 몰아넣지 않기 )
-- 결과물 : FTL 핵심 개념을 한 장으로 정리한 다이어그램/노트 ( 완벽한 이해보다 "구현에 필요한 만큼" 을 목표로 함 )
+- NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write" ✅ ( 9/4 진행 )
+- 주소 매핑 방식 : page-level, block-level, hybrid(log-block, FAST) mapping ✅ ( 9/4 진행 )
+- 마모 평준화( static/dynamic ), bad block 관리, over-provisioning, DFTL 같은 demand-based 매핑 캐싱 — 이미 잘 알고 있음 ✅
+- Garbage Collection ( victim block 선정 알고리즘 등 ) — **Session 5(GC 알고리즘 구현) 때 실습과 함께 깊이 다루기로 미룸**
+- 결과물 : FTL 핵심 개념 정리 ( GC 제외 완료 )
 
 </div>
 
@@ -181,6 +182,7 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="5"> 완료 체크</label>
 
+- **GC 이론 학습** ( Session 1 에서 미뤄둔 부분 ) : victim block 선정 알고리즘( greedy vs cost-benefit ), GC 트리거 정책과 WAF 관계
 - GC 알고리즘 구현 : victim block 선정, valid page migration, block erase
 - UI 없이 시뮬레이션 코어만 단위 테스트 ( 샘플 write 시퀀스로 WAF 등 기대값 검증 )
 
