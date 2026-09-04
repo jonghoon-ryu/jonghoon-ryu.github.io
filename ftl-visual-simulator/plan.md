@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 계획 (Plan)
+title: 통합 계획 (Plan)
 permalink: /ftl-visual-simulator/plan/
 ---
 <style>
