@@ -138,7 +138,7 @@ Host_Interface <-> Data_Cache_Manager <-> NVM_Firmware(FTL) <-> NVM_PHY <-> NVM_
 - **( 시간이 여유로울 때 ) 목표로 채택** — [FTL Visual Simulator 목표](/ftl-visual-simulator/) 7번 항목으로 등록.
 - **언제 추가하는 게 가장 좋은가 : Session 4 가 최적** — 이유는 단순하다. GTest/GMock 을 쓰려면 테스트 바이너리가 링크할 라이브러리가 있어야 하는데, `main()` 이 `main.cpp` 안에 그대로 있는 지금 구조로는 불가능하다. 그런데 **Session 4 에서 우리가 어차피 하는 일**( WASM 임베딩을 위해 CLI 진입점을 라이브러리 형태로 분리하는 리팩터링 )이 정확히 이 문제를 해결한다. 즉 :
   - Session 4 **이전** 에 시도하면 → 같은 리팩터링을 두 번 해야 함( 낭비 )
-  - Session 4 **이후** 로 미루면 → 테스트 없이 GC/hybrid( Session 5~6 )를 먼저 구현하게 되어, 회귀를 놓칠 위험이 가장 큰 구간을 테스트 없이 지나감
+  - Session 4 **이후** 로 미루면 → 테스트 없이 GC/hybrid( Session 5~6 )를 먼저 구현하게 되어, 회귀를 놓칠 위험이 가장 큰 세션을 테스트 없이 지나감
   - 그래서 **Session 4 에서 라이브러리 분리 작업을 할 때 GTest 프레임워크 연결까지 같이 끝내두고**, Session 5( GC )부터는 새 로직을 짤 때마다 테스트를 같이 쌓아가는 것이 가장 효율적
 - 시간이 부족하면 Session 4 에서는 골든/회귀 테스트만 먼저 걸어두고, GMock 을 이용한 진짜 단위 테스트는 13~16번 버퍼 기간( Cost-Benefit GC 구현과 같은 시기 )으로 미뤄도 됨.
 
