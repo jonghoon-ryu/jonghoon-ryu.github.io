@@ -88,6 +88,7 @@ table.plan-calendar th {
 - 10/5(월), 10/9(금) 은 공휴일이라 평일이지만 주말과 동일하게 6시간 작업일로 포함
 - **10/11 이 1차 마감** — 이 날짜 안에 "동작하는 배포본"을 만드는 것이 최우선이고, 그 다음 리뷰 결과에 따라 10/17~10/25 에 수정
 - 세션 순서가 날짜보다 중요함. 한 세션이 밀리면 다음 세션도 그만큼 밀린다고 생각하고, 억지로 두 세션을 하루에 몰아넣지 않기
+- **Session 3~10 은 코드 구현을 Claude 가 담당** — 사용자는 방향 지시, 코드/결과 리뷰, 브라우저에서 직접 테스트를 담당. 각 세션에 남는 시간은 해당 단계와 연결된 MQSim/FTL 개념을 더 깊이 파는 데 사용
 
 <div style="margin-top: 40px;"></div>
 
@@ -110,10 +111,10 @@ table.plan-calendar th {
 <tr><td>10</td><td>10/9 (금)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (2)</td><td class="table-mark" data-session="10">☐</td></tr>
 <tr><td>11</td><td>10/10 (토)</td><td>주말</td><td>Phase 7 — 마무리 (1)</td><td class="table-mark" data-session="11">☐</td></tr>
 <tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td><td class="table-mark" data-session="12">☐</td></tr>
-<tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>☐</td></tr>
-<tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td>☐</td></tr>
-<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>☐</td></tr>
-<tr><td>16</td><td>10/25 (일)</td><td>주말</td><td>리뷰 및 수정</td><td>☐</td></tr>
+<tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td><input type="checkbox" class="buffer-checkbox" data-session="13"></td></tr>
+<tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td><input type="checkbox" class="buffer-checkbox" data-session="14"></td></tr>
+<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td><input type="checkbox" class="buffer-checkbox" data-session="15"></td></tr>
+<tr><td>16</td><td>10/25 (일)</td><td>주말</td><td>리뷰 및 수정</td><td><input type="checkbox" class="buffer-checkbox" data-session="16"></td></tr>
 </table>
 </div>
 
@@ -167,10 +168,13 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="3"> 완료 체크</label>
 
+**역할** : 설계 초안은 Claude 가 작성 → 사용자는 방향 지시(범위, 우선순위)와 검토·조정
+
 - MVP 범위 확정 : flash block/page grid ( free / valid / invalid / erasing 상태 ), 매핑 테이블, GC 이벤트, 통계( WAF, valid page 비율 )
 - 사용자 조절 파라미터 확정 : page 크기, block 당 page 수, block 개수/OP 비율, 매핑 방식, GC 트리거 임계값, workload 패턴
 - 기술 스택 결정 : TypeScript + React + Vite, 시뮬레이션 코어는 UI 와 분리된 순수 TS 모듈, Canvas/SVG 렌더링, GitHub Pages 정적 배포
 - 데이터 모델 설계( Flash array, Block, Page, MappingTable, FTL controller — step() 기반 ) 와 화면 와이어프레임( flash grid, 매핑 테이블 패널, 파라미터 패널, 이벤트 로그, 통계 대시보드 )
+- **MQSim/FTL 심화** : `Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 를 더 자세히 읽고, 우리가 설계하는 데이터 모델이 MQSim 구조와 어디서 같고 어디서 단순화되는지 정리
 - 결과물 : 설계 문서 + 와이어프레임, 프로젝트 뼈대(scaffold) 커밋
 
 </div>
@@ -181,9 +185,12 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="4"> 완료 체크</label>
 
+**역할** : 구현은 Claude 가 진행 → 사용자는 코드 리뷰, 실행 결과·테스트 확인
+
 - 프로젝트 scaffold ( Vite + React + TS )
 - NAND flash array 자료구조, page-level FTL 매핑 테이블 구현
 - host write 경로 ( 매핑 조회 → free page 할당 → 매핑 갱신 → 기존 page invalidate ), read 경로 구현
+- **MQSim/FTL 심화** : MQSim 의 `Address_Mapping_Unit_Page_Level.cpp` 에서 실제 lookup/allocate 로직을 읽고 우리 구현과 비교
 
 </div>
 
@@ -193,9 +200,12 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="5"> 완료 체크</label>
 
-- **GC 이론 학습** ( Session 1 에서 미뤄둔 부분 ) : victim block 선정 알고리즘( greedy vs cost-benefit ), GC 트리거 정책과 WAF 관계
+**역할** : GC 이론은 사용자가 직접 학습, 구현은 Claude → 사용자는 테스트 결과(WAF 등)로 검증
+
+- **GC 이론 학습** ( Session 1 에서 미뤄둔 부분, 사용자 직접 ) : victim block 선정 알고리즘( greedy vs cost-benefit ), GC 트리거 정책과 WAF 관계
 - GC 알고리즘 구현 : victim block 선정, valid page migration, block erase
 - UI 없이 시뮬레이션 코어만 단위 테스트 ( 샘플 write 시퀀스로 WAF 등 기대값 검증 )
+- **MQSim/FTL 심화** : MQSim 의 `GC_and_WL_Unit_Page_Level.cpp` 에서 실제 victim selection( `GC_Block_Selection_Policy=RGA` 등 ) 코드를 읽고, 방금 배운 이론과 대조
 
 </div>
 
@@ -205,9 +215,12 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="6"> 완료 체크</label>
 
+**역할** : Hybrid 매핑 이론은 사용자 직접 학습, 구현은 Claude → 사용자는 리뷰·테스트
+
 - 기본적인 dynamic wear leveling, bad block 표시 구현
-- 비교용으로 hybrid/log-block 매핑을 대안 옵션으로 추가
+- **Hybrid(log-block, FAST) mapping 이론 학습** ( Session 1 에서 미뤄둔 부분, 사용자 직접 ), 비교용으로 hybrid/log-block 매핑을 대안 옵션으로 구현
 - 시뮬레이션 엔진 API 확정 ( step, reset, configure )
+- **MQSim/FTL 심화** : MQSim 의 `Address_Mapping_Unit_Hybrid.cpp` 를 읽고 log-block merge(switch/partial/full merge) 가 실제로 어떻게 도는지 확인
 - 결과물 : UI 없이도 동작·테스트가 끝난 시뮬레이션 엔진
 
 </div>
@@ -218,8 +231,11 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="7"> 완료 체크</label>
 
+**역할** : 구현은 Claude → 사용자는 브라우저에서 직접 조작해보며 리뷰·피드백
+
 - flash array grid 시각화 ( block/page 상태별 색상 구분 ), 시뮬레이션 엔진과 연결해 write/GC 실시간 애니메이션
 - 매핑 테이블 뷰어 패널
+- **MQSim/FTL 심화** : 지금 만든 시각화 요소가 MQSim 의 `Stats.cpp` 에서 어떤 통계 항목에 대응하는지 매핑해보기
 
 </div>
 
@@ -229,8 +245,11 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="8"> 완료 체크</label>
 
+**역할** : 구현은 Claude → 사용자는 브라우저에서 직접 조작해보며 리뷰·피드백
+
 - 이벤트 로그 / 타임라인, 통계 대시보드 ( WAF, valid page 비율, GC 발생 횟수, erase 횟수 )
 - step / play·pause / 속도 조절 슬라이더, write/invalidate/erase/migrate 애니메이션 다듬기
+- **MQSim/FTL 심화** : 9/4 에 실행했던 MQSim 결과( `workload_scenario_*.xml` 의 `Total_GC_Executions`, WAF 관련 카운터 )와 우리 대시보드 지표를 1:1로 대조
 - 결과물 : 고정 기본 파라미터로 브라우저에서 처음부터 끝까지 동작하는 시각화 시뮬레이터
 
 </div>
@@ -241,8 +260,11 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="9"> 완료 체크</label>
 
+**역할** : 구현은 Claude → 사용자는 UI 를 직접 조작해보며 리뷰·피드백
+
 - page 크기, block/page 개수, OP 비율, GC 임계값, 매핑 방식 선택 UI
 - 파라미터 변경 시 엔진을 실시간으로 reset/reconfigure 하도록 연동
+- **MQSim/FTL 심화** : `ssdconfig.xml` 의 실제 파라미터 범위/의미( `Overprovisioning_Ratio`, `GC_Exec_Threshold`, `GC_Hard_Threshold` 등 )를 다시 확인하고 우리 UI 파라미터와 1:1 대응시키기
 
 </div>
 
@@ -252,9 +274,12 @@ table.plan-calendar th {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="10"> 완료 체크</label>
 
+**역할** : 구현은 Claude → 사용자는 UI 를 직접 조작해보며 리뷰·피드백
+
 - workload 생성기 컨트롤 ( sequential/random, read/write 비율, burst 크기 )
 - ( 선택 ) 간단한 CSV/텍스트 형식의 커스텀 trace 업로드
 - 입력값 검증 및 파라미터 범위 제한
+- **MQSim/FTL 심화** : `workload.xml` 의 synthetic vs trace-based 워크로드 정의 방식을 비교하고, `tpcc-small.trace` 포맷을 다시 훑어보기
 - 결과물 : 파라미터와 workload 를 바꿔가며 동작 차이를 직접 관찰할 수 있는 완전한 인터랙티브 시뮬레이터
 
 </div>
@@ -331,6 +356,16 @@ table.plan-calendar th {
         state[cb.getAttribute('data-session')] = cb.checked;
         save(state);
         render();
+      });
+    });
+
+    var bufferBoxes = Array.prototype.slice.call(document.querySelectorAll('.buffer-checkbox'));
+    bufferBoxes.forEach(function (cb) {
+      var id = cb.getAttribute('data-session');
+      cb.checked = !!state[id];
+      cb.addEventListener('change', function () {
+        state[id] = cb.checked;
+        save(state);
       });
     });
 
