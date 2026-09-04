@@ -134,9 +134,11 @@ table.plan-calendar th {
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="1"> 완료 체크</label>
 
 - NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write" — 이미 잘 알고 있음 ✅
-- 주소 매핑 방식 : page-level, block-level, hybrid(log-block, FAST) mapping — 이미 잘 알고 있음 ✅
-- 마모 평준화( static/dynamic ), bad block 관리, over-provisioning, DFTL 같은 demand-based 매핑 캐싱 — 이미 잘 알고 있음 ✅
+- 주소 매핑 방식 : page-level, block-level mapping — 이미 잘 알고 있음 ✅
+- 마모 평준화( static/dynamic ), bad block 관리, over-provisioning — 이미 잘 알고 있음 ✅
+- Hybrid(log-block, FAST) mapping — **Session 6(엔진에 hybrid 매핑 추가) 때 실습과 함께 다루기로 미룸**
 - Garbage Collection ( victim block 선정 알고리즘 등 ) — **Session 5(GC 알고리즘 구현) 때 실습과 함께 깊이 다루기로 미룸**
+- DFTL 같은 demand-based 매핑 캐싱 — **확장 기능으로 나중에 실습할 때(DFTL 매핑 캐시 시각화) 같이 다루기로 미룸**
 - 결과물 : visual simulator 를 만들면서 FTL 핵심 개념 이해, FTL 이해 내용을 visual simulator 에 적용
 
 </div>
