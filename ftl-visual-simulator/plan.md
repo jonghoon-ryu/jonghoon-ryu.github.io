@@ -75,13 +75,14 @@ table.plan-calendar th {
 
 # FTL 시각화 시뮬레이터 — 일정 계획
 
-**1차 완성 목표일 : 2026-10-11**. 주말( 토/일 ) + 공휴일( 10/5, 10/9 ) 기준, 하루 6시간씩 총 12세션( 72시간 ) 커리큘럼. 10/11 에 결과물을 직접 리뷰하고, 필요하면 10/17~10/18, 10/24~10/25 를 이용해 수정한다.
+**1차 완성 목표일 : 2026-10-11**. 9/4(금)를 시작일로 삼아, 이후 주말( 토/일 ) + 공휴일( 10/5, 10/9 ) 기준 하루 6시간씩 총 12세션 커리큘럼. 10/11 에 결과물을 직접 리뷰하고, 필요하면 10/17~10/18, 10/24~10/25 를 이용해 수정한다.
 
 <div style="margin-top: 60px;"></div>
 
 ## 전제 조건
 
 - 평일 작업은 기대하지 않음. 다만 가능하면 다음 세션 내용을 미리 당기거나, 여유( 버퍼 ) 로 사용
+- **9/4(금)를 시작일로 사용** — 세션 1 (FTL 개념)을 짜투리 시간에 미리 시작. **9/5(토)는 계획에서 제외** (쉬는 날)
 - 9/12(토), 9/13(일) 은 개인 사정으로 작업 불가 → 계획에서 제외
 - 10/5(월), 10/9(금) 은 공휴일이라 평일이지만 주말과 동일하게 6시간 작업일로 포함
 - **10/11 이 1차 마감** — 이 날짜 안에 "동작하는 배포본"을 만드는 것이 최우선이고, 그 다음 리뷰 결과에 따라 10/17~10/25 에 수정
@@ -89,12 +90,12 @@ table.plan-calendar th {
 
 <div style="margin-top: 40px;"></div>
 
-## 날짜표 ( 12 세션 · 72시간 )
+## 날짜표 ( 12 세션 )
 
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>세션</th><th>날짜</th><th>구분</th><th>단계</th></tr>
-<tr><td>1</td><td>9/5 (토)</td><td>주말</td><td>Phase 1 — FTL 개념</td></tr>
+<tr><td>1</td><td>9/4 (금)</td><td>평일 (시작일)</td><td>Phase 1 — FTL 개념</td></tr>
 <tr><td>2</td><td>9/6 (일)</td><td>주말</td><td>Phase 2 — MQSim 분석</td></tr>
 <tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td></tr>
 <tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td></tr>
@@ -124,14 +125,14 @@ table.plan-calendar th {
 
 <div class="session" data-session="1" markdown="1">
 
-### 1. (9/5) FTL 개념 — 매핑 · GC · 마모 평준화 · Over-provisioning
+### 1. (9/4) FTL 개념 — 매핑 · GC · 마모 평준화 · Over-provisioning
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="1"> 완료 체크</label>
 
-- NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write"
-- 주소 매핑 방식 : page-level, block-level, hybrid(log-block, FAST) mapping
-- Garbage Collection ( greedy, cost-benefit victim block 선정 ), 마모 평준화( static/dynamic ), bad block 관리, over-provisioning, DFTL 같은 demand-based 매핑 캐싱
-- 결과물 : FTL 핵심 개념을 한 장으로 정리한 다이어그램/노트 ( 하루에 몰아서 훑는 세션이므로 완벽한 이해보다 "구현에 필요한 만큼" 을 목표로 함 )
+- NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write" ✅ ( 9/4 짜투리 시간에 진행 )
+- 주소 매핑 방식 : page-level, block-level, hybrid(log-block, FAST) mapping ✅ ( 9/4 짜투리 시간에 진행 )
+- Garbage Collection ( greedy, cost-benefit victim block 선정 ), 마모 평준화( static/dynamic ), bad block 관리, over-provisioning, DFTL 같은 demand-based 매핑 캐싱 — 남은 부분, 시간 날 때 이어서 진행 ( 9/5 는 쉬는 날이므로 급하게 몰아넣지 않기 )
+- 결과물 : FTL 핵심 개념을 한 장으로 정리한 다이어그램/노트 ( 완벽한 이해보다 "구현에 필요한 만큼" 을 목표로 함 )
 
 </div>
 
@@ -272,7 +273,7 @@ table.plan-calendar th {
 
 ## 페이싱 & 리스크 노트
 
-- 12세션( 9/5 ~ 10/11 ) 을 다 채우면 정확히 1차 마감일에 맞음 → 여유가 거의 없는 일정
+- 12세션( 9/4 ~ 10/11 ) 을 다 채우면 정확히 1차 마감일에 맞음 → 여유가 거의 없는 일정
 - 가장 위험한 구간은 **Phase 4 (시뮬레이션 엔진, 세션 4~6)**. 여기서 밀리면 Phase 5(시각화) 범위를 줄여서 흡수하고( 예 : 이벤트 로그 생략, grid+매핑테이블+통계만 유지 ), 엔진 정확성과 세션 11~12( 다듬기·배포 ) 는 타협하지 않기
 - 세션 11~12( 마무리·배포 ) 는 일부러 축소하지 않음 — 10/11 에 "리뷰할 수 있는 배포된 결과물" 이 있는 것이 이번 계획의 핵심 목표이기 때문
 - 평일에 시간이 나면 : 다음 세션 내용을 미리 당기거나, 확장 기능( hybrid 매핑 비교, DFTL 매핑 캐시 시각화, MQSim 을 WASM 으로 컴파일해서 코어로 사용, 실제 SSD trace 재생 ) 에 투자하거나, 그냥 버퍼로 저축
