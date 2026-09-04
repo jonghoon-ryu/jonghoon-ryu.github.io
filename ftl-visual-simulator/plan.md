@@ -159,11 +159,15 @@ table.plan-calendar .buffer-mark {
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="2"> 완료 체크</label>
 
+**Ryu 가 할 일**
+- Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해
+
+**Claude 가 할 일**
 - [CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim) clone, 빌드, 샘플 설정으로 실행 ✅ ( 9/4 에 미리 진행 — g++13 에서 수정 없이 바로 빌드/실행 됨, `/home/ryuj/Ryu/MQSim` )
   - 샘플 `ssdconfig.xml` + `workload.xml` 로 3개 시나리오(synthetic 2개 + trace 기반 tpcc-small) 모두 정상 실행, 결과는 `workload_scenario_*.xml` 로 출력
   - 주목할 점 : 기본 설정(75% occupancy, 짧은 워크로드)으로는 `Total_GC_Executions="0"` — GC 가 한 번도 안 일어남. Session 5 에서 GC 를 실제로 보려면 occupancy 를 높이거나 워크로드를 늘려야 함
-- XML 설정 구조( Flash parameter, FTL parameter, GC 정책, cache ) 파악
-- 주요 모듈 : Host_Interface, IO_Flow, Address_Mapping_Unit, Flash_Block_Manager, GC_and_WL_Unit, NVM_PHY_ONFI
+- XML 설정 구조( Flash parameter, FTL parameter, GC 정책, cache ) 조사·정리
+- 주요 모듈 조사 : Host_Interface, IO_Flow, Address_Mapping_Unit, Flash_Block_Manager, GC_and_WL_Unit, NVM_PHY_ONFI
 - 결과물 : Host request → FTL 매핑 → Flash controller → NAND 로 이어지는 파이프라인 다이어그램, "시각화에 그대로 가져갈 부분 / 단순화할 부분" 정리
 
 </div>
@@ -177,7 +181,6 @@ table.plan-calendar .buffer-mark {
 **Ryu 가 할 일**
 - MVP 범위, 사용자 조절 파라미터 방향 결정 및 Claude 초안 검토·조정
 - **MQSim/FTL 심화** : `Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 를 더 자세히 읽고, 설계할 데이터 모델이 MQSim 구조와 어디서 같고 어디서 단순화되는지 정리
-- **코드 스터디** : TypeScript 기본 문법( interface/type, class ), Vite + React 프로젝트 구조 관례 — scaffold 폴더/파일 역할 이해
 
 **Claude 가 할 일**
 - MVP 범위 초안 : flash block/page grid ( free / valid / invalid / erasing 상태 ), 매핑 테이블, GC 이벤트, 통계( WAF, valid page 비율 )
@@ -196,7 +199,7 @@ table.plan-calendar .buffer-mark {
 **Ryu 가 할 일**
 - 코드 리뷰, 실행 결과·테스트 확인
 - **MQSim/FTL 심화** : MQSim 의 `Address_Mapping_Unit_Page_Level.cpp` 에서 실제 lookup/allocate 로직을 읽고 우리 구현과 비교
-- **코드 스터디** : TypeScript 클래스/배열 기반 자료구조 — Claude 가 작성한 Flash array, MappingTable 클래스 코드를 한 줄씩 같이 읽고 이해
+- **코드 스터디** : Claude 가 작성한 매핑 테이블 코드(lookup/allocate/invalidate)를 한 줄씩 같이 읽으며, FTL 주소 변환이 실제로 어떻게 동작하는지 이해
 
 **Claude 가 할 일**
 - 프로젝트 scaffold ( Vite + React + TS )
@@ -215,7 +218,7 @@ table.plan-calendar .buffer-mark {
 - **GC 이론 학습** ( Session 1 에서 미뤄둔 부분 ) : victim block 선정 알고리즘( greedy vs cost-benefit ), GC 트리거 정책과 WAF 관계
 - 테스트 결과(WAF 등)로 검증
 - **MQSim/FTL 심화** : MQSim 의 `GC_and_WL_Unit_Page_Level.cpp` 에서 실제 victim selection( `GC_Block_Selection_Policy=RGA` 등 ) 코드를 읽고, 방금 배운 이론과 대조
-- **코드 스터디** : 정렬/탐색 기반 알고리즘 구현 패턴 — Claude 의 victim block 선정 코드를 pseudo-code 와 나란히 놓고 비교
+- **코드 스터디** : Claude 가 구현한 victim block 선정 코드를 직접 읽으며, 방금 배운 GC 이론이 코드로 어떻게 옮겨지는지 확인
 
 **Claude 가 할 일**
 - GC 알고리즘 구현 : victim block 선정, valid page migration, block erase
@@ -233,7 +236,7 @@ table.plan-calendar .buffer-mark {
 - **Hybrid(log-block, FAST) mapping 이론 학습** ( Session 1 에서 미뤄둔 부분 )
 - 리뷰·테스트
 - **MQSim/FTL 심화** : MQSim 의 `Address_Mapping_Unit_Hybrid.cpp` 를 읽고 log-block merge(switch/partial/full merge) 가 실제로 어떻게 도는지 확인
-- **코드 스터디** : 상태 머신/조건 분기 설계 — hybrid 매핑과 wear leveling 코드의 분기 구조를 같이 읽고 왜 그렇게 나눴는지 이해
+- **코드 스터디** : Claude 가 구현한 hybrid 매핑·마모 평준화 코드를 직접 읽으며, 방금 배운 이론이 코드로 어떻게 구현되는지 확인
 
 **Claude 가 할 일**
 - 기본적인 dynamic wear leveling, bad block 표시 구현
@@ -252,7 +255,6 @@ table.plan-calendar .buffer-mark {
 **Ryu 가 할 일**
 - 브라우저에서 직접 조작해보며 리뷰·피드백
 - **MQSim/FTL 심화** : 지금 만든 시각화 요소가 MQSim 의 `Stats.cpp` 에서 어떤 통계 항목에 대응하는지 매핑해보기
-- **코드 스터디** : Canvas/SVG 렌더링 기초, React state → 화면 반영 원리 — 엔진 상태가 어떻게 grid 색상으로 그려지는지 실제 렌더링 코드 읽기
 
 **Claude 가 할 일**
 - flash array grid 시각화 ( block/page 상태별 색상 구분 ), 시뮬레이션 엔진과 연결해 write/GC 실시간 애니메이션
@@ -269,7 +271,6 @@ table.plan-calendar .buffer-mark {
 **Ryu 가 할 일**
 - 브라우저에서 직접 조작해보며 리뷰·피드백
 - **MQSim/FTL 심화** : 9/4 에 실행했던 MQSim 결과( `workload_scenario_*.xml` 의 `Total_GC_Executions`, WAF 관련 카운터 )와 우리 대시보드 지표를 1:1로 대조
-- **코드 스터디** : `requestAnimationFrame` 기반 애니메이션, React state 업데이트/재렌더링 패턴 — 재생 컨트롤 코드가 시간 흐름을 어떻게 다루는지 읽기
 
 **Claude 가 할 일**
 - 이벤트 로그 / 타임라인, 통계 대시보드 ( WAF, valid page 비율, GC 발생 횟수, erase 횟수 )
@@ -287,7 +288,6 @@ table.plan-calendar .buffer-mark {
 **Ryu 가 할 일**
 - UI 를 직접 조작해보며 리뷰·피드백
 - **MQSim/FTL 심화** : `ssdconfig.xml` 의 실제 파라미터 범위/의미( `Overprovisioning_Ratio`, `GC_Exec_Threshold`, `GC_Hard_Threshold` 등 )를 다시 확인하고 우리 UI 파라미터와 1:1 대응시키기
-- **코드 스터디** : React controlled component 패턴( input/slider 가 state 와 어떻게 묶이는지 ) — 파라미터 패널 코드를 직접 읽고 이해
 
 **Claude 가 할 일**
 - page 크기, block/page 개수, OP 비율, GC 임계값, 매핑 방식 선택 UI
@@ -304,7 +304,6 @@ table.plan-calendar .buffer-mark {
 **Ryu 가 할 일**
 - UI 를 직접 조작해보며 리뷰·피드백
 - **MQSim/FTL 심화** : `workload.xml` 의 synthetic vs trace-based 워크로드 정의 방식을 비교하고, `tpcc-small.trace` 포맷을 다시 훑어보기
-- **코드 스터디** : 브라우저 파일 입력( `FileReader` API ), 입력 검증 로직 — 커스텀 trace 업로드/검증 코드를 직접 읽고 이해
 
 **Claude 가 할 일**
 - workload 생성기 컨트롤 ( sequential/random, read/write 비율, burst 크기 )
@@ -322,7 +321,6 @@ table.plan-calendar .buffer-mark {
 
 **Ryu 가 할 일**
 - 브라우저에서 직접 확인하며 리뷰·피드백
-- **코드 스터디** : 반응형 CSS( flexbox/grid, 미디어 쿼리 ), 웹 접근성(a11y) 기초 — 다듬기 코드가 실제로 뭘 바꾸는지 비교해보기
 
 **Claude 가 할 일**
 - UI 다듬기 ( 범례, 툴팁, 반응형 레이아웃, 색상 접근성 )
@@ -339,7 +337,6 @@ table.plan-calendar .buffer-mark {
 
 **Ryu 가 할 일**
 - 배포된 사이트를 직접 리뷰 — 1차 완성본 리뷰, 여기서 나온 피드백은 10/17 이후 버퍼 기간에 반영
-- **코드 스터디** : Vite 빌드 산출물 구조, GitHub Pages 배포 워크플로( 정적 파일 배포 원리 ) — 배포 과정을 직접 따라가며 이해
 
 **Claude 가 할 일**
 - 최종 테스트, GitHub Pages 배포
