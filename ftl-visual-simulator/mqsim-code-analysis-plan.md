@@ -67,7 +67,7 @@ table.plan-calendar .row-mark {
 
 # MQSim 코드 분석 계획
 
-시뮬레이터를 만들기 전에, MQSim 소스코드 자체를 처음부터 끝까지 체계적으로 읽는 계획. [통합 계획 (Plan)](/ftl-visual-simulator/plan/) 과 같은 12세션 날짜를 그대로 따라가되, 여기서는 **그 세션에 어떤 MQSim 소스를 읽을 것인가**만 다룬다.
+시뮬레이터를 만들기 전에, MQSim 소스코드 자체를 처음부터 끝까지 체계적으로 읽는 계획. [통합 계획 (Plan)](/ftl-visual-simulator/plan/) 과 같은 16세션 날짜( 9/4 ~ 10/25 )를 그대로 따라가되, 여기서는 **그 세션에 어떤 MQSim 소스를 읽을 것인가**만 다룬다.
 
 <div style="margin-top: 40px;"></div>
 
@@ -82,7 +82,7 @@ table.plan-calendar .row-mark {
 ## 세션
 
 <div class="progress-box">
-  <span>진행률: <span id="progress-count">0 / 12</span></span>
+  <span>진행률: <span id="progress-count">0 / 16</span></span>
   <span class="progress-bar-track"><span class="progress-bar-fill" id="progress-fill"></span></span>
 </div>
 

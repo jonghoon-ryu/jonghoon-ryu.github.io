@@ -90,27 +90,27 @@ table.plan-calendar .buffer-mark {
 
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
-<tr><th>세션</th><th>날짜</th><th>구분</th><th>단계</th><th>완료</th></tr>
-<tr><td>1</td><td>9/4 (금)</td><td>평일 (시작일)</td><td>Phase 1 — FTL 개념</td><td class="table-mark buffer-mark" data-session="1">☐</td></tr>
-<tr><td>2</td><td>9/6 (일)</td><td>주말</td><td>Phase 2 — MQSim 분석</td><td class="table-mark buffer-mark" data-session="2">☐</td></tr>
-<tr><td>-</td><td>9/12 (토)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td></tr>
-<tr><td>-</td><td>9/13 (일)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td></tr>
-<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td><td class="table-mark buffer-mark" data-session="3">☐</td></tr>
-<tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td><td class="table-mark buffer-mark" data-session="4">☐</td></tr>
-<tr><td>-</td><td>9/24 (목)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td></tr>
-<tr><td>-</td><td>9/25 (금)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td></tr>
-<tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td><td class="table-mark buffer-mark" data-session="5">☐</td></tr>
-<tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td><td class="table-mark buffer-mark" data-session="6">☐</td></tr>
-<tr><td>7</td><td>10/3 (토)</td><td>주말</td><td>Phase 5 — 시각화 (1)</td><td class="table-mark buffer-mark" data-session="7">☐</td></tr>
-<tr><td>8</td><td>10/4 (일)</td><td>주말</td><td>Phase 5 — 시각화 (2)</td><td class="table-mark buffer-mark" data-session="8">☐</td></tr>
-<tr><td>9</td><td>10/5 (월)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (1)</td><td class="table-mark buffer-mark" data-session="9">☐</td></tr>
-<tr><td>10</td><td>10/9 (금)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (2)</td><td class="table-mark buffer-mark" data-session="10">☐</td></tr>
-<tr><td>11</td><td>10/10 (토)</td><td>주말</td><td>Phase 7 — 마무리 (1)</td><td class="table-mark buffer-mark" data-session="11">☐</td></tr>
-<tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td><td class="table-mark buffer-mark" data-session="12">☐</td></tr>
-<tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="13">☐</td></tr>
-<tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="14">☐</td></tr>
-<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="15">☐</td></tr>
-<tr><td>16</td><td>10/25 (일)</td><td>주말</td><td>리뷰 및 수정</td><td class="table-mark buffer-mark" data-session="16">☐</td></tr>
+<tr><th>세션</th><th>날짜</th><th>구분</th><th>단계 ( Claude )</th><th>Ryu 공부 내용</th><th>완료</th></tr>
+<tr><td>1</td><td>9/4 (금)</td><td>평일 (시작일)</td><td>Phase 1 — FTL 개념</td><td>FTL 핵심 개념 복습( 매핑/GC/WL/OP ), hybrid·DFTL 은 나중으로 미룸</td><td class="table-mark buffer-mark" data-session="1">☐</td></tr>
+<tr><td>2</td><td>9/6 (일)</td><td>주말</td><td>Phase 2 — MQSim 개괄</td><td>MQSim 개요 문서 학습, XML 설정/모듈 구조 리뷰</td><td class="table-mark buffer-mark" data-session="2">☐</td></tr>
+<tr><td>-</td><td>9/12 (토)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td><td>—</td></tr>
+<tr><td>-</td><td>9/13 (일)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td><td>—</td></tr>
+<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td><td>`Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 읽기</td><td class="table-mark buffer-mark" data-session="3">☐</td></tr>
+<tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td><td>`Address_Mapping_Unit_Page_Level.cpp` 의 lookup/allocate 로직 추적</td><td class="table-mark buffer-mark" data-session="4">☐</td></tr>
+<tr><td>-</td><td>9/24 (목)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td><td>—</td></tr>
+<tr><td>-</td><td>9/25 (금)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td><td>—</td></tr>
+<tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td><td>GC 이론( greedy vs cost-benefit ) + `GC_and_WL_Unit_Page_Level.cpp` victim selection</td><td class="table-mark buffer-mark" data-session="5">☐</td></tr>
+<tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td><td>Hybrid 매핑 이론 + `Address_Mapping_Unit_Hybrid.cpp`</td><td class="table-mark buffer-mark" data-session="6">☐</td></tr>
+<tr><td>7</td><td>10/3 (토)</td><td>주말</td><td>Phase 5 — 시각화 (1)</td><td>시각화 요소와 `Stats.cpp` 통계 항목 대응 관계 확인</td><td class="table-mark buffer-mark" data-session="7">☐</td></tr>
+<tr><td>8</td><td>10/4 (일)</td><td>주말</td><td>Phase 5 — 시각화 (2)</td><td>9/4 결과( `workload_scenario_*.xml` )와 대시보드 지표 대조</td><td class="table-mark buffer-mark" data-session="8">☐</td></tr>
+<tr><td>9</td><td>10/5 (월)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (1)</td><td>`ssdconfig.xml` 파라미터 범위/의미 재확인</td><td class="table-mark buffer-mark" data-session="9">☐</td></tr>
+<tr><td>10</td><td>10/9 (금)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (2)</td><td>`workload.xml` synthetic vs trace-based 비교</td><td class="table-mark buffer-mark" data-session="10">☐</td></tr>
+<tr><td>11</td><td>10/10 (토)</td><td>주말</td><td>Phase 7 — 마무리 (1)</td><td>지금까지 추가된 hook 전체 재점검</td><td class="table-mark buffer-mark" data-session="11">☐</td></tr>
+<tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td><td>캡스톤 — write 요청 하나를 매핑→GC→flash 까지 전체 설명</td><td class="table-mark buffer-mark" data-session="12">☐</td></tr>
+<tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>Cost-Benefit GC 이론 복습 + 기존 GC 코드 구조 재설계 지점 파악</td><td class="table-mark buffer-mark" data-session="13">☐</td></tr>
+<tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td>Cost-Benefit GC 코드 리뷰, RGA 대비 비교 검증</td><td class="table-mark buffer-mark" data-session="14">☐</td></tr>
+<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>전체 hook 코드 최종 재점검( 매핑/GC/WL/hybrid )</td><td class="table-mark buffer-mark" data-session="15">☐</td></tr>
+<tr><td>16</td><td>10/25 (일)</td><td>주말</td><td>리뷰 및 수정</td><td>최종 캡스톤 — 확장 기능까지 포함해 전체 시스템 설명</td><td class="table-mark buffer-mark" data-session="16">☐</td></tr>
 </table>
 </div>
 
