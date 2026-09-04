@@ -44,6 +44,14 @@
               </ul>
             </details>
           </li>
+          <li>
+            <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/' %} open{% endif %}>
+              <summary><a href="{{ '/ftl-visual-simulator/' | relative_url }}">FTL Visual Simulator</a></summary>
+              <ul class="nav-subitems">
+                <li><a href="{{ '/ftl-visual-simulator/plan/' | relative_url }}">계획 (Plan)</a></li>
+              </ul>
+            </details>
+          </li>
         </ul>
       </nav>
 
