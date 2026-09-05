@@ -4,8 +4,8 @@ title: FTL 개념 ↔ 파라미터·모듈 대응
 permalink: /ftl-visual-simulator/mqsim/concept-mapping/
 ---
 <style>
-table.plan-calendar th, table.plan-calendar td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; }
-table.plan-calendar { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
+table.plan-calendar th, table.plan-calendar td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; overflow-wrap: break-word; word-break: break-word; }
+table.plan-calendar { width: 100% !important; table-layout: fixed !important; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; }
 table.plan-calendar th { background: #f5f5f5; color: #333; }
 </style>
 
