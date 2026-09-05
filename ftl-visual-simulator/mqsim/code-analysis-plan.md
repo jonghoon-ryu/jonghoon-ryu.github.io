@@ -369,7 +369,7 @@ table.plan-calendar .row-mark {
 </div>
 
 - free block pool 이 줄어들 때 `Check_gc_required()` 가 왜/어떻게 불리는지 — 정확히는 write frontier 블록이 가득 차서 새 free 블록으로 교체되는 순간( 매 쓰기가 아님 )에만 호출된다는 것까지 확인. 위 그림의 첫 판단 지점
-- `GC_is_in_urgent_mode()` 가 `GC_Hard_Threshold` 로 "긴급 GC"( preemptible 하지 않게 강제 )를 어떻게 구분하는지
+- `GC_is_in_urgent_mode()` 의 실제 분기 순서 확인 — `!preemptible_gc_enabled` 이면 `GC_Hard_Threshold` 확인 없이 곧바로 true( 우리 설정 `Preemptible_GC_Enabled=false` 라 항상 이 경로 ). `GC_Hard_Threshold` 가 실제로 쓰이는 건 `Preemptible_GC_Enabled=true` 일 때뿐이라는 것 코드로 확인
 - `GC_Block_Selection_Policy`( GREEDY/RGA/RANDOM 계열/FIFO ) 중 실제 설정값( RGA )의 코드 분기 추적
 - victim block 선정 → valid page migration → block erase, 3단계를 코드에서 순서대로 확인 — 위 그림의 나머지 3개 박스
 - 체크포인트 : "GC 가 왜 지금 시작됐는지" 를 코드 조건문 기준으로 설명
@@ -602,7 +602,7 @@ table.plan-calendar .row-mark {
 
 ### 11. 재점검 — hook 지점 다시 훑기
 
-지금까지 읽은 8개 파일( Address_Mapping_Unit_Page_Level/Hybrid, GC_and_WL_Unit_Page_Level, Flash_Block_Manager, Stats )을 다시 열어서, 실제로 시뮬레이터에 추가된 hook 코드가 원본 로직의 정확히 어느 지점에 들어갔는지 하나씩 대조
+지금까지 hook 을 추가한 파일들( `Address_Mapping_Unit_Page_Level`, `GC_and_WL_Unit_Page_Level`/`GC_and_WL_Unit_Base`( GC + wear-leveling ), `Flash_Block_Manager`/`Flash_Block_Manager_Base`, `Stats` — `Address_Mapping_Unit_Hybrid` 는 빈 스텁이라 hook 대상에서 제외 )을 다시 열어서, 실제로 시뮬레이터에 추가된 hook 코드가 원본 로직의 정확히 어느 지점에 들어갔는지 하나씩 대조
 
 - 체크포인트 : hook 코드 한 줄 한 줄이 "왜 거기 있는지" 설명 가능해야 함
 
@@ -683,7 +683,7 @@ Claude 가 추가한 `COST_BENEFIT` 정책 코드를 리뷰
 
 ### 15. 전체 hook 코드 최종 재점검
 
-11번에서 한 번 훑었던 hook 코드 전체( 매핑/GC/WL/hybrid )와, 13~14번에서 추가된 Cost-Benefit 관련 코드까지 포함해서 다시 한 번 통독
+11번에서 한 번 훑었던 hook 코드 전체( 매핑/GC/WL, hybrid 는 구현했다면 포함 )와, 13~14번에서 추가된 Cost-Benefit 관련 코드까지 포함해서 다시 한 번 통독
 
 - ( 시간이 되면 ) GTest 로 만들어둔 골든/회귀 테스트가 있다면, 그 테스트가 실제로 무엇을 검증하는지 코드로 확인
 - 체크포인트 : hook + 확장 코드를 합쳐서 전체 diff 를 설명할 수 있으면 통과
@@ -702,6 +702,12 @@ Claude 가 추가한 `COST_BENEFIT` 정책 코드를 리뷰
 이번 프로젝트에서 MQSim 코드를 공부한 여정의 종착점.
 
 </div>
+
+<div style="margin-top: 60px;"></div>
+
+## 참고
+
+- 관련 문서 : [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) · [개발 계획](/ftl-visual-simulator/plan/)
 
 <script>
 (function () {
