@@ -255,9 +255,9 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 
 `Address_Mapping_Unit_Hybrid.cpp` 전체( 53줄 )를 직접 열어 확인한 결과, **모든 메서드 본문이 비어 있거나(`{}`) 고정값만 반환한다(`return 0`)**. 즉 log-block 방식(FAST, switch/partial/full merge)이 코드로 존재하지 않고, 클래스 골격( `Address_Mapping_Unit_Base` 를 상속하는 자리표시자 )만 있다.
 
-- 기존 [개발 계획](/ftl-visual-simulator/plan/) Session 6 과 [코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) Session 6 은 "hybrid 매핑이 이미 구현되어 있으니 hook 만 추가하면 된다"고 전제하고 있었는데, 이 전제가 **틀렸다**.
+- 기존 [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) Session 6 과 [코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) Session 6 은 "hybrid 매핑이 이미 구현되어 있으니 hook 만 추가하면 된다"고 전제하고 있었는데, 이 전제가 **틀렸다**.
 - 실제로 hybrid 매핑을 시각화하려면 Cost-Benefit GC( 확장 목표 7번 )처럼 **직접 구현**해야 하는 작업이 된다 — page-level 매핑처럼 "이미 있는 로직에 hook만 추가"가 아니라 새로운 기능 개발.
-- 두 가지 선택지가 있다 : (1) Session 6 범위를 hybrid 매핑 없이 wear-leveling( 이건 `GC_and_WL_Unit_Page_Level.cpp` 에 실제로 구현되어 있음, 확인됨 )만으로 축소하고 hybrid 매핑은 13~16번 버퍼( Cost-Benefit GC 와 같은 성격의 확장 목표 )로 미룬다, 또는 (2) 애초 계획대로 Session 6 에서 hybrid 매핑을 직접 구현한다. 시간이 빠듯한 1차 마감(10/11) 사정을 고려하면 (1)이 안전하다 — 계획 수정은 [개발 계획](/ftl-visual-simulator/plan/) 문서에서 별도로 반영 필요.
+- 두 가지 선택지가 있다 : (1) Session 6 범위를 hybrid 매핑 없이 wear-leveling( 이건 `GC_and_WL_Unit_Page_Level.cpp` 에 실제로 구현되어 있음, 확인됨 )만으로 축소하고 hybrid 매핑은 13~16번 버퍼( Cost-Benefit GC 와 같은 성격의 확장 목표 )로 미룬다, 또는 (2) 애초 계획대로 Session 6 에서 hybrid 매핑을 직접 구현한다. 시간이 빠듯한 1차 마감(10/11) 사정을 고려하면 (1)이 안전하다 — 계획 수정은 [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) 문서에서 별도로 반영 필요.
 
 <div style="margin-top: 60px;"></div>
 
