@@ -370,7 +370,7 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 ## 참고
 
-- 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) · [구현 작업 상세](/ftl-visual-simulator/plan/implementation/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [개발 동기/목표](/ftl-visual-simulator/motivation-goals/) · [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/) · [Visual Simulator Layout (초안)](/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/)
+- 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) · [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [개발 동기/목표](/ftl-visual-simulator/motivation-goals/) · [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/) · [Visual Simulator Layout (초안)](/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/)
 
 <script>
 (function () {
