@@ -25,11 +25,11 @@ table.plan-calendar th {
 #main_content li > input.item-check {
   margin-right: 0.5em;
   vertical-align: middle;
-  accent-color: #2e8b57;
+  accent-color: #7c3aed;
   cursor: not-allowed;
 }
 #main_content li .item-comment {
-  color: #2e8b57;
+  color: #7c3aed;
   font-style: italic;
   font-size: 0.85em;
   margin-left: 0.4em;
@@ -214,8 +214,8 @@ table.plan-calendar th {
         cb.type = 'checkbox';
         cb.className = 'item-check';
         cb.checked = !!done;
-        cb.disabled = true;
         cb.title = 'Claude 가 작업 완료 시 직접 표시하는 항목';
+        cb.addEventListener('click', function (e) { e.preventDefault(); });
 
         if (done && typeof done === 'object' && done.comment) {
           var note = document.createElement('span');
