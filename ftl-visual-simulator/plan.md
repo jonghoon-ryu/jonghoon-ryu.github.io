@@ -72,19 +72,12 @@ table.plan-calendar .buffer-mark {
 
 **1차 완성 목표일 : 2026-10-11**. 9/4(금)를 시작일로 삼아, 이후 주말( 토/일 ) + 공휴일( 10/5, 10/9 ) 기준 하루 5시간씩 총 12세션 커리큘럼. 10/11 에 결과물을 직접 리뷰하고, 필요하면 10/17~10/18, 10/24~10/25 를 이용해 수정한다.
 
-> **9/5(토, 원래 휴무일) 추가 작업 기록** — 쉬는 날이지만 세션 2 마무리 겸 문서 전반을 손봤다.
-> - [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)에 파일별 상세 설명(FTL 코드 라인 수 포함) + 콜 플로우 다이어그램 8개 추가
-> - [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) 문서 신설
-> - **개발 계획(이 문서) 검토 및 수정** : Session 6 을 "Hybrid 매핑 구현되어 있음" 전제에서 "실제로는 빈 스텁 → 마모 평준화 중심으로 수정"으로 정정, Session 2 에 MQSim 강의 영상 추가
-> - **[MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim/code-analysis-plan/) 수정** : Session 6 정정(위와 동일 이유), Session 7 을 Host 딥다이브에서 "Host 개념만 + FTL 통합 점검"으로 축소( FTL 만 깊이 보고 Host 는 개념만 파악하기로 함 ), Session 4/13 파일 위치 오류 수정
-> - 코드 재검증으로 발견한 오류 정정 : GC 트리거는 매 쓰기가 아니라 write frontier 블록이 다 찼을 때만 확인됨, dynamic wear-leveling 은 GC 정책이 아니라 free block pool 배정(erase count 최소 블록 우선)에서 동작, `Preemptible_GC_Enabled=false` 설정에서는 GC 가 항상 긴급 모드, MQSim 에는 bad block 관리가 없음(통계용 카운터만 존재)
-
 <div style="margin-top: 60px;"></div>
 
 ## 전제 조건
 
 - 평일 작업은 기대하지 않음. 다만 가능하면 다음 세션 내용을 미리 당기거나, 여유( 버퍼 ) 로 사용
-- **9/4(금)를 시작일로 사용** — 세션 1 (FTL 개념)을 짜투리 시간에 미리 시작. **9/5(토)는 계획에서 제외** (쉬는 날)
+- **9/4(금)를 시작일로 사용** — 세션 1 (FTL 개념)을 짜투리 시간에 미리 시작. **9/5(토)는 원래 쉬는 날로 잡았었지만 실제로 세션 2 작업이 이어져서 세션 2 를 9/5~9/6 이틀로 늘려 포함**
 - 9/12(토), 9/13(일) 은 개인 사정으로 작업 불가 → 계획에서 제외
 - 10/5(월), 10/9(금) 은 공휴일이라 평일이지만 주말과 동일하게 5시간 작업일로 포함
 - **10/11 이 1차 마감** — 이 날짜 안에 "동작하는 배포본"을 만드는 것이 최우선이고, 그 다음 리뷰 결과에 따라 10/17~10/25 에 수정
@@ -103,7 +96,7 @@ table.plan-calendar .buffer-mark {
 <table class="plan-calendar">
 <tr><th>세션</th><th>날짜</th><th>구분</th><th>단계 ( Claude )</th><th>Ryu 공부 내용</th><th>완료</th></tr>
 <tr><td>1</td><td>9/4 (금)</td><td>평일 (시작일)</td><td>Phase 1 — FTL 개념</td><td>FTL 핵심 개념 복습( 매핑/GC/WL/OP ), hybrid·DFTL 은 나중으로 미룸</td><td class="table-mark buffer-mark" data-session="1">☐</td></tr>
-<tr><td>2</td><td>9/6 (일)</td><td>주말</td><td>Phase 2 — MQSim 개괄</td><td>MQSim 개요 문서 학습, XML 설정/모듈 구조 리뷰</td><td class="table-mark buffer-mark" data-session="2">☐</td></tr>
+<tr><td>2</td><td>9/5~9/6 (토~일)</td><td>주말( 9/5 는 원래 휴무 예정이었으나 작업일로 포함 )</td><td>Phase 2 — MQSim 개괄</td><td>MQSim 개요 문서 학습, XML 설정/모듈 구조 리뷰, 코드 재검증으로 문서 오류 정정</td><td class="table-mark buffer-mark" data-session="2">☐</td></tr>
 <tr><td>-</td><td>9/12 (토)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td><td>—</td></tr>
 <tr><td>-</td><td>9/13 (일)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td><td>—</td></tr>
 <tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td><td>`Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 읽기</td><td class="table-mark buffer-mark" data-session="3">☐</td></tr>
@@ -155,7 +148,9 @@ table.plan-calendar .buffer-mark {
 
 <div class="session" data-session="2" markdown="1">
 
-### 2. (9/6) MQSim 개괄 학습
+### 2. (9/5~9/6) MQSim 개괄 학습
+
+원래 9/5(토)는 휴무일로 잡았었지만 세션 2 작업이 이어져서 9/5~9/6 이틀에 걸쳐 진행했다.
 
 
 **Ryu 가 할 일**
@@ -169,6 +164,9 @@ table.plan-calendar .buffer-mark {
   - 주목할 점 : 기본 설정(75% occupancy, 짧은 워크로드)으로는 `Total_GC_Executions="0"` — GC 가 한 번도 안 일어남. Session 5 에서 GC 를 실제로 보려면 occupancy 를 높이거나 워크로드를 늘려야 함
 - XML 설정 구조( Flash parameter, FTL parameter, GC 정책, cache ) 조사·정리
 - 주요 모듈 조사 : Host_Interface, IO_Flow, Address_Mapping_Unit, Flash_Block_Manager, GC_and_WL_Unit, NVM_PHY_ONFI
+- ( 9/5 추가 진행 ) [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) 문서 신설, [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)에 파일별 상세 설명(FTL 코드 라인 수 포함) + 콜 플로우 다이어그램 8개 추가
+- ( 9/5 추가 진행 ) 코드 재검증으로 이 개발 계획과 [MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim/code-analysis-plan/)의 오류 정정 : Session 6 을 "Hybrid 매핑 구현되어 있음" 전제에서 "실제로는 빈 스텁 → 마모 평준화 중심"으로 수정, Session 7( 코드 분석 계획 )을 Host 딥다이브에서 "Host 개념만 + FTL 통합 점검"으로 축소, GC 트리거 조건/dynamic wear-leveling 동작 방식/`Preemptible_GC_Enabled` 영향/bad block 관리 부재 등 잘못 적었던 내용 정정
+- ( 9/5 추가 진행 ) 문서 테이블이 컨테이너보다 넓어져 가로로 안 보이던 버그 발견·수정( `table-layout: fixed` 누락 + 일부 페이지에 스타일 블록 자체가 없었음 )
 - 결과물 : Host request → FTL 매핑 → Flash controller → NAND 로 이어지는 파이프라인 다이어그램, "시각화에 그대로 가져갈 부분 / 단순화할 부분" 정리
 
 </div>
