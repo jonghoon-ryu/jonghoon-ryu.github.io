@@ -25,7 +25,7 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 3. 사용자가 파라미터( 페이지 크기, 블록 수, Over-provisioning 비율, 매핑 방식, GC 정책 등 )를 직접 조절해 볼 수 있게 만들기
 4. **초심자도 FTL 개념을 쉽게 익힐 수 있는 학습 환경 만들기** — 나만 이해하는 도구가 아니라, MQSim 의 raw 통계/설정을 잘 모르는 사람도 화면만 보고 "아, 이게 GC 구나" 하고 감을 잡을 수 있어야 함
 5. **2026-10-11 까지 1차 완성** → 직접 리뷰하고 필요하면 10/17~10/25 사이에 수정
-6. ( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기 — 예 : Cost-Benefit GC 정책
+6. ( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기 — 예 : Cost-Benefit GC 정책, Hybrid(log-block) 매핑( 9/5 확인 결과 `Address_Mapping_Unit_Hybrid.cpp` 가 빈 스텁이라 이것도 직접 구현이 필요한 대상 )
 7. ( 시간이 여유로울 때 ) Google Test/Mock 기반 테스트 스위트 추가 — MQSim 자체엔 테스트가 없지만, 4개 핵심 클래스가 이미 추상 인터페이스라 GMock 으로 단위 테스트가 가능함( [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) 참고 )
 
 <div style="margin-top: 60px;"></div>
