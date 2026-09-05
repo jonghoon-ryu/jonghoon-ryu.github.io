@@ -11,7 +11,7 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 
 # FTL 개념 ↔ 파라미터·모듈 대응
 
-[개발 계획](/ftl-visual-simulator/plan/) Session 2 의 "Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해" 항목을 위한 문서. [MQSim 개요](/ftl-visual-simulator/mqsim/overview/)가 "MQSim이 뭔가"를, [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/)이 "코드가 어떻게 짜여 있나"를 다룬다면, 이 문서는 **"FTL 개념 하나하나가 `ssdconfig.xml` 의 어느 파라미터, 코드의 어느 클래스에 대응하는가"**를 개념 중심으로 다시 엮은 것.
+[전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) Session 2 의 "Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해" 항목을 위한 문서. [MQSim 개요](/ftl-visual-simulator/mqsim/overview/)가 "MQSim이 뭔가"를, [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/)이 "코드가 어떻게 짜여 있나"를 다룬다면, 이 문서는 **"FTL 개념 하나하나가 `ssdconfig.xml` 의 어느 파라미터, 코드의 어느 클래스에 대응하는가"**를 개념 중심으로 다시 엮은 것.
 
 <div style="margin-top: 40px;"></div>
 

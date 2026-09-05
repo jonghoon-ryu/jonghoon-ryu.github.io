@@ -70,7 +70,7 @@ table.plan-calendar .row-mark {
 
 # MQSim 코드 분석 계획
 
-시뮬레이터를 만들기 전에, MQSim 소스코드 자체를 처음부터 끝까지 체계적으로 읽는 계획. [개발 계획](/ftl-visual-simulator/plan/) 과 같은 16세션 날짜( 9/4 ~ 10/25 )를 그대로 따라가되, 여기서는 **그 세션에 어떤 MQSim 소스를 읽을 것인가**만 다룬다.
+시뮬레이터를 만들기 전에, MQSim 소스코드 자체를 처음부터 끝까지 체계적으로 읽는 계획. [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) 과 같은 16세션 날짜( 9/4 ~ 10/25 )를 그대로 따라가되, 여기서는 **그 세션에 어떤 MQSim 소스를 읽을 것인가**만 다룬다.
 
 <div style="margin-top: 40px;"></div>
 
@@ -78,7 +78,7 @@ table.plan-calendar .row-mark {
 
 - **하향식( top-down )** : 전체 그림 → 요청이 들어오는 입구 → FTL 핵심(매핑·GC·WL) → 요청이 빠져나가는 출구(스케줄링·물리) → 입출력 주변부(캐시·통계·workload) → 마지막에 전체를 한 번에 관통
 - 각 세션은 [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/) 문서의 해당 부분을 먼저 훑고, 실제 소스 파일을 열어 문서의 설명과 코드가 정말 일치하는지 확인하는 방식으로 진행
-- [개발 계획](/ftl-visual-simulator/plan/) 의 "MQSim/FTL 심화" 항목과 내용이 겹치는 세션도 있음 — 여긴 그걸 하나로 모아 더 깊게 파는 버전
+- [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) 의 "MQSim/FTL 심화" 항목과 내용이 겹치는 세션도 있음 — 여긴 그걸 하나로 모아 더 깊게 파는 버전
 
 <div style="margin-top: 60px;"></div>
 
