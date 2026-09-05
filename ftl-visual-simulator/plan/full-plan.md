@@ -26,14 +26,6 @@ permalink: /ftl-visual-simulator/plan/full-plan/
   background: #3a7d44;
   transition: width 0.2s ease;
 }
-.session.done h3 {
-  color: #999;
-  text-decoration: line-through;
-  text-decoration-color: #bbb;
-}
-.session.done {
-  opacity: 0.6;
-}
 .session {
   margin-top: 70px;
   padding-top: 32px;
@@ -78,11 +70,11 @@ table.plan-calendar .buffer-mark {
   cursor: pointer;
 }
 .session li > input.item-check.owner-claude {
-  accent-color: #2e8b57;
+  accent-color: #7c3aed;
   cursor: not-allowed;
 }
 .session li .item-comment {
-  color: #2e8b57;
+  color: #7c3aed;
   font-style: italic;
   font-size: 0.85em;
   margin-left: 0.4em;
@@ -499,8 +491,8 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
           if (owner === 'claude') {
             var done = CLAUDE_DONE[itemId];
             cb.checked = !!done;
-            cb.disabled = true;
             cb.title = 'Claude 가 작업 완료 시 직접 표시하는 항목';
+            cb.addEventListener('click', function (e) { e.preventDefault(); });
             if (done && typeof done === 'object' && done.comment) {
               var note = document.createElement('span');
               note.className = 'item-comment';
