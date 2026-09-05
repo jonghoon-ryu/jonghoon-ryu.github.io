@@ -57,6 +57,27 @@ permalink: /ftl-visual-simulator/mqsim/overview/
 
 <div style="margin-top: 60px;"></div>
 
+## ssdconfig.xml 파라미터 구조
+
+실제 `ssdconfig.xml`( 9/4 에 실행한 샘플 설정 )을 열어서 확인한 구조. 크게 `Host_Parameter_Set`( 호스트 쪽 )과 `Device_Parameter_Set`( SSD 쪽 )로 나뉘고, `Device_Parameter_Set` 안에 하드웨어 스펙( `Flash_Parameter_Set` )이 중첩되어 있다.
+
+<div style="overflow-x:auto;">
+<table class="plan-calendar">
+<tr><th>그룹</th><th>주요 파라미터</th><th>의미</th></tr>
+<tr><td><b>Host_Parameter_Set</b></td><td><code>PCIe_Lane_Bandwidth</code>, <code>PCIe_Lane_Count</code>, <code>SATA_Processing_Delay</code></td><td>호스트↔SSD 링크 대역폭/지연 — NVMe 는 PCIe lane, SATA 는 별도 처리 지연값을 씀</td></tr>
+<tr><td>Device — 인터페이스/캐시</td><td><code>HostInterface_Type</code>(NVME/SATA), <code>IO_Queue_Depth</code>, <code>Caching_Mechanism</code>(ADVANCED), <code>Data_Cache_Capacity</code></td><td>큐 구조와 SSD 내부 DRAM 캐시 크기 — <code>Data_Cache_Manager</code> 가 쓰는 값</td></tr>
+<tr><td>Device — 매핑(FTL)</td><td><code>Address_Mapping</code>(PAGE_LEVEL/HYBRID), <code>CMT_Capacity</code>, <code>Ideal_Mapping_Table</code></td><td><code>Address_Mapping_Unit</code> 이 어떤 서브클래스로 뜨는지, CMT 캐시 규모( demand-based 캐싱 크기 )</td></tr>
+<tr><td>Device — GC/마모평준화</td><td><code>Overprovisioning_Ratio</code>, <code>GC_Exec_Threshold</code>, <code>GC_Hard_Threshold</code>, <code>GC_Block_Selection_Policy</code>(RGA 등), <code>Dynamic_Wearleveling_Enabled</code>, <code>Static_Wearleveling_Threshold</code></td><td><code>GC_and_WL_Unit</code> 이 언제(threshold) · 무엇을(policy) 고를지 — 파라미터 패널의 핵심 조절 대상( Session 9 )</td></tr>
+<tr><td>Device — 스케줄링</td><td><code>Transaction_Scheduling_Policy</code>(PRIORITY_OUT_OF_ORDER 등), <code>Plane_Allocation_Scheme</code>(CWDP)</td><td>TSU 가 여러 채널/칩에 요청을 어떻게 분배·순서화할지</td></tr>
+<tr><td>Device — 채널/타이밍</td><td><code>Flash_Channel_Count</code>, <code>Chip_No_Per_Channel</code>, <code>Channel_Transfer_Rate</code>, <code>Flash_Comm_Protocol</code>(NVDDR2)</td><td><code>ONFI_Channel</code> 물리 계층 구성</td></tr>
+<tr><td><b>Flash_Parameter_Set</b>(중첩)</td><td><code>Page_Read/Program_Latency_*</code>, <code>Block_Erase_Latency</code>, <code>Block_PE_Cycles_Limit</code>, <code>Die_No_Per_Chip</code>, <code>Plane_No_Per_Die</code>, <code>Block_No_Per_Plane</code>, <code>Page_No_Per_Block</code>, <code>Page_Capacity</code></td><td>NAND 물리 스펙 — flash grid 의 block/page 개수, 마모 한계( PE cycle )가 여기서 나옴</td></tr>
+</table>
+</div>
+
+이 중 파라미터 패널( Session 9 )에 그대로 노출할 것 : `Address_Mapping`, `Overprovisioning_Ratio`, `GC_Exec_Threshold`/`GC_Hard_Threshold`, `GC_Block_Selection_Policy`, `Dynamic_Wearleveling_Enabled`, `Block_No_Per_Plane`/`Page_No_Per_Block`( 그리드 크기 ). 나머지( PCIe 대역폭, DRAM 캐시 타이밍, 채널 타이밍 세부값 )는 시뮬레이션 정확도에는 필요하지만 초심자 UI 에는 노출하지 않고 기본값으로 고정한다.
+
+<div style="margin-top: 60px;"></div>
+
 ## 다른 오픈소스 SSD/FTL 시뮬레이터들과 비교
 
 FTL 을 시뮬레이션하는 오픈소스 도구는 MQSim 말고도 여럿 있다. 이번 프로젝트에 뭘 쓸지 고르면서 비교해본 것들.
