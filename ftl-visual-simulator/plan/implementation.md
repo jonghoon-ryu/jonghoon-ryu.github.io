@@ -22,6 +22,18 @@ table.plan-calendar th {
   background: #f5f5f5;
   color: #333;
 }
+#main_content li > input.item-check {
+  margin-right: 0.5em;
+  vertical-align: middle;
+  accent-color: #2e8b57;
+  cursor: not-allowed;
+}
+#main_content li .item-comment {
+  color: #2e8b57;
+  font-style: italic;
+  font-size: 0.85em;
+  margin-left: 0.4em;
+}
 </style>
 
 # Claude 구현 작업 상세
@@ -163,3 +175,58 @@ table.plan-calendar th {
 ## 참고
 
 - 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) · [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/)
+
+<script>
+(function () {
+  // 이 문서는 전부 "Claude 가 할 일" 스펙이라 모든 체크박스가 Claude 전용(초록색, 비활성)이다.
+  // Ryu 가 클릭해서 바꾸는 게 아니라, Claude 가 작업을 끝낼 때마다 이 파일을 직접 고쳐서
+  // 아래 CLAUDE_DONE 에 항목을 추가하고, 필요하면 comment 를 덧붙인다.
+  // "0. 전체 아키텍처"(확정된 결정 사항 나열, 할 일 아님)와 "참고"(링크 모음)는 체크박스 대상에서 제외.
+  // key 형식 : 'i{번호}' — 제외 구간(0장, 인용구, 참고)을 뺀 나머지 목록을, 문서에 나오는 순서대로 0부터 센 것.
+  var CLAUDE_DONE = {
+    'i0': true,
+    'i1': true,
+    'i2': true
+  };
+  var SKIP_HEADINGS = ['0. 전체 아키텍처', '참고'];
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var container = document.getElementById('main_content');
+    if (!container) return;
+
+    var skip = false;
+    var idx = 0;
+
+    Array.prototype.forEach.call(container.children, function (el) {
+      if (/^H[1-4]$/.test(el.tagName)) {
+        skip = SKIP_HEADINGS.indexOf(el.textContent.trim()) !== -1;
+        return;
+      }
+      if (skip || el.tagName === 'BLOCKQUOTE') return;
+      if (el.tagName !== 'UL' && el.tagName !== 'OL') return;
+
+      el.querySelectorAll('li').forEach(function (li) {
+        var itemId = 'i' + idx;
+        idx++;
+
+        var done = CLAUDE_DONE[itemId];
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'item-check';
+        cb.checked = !!done;
+        cb.disabled = true;
+        cb.title = 'Claude 가 작업 완료 시 직접 표시하는 항목';
+
+        if (done && typeof done === 'object' && done.comment) {
+          var note = document.createElement('span');
+          note.className = 'item-comment';
+          note.textContent = '— ' + done.comment;
+          li.appendChild(note);
+        }
+
+        li.insertBefore(cb, li.firstChild);
+      });
+    });
+  });
+})();
+</script>

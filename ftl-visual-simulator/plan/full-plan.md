@@ -72,17 +72,20 @@ table.plan-calendar .buffer-mark {
 .session li > input.item-check {
   margin-right: 0.5em;
   vertical-align: middle;
+}
+.session li > input.item-check.owner-ryu {
+  accent-color: #2f6fd6;
   cursor: pointer;
 }
-.session li.item-checked {
-  color: #999;
-  text-decoration: line-through;
-  text-decoration-color: #bbb;
+.session li > input.item-check.owner-claude {
+  accent-color: #2e8b57;
+  cursor: not-allowed;
 }
-.session li.item-checked > ul,
-.session li.item-checked > ol {
-  text-decoration: none;
-  color: inherit;
+.session li .item-comment {
+  color: #2e8b57;
+  font-style: italic;
+  font-size: 0.85em;
+  margin-left: 0.4em;
 }
 </style>
 
@@ -440,6 +443,26 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 (function () {
   var STORAGE_KEY = 'ftl-visual-simulator-plan-item-progress';
 
+  // "Claude 가 할 일" 항목의 완료 표시는 Ryu 의 브라우저(localStorage)가 아니라
+  // 이 목록에 Claude 가 직접 기록한다 — 작업이 끝나면 Claude 가 이 파일을 수정해서
+  // 해당 항목을 true 로 바꾸고, 필요하면 comment 를 덧붙인다.
+  // key 형식 : 's{세션 번호}-i{그 세션 안에서 몇 번째 항목인지, Ryu/Claude 항목 통틀어 0부터}'
+  var CLAUDE_DONE = {
+    's2-i3': true,
+    's2-i4': true,
+    's2-i5': true,
+    's2-i6': true,
+    's2-i7': true,
+    's2-i8': true,
+    's2-i9': true,
+    's2-i10': true,
+    's2-i11': true,
+    's4-i3': true,
+    's4-i4': true,
+    's4-i5': true,
+    's4-i6': true
+  };
+
   function load() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) { return {}; }
   }
@@ -452,23 +475,48 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
     document.querySelectorAll('.session').forEach(function (sessionEl) {
       var sid = sessionEl.getAttribute('data-session');
-      var items = sessionEl.querySelectorAll('li');
+      var owner = 'ryu';
+      var idx = 0;
 
-      items.forEach(function (li, idx) {
-        var itemId = 's' + sid + '-i' + idx;
-        var cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.className = 'item-check';
-        cb.checked = !!state[itemId];
-        if (cb.checked) li.classList.add('item-checked');
+      Array.prototype.forEach.call(sessionEl.children, function (child) {
+        var tag = child.tagName;
+        if (tag === 'P') {
+          var text = child.textContent.trim();
+          if (text === 'Ryu 가 할 일') owner = 'ryu';
+          else if (text === 'Claude 가 할 일') owner = 'claude';
+          return;
+        }
+        if (tag !== 'UL' && tag !== 'OL') return;
 
-        cb.addEventListener('change', function () {
-          state[itemId] = cb.checked;
-          save(state);
-          li.classList.toggle('item-checked', cb.checked);
+        child.querySelectorAll('li').forEach(function (li) {
+          var itemId = 's' + sid + '-i' + idx;
+          idx++;
+
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.className = 'item-check owner-' + owner;
+
+          if (owner === 'claude') {
+            var done = CLAUDE_DONE[itemId];
+            cb.checked = !!done;
+            cb.disabled = true;
+            cb.title = 'Claude 가 작업 완료 시 직접 표시하는 항목';
+            if (done && typeof done === 'object' && done.comment) {
+              var note = document.createElement('span');
+              note.className = 'item-comment';
+              note.textContent = '— ' + done.comment;
+              li.appendChild(note);
+            }
+          } else {
+            cb.checked = !!state[itemId];
+            cb.addEventListener('change', function () {
+              state[itemId] = cb.checked;
+              save(state);
+            });
+          }
+
+          li.insertBefore(cb, li.firstChild);
         });
-
-        li.insertBefore(cb, li.firstChild);
       });
     });
   });
