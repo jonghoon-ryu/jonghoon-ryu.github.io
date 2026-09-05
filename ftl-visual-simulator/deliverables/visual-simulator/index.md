@@ -11,7 +11,7 @@ permalink: /ftl-visual-simulator/deliverables/visual-simulator/
 
 ## 하위 문서
 
-( 아직 없음 — 세션이 진행되면서 채워질 예정 )
+- [Visual Simulator Layout (초안)](/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/) — 화면 레이아웃 mockup 초안
 
 <div style="margin-top: 60px;"></div>
 

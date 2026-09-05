@@ -65,12 +65,18 @@
                     </ul>
                   </details>
                 </li>
-                <li><a href="{{ '/ftl-visual-simulator/visual-simulator-interface-draft/' | relative_url }}">Visual Simulator Interface (초안)</a></li>
                 <li>
                   <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/deliverables/' %} open{% endif %}>
                     <summary><a href="{{ '/ftl-visual-simulator/deliverables/' | relative_url }}">개발 산출물</a></summary>
                     <ul class="nav-subitems">
-                      <li><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/' | relative_url }}">Visual Simulator</a></li>
+                      <li>
+                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/deliverables/visual-simulator/' %} open{% endif %}>
+                          <summary><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/' | relative_url }}">Visual Simulator</a></summary>
+                          <ul class="nav-subitems">
+                            <li><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/' | relative_url }}">Visual Simulator Layout (초안)</a></li>
+                          </ul>
+                        </details>
+                      </li>
                     </ul>
                   </details>
                 </li>
