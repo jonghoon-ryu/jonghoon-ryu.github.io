@@ -191,15 +191,40 @@ for (auto it = range.first; it != range.second; ) {
 </svg>
 </div>
 
-**검증** : 시나리오 1( synthetic )은 네이티브·WASM 이 요청 수( 329,898 / 41,238 )까지 완전히 동일해졌고, 시나리오 3( trace )은 양쪽 다 6,999 개 전부 처리로 완전히 일치했다.
+**1차 검증** : 시나리오 1( synthetic )은 네이티브·WASM 이 요청 수( 329,898 / 41,238 )까지 완전히 동일해졌고, 시나리오 3( trace )은 양쪽 다 6,999 개 전부 처리로 완전히 일치했다.
 
 <div style="margin-top: 60px;"></div>
 
-## 별개 이슈 — 시나리오 2 의 `std::bad_alloc` (버그 아님)
+## 해결된 별개 이슈 — 시나리오 2 의 `std::bad_alloc` (버그 아님)
 
-버그 4 를 고친 뒤 시나리오 2( synthetic, 가장 큰 시나리오 )를 WASM 으로 돌리면 `std::bad_alloc` 이 발생한다. 이건 실제로 catch 되는 C++ 예외로 직접 확인한 것이지 추측이 아니다 — Emscripten 에 `-fexceptions` 를 켜고 예외를 잡아 메시지를 출력해서 확인했다.
+버그 4 를 고친 뒤 시나리오 2( synthetic, 가장 큰 시나리오 )를 WASM 으로 돌리면 처음엔 `std::bad_alloc` 이 발생했다. 이건 실제로 catch 되는 C++ 예외로 직접 확인한 것이지 추측이 아니다 — Emscripten 에 `-fexceptions` 를 켜고 예외를 잡아 메시지를 출력해서 확인했다.
 
-이건 **버그가 아니라 WASM32 의 태생적 한계**다. WASM32 는 32비트 주소 공간이라 메모리 한계가 4GB 인데, `AddressMappingDomain` 생성자 하나가 약 1.5GB 짜리 배열을 요청하는 걸 ASan 으로 별도 확인했다 — 이 샘플 config 는 애초에 MQSim 의 네이티브 성능을 스트레스 테스트하려고 만든 큰 설정이라, 실제 시각화 시뮬레이터가 UI 에서 쓸 훨씬 작은 설정에서는 문제가 안 될 것으로 보인다.
+이건 **버그가 아니라 WASM32 의 태생적 한계**였다. WASM32 는 32비트 주소 공간이라 메모리 한계가 4GB 인데, 빌드 스크립트가 테스트 중에는 메모리 상한을 2GB 로 잡아뒀었다 — `AddressMappingDomain` 생성자 하나가 약 1.5GB 짜리 배열을 요청하는 걸 ASan 으로 확인했으니, 큰 설정에서는 2GB 로 빠듯했던 것. **`-sMAXIMUM_MEMORY` 를 WASM32 의 실제 한계인 4GB 로 올리자 시나리오 2 도 완주하고 네이티브와 정확히 일치**했다( 아래 "추가 검증" 참고 ). 이 값은 실제 `engine/build-wasm.sh` 에도 반영해 뒀다.
+
+<div style="margin-top: 60px;"></div>
+
+## 추가 검증 — 더 다양한 테스트 케이스로 재확인
+
+수정한 뒤에도 "혹시 이 특정 설정 하나에만 우연히 맞아떨어진 건 아닐까" 하는 의심이 남아서, 훨씬 다양한 입력으로 다시 검증했다.
+
+**MQSim 자체 샘플 설정 4개** ( `-sMAXIMUM_MEMORY=4GB` 로 재빌드 후, 이전에 테스트 안 해본 두 번째 trace 파일(`wsrch-small.trace`)도 추가 ) — 4개 시나리오 전부 **결과 XML 파일이 완전히 MD5 일치**( 요약 숫자만이 아니라 파일 전체 ):
+
+<div style="overflow-x:auto;">
+<table class="plan-calendar">
+<tr><th>시나리오</th><th>종류</th><th>결과</th></tr>
+<tr><td>1</td><td>Synthetic(소)</td><td>✅ MD5 완전 일치( 329,898 / 41,238 )</td></tr>
+<tr><td>2</td><td>Synthetic(대)</td><td>✅ MD5 완전 일치( 907,628 / 623,472 ) — 위의 bad_alloc 이슈 해결 후</td></tr>
+<tr><td>3</td><td>Trace(tpcc)</td><td>✅ MD5 완전 일치( 6,999/6,999 ) — 원래 버그 발견 전 네이티브 기준값과도 동일</td></tr>
+<tr><td>4( 신규 )</td><td>Trace(wsrch)</td><td>✅ MD5 완전 일치( 24,783/24,783 )</td></tr>
+</table>
+</div>
+
+**MQSim 원본 저장소의 FAST 2018 논문 재현 테스트 스위트도 통째로 돌려봤다** ( `fast18/` 디렉터리 — 이 프로젝트가 만든 게 아니라 CMU-SAFARI 가 원래 논문 실험을 재현하려고 만들어 둔 것 ). `backend-contention`, `data-cache-contention`, `queue-fetch-size`( 큐 크기 16/1024 두 버전 ) 세 그룹, 총 64개 시나리오 실행분을 네이티브·WASM 로 각각 돌려 비교했는데 **전부 바이트 단위로 일치**했다. 이 중 하나( `queue-fetch-size` 설정 )는 `Ideal_Mapping_Table=true` 를 쓰는 완전히 다른 코드 경로라 — CMT miss 처리 자체를 안 타므로 버그 4 를 아예 건드리지 않는 케이스인데, 이것도 이상 없이 일치해서 "고친 부분 말고 다른 데를 건드리지 않았다"는 확인도 됐다.
+
+이 과정에서 **이번 조사와 무관한, MQSim 원본에 이미 있던 버그 2개**를 우연히 발견했다( 참고용으로 남겨둠, 고치지는 않음 ) :
+
+1. `fast18/backend-contention/workload-backend-contention-flow-1.xml` 파일 안에 **git 병합 충돌 마커(`<<<<<<< HEAD`)가 그대로 커밋돼 있어서** 어느 빌드로 돌려도 XML 파싱에 실패한다 — CMU-SAFARI 원본 저장소 자체의 오래된 실수로 보인다.
+2. `fast18/data-cache-contention` 의 flow-1-flow-2 동시 실행 워크로드는 시나리오 3( `Working_Set_Percentage=1`, `RANDOM_HOTCOLD`, `Percentage_of_Hot_Region=1` — 극단적으로 작은 비율 조합 )에서 **부동소수점 예외(SIGFPE, 아마 hot region 크기가 0 으로 반올림되면서 생기는 0-나누기)로 크래시**한다. **아무것도 수정하지 않은 원본 MQSim 을 그대로 빌드해서 똑같이 크래시하는 걸 확인**했으니 이번 조사에서 건드린 것과는 무관한, 원본에 이미 있던 별개의 버그다.
 
 <div style="margin-top: 60px;"></div>
 
