@@ -11,7 +11,7 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 
 ## 왜 이 프로젝트를 시작했나?
 
-- MQSim 이라는 오픈소스 SSD 시뮬레이터가 있음 ( 논문 기반, C++ ) — FEMU/SimpleSSD/VSSIM/Amber/Dhara 등 다른 오픈소스 SSD/FTL 시뮬레이터와 비교해서 고른 선택이다. 왜 MQSim 인지( VM/QEMU 불필요, 표준 C++11만 사용, 코드 규모, MIT 라이선스, 논문 기반 검증된 정확도 등 )는 [MQSim 이란? — 결론 : 왜 MQSim 인가](/ftl-visual-simulator/reference/mqsim/overview/#mqsim--1) 에 비교표와 함께 정리해 뒀다
+- MQSim 이라는 오픈소스 SSD 시뮬레이터가 있음 ( 논문 기반, C++ ) — FEMU/SimpleSSD/VSSIM/Amber/Dhara 등 다른 오픈소스 SSD/FTL 시뮬레이터와 비교해서 고른 선택이다. 왜 MQSim 인지( VM/QEMU 불필요, 표준 C++11만 사용, 코드 규모, MIT 라이선스, 논문 기반 검증된 정확도 등 )는 [MQSim 이란? — 결론 : 왜 MQSim 인가](/ftl-visual-simulator/reference/mqsim/overview/#결론--왜-mqsim-인가) 에 비교표와 함께 정리해 뒀다
 - 로그/통계 파일 기반이라 내부 동작( 매핑, GC, 마모 평준화 )을 직관적으로 이해하기 어려움
 - FTL 개념을 눈으로 보면서 제대로 익히고 싶음
 - 겸사겸사 웹 기반 인터랙티브 시각화 도구도 하나 만들어보고 싶음
