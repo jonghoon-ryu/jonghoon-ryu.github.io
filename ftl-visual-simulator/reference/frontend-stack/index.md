@@ -159,4 +159,3 @@ WASM 으로 컴파일한 MQSim 은 **화면이 없다.** 함수를 호출하면 
 - [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) — 이 스택이 실제로 어느 컴포넌트·파일에 적용되는지의 상세 스펙
 - [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) — Session 3~4 의 "scaffold" 항목이 바로 이 문서에서 설명한 작업
 - [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) — 실제 코드
-</content>
