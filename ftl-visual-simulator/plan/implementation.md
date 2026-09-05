@@ -118,7 +118,7 @@ table.plan-calendar th {
 
 ## 5. 인터랙션 ( Session 9~10 )
 
-- **파라미터 패널** : page 크기, block/page 개수, OP 비율, GC 임계값( `GC_Exec_Threshold`/`GC_Hard_Threshold` — ⚠️ 후자는 `Preemptible_GC_Enabled=true` 일 때만 실제로 의미 있음, [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/) 참고 ), 매핑 방식 선택 — 각 항목에 쉬운 설명 툴팁 연결
+- **파라미터 패널** : page 크기, block/page 개수, OP 비율, GC 임계값( `GC_Exec_Threshold`/`GC_Hard_Threshold` — ⚠️ 후자는 `Preemptible_GC_Enabled=true` 일 때만 실제로 의미 있음, [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/) 참고 ), 매핑 방식 선택 — 각 항목에 쉬운 설명 툴팁 연결
 - 파라미터 변경 시 값을 `ssdconfig.xml` 형식 텍스트로 재생성 → MEMFS 재기록 → WASM `configure()`(reset) 호출
 - **개념별 프리셋 버튼** : "매핑 기본" / "GC 시연"( OP 비율 낮춤 ) / "마모평준화 시연"( 특정 block 에 쓰기 집중 ) — 파라미터와 workload 를 함께 전환
 - **workload 컨트롤** : sequential/random, read/write 비율, burst 크기 → `workload.xml` 형식으로 생성
@@ -147,7 +147,7 @@ table.plan-calendar th {
 
 ### 7-2. Hybrid(log-block) 매핑
 
-- ⚠️ **`Address_Mapping_Unit_Hybrid.cpp` 가 현재 전부 빈 스텁**( 53줄, 모든 메서드가 `{}` 또는 `return 0` ) — [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/)의 정확성 노트 참고
+- ⚠️ **`Address_Mapping_Unit_Hybrid.cpp` 가 현재 전부 빈 스텁**( 53줄, 모든 메서드가 `{}` 또는 `return 0` ) — [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/)의 정확성 노트 참고
 - `Translate_lpa_to_ppa_and_dispatch()` 부터 실제 log-block 로직을 새로 구현해야 함
 - log block pool 관리, switch/partial/full merge 로직 새로 작성
 - `Address_Mapping_Unit_Page_Level` 의 구조( `Cached_Mapping_Table`, `AddressMappingDomain` )를 참고해 유사한 형태로 구현
@@ -162,4 +162,4 @@ table.plan-calendar th {
 
 ## 참고
 
-- 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) · [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/)
+- 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) · [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/)

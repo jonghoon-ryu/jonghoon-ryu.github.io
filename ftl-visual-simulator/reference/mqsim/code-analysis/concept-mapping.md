@@ -1,7 +1,7 @@
 ---
 layout: default
 title: FTL 개념 ↔ 파라미터·모듈 대응
-permalink: /ftl-visual-simulator/mqsim/code-analysis/concept-mapping/
+permalink: /ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/
 ---
 <style>
 table.plan-calendar th, table.plan-calendar td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; overflow-wrap: break-word; word-break: break-word; }
@@ -11,7 +11,7 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 
 # FTL 개념 ↔ 파라미터·모듈 대응
 
-[전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) Session 2 의 "Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해" 항목을 위한 문서. [MQSim 개요](/ftl-visual-simulator/mqsim/overview/)가 "MQSim이 뭔가"를, [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/)이 "코드가 어떻게 짜여 있나"를 다룬다면, 이 문서는 **"FTL 개념 하나하나가 `ssdconfig.xml` 의 어느 파라미터, 코드의 어느 클래스에 대응하는가"**를 개념 중심으로 다시 엮은 것.
+[전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) Session 2 의 "Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해" 항목을 위한 문서. [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/)가 "MQSim이 뭔가"를, [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/)이 "코드가 어떻게 짜여 있나"를 다룬다면, 이 문서는 **"FTL 개념 하나하나가 `ssdconfig.xml` 의 어느 파라미터, 코드의 어느 클래스에 대응하는가"**를 개념 중심으로 다시 엮은 것.
 
 <div style="margin-top: 40px;"></div>
 
@@ -93,7 +93,7 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 </table>
 </div>
 
-**실제로 관찰되는 현상** : CMT 에 없는 LPA 를 요청하면(miss) MQSim 은 "매핑 테이블이 저장된 flash 페이지를 읽어오는" 별도의 flash read 트랜잭션을 만든다( [코드 분석 7-2절](/ftl-visual-simulator/mqsim/code-analysis/overview/) 참고 ) — 이게 바로 "매핑 테이블도 결국 flash 공간을 차지하고, 매핑 miss 도 실제 I/O 지연을 유발한다"는 DFTL 개념이 코드로 구현된 부분.
+**실제로 관찰되는 현상** : CMT 에 없는 LPA 를 요청하면(miss) MQSim 은 "매핑 테이블이 저장된 flash 페이지를 읽어오는" 별도의 flash read 트랜잭션을 만든다( [코드 분석 7-2절](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 참고 ) — 이게 바로 "매핑 테이블도 결국 flash 공간을 차지하고, 매핑 miss 도 실제 I/O 지연을 유발한다"는 DFTL 개념이 코드로 구현된 부분.
 
 <div style="margin-top: 60px;"></div>
 
@@ -122,7 +122,7 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 <tr><td><code>GC_Exec_Threshold</code> = 0.05</td><td>free block pool 이 이 비율 아래로 떨어지면 GC 시작 — "얼마나 급해야 청소를 시작하나". 단, 매 쓰기마다 확인하는 게 아니라 <b>write frontier 블록 하나가 다 차서 새 free 블록으로 교체되는 시점마다</b> 확인한다</td><td><code>GC_and_WL_Unit_Base::gc_threshold</code>, <code>Check_gc_required()</code>( 호출부 : <code>Flash_Block_Manager::Allocate_block_and_page_in_plane_for_*</code> )</td></tr>
 <tr><td><code>Preemptible_GC_Enabled</code> = false</td><td>GC 도중 사용자 요청이 끼어들 수 있게 할지. ⚠️ <b>우리 설정값(false)에서는 <code>GC_is_in_urgent_mode()</code> 가 조건 없이 항상 true 를 반환</b>한다( 코드 첫 줄이 <code>if (!preemptible_gc_enabled) return true;</code> ) — 즉 지금 설정으로는 GC 가 항상 "긴급 모드"로 동작</td><td><code>preemptible_gc_enabled</code>, <code>GC_is_in_urgent_mode()</code></td></tr>
 <tr><td><code>GC_Hard_Threshold</code> = 0.005</td><td>⚠️ <b>지금 설정( Preemptible_GC_Enabled=false )에서는 사실상 죽은 파라미터다</b> — 위 줄 이유로 `GC_is_in_urgent_mode()`가 이 값을 확인하기도 전에 항상 true 를 반환하기 때문. 이 값이 실제로 쓰이려면 `Preemptible_GC_Enabled=true` 로 바꿔야 한다</td><td><code>GC_is_in_urgent_mode()</code> 의 plane 별 free pool 체크 부분( preemptible=true 일 때만 도달 )</td></tr>
-<tr><td><code>GC_Block_Selection_Policy</code> = RGA</td><td>"어떤 블록을 청소 대상(victim)으로 고를까" 정책 — invalid page 가 많은 블록을 고르는 게 이득이지만, 전수 조사(GREEDY)는 비쌈</td><td><code>Check_gc_required()</code> 의 policy별 switch-case(6가지, [코드 분석 7-3절](/ftl-visual-simulator/mqsim/code-analysis/overview/) 표 참고)</td></tr>
+<tr><td><code>GC_Block_Selection_Policy</code> = RGA</td><td>"어떤 블록을 청소 대상(victim)으로 고를까" 정책 — invalid page 가 많은 블록을 고르는 게 이득이지만, 전수 조사(GREEDY)는 비쌈</td><td><code>Check_gc_required()</code> 의 policy별 switch-case(6가지, [코드 분석 7-3절](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 표 참고)</td></tr>
 <tr><td><code>Use_Copyback_for_GC</code> = false</td><td>valid page 이동 시 데이터를 컨트롤러 밖으로 꺼내지 않고 칩 내부에서 바로 복사(copyback)할지 — 속도상 이점이지만 오류 검출이 약해짐</td><td><code>NVM_PHY_ONFI</code> 의 COPYBACK 커맨드 계열</td></tr>
 </table>
 </div>
@@ -185,7 +185,7 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>파라미터</th><th>의미</th><th>담당 코드</th></tr>
-<tr><td><code>Transaction_Scheduling_Policy</code> = PRIORITY_OUT_OF_ORDER</td><td>도착 순서를 지키지 않고(Out-of-Order) 우선순위/소스별로 재정렬해서 실행 — 실제 코드 확인 결과 **매핑(CMT) 관련 트랜잭션이 항상 최우선**, 그 다음은 GC 가 "긴급 모드"인지에 따라 GC/사용자 순서가 바뀜( 우리 설정은 `Preemptible_GC_Enabled=false` 라서 GC 가 항상 긴급 모드 → 매핑 다음은 항상 GC 우선 )</td><td><code>TSU_Priority_OutOfOrder::service_read_transaction()</code>( [코드 분석 7-4절](/ftl-visual-simulator/mqsim/code-analysis/overview/) 참고 )</td></tr>
+<tr><td><code>Transaction_Scheduling_Policy</code> = PRIORITY_OUT_OF_ORDER</td><td>도착 순서를 지키지 않고(Out-of-Order) 우선순위/소스별로 재정렬해서 실행 — 실제 코드 확인 결과 **매핑(CMT) 관련 트랜잭션이 항상 최우선**, 그 다음은 GC 가 "긴급 모드"인지에 따라 GC/사용자 순서가 바뀜( 우리 설정은 `Preemptible_GC_Enabled=false` 라서 GC 가 항상 긴급 모드 → 매핑 다음은 항상 GC 우선 )</td><td><code>TSU_Priority_OutOfOrder::service_read_transaction()</code>( [코드 분석 7-4절](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 참고 )</td></tr>
 <tr><td><code>Plane_Allocation_Scheme</code> = CWDP</td><td>연속된 논리 주소를 채널(C)/Way=칩(W)/다이(D)/플레인(P) 중 어느 순서로 흩뿌릴지 — 코드 주석에 "Way"가 칩의 다른 이름으로 확인됨( 예: `WCDP` 분기 위 주석 "Static: Way first" ). 이름 순서가 곧 "어느 차원이 연속 주소에서 가장 빨리 바뀌는가" — CWDP 는 채널이 가장 빨리 바뀜(채널 인터리빙 우선)</td><td><code>Flash_Plane_Allocation_Scheme_Type</code>, 실제 주소 계산은 <code>Address_Mapping_Unit_Page_Level.cpp</code> 의 24가지 순열 switch-case</td></tr>
 </table>
 </div>
@@ -211,4 +211,4 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 
 ## 참고
 
-- 관련 문서 : [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/) · [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/) · [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [개발 계획](/ftl-visual-simulator/plan/)
+- 관련 문서 : [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/) · [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) · [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [개발 계획](/ftl-visual-simulator/plan/)

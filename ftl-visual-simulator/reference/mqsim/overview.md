@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MQSim 개요
-permalink: /ftl-visual-simulator/mqsim/overview/
+permalink: /ftl-visual-simulator/reference/mqsim/overview/
 ---
 <style>
 table.plan-calendar {
@@ -59,7 +59,7 @@ table.plan-calendar th {
 
 우리가 시각화하려는 개념들이 실제로 다 구현되어 있다.
 
-- **주소 매핑** : page-level ( `Address_Mapping_Unit_Page_Level.cpp` )만 실제로 구현되어 있음 — hybrid/log-block( `Address_Mapping_Unit_Hybrid.cpp` )은 클래스 골격만 있고 내부 로직은 빈 스텁( [코드 분석 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/) 정확성 노트 참고 )
+- **주소 매핑** : page-level ( `Address_Mapping_Unit_Page_Level.cpp` )만 실제로 구현되어 있음 — hybrid/log-block( `Address_Mapping_Unit_Hybrid.cpp` )은 클래스 골격만 있고 내부 로직은 빈 스텁( [코드 분석 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 정확성 노트 참고 )
 - **GC** : victim block 선정( greedy 계열인 RGA 등 ), valid page migration, block erase — `GC_and_WL_Unit_Page_Level.cpp`
 - **마모 평준화** : dynamic( 새 write frontier 를 고를 때 erase count 가 가장 낮은 free 블록을 우선 선택 ) / static( plane 내 최대-최소 erase count 차이가 threshold 를 넘으면 강제 순환 ) — `GC_and_WL_Unit_Base.cpp` + `Flash_Block_Manager_Base.cpp`
 - **Over-provisioning** : `Address_Mapping_Unit_Base` 의 `overprovisioning_ratio` — 물리 용량 중 호스트에 노출하지 않는 여분 비율

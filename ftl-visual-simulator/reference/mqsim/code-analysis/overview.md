@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MQSim 개괄
-permalink: /ftl-visual-simulator/mqsim/code-analysis/overview/
+permalink: /ftl-visual-simulator/reference/mqsim/code-analysis/overview/
 ---
 <style>
 table.plan-calendar {
@@ -207,7 +207,7 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 <tr><td><code>SSD_Device.h/cpp</code></td><td>"SSD 한 대"에 해당하는 조립 클래스. <code>Host_interface</code>, <code>Cache_manager</code>, <code>Firmware</code>(FTL), <code>PHY</code>, <code>Channels</code> 를 실제로 new 해서 서로 연결한다. 헤더 주석에 파이프라인 전체가 한 줄로 적혀 있다.</td></tr>
 <tr><td><code>Host_System.h/cpp</code></td><td>workload 정의로부터 <code>IO_Flow</code> 들을 만들고 <code>SSD_Device</code> 에 붙이는(<code>Attach_ssd_device</code>) 역할.</td></tr>
 <tr><td><code>Execution_Parameter_Set.h/cpp</code></td><td><code>ssdconfig.xml</code> 전체를 담는 최상위 컨테이너. <code>Host_Configuration</code>(Host_Parameter_Set) + <code>SSD_Device_Configuration</code>(Device_Parameter_Set) 두 덩어리로 나뉜다.</td></tr>
-<tr><td><code>Device_Parameter_Set.h/cpp</code>, <code>Flash_Parameter_Set.h/cpp</code>, <code>Host_Parameter_Set.h/cpp</code>, <code>IO_Flow_Parameter_Set.h/cpp</code></td><td>XML 태그 하나하나를 그대로 멤버 변수로 들고 있는 설정 구조체 + <code>XML_serialize</code>/<code>XML_deserialize</code>. [MQSim 개요](/ftl-visual-simulator/mqsim/overview/)의 파라미터 표가 바로 이 파일들의 필드 목록이다.</td></tr>
+<tr><td><code>Device_Parameter_Set.h/cpp</code>, <code>Flash_Parameter_Set.h/cpp</code>, <code>Host_Parameter_Set.h/cpp</code>, <code>IO_Flow_Parameter_Set.h/cpp</code></td><td>XML 태그 하나하나를 그대로 멤버 변수로 들고 있는 설정 구조체 + <code>XML_serialize</code>/<code>XML_deserialize</code>. [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/)의 파라미터 표가 바로 이 파일들의 필드 목록이다.</td></tr>
 <tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">sim/ — 이산 이벤트 엔진</td></tr>
 <tr><td><code>Sim_Object.h</code></td><td>모든 시뮬레이션 구성요소의 베이스. 순수 가상 함수 <code>Execute_simulator_event()</code>( 이벤트 수신 진입점 ), <code>Start_simulation()</code>, <code>Validate_simulation_config()</code> 를 강제한다.</td></tr>
 <tr><td><code>Sim_Event.h</code></td><td>이벤트 하나 = <code>{Fire_time, Target_sim_object, Parameters, Type}</code>. <code>Next_event</code> 포인터로 같은 시각 이벤트를 연결 리스트로 묶는다.</td></tr>
@@ -772,5 +772,5 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 
 ## 참고
 
-- 관련 문서 : [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/) · [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [개발 계획](/ftl-visual-simulator/plan/)
+- 관련 문서 : [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/) · [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [개발 계획](/ftl-visual-simulator/plan/)
 - GitHub : [github.com/CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim)
