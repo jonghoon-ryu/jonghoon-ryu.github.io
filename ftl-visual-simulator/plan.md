@@ -365,6 +365,12 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 - 평일에 시간이 나면 : 다음 세션 내용을 미리 당기거나, 확장 기능( DFTL 매핑 캐시 시각화, 실제 SSD trace 재생 ) 에 투자하거나, 그냥 버퍼로 저축
 - 세션이 통째로 날아가면 억지로 다음 세션에 두 개를 몰아넣지 말고, 세션 11~12 버퍼로 흡수하는 쪽을 우선. 그래도 안 되면 10/11 리뷰 범위를 줄이고 10/17 이후로 일부 항목을 미루기
 
+<div style="margin-top: 60px;"></div>
+
+## 참고
+
+- 관련 문서 : [FTL Visual Simulator 목표](/ftl-visual-simulator/) · [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim/code-analysis-plan/) · [Visual Simulator Interface (초안)](/ftl-visual-simulator/visual-simulator-interface-draft/)
+
 <script>
 (function () {
   var STORAGE_KEY = 'ftl-visual-simulator-plan-progress';
