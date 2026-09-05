@@ -43,10 +43,19 @@ table.plan-calendar th {
 
 ## 1. 프로젝트 뼈대 & 빌드 파이프라인 ( Session 3~4 )
 
-- Vite + React + TS scaffold 생성
+- Vite + React + TS scaffold 생성 ✅ ( 9/5 진행 — [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) )
 - Emscripten 툴체인 설치, MQSim 빌드 확인( 기존 `Makefile` 대신 Emscripten 용 빌드 스크립트 필요 )
 - **`main.cpp` 라이브러리화** — 현재 `main()` 안에 있는 "설정 파싱 → workload 파싱 → 시나리오 루프( `Simulator->Reset()` → `SSD_Device` 생성 → `Host_System` 생성 → `Simulator->Start_simulation()` → `collect_results()` )" 흐름을 재호출 가능한 함수로 분리
 - ( 여유 있으면 ) 이 라이브러리 분리 구조에 **GTest 프레임워크 연결** — 같은 리팩터링을 GMock 테스트 바이너리용으로도 재사용( 7-3 참고 )
+
+> **사전 조사( 9/5, Session 4 예습 )** — Session 4 를 시작하기 전에 "Emscripten 빌드가 애초에 가능한가"만 미리 확인해봄( 라이브러리 리팩터링 없이 기존 `main.cpp` 그대로, `/tmp` 에서 실험, 실제 프로젝트 코드는 변경 없음 ).
+> - MQSim 소스 61개 파일 전부 **수정 없이 그대로 컴파일 성공**( 기존에도 있던 warning 몇 개 외에는 문제 없음 ) — C++ 호환성 리스크는 낮아 보임
+> - 링크는 `emcc` 가 아니라 **`em++`** 로 해야 함( `emcc` 는 C 링커 모드라 libc++ 심볼이 전부 undefined 로 뜸 )
+> - 기본 옵션으로 실행하면 두 가지가 바로 걸림 — 전부 빌드 플래그로 해결됨, 코드 수정 불필요:
+>   - 스택 오버플로우 → **`-sSTACK_SIZE=8MB`**( 기본 64KB 는 MQSim 에 너무 작음 )
+>   - OOM → **`-sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=128MB`**( 기본 16MB 는 너무 작음 )
+> - 위 플래그로 빌드해 Node 에서 `ssdconfig.xml`/`workload.xml` 시나리오 1(synthetic)을 실행 → **결과가 9/4 네이티브 실행과 동일**( 요청 수·응답시간 일치 ). 시나리오 2 는 오래 걸리는데, 이건 버그가 아니라 그 시나리오 자체가 `Stop_Time=10,000,000,000` · `Total_Requests_To_Generate=0`( 무제한 )으로 설정된 긴 시나리오라서( 네이티브에서도 마찬가지로 오래 걸릴 것 ). 시나리오 3(trace 기반)은 이번엔 `traces/` 를 같이 안 실었어서 테스트 안 함.
+> - 결론 : Emscripten 빌드 자체는 **막히는 지점이 아님**. Session 4 의 실제 작업은 그대로 "`main.cpp` 라이브러리화 + 위 빌드 플래그를 정식 빌드 스크립트에 반영"이 됨.
 
 <div style="margin-top: 60px;"></div>
 
