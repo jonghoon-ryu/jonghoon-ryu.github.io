@@ -66,6 +66,24 @@ table.plan-calendar .buffer-mark {
   cursor: pointer;
   user-select: none;
 }
+.session li {
+  position: relative;
+}
+.session li > input.item-check {
+  margin-right: 0.5em;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.session li.item-checked {
+  color: #999;
+  text-decoration: line-through;
+  text-decoration-color: #bbb;
+}
+.session li.item-checked > ul,
+.session li.item-checked > ol {
+  text-decoration: none;
+  color: inherit;
+}
 </style>
 
 # FTL 시각화 시뮬레이터 — 전체 개발 계획
@@ -416,6 +434,43 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
     });
 
     render();
+  });
+})();
+
+(function () {
+  var STORAGE_KEY = 'ftl-visual-simulator-plan-item-progress';
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) { return {}; }
+  }
+  function save(state) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var state = load();
+
+    document.querySelectorAll('.session').forEach(function (sessionEl) {
+      var sid = sessionEl.getAttribute('data-session');
+      var items = sessionEl.querySelectorAll('li');
+
+      items.forEach(function (li, idx) {
+        var itemId = 's' + sid + '-i' + idx;
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'item-check';
+        cb.checked = !!state[itemId];
+        if (cb.checked) li.classList.add('item-checked');
+
+        cb.addEventListener('change', function () {
+          state[itemId] = cb.checked;
+          save(state);
+          li.classList.toggle('item-checked', cb.checked);
+        });
+
+        li.insertBefore(cb, li.firstChild);
+      });
+    });
   });
 })();
 </script>
