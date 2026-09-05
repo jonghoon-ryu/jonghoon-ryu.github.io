@@ -144,6 +144,28 @@ Host_Interface <-> Data_Cache_Manager <-> NVM_Firmware(FTL) <-> NVM_PHY <-> NVM_
 
 <div style="margin-top: 60px;"></div>
 
+## 5. 시각화에 가져갈 부분 vs 단순화할 부분
+
+Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대로 화면에 옮기고 뭘 걷어낼지 미리 정리해둔다( MVP 범위 확정 자체는 Session 3 에서 ).
+
+**그대로 가져갈 것 ( hook 을 심어 실시간으로 노출할 대상 )**
+
+- `Flash_Block_Manager` 의 `Block_Pool_Slot_Type`( valid/invalid/free, erase count ) → flash grid 색상 그 자체
+- `Address_Mapping_Unit_Page_Level` 의 매핑 갱신 → 매핑 테이블 패널
+- `GC_and_WL_Unit_Page_Level` 의 트리거/victim 선정/migration/erase → GC 애니메이션 + 이벤트 로그
+- `Stats` 의 핵심 카운터( `Total_GC_Executions`, WAF 관련 값 ) → 통계 대시보드
+
+**단순화하거나 뒤로 미룰 것**
+
+- TSU 의 채널/칩 스케줄링 세부( 어떤 정책이 어떤 순서로 트랜잭션을 고르는지 )와 `ONFI_Channel` 버스 경합 타이밍 — MVP 에서는 "요청이 실행된다" 정도로만 보여주고, 채널별 타이밍 시각화는 확장 목표로 미룸
+- PCIe 링크 지연시간, SATA 호스트 인터페이스 — 데모는 NVMe 하나로 고정, SATA 비교는 다루지 않음
+- CMT( Cached Mapping Table ) 의 partial caching( hit/miss ) — 초기 MVP 는 "매핑 테이블 전체"를 보여주는 것으로 단순화하고, DFTL 류 캐시 hit/miss 시각화는 확장 기능으로 미룸
+- `Data_Cache_Manager` 의 DRAM 캐시 세부( row size, tRCD/tCL/tRP 등 타이밍 ) — 시뮬레이션 정확도 유지에만 쓰고 화면에는 노출 안 함
+
+이 구분은 Session 3( 설계 )에서 MVP 범위·파라미터 패널 구성을 확정할 때 그대로 기준이 된다.
+
+<div style="margin-top: 60px;"></div>
+
 ## 참고
 
 - 관련 문서 : [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [개발 계획](/ftl-visual-simulator/plan/)
