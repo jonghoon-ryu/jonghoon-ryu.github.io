@@ -119,9 +119,9 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>파라미터</th><th>FTL 개념상 의미</th><th>담당 코드</th></tr>
-<tr><td><code>GC_Exec_Threshold</code> = 0.05</td><td>free page 비율이 이 아래로 떨어지면 GC 시작 — "얼마나 급해야 청소를 시작하나"</td><td><code>GC_and_WL_Unit_Base::gc_threshold</code>, <code>Check_gc_required()</code></td></tr>
-<tr><td><code>GC_Hard_Threshold</code> = 0.005</td><td>이보다 더 급하면 "긴급 모드" — 우선순위 없이 무조건 GC 먼저</td><td><code>GC_is_in_urgent_mode()</code></td></tr>
-<tr><td><code>Preemptible_GC_Enabled</code> = false</td><td>GC 도중 사용자 요청이 끼어들 수 있게 할지(false=끼어들기 불가, 매 GC 를 방해 없이 완주)</td><td><code>preemptible_gc_enabled</code></td></tr>
+<tr><td><code>GC_Exec_Threshold</code> = 0.05</td><td>free block pool 이 이 비율 아래로 떨어지면 GC 시작 — "얼마나 급해야 청소를 시작하나". 단, 매 쓰기마다 확인하는 게 아니라 <b>write frontier 블록 하나가 다 차서 새 free 블록으로 교체되는 시점마다</b> 확인한다</td><td><code>GC_and_WL_Unit_Base::gc_threshold</code>, <code>Check_gc_required()</code>( 호출부 : <code>Flash_Block_Manager::Allocate_block_and_page_in_plane_for_*</code> )</td></tr>
+<tr><td><code>Preemptible_GC_Enabled</code> = false</td><td>GC 도중 사용자 요청이 끼어들 수 있게 할지. ⚠️ <b>우리 설정값(false)에서는 <code>GC_is_in_urgent_mode()</code> 가 조건 없이 항상 true 를 반환</b>한다( 코드 첫 줄이 <code>if (!preemptible_gc_enabled) return true;</code> ) — 즉 지금 설정으로는 GC 가 항상 "긴급 모드"로 동작</td><td><code>preemptible_gc_enabled</code>, <code>GC_is_in_urgent_mode()</code></td></tr>
+<tr><td><code>GC_Hard_Threshold</code> = 0.005</td><td>⚠️ <b>지금 설정( Preemptible_GC_Enabled=false )에서는 사실상 죽은 파라미터다</b> — 위 줄 이유로 `GC_is_in_urgent_mode()`가 이 값을 확인하기도 전에 항상 true 를 반환하기 때문. 이 값이 실제로 쓰이려면 `Preemptible_GC_Enabled=true` 로 바꿔야 한다</td><td><code>GC_is_in_urgent_mode()</code> 의 plane 별 free pool 체크 부분( preemptible=true 일 때만 도달 )</td></tr>
 <tr><td><code>GC_Block_Selection_Policy</code> = RGA</td><td>"어떤 블록을 청소 대상(victim)으로 고를까" 정책 — invalid page 가 많은 블록을 고르는 게 이득이지만, 전수 조사(GREEDY)는 비쌈</td><td><code>Check_gc_required()</code> 의 policy별 switch-case(6가지, [코드 분석 7-3절](/ftl-visual-simulator/mqsim/code-analysis/) 표 참고)</td></tr>
 <tr><td><code>Use_Copyback_for_GC</code> = false</td><td>valid page 이동 시 데이터를 컨트롤러 밖으로 꺼내지 않고 칩 내부에서 바로 복사(copyback)할지 — 속도상 이점이지만 오류 검출이 약해짐</td><td><code>NVM_PHY_ONFI</code> 의 COPYBACK 커맨드 계열</td></tr>
 </table>
@@ -133,14 +133,16 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 
 ## 4. 마모 평준화 (Wear Leveling)
 
-**FTL 개념** : 블록은 지울 수 있는 횟수(P/E cycle)에 물리적 한계가 있다. 특정 블록만 계속 지워지면 그 블록만 먼저 죽는다 — 그래서 "지워지는 빈도를 여러 블록에 고르게 분산"시키는 게 마모 평준화. GC 의 victim 선정이 확률적이면(RGA/RANDOM) 자연히 어느 정도 분산되지만(dynamic WL), 아예 안 바뀌는 "차가운" 데이터가 있는 블록은 GC 대상이 될 기회 자체가 없어서 별도 보정(static WL)이 필요하다.
+**FTL 개념** : 블록은 지울 수 있는 횟수(P/E cycle)에 물리적 한계가 있다. 특정 블록만 계속 지워지면 그 블록만 먼저 죽는다 — 그래서 "지워지는 빈도를 여러 블록에 고르게 분산"시키는 게 마모 평준화. 아예 안 바뀌는 "차가운" 데이터가 있는 블록은 GC 대상이 될 기회 자체가 없어서 별도 보정(static WL)이 필요하다.
+
+> ⚠️ **정정( 9/5 재확인 )** — 이전 버전 이 문서는 "dynamic WL 은 GC 의 확률적 victim 선정(RGA/RANDOM)에 자연히 녹아 있다"고 적었는데, 실제 코드를 더 따라가 보니 **그건 틀렸고 별도의 명시적 메커니즘**이 있었다. GC 로 블록을 지우고 나면(`Flash_Block_Manager::Add_erased_block_to_pool()`), 그 블록을 free pool( `PlaneBookKeepingType::Free_block_pool`, 실제로는 `erase_count → 블록` 형태의 `std::multimap` )에 넣을 때 `Add_to_free_block_pool(block, consider_dynamic_wl)` 이 호출된다 — `consider_dynamic_wl`(=`Dynamic_Wearleveling_Enabled`) 이 true 면 **블록의 실제 erase count 를 key 로** 넣고, false 면 전부 key 0 으로 넣는다. 그리고 다음 write frontier 를 고르는 `Get_a_free_block()` 은 **항상 `Free_block_pool.begin()`(가장 작은 key)을 꺼낸다** — 즉 dynamic WL 이 켜져 있으면 **"제일 적게 지워진 free 블록을 다음 쓰기 대상으로 우선 배정"**하는 방식으로 마모를 분산시킨다. GC 의 victim 선정 정책(RGA 등)과는 완전히 별개의, 쓰기 쪽(free pool 배정)에서 일어나는 메커니즘.
 
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>파라미터</th><th>의미</th><th>담당 코드</th></tr>
-<tr><td><code>Dynamic_Wearleveling_Enabled</code> = true</td><td>GC victim 선정이 마모 분산도 함께 고려하는지( 사실상 RGA/RANDOM 계열 정책 자체가 이 역할 )</td><td><code>Check_gc_required()</code> 의 확률적 정책들</td></tr>
-<tr><td><code>Static_Wearleveling_Enabled</code> = true, <code>Static_Wearleveling_Threshold</code> = 100</td><td>GC 로 커버 안 되는 차가운 블록을 강제로 순환시키는 문턱값( plane 내 최대-최소 erase count 차이 )</td><td><code>check_static_wl_required()</code>, <code>run_static_wearleveling()</code>, <code>Get_coldest_block_id()</code></td></tr>
-<tr><td><code>Block_PE_Cycles_Limit</code> = 10000</td><td>블록 하나가 버틸 수 있는 최대 erase 횟수 — 마모 평준화의 목표가 "이 한계에 도달하는 시점을 블록들 사이에 최대한 늦고 고르게" 만드는 것</td><td><code>max_allowed_block_erase_count</code>(FTL 생성자 인자)</td></tr>
+<tr><td><code>Dynamic_Wearleveling_Enabled</code> = true</td><td>새 write frontier 를 고를 때 free pool 에서 <b>erase count 가 가장 낮은 블록을 우선 선택</b>할지( off 면 그냥 삽입 순서 = FIFO 에 가깝게 선택 )</td><td><code>GC_and_WL_Unit_Base::Use_dynamic_wearleveling()</code> → <code>Flash_Block_Manager::Add_erased_block_to_pool()</code> → <code>PlaneBookKeepingType::Add_to_free_block_pool()</code> / <code>Get_a_free_block()</code></td></tr>
+<tr><td><code>Static_Wearleveling_Enabled</code> = true, <code>Static_Wearleveling_Threshold</code> = 100</td><td>GC/dynamic WL 로도 커버 안 되는 차가운 블록을 강제로 순환시키는 문턱값( plane 내 최대-최소 erase count 차이 ≥ 100 이면 발동 )</td><td><code>GC_and_WL_Unit_Base::check_static_wl_required()</code>/<code>run_static_wearleveling()</code>(⚠️ Page_Level 이 아니라 <b>Base.cpp</b>), <code>Flash_Block_Manager_Base::Get_coldest_block_id()</code>/<code>Get_min_max_erase_difference()</code></td></tr>
+<tr><td><code>Block_PE_Cycles_Limit</code> = 10000</td><td>⚠️ <b>실제로는 강제(enforce)되지 않는다</b> — 코드로 확인한 결과 이 값은 통계용 <code>Stats::Block_erase_histogram</code> 배열의 크기를 정하는 데만 쓰이고, 어떤 블록이 이 횟수에 도달해도 "퇴역(bad block)"시키는 로직은 없다. 마모 평준화가 하는 일은 "언젠가 이 한계에 도달할 시점을 최대한 늦고 고르게 만드는" 통계적 목표일 뿐, 한계를 넘었을 때의 처리까지 시뮬레이션하지는 않음</td><td><code>max_allowed_block_erase_count</code>(FTL 생성자 인자) → <code>Stats::Init_stats()</code> 배열 크기로만 사용</td></tr>
 </table>
 </div>
 
@@ -183,8 +185,8 @@ table.plan-calendar th { background: #f5f5f5; color: #333; }
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>파라미터</th><th>의미</th><th>담당 코드</th></tr>
-<tr><td><code>Transaction_Scheduling_Policy</code> = PRIORITY_OUT_OF_ORDER</td><td>도착 순서를 지키지 않고(Out-of-Order) 우선순위/소스별로 재정렬해서 실행 — read 를 GC/매핑 write 보다 먼저</td><td><code>TSU_Priority_OutOfOrder::Schedule()</code>( [코드 분석 7-4절](/ftl-visual-simulator/mqsim/code-analysis/) 참고 )</td></tr>
-<tr><td><code>Plane_Allocation_Scheme</code> = CWDP</td><td>연속된 논리 주소를 채널(C)/칩(W=Chip 약자와 무관, MQSim 표기)/다이(D)/플레인(P) 중 어느 순서로 흩뿌릴지 — 순서에 따라 병렬성 패턴이 달라짐</td><td><code>Flash_Plane_Allocation_Scheme_Type</code></td></tr>
+<tr><td><code>Transaction_Scheduling_Policy</code> = PRIORITY_OUT_OF_ORDER</td><td>도착 순서를 지키지 않고(Out-of-Order) 우선순위/소스별로 재정렬해서 실행 — 실제 코드 확인 결과 **매핑(CMT) 관련 트랜잭션이 항상 최우선**, 그 다음은 GC 가 "긴급 모드"인지에 따라 GC/사용자 순서가 바뀜( 우리 설정은 `Preemptible_GC_Enabled=false` 라서 GC 가 항상 긴급 모드 → 매핑 다음은 항상 GC 우선 )</td><td><code>TSU_Priority_OutOfOrder::service_read_transaction()</code>( [코드 분석 7-4절](/ftl-visual-simulator/mqsim/code-analysis/) 참고 )</td></tr>
+<tr><td><code>Plane_Allocation_Scheme</code> = CWDP</td><td>연속된 논리 주소를 채널(C)/Way=칩(W)/다이(D)/플레인(P) 중 어느 순서로 흩뿌릴지 — 코드 주석에 "Way"가 칩의 다른 이름으로 확인됨( 예: `WCDP` 분기 위 주석 "Static: Way first" ). 이름 순서가 곧 "어느 차원이 연속 주소에서 가장 빨리 바뀌는가" — CWDP 는 채널이 가장 빨리 바뀜(채널 인터리빙 우선)</td><td><code>Flash_Plane_Allocation_Scheme_Type</code>, 실제 주소 계산은 <code>Address_Mapping_Unit_Page_Level.cpp</code> 의 24가지 순열 switch-case</td></tr>
 </table>
 </div>
 
