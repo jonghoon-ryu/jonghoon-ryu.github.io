@@ -51,10 +51,21 @@
 }
 
 .nav-group summary {
+  display: flex;
+  align-items: center;
   cursor: pointer;
   list-style: none;
   color: #ddd;
   font-size: 1.05rem;
+}
+
+/* The <a> only wrapped its own text width, leaving most of the row
+   clickable only for the details-toggle (not the link) - that's why a
+   click on the row often just expanded the tree instead of navigating.
+   Stretching the link across the row makes a single click do both. */
+.nav-group summary a {
+  flex: 1;
+  color: inherit;
 }
 
 .nav-group summary:hover {
