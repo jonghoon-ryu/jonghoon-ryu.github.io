@@ -49,6 +49,15 @@
               <summary><a href="{{ '/ftl-visual-simulator/' | relative_url }}">FTL Visual Simulator</a></summary>
               <ul class="nav-subitems">
                 <li>
+                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/plan/' %} open{% endif %}>
+                    <summary><a href="{{ '/ftl-visual-simulator/plan/' | relative_url }}">개발 계획</a></summary>
+                    <ul class="nav-subitems">
+                      <li><a href="{{ '/ftl-visual-simulator/plan/full-plan/' | relative_url }}">전체 개발 계획</a></li>
+                      <li><a href="{{ '/ftl-visual-simulator/plan/code-analysis-plan/' | relative_url }}">MQSim 코드 분석 계획</a></li>
+                    </ul>
+                  </details>
+                </li>
+                <li>
                   <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/mqsim/' %} open{% endif %}>
                     <summary><a href="{{ '/ftl-visual-simulator/mqsim/' | relative_url }}">MQSim</a></summary>
                     <ul class="nav-subitems">
@@ -77,15 +86,6 @@
                           </ul>
                         </details>
                       </li>
-                    </ul>
-                  </details>
-                </li>
-                <li>
-                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/plan/' %} open{% endif %}>
-                    <summary><a href="{{ '/ftl-visual-simulator/plan/' | relative_url }}">개발 계획</a></summary>
-                    <ul class="nav-subitems">
-                      <li><a href="{{ '/ftl-visual-simulator/plan/full-plan/' | relative_url }}">전체 개발 계획</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/plan/code-analysis-plan/' | relative_url }}">MQSim 코드 분석 계획</a></li>
                     </ul>
                   </details>
                 </li>
