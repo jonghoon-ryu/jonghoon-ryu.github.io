@@ -17,5 +17,5 @@ FTL 시각화 시뮬레이터를 실제로 만들어가면서 나오는 산출�
 
 ## 관련 문서
 
-- [FTL Visual Simulator 목표](/ftl-visual-simulator/)
+- [개발 동기/목표](/ftl-visual-simulator/motivation-goals/)
 - [개발 계획](/ftl-visual-simulator/plan/)
