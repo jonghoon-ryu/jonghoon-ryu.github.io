@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MQSim 코드 분석 계획
-permalink: /ftl-visual-simulator/mqsim/code-analysis-plan/
+permalink: /ftl-visual-simulator/plan/code-analysis-plan/
 ---
 <style>
 .progress-box {
@@ -77,7 +77,7 @@ table.plan-calendar .row-mark {
 ## 왜 이 순서인가
 
 - **하향식( top-down )** : 전체 그림 → 요청이 들어오는 입구 → FTL 핵심(매핑·GC·WL) → 요청이 빠져나가는 출구(스케줄링·물리) → 입출력 주변부(캐시·통계·workload) → 마지막에 전체를 한 번에 관통
-- 각 세션은 [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) 문서의 해당 부분을 먼저 훑고, 실제 소스 파일을 열어 문서의 설명과 코드가 정말 일치하는지 확인하는 방식으로 진행
+- 각 세션은 [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/) 문서의 해당 부분을 먼저 훑고, 실제 소스 파일을 열어 문서의 설명과 코드가 정말 일치하는지 확인하는 방식으로 진행
 - [개발 계획](/ftl-visual-simulator/plan/) 의 "MQSim/FTL 심화" 항목과 내용이 겹치는 세션도 있음 — 여긴 그걸 하나로 모아 더 깊게 파는 버전
 
 <div style="margin-top: 60px;"></div>
@@ -385,7 +385,7 @@ table.plan-calendar .row-mark {
 
 읽을 파일 : `src/ssd/Address_Mapping_Unit_Hybrid.h/cpp`, `GC_and_WL_Unit_Base.cpp` 의 wear-leveling 관련 부분( `check_static_wl_required`, `run_static_wearleveling`, `Use_dynamic_wearleveling` — ⚠️ Page_Level.cpp 가 아니라 **Base.cpp** 에 있음, 9/5 재확인 ), `Flash_Block_Manager_Base.cpp` 의 `Add_to_free_block_pool`/`Get_a_free_block`/`Get_coldest_block_id`/`Get_min_max_erase_difference`
 
-> ⚠️ **계획 수정 (9/5 코드 재확인)** : `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어보면 **모든 메서드가 빈 스텁**( `{}` 또는 `return 0`, 파일 전체 53줄 )이다. log-block merge(switch/partial/full) 로직이 코드에 없다 — 애초 계획이 "hybrid 매핑은 이미 있으니 hook 만 추가하면 된다"고 잘못 전제하고 있었다. 그래서 이 세션은 **읽을 코드가 있는 wear-leveling 쪽에 집중**하고, hybrid 매핑은 Cost-Benefit GC 와 같은 성격의 확장 목표( 13~16번 버퍼, 시간이 남을 때 직접 구현 )로 옮긴다. 자세한 근거는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)의 "정확성 노트" 참고.
+> ⚠️ **계획 수정 (9/5 코드 재확인)** : `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어보면 **모든 메서드가 빈 스텁**( `{}` 또는 `return 0`, 파일 전체 53줄 )이다. log-block merge(switch/partial/full) 로직이 코드에 없다 — 애초 계획이 "hybrid 매핑은 이미 있으니 hook 만 추가하면 된다"고 잘못 전제하고 있었다. 그래서 이 세션은 **읽을 코드가 있는 wear-leveling 쪽에 집중**하고, hybrid 매핑은 Cost-Benefit GC 와 같은 성격의 확장 목표( 13~16번 버퍼, 시간이 남을 때 직접 구현 )로 옮긴다. 자세한 근거는 [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/)의 "정확성 노트" 참고.
 
 <div style="overflow-x:auto;">
 <svg viewBox="0 0 820 220" style="width:100%;max-width:680px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
@@ -507,7 +507,7 @@ table.plan-calendar .row-mark {
 </svg>
 </div>
 
-- `TSU.Schedule()` 이 여러 채널/칩 중 무엇을 언제 실행시킬지 정하는 기준 — 실제로는 채널별 라운드로빈 + 칩 하나당 read>write>erase 우선순위( `TSU_Priority_OutOfOrder::Schedule()` 실제 코드로 확인, [코드 분석 7-4절](/ftl-visual-simulator/mqsim/code-analysis/) 참고 )
+- `TSU.Schedule()` 이 여러 채널/칩 중 무엇을 언제 실행시킬지 정하는 기준 — 실제로는 채널별 라운드로빈 + 칩 하나당 read>write>erase 우선순위( `TSU_Priority_OutOfOrder::Schedule()` 실제 코드로 확인, [코드 분석 7-4절](/ftl-visual-simulator/mqsim/code-analysis/overview/) 참고 )
 - ONFI 타이밍 모델( read/program/erase 지연시간 )이 어디서 더해지는지 — 위 그림의 실제 배율을 코드(`Get_command_execution_latency()`)에서 확인
 - 채널 하나에 여러 칩이 붙을 때 버스 경합이 어떻게 처리되는지 — `ONFI_Channel_Base::SetStatus()` 가 상태 전이를 어떻게 검증하는지
 - 체크포인트 : flash transaction 하나가 큐에 들어가서 실제로 실행되기까지의 대기 이유를 설명, program 이 read 보다 왜 10배 느린지 NAND 물리 원리로 설명
@@ -710,7 +710,7 @@ Claude 가 추가한 `COST_BENEFIT` 정책 코드를 리뷰
 
 ## 참고
 
-- 관련 문서 : [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) · [개발 계획](/ftl-visual-simulator/plan/)
+- 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) · [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/)
 
 <script>
 (function () {

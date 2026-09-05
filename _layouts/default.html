@@ -53,14 +53,27 @@
                     <summary><a href="{{ '/ftl-visual-simulator/mqsim/' | relative_url }}">MQSim</a></summary>
                     <ul class="nav-subitems">
                       <li><a href="{{ '/ftl-visual-simulator/mqsim/overview/' | relative_url }}">MQSim 개요</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/mqsim/code-analysis/' | relative_url }}">MQSim 코드 분석</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/mqsim/code-analysis-plan/' | relative_url }}">MQSim 코드 분석 계획</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/mqsim/concept-mapping/' | relative_url }}">FTL 개념 ↔ 파라미터·모듈 대응</a></li>
+                      <li>
+                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/mqsim/code-analysis/' %} open{% endif %}>
+                          <summary><a href="{{ '/ftl-visual-simulator/mqsim/code-analysis/' | relative_url }}">MQSim 코드 분석</a></summary>
+                          <ul class="nav-subitems">
+                            <li><a href="{{ '/ftl-visual-simulator/mqsim/code-analysis/overview/' | relative_url }}">MQSim 개괄</a></li>
+                            <li><a href="{{ '/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/' | relative_url }}">FTL 개념 ↔ 파라미터·모듈 대응</a></li>
+                          </ul>
+                        </details>
+                      </li>
                     </ul>
                   </details>
                 </li>
                 <li><a href="{{ '/ftl-visual-simulator/visual-simulator-interface-draft/' | relative_url }}">Visual Simulator Interface (초안)</a></li>
-                <li><a href="{{ '/ftl-visual-simulator/plan/' | relative_url }}">개발 계획</a></li>
+                <li>
+                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/plan/' %} open{% endif %}>
+                    <summary><a href="{{ '/ftl-visual-simulator/plan/' | relative_url }}">개발 계획</a></summary>
+                    <ul class="nav-subitems">
+                      <li><a href="{{ '/ftl-visual-simulator/plan/code-analysis-plan/' | relative_url }}">MQSim 코드 분석 계획</a></li>
+                    </ul>
+                  </details>
+                </li>
               </ul>
             </details>
           </li>

@@ -85,7 +85,7 @@ table.plan-calendar .buffer-mark {
 - **구현은 전부 Claude 담당** — Ryu 는 visual simulator 를 만드는 방법을 몰라도 됨. 설계·코딩·빌드·배포 등 구체적인 작업은 모두 Claude 가 하고, 여러 방식 중 선택이 필요한 지점( 예 : 매핑 방식, 색상 스킴, GC 정책 이름 등 )에서만 Claude 가 Ryu 에게 옵션을 제시해 결정을 구함
 - **모든 세션에 FTL 개념 공부 + MQSim 코드 이해가 들어감** — Ryu 의 역할은 방향 결정, 코드/결과 리뷰, 브라우저 테스트에 더해 **매 세션 그 단계와 연결된 FTL 개념과 MQSim 실제 소스코드를 함께 이해하는 것**( 각 세션의 "MQSim/FTL 심화" 항목 )
 - **( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기** — 조사 결과 MQSim 은 GC 정책으로 GREEDY/RGA/RANDOM/RANDOM_P/RANDOM_PP/FIFO 만 지원하고 **Cost-Benefit GC**( LFS/Rosenblum 방식, valid page 비율과 block age 를 함께 고려하는 정책, Session 1/5 에서 배운 "greedy vs cost-benefit" 비교의 그 cost-benefit )는 없음 → 시간이 남으면 13~16번 버퍼 기간에 이 정책을 새로 구현해 RGA 와 비교해보는 것을 확장 목표로 삼음
-- **( 시간이 여유로울 때 ) Google Test/Mock 기반 테스트 스위트 추가** — MQSim 은 테스트가 전혀 없지만 `Address_Mapping_Unit_Base`/`Flash_Block_Manager_Base`/`GC_and_WL_Unit_Base`/`TSU_Base` 가 이미 추상 인터페이스라 GMock 으로 단위 테스트가 가능함. **Session 4 가 최적 타이밍** — WASM 임베딩용 라이브러리 분리 리팩터링과 테스트 바이너리에 필요한 리팩터링이 동일하기 때문( 자세한 이유는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) 참고 ). 시간이 부족하면 골든/회귀 테스트만 먼저 걸고, 진짜 단위 테스트는 13~16번 버퍼로 미룸
+- **( 시간이 여유로울 때 ) Google Test/Mock 기반 테스트 스위트 추가** — MQSim 은 테스트가 전혀 없지만 `Address_Mapping_Unit_Base`/`Flash_Block_Manager_Base`/`GC_and_WL_Unit_Base`/`TSU_Base` 가 이미 추상 인터페이스라 GMock 으로 단위 테스트가 가능함. **Session 4 가 최적 타이밍** — WASM 임베딩용 라이브러리 분리 리팩터링과 테스트 바이너리에 필요한 리팩터링이 동일하기 때문( 자세한 이유는 [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/) 참고 ). 시간이 부족하면 골든/회귀 테스트만 먼저 걸고, 진짜 단위 테스트는 13~16번 버퍼로 미룸
 - **초심자 학습 환경이라는 목표를 설계 단계부터 반영** — MQSim 의 raw 파라미터/통계를 그대로 노출하면 초심자에게는 그냥 숫자 나열일 뿐임. Session 3 설계 때부터 "쉬운 용어로 된 툴팁", "개념별 프리셋 시나리오( 매핑 기본 / GC 시연 / 마모평준화 시연 )", "지금 무슨 일이 일어나고 있는지 평범한 말로 알려주는 설명 패널" 을 MVP 범위에 포함시킴 — Session 11(다듬기)의 "툴팁/범례" 는 이 원칙을 마무리하는 단계일 뿐, 처음부터 있어야 하는 요구사항
 
 <div style="margin-top: 40px;"></div>
@@ -155,7 +155,7 @@ table.plan-calendar .buffer-mark {
 
 **Ryu 가 할 일**
 - **MQSim/FTL 심화** : [MQSim 문서](/ftl-visual-simulator/mqsim/) 를 읽으며 MQSim 이 뭘 모델링하는지, 어떤 기능이 있는지, 다른 오픈소스 시뮬레이터와 비교했을 때 왜 이걸 골랐는지 개괄적으로 이해
-- Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램( [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) )을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해
+- Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램( [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/) )을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해
 - **강의 시청** : [Understanding & Designing Modern Storage Systems - L3: MQSim](https://www.youtube.com/watch?v=9YZGHl6yxBc) — 제목상 "스토리지 시스템 설계" 강의 시리즈의 MQSim 전용 회차(L3). 위 문서들로 정리한 내용을 강의 설명으로 한 번 더 교차 확인하는 용도( 영상 자체를 열어보지 못했으니 실제 내용은 시청하면서 직접 확인 필요 )
 
 **Claude 가 할 일**
@@ -164,8 +164,8 @@ table.plan-calendar .buffer-mark {
   - 주목할 점 : 기본 설정(75% occupancy, 짧은 워크로드)으로는 `Total_GC_Executions="0"` — GC 가 한 번도 안 일어남. Session 5 에서 GC 를 실제로 보려면 occupancy 를 높이거나 워크로드를 늘려야 함
 - XML 설정 구조( Flash parameter, FTL parameter, GC 정책, cache ) 조사·정리
 - 주요 모듈 조사 : Host_Interface, IO_Flow, Address_Mapping_Unit, Flash_Block_Manager, GC_and_WL_Unit, NVM_PHY_ONFI
-- ( 9/5 추가 진행 ) [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) 문서 신설, [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)에 파일별 상세 설명(FTL 코드 라인 수 포함) + 콜 플로우 다이어그램 8개 추가
-- ( 9/5 추가 진행 ) 코드 재검증으로 이 개발 계획과 [MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim/code-analysis-plan/)의 오류 정정 : Session 6 을 "Hybrid 매핑 구현되어 있음" 전제에서 "실제로는 빈 스텁 → 마모 평준화 중심"으로 수정, Session 7( 코드 분석 계획 )을 Host 딥다이브에서 "Host 개념만 + FTL 통합 점검"으로 축소, GC 트리거 조건/dynamic wear-leveling 동작 방식/`Preemptible_GC_Enabled` 영향/bad block 관리 부재 등 잘못 적었던 내용 정정
+- ( 9/5 추가 진행 ) [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/) 문서 신설, [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/)에 파일별 상세 설명(FTL 코드 라인 수 포함) + 콜 플로우 다이어그램 8개 추가
+- ( 9/5 추가 진행 ) 코드 재검증으로 이 개발 계획과 [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/)의 오류 정정 : Session 6 을 "Hybrid 매핑 구현되어 있음" 전제에서 "실제로는 빈 스텁 → 마모 평준화 중심"으로 수정, Session 7( 코드 분석 계획 )을 Host 딥다이브에서 "Host 개념만 + FTL 통합 점검"으로 축소, GC 트리거 조건/dynamic wear-leveling 동작 방식/`Preemptible_GC_Enabled` 영향/bad block 관리 부재 등 잘못 적었던 내용 정정
 - ( 9/5 추가 진행 ) 문서 테이블이 컨테이너보다 넓어져 가로로 안 보이던 버그 발견·수정( `table-layout: fixed` 누락 + 일부 페이지에 스타일 블록 자체가 없었음 )
 - 결과물 : Host request → FTL 매핑 → Flash controller → NAND 로 이어지는 파이프라인 다이어그램, "시각화에 그대로 가져갈 부분 / 단순화할 부분" 정리
 
@@ -213,7 +213,7 @@ table.plan-calendar .buffer-mark {
 - Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 )
 - `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성
 - host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인
-- ( 시간이 여유로울 때 ) 위에서 만든 라이브러리 분리 구조에 **GTest 프레임워크를 바로 연결** — main.cpp 리팩터링을 두 번 하지 않으려면 지금이 최적의 타이밍( 자세한 이유는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) 참고 )
+- ( 시간이 여유로울 때 ) 위에서 만든 라이브러리 분리 구조에 **GTest 프레임워크를 바로 연결** — main.cpp 리팩터링을 두 번 하지 않으려면 지금이 최적의 타이밍( 자세한 이유는 [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/) 참고 )
 
 </div>
 
@@ -240,9 +240,9 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 ### 6. (9/27) 시뮬레이션 엔진 (3) — 마모평준화 노출과 바인딩 마무리
 
-> ⚠️ **계획 수정( 9/5 코드 재확인)** : `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어보니 **모든 메서드가 빈 스텁**( 53줄, log-block merge 로직 없음 )이었다. "hybrid 매핑도 이미 구현되어 있어서 hook 만 추가하면 된다"는 원래 전제가 틀렸음 — 자세한 근거는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)의 "정확성 노트" 참고. 그래서 이 세션은 **실제로 구현되어 있는 마모 평준화(dynamic/static WL)에 집중**하고, hybrid 매핑은 직접 구현이 필요한 확장 목표( Cost-Benefit GC 와 같은 성격, 13~16번 버퍼 )로 옮긴다.
+> ⚠️ **계획 수정( 9/5 코드 재확인)** : `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어보니 **모든 메서드가 빈 스텁**( 53줄, log-block merge 로직 없음 )이었다. "hybrid 매핑도 이미 구현되어 있어서 hook 만 추가하면 된다"는 원래 전제가 틀렸음 — 자세한 근거는 [MQSim 개괄](/ftl-visual-simulator/mqsim/code-analysis/overview/)의 "정확성 노트" 참고. 그래서 이 세션은 **실제로 구현되어 있는 마모 평준화(dynamic/static WL)에 집중**하고, hybrid 매핑은 직접 구현이 필요한 확장 목표( Cost-Benefit GC 와 같은 성격, 13~16번 버퍼 )로 옮긴다.
 
-마모 평준화는 MQSim 에 실제로 구현되어 있음( `GC_and_WL_Unit_Base.cpp` 의 dynamic/static WL 로직 — [코드 분석 7-3절](/ftl-visual-simulator/mqsim/code-analysis/) 참고 ) — hook 추가와 WASM 바인딩 API 마무리가 중심.
+마모 평준화는 MQSim 에 실제로 구현되어 있음( `GC_and_WL_Unit_Base.cpp` 의 dynamic/static WL 로직 — [코드 분석 7-3절](/ftl-visual-simulator/mqsim/code-analysis/overview/) 참고 ) — hook 추가와 WASM 바인딩 API 마무리가 중심.
 
 **Ryu 가 할 일**
 - **마모 평준화(dynamic/static WL) 이론 재확인** ( Session 5 GC 이론에 이어서, Session 1 에서 미뤄둔 부분 )
@@ -370,7 +370,7 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 ## 참고
 
-- 관련 문서 : [FTL Visual Simulator 목표](/ftl-visual-simulator/) · [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim/code-analysis-plan/) · [Visual Simulator Interface (초안)](/ftl-visual-simulator/visual-simulator-interface-draft/)
+- 관련 문서 : [FTL Visual Simulator 목표](/ftl-visual-simulator/) · [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [Visual Simulator Interface (초안)](/ftl-visual-simulator/visual-simulator-interface-draft/)
 
 <script>
 (function () {
