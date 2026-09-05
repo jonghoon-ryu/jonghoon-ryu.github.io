@@ -106,7 +106,7 @@ Host_Interface <-> Data_Cache_Manager <-> NVM_Firmware(FTL) <-> NVM_PHY <-> NVM_
 3. `FTL.Address_Mapping_Unit.Translate_lpa_to_ppa_and_dispatch()` — LPA 를 조회(CMT hit/miss), 새 PPA 를 `Flash_Block_Manager` 에서 할당받아 매핑 갱신, 기존 PPA 가 있었다면 invalid 로 표시
 4. `TSU.Schedule()` — 이 flash transaction 을 어느 채널/칩에 언제 실행시킬지 스케줄링( FLIN/out-of-order/priority 정책 중 설정된 것 )
 5. `NVM_PHY_ONFI` + `ONFI_Channel` 이 실제 program 명령의 타이밍(지연시간)을 시뮬레이션
-6. 매 쓰기 후 `Flash_Block_Manager` 의 free block pool 이 줄면 `GC_and_WL_Unit.Check_gc_required()` 가 불려서 GC 트리거 여부 판단 → 필요하면 victim block 선정, valid page migration, block erase 순으로 GC 실행
+6. write frontier 블록이 가득 차서( `Current_page_write_index == pages_no_per_block` ) `Flash_Block_Manager` 가 free pool 에서 새 블록을 배정할 때마다( 매 쓰기가 아니라 **블록 하나를 다 썼을 때만** ) `GC_and_WL_Unit.Check_gc_required()` 가 불려서 GC 트리거 여부 판단 → 필요하면 victim block 선정, valid page migration, block erase 순으로 GC 실행
 
 이 6단계가 바로 우리 계획의 Session 3~6 에서 hook 을 심을 지점들과 정확히 대응한다.
 
@@ -290,9 +290,9 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
   <text x="700" y="87" class="b-ca1" fill="#78350f">_for_user_write()</text>
 
   <line x1="700" y1="100" x2="700" y2="150" class="f-ca1"/>
-  <text x="835" y="140" class="b-ca1" fill="#e11d48">free page 부족하면 →</text>
+  <text x="835" y="140" class="b-ca1" fill="#e11d48">write frontier 블록이 다 차면 →</text>
   <rect x="620" y="150" width="240" height="70" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
-  <circle cx="640" cy="165" r="10" fill="#e11d48"/><text x="640" y="169" class="n-ca1">4a</text>
+  <circle cx="640" cy="165" r="10" fill="#e11d48"/><text x="640" y="169" class="n-ca1">4b</text>
   <text x="740" y="175" class="t-ca1" fill="#881337">GC_and_WL_Unit</text>
   <text x="740" y="192" class="b-ca1" fill="#881337">Check_gc_required() 트리거</text>
   <text x="740" y="207" class="b-ca1" fill="#881337">(7-3절 GC 흐름으로 분기)</text>
@@ -326,8 +326,9 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 1. `Host_Interface_NVMe::Request_Fetch_Unit_NVMe::Fetch_next_request()` 가 NVMe 제출 큐(SQ)에서 명령을 DMA 로 읽어와 `User_Request` 를 만든다.
 2. `Data_Cache_Manager` 가 `Caching_Mode::WRITE_CACHE` 설정에 따라 DRAM 캐시에 먼저 데이터를 반영한다( 캐시 자체의 접근 지연은 `estimate_dram_access_time()` 으로 계산 ).
 3. `Address_Mapping_Unit_Page_Level::query_cmt()` 가 CMT( Cached Mapping Table )에서 LPA 를 조회한다. hit 이면 바로 `translate_lpa_to_ppa()`, miss 면 `request_mapping_entry()` 로 매핑 페이지를 flash 에서 읽어와야 하고, 그마저 안 되면 `Waiting_unmapped_program_transactions` 에 넣고 대기시킨다.
-4. `translate_lpa_to_ppa()` 안에서 write 요청은 `allocate_plane_for_user_write()` → `allocate_page_in_plane_for_user_write()` 로 `Flash_Block_Manager` 에게 새 PPA 를 요청한다. 이 시점에 write frontier( `Data_wf` ) 블록에 남은 free page 가 부족하면 —
-   - **4a.** `GC_and_WL_Unit::Check_gc_required()` 가 불려 GC 가 트리거된다( 자세한 내용은 7-3절 ).
+4. `translate_lpa_to_ppa()` 안에서 write 요청은 `allocate_plane_for_user_write()` 로 plane 을 정한 뒤, **두 가지 GC 관련 검사**를 차례로 거친다( 코드로 직접 확인한 순서 ) —
+   - **4a. 하드 블록** : `GC_and_WL_Unit::Stop_servicing_writes()` 가 `block_manager->Get_pool_size() < max_ongoing_gc_reqs_per_plane`( 기본값 10 — free 블록이 정말 얼마 안 남았을 때 )이면 true 를 반환하고, 이 write 트랜잭션은 **그 자리에서 실패 처리**된다( "there are too few free pages remaining only for GC"라는 소스 코드 주석 그대로 ).
+   - **4b. GC 트리거** : 통과하면 `allocate_page_in_plane_for_user_write()` 가 실제 PPA 를 할당하는데, 이때 write frontier( `Data_wf` ) 블록이 **가득 차서**( `Current_page_write_index == pages_no_per_block` ) 새 free 블록으로 교체되는 순간에만 `GC_and_WL_Unit::Check_gc_required()` 가 불려 GC 가 트리거된다( 매 쓰기마다가 아니라 블록 하나를 다 썼을 때만 — 자세한 내용은 7-3절 ).
 5. PPA 가 확정되면 `ftl->TSU->Submit_transaction()` 으로 트랜잭션이 제출되고, 리스트 처리가 끝나면 `ftl->TSU->Schedule()` 이 한 번 호출된다( 7-4절 참고 — die/plane-level 병렬성을 살리기 위해 여러 트랜잭션을 모아서 한 번에 스케줄링 ).
 6. TSU 가 채널이 idle 이 되는 시점에 `NVM_PHY_ONFI::Send_command_to_chip()` 으로 `CMD_PROGRAM_PAGE` 를 내려보낸다. `Flash_Chip::Get_command_execution_latency()` 가 MLC 기준 750,000ns( `Page_Program_Latency_*` ) 지연을 계산해 완료 이벤트를 예약한다.
 7. 커맨드가 끝나면 PHY 가 `broadcastTransactionServicedSignal()` 로 콜백을 호출 — `Flash_Block_Manager::Program_transaction_serviced()`( block bookkeeping 갱신 ), 필요하면 기존 PPA 를 `Invalidate_page_in_block()` 으로 무효화, `Stats` 카운터 갱신까지 이어진다.
@@ -466,7 +467,8 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 3. 후보가 확정되면 `block_manager->GC_WL_started()` 로 블록 상태를 `Block_Service_Status::GC_WL` 로 바꾸고, `address_mapping_unit->Set_barrier_for_accessing_physical_block()` 로 барrier 를 걸어 이 블록의 LPA 들에 대한 새 요청을 막는다.
 4. `block->Current_page_write_index - block->Invalid_page_count > 0`( 살아있는 valid page 가 있음 )이면 그 수만큼 `NVM_Transaction_Flash_RD`(읽기) + 이어지는 write(새 위치에 재기록) 쌍을 생성한다 — 이게 GC 로 인한 "추가 쓰기"(Write Amplification 의 원인)다.
 5. 모든 valid page 이동이 끝나면 `NVM_Transaction_Flash_ER`( erase )가 실행되고, `Stats::Total_gc_executions++`, 블록의 `Erase_count++` 후 `Add_erased_block_to_pool()` 로 free pool 에 반환된다.
-6. Dynamic wear-leveling 은 이 GC 사이클에 자연히 얹혀 있다 — victim 선정 자체가 여러 블록 중 하나를 고르는 과정이므로, RGA/RANDOM 계열처럼 확률적으로 고르는 정책은 자동으로 특정 블록만 계속 지워지는 것을 완화한다. **Static wear-leveling** 은 별도로 `check_static_wl_required()` 가 " 이 plane 의 최대/최소 erase count 차이가 `Static_Wearleveling_Threshold`(기본 100)를 넘는지"를 확인해서, 넘으면 `run_static_wearleveling()` 이 **아직 한 번도 GC 대상이 안 된, erase count 가 가장 낮은( `Get_coldest_block_id()` ) 차가운 블록**을 강제로 옮겨 쓴다 — GC 트리거와 별개로 동작하는 독립 경로.
+6. ⚠️ **Dynamic wear-leveling 은 GC victim 선정과는 무관한, 별도의 명시적 메커니즘이다**( 정정 — 이전에는 "RGA/RANDOM 의 확률적 선택에 자연히 녹아있다"고 잘못 적었었음 ). erase 가 끝나 블록이 `Flash_Block_Manager::Add_erased_block_to_pool()` 로 free pool 에 반환될 때, `Dynamic_Wearleveling_Enabled` 가 true 면 `PlaneBookKeepingType::Add_to_free_block_pool()` 이 그 블록을 **실제 erase count 를 key 로** free pool(`multimap`)에 넣는다. 다음에 write frontier 가 필요할 때 `Get_a_free_block()` 은 **항상 이 multimap 에서 key 가 가장 작은(=erase count 가 가장 낮은) 블록**을 꺼낸다 — 즉 "가장 적게 지워진 블록을 다음 쓰기 대상으로 우선 배정"하는 방식으로 마모를 분산시키며, GC 의 victim 선정 정책(RGA 등)과는 완전히 다른, **쓰기 쪽(free pool 배정)에서 일어나는 로직**이다.
+7. **Static wear-leveling** 은 GC/dynamic WL 로도 못 잡는 케이스를 위한 세 번째 보정 — 코드 위치도 다르다(`GC_and_WL_Unit_Base.cpp`, `Page_Level.cpp` 가 아님). erase 가 끝날 때마다 `check_static_wl_required()` 가 "이 plane 의 최대/최소 erase count 차이가 `Static_Wearleveling_Threshold`(기본 100) 이상인지"를 확인해서, 그렇다면 `run_static_wearleveling()` 이 **erase count 가 가장 낮은(`Get_coldest_block_id()`) 블록**을 강제로 골라 옮겨 쓰고 지운다 — GC 트리거(`Check_gc_required`)와는 완전히 독립된 경로.
 
 <div style="margin-top: 60px;"></div>
 
@@ -524,7 +526,7 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 2. 각 트랜잭션은 `Type`(READ/WRITE/ERASE) × `Source`(USERIO/CACHE, MAPPING, GC_WL) 조합으로 서로 다른 큐에 들어간다 — **사용자 요청, 매핑 테이블 접근, GC 페이지 이동이 처음부터 물리적으로 분리된 큐를 쓴다**는 점이 중요( 우리 이벤트 로그에서 "이 트랜잭션이 왜 지금 실행됐는지" 설명할 때 소스 구분의 근거 ).
 3. 채널 하나씩 순회하며, 그 채널이 `BusChannelStatus::IDLE` 이면 `Round_robin_turn_of_channel[channelID]` 가 가리키는 칩부터 순서대로 시도한다 — 특정 칩만 계속 서비스되는 것을 막는 라운드로빈.
 4. 칩 하나에 대해 **read > write > erase** 순서로 서비스를 시도하고( `process_chip_requests()` ), 하나라도 성공하면 그 칩 순번을 다음으로 넘기고 다음 칩으로 넘어간다. 이 우선순위 때문에 read 요청이 섞여 있으면 GC/매핑 write 보다 먼저 실행된다.
-5. `service_read/write/erase_transaction()` 내부에서는 다시 `GCReadTRQueue`>`MappingReadTRQueue`>`UserReadTRQueue`( 또는 반대 순서, 정책별 세부 우선순위 )를 확인해 실제로 어떤 큐의 head 를 chip 에 내려보낼지 정한다.
+5. `service_read_transaction()` 내부의 실제 우선순위( 코드로 직접 확인 ) : **매핑(`MappingReadTRQueue`) 관련 트랜잭션이 항상 최우선** — 소스 코드 주석 그대로 "Flash transactions that are related to FTL mapping data have the highest priority". 그 다음은 `GC_is_in_urgent_mode()` 여부로 갈린다 — urgent 면 `GCReadTRQueue` 가 `UserReadTRQueue` 보다 먼저, urgent 가 아니면(preemptible) 그 반대. 우리 설정은 `Preemptible_GC_Enabled=false` 라서 `GC_is_in_urgent_mode()` 가 항상 true 를 반환 → **실질적으로 항상 "매핑 &gt; GC &gt; 사용자" 순서**가 된다.
 
 <div style="margin-top: 60px;"></div>
 

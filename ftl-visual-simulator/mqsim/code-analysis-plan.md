@@ -306,7 +306,7 @@ table.plan-calendar .row-mark {
 
 - write 요청이 들어왔을 때 : 기존 매핑 조회( CMT hit/miss ) → 새 PPA 할당( `Flash_Block_Manager` 호출 ) → 매핑 갱신 → 기존 PPA invalidate, 이 순서를 코드에서 그대로 추적
 - read 요청 경로도 동일하게 추적
-- **주목할 점** : `translate_lpa_to_ppa()` 의 write 분기 안에서 `ftl->GC_and_WL_Unit->Stop_servicing_writes()` 가 true 를 반환하면 이 트랜잭션은 그 자리에서 실패 처리된다( free page 가 GC 전용으로만 남을 만큼 부족한 경우 ) — 매핑 코드 안에 GC 압박이 직접 개입하는 지점이라는 걸 놓치기 쉬움
+- **주목할 점** : `translate_lpa_to_ppa()` 의 write 분기 안에서 `ftl->GC_and_WL_Unit->Stop_servicing_writes()` 가 true 를 반환하면 이 트랜잭션은 그 자리에서 실패 처리된다 — 정확한 조건은 `block_manager->Get_pool_size() < max_ongoing_gc_reqs_per_plane`(기본값 10), 즉 free 블록이 정말 얼마 안 남았을 때뿐이다( 소스 코드 주석 : "there are too few free pages remaining only for GC" ) — 매핑 코드 안에 GC 압박이 직접 개입하는 지점이라는 걸 놓치기 쉬움
 - 체크포인트 : write 요청 하나가 `Translate_lpa_to_ppa_and_dispatch` 안에서 거치는 단계를 순서대로 나열, `Stop_servicing_writes()` 가 어떤 조건에서 write 를 막는지 설명
 
 </div>
@@ -368,7 +368,7 @@ table.plan-calendar .row-mark {
 </svg>
 </div>
 
-- free block pool 이 줄어들 때 `Check_gc_required()` 가 왜/어떻게 불리는지 — 위 그림의 첫 판단 지점
+- free block pool 이 줄어들 때 `Check_gc_required()` 가 왜/어떻게 불리는지 — 정확히는 write frontier 블록이 가득 차서 새 free 블록으로 교체되는 순간( 매 쓰기가 아님 )에만 호출된다는 것까지 확인. 위 그림의 첫 판단 지점
 - `GC_is_in_urgent_mode()` 가 `GC_Hard_Threshold` 로 "긴급 GC"( preemptible 하지 않게 강제 )를 어떻게 구분하는지
 - `GC_Block_Selection_Policy`( GREEDY/RGA/RANDOM 계열/FIFO ) 중 실제 설정값( RGA )의 코드 분기 추적
 - victim block 선정 → valid page migration → block erase, 3단계를 코드에서 순서대로 확인 — 위 그림의 나머지 3개 박스
@@ -380,7 +380,7 @@ table.plan-calendar .row-mark {
 
 ### 6. Wear-Leveling 실제 동작, 그리고 Hybrid 매핑의 진실
 
-읽을 파일 : `src/ssd/Address_Mapping_Unit_Hybrid.h/cpp`, `GC_and_WL_Unit_Page_Level.cpp` 의 wear-leveling 관련 부분( `check_static_wl_required`, `run_static_wearleveling`, `Get_coldest_block_id` )
+읽을 파일 : `src/ssd/Address_Mapping_Unit_Hybrid.h/cpp`, `GC_and_WL_Unit_Base.cpp` 의 wear-leveling 관련 부분( `check_static_wl_required`, `run_static_wearleveling`, `Use_dynamic_wearleveling` — ⚠️ Page_Level.cpp 가 아니라 **Base.cpp** 에 있음, 9/5 재확인 ), `Flash_Block_Manager_Base.cpp` 의 `Add_to_free_block_pool`/`Get_a_free_block`/`Get_coldest_block_id`/`Get_min_max_erase_difference`
 
 > ⚠️ **계획 수정 (9/5 코드 재확인)** : `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어보면 **모든 메서드가 빈 스텁**( `{}` 또는 `return 0`, 파일 전체 53줄 )이다. log-block merge(switch/partial/full) 로직이 코드에 없다 — 애초 계획이 "hybrid 매핑은 이미 있으니 hook 만 추가하면 된다"고 잘못 전제하고 있었다. 그래서 이 세션은 **읽을 코드가 있는 wear-leveling 쪽에 집중**하고, hybrid 매핑은 Cost-Benefit GC 와 같은 성격의 확장 목표( 13~16번 버퍼, 시간이 남을 때 직접 구현 )로 옮긴다. 자세한 근거는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)의 "정확성 노트" 참고.
 
@@ -413,7 +413,7 @@ table.plan-calendar .row-mark {
 </div>
 
 - **Static wear-leveling** : GC 로 자연스럽게 마모가 분산되지 않는 "차가운"(거의 안 바뀌는) 데이터가 있는 블록을 강제로 순환시키는 보완 장치. `check_static_wl_required()` 가 plane 내 블록들의 최대-최소 erase count 차이를 `Static_Wearleveling_Threshold`(설정값 100)와 비교하고, 넘으면 `Get_coldest_block_id()`( erase count 가 가장 낮은 블록 — 즉 가장 안 지워진, 정적인 데이터가 오래 눌러앉은 블록 )를 찾아 그 valid page 들을 강제로 다른 곳으로 옮기고 지운다.
-- **Dynamic wear-leveling** 은 별도 함수가 아니라 GC 의 victim 선정 정책 자체에 녹아 있다( RGA/RANDOM 계열이 확률적으로 블록을 고르기 때문에 자연히 마모가 퍼짐 ) — Session 5 에서 이미 확인한 내용과 이어진다.
+- ⚠️ **Dynamic wear-leveling — 9/5 정정** : 예전엔 "GC 의 victim 선정 정책(RGA/RANDOM)에 자연히 녹아 있다"고 적었는데, 실제로는 **완전히 별도의 명시적 메커니즘**이다. erase 가 끝난 블록이 free pool 로 돌아갈 때 `Flash_Block_Manager::Add_erased_block_to_pool()` → `Add_to_free_block_pool(block, consider_dynamic_wl)` 이 호출되는데, `Dynamic_Wearleveling_Enabled`(=`consider_dynamic_wl`) 가 true 면 그 블록을 **실제 erase count 를 key 로** free pool(내부적으로 `erase_count → block` 인 `multimap`)에 넣는다. 다음 write frontier 가 필요할 때 `Get_a_free_block()` 은 **항상 이 multimap 에서 key 가 가장 작은(=erase count 가 가장 낮은) 블록**을 꺼낸다 — "가장 적게 지워진 블록을 다음 쓰기 대상으로 우선 배정"하는 방식. GC 의 victim 선정과는 무관하게, **쓰기 쪽(free pool 배정)에서** 일어나는 로직이라는 게 핵심.
 - (참고) Hybrid 매핑을 직접 구현해보고 싶다면 : `Address_Mapping_Unit_Base` 를 상속하는 뼈대는 이미 있으므로, `Address_Mapping_Unit_Page_Level` 을 참고해 log block 개념( 몇 개의 block 을 임시 로그로 쓰고 가득 차면 switch/partial/full merge )을 새로 구현하면 된다 — Cost-Benefit GC(13~14번)와 성격이 같은 "확장 구현" 과제.
 - 체크포인트 : static wear-leveling 이 트리거되는 조건과, 그것이 GC 트리거 조건(`Check_gc_required`)과 어떻게 다른 별도 경로인지 설명. `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어 실제로 빈 스텁인지 확인.
 
