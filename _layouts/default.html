@@ -60,19 +60,27 @@
                   </details>
                 </li>
                 <li>
-                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/mqsim/' %} open{% endif %}>
-                    <summary><a href="{{ '/ftl-visual-simulator/mqsim/' | relative_url }}">MQSim</a></summary>
+                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/' %} open{% endif %}>
+                    <summary><a href="{{ '/ftl-visual-simulator/reference/' | relative_url }}">참고 자료</a></summary>
                     <ul class="nav-subitems">
-                      <li><a href="{{ '/ftl-visual-simulator/mqsim/overview/' | relative_url }}">MQSim 개요</a></li>
                       <li>
-                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/mqsim/code-analysis/' %} open{% endif %}>
-                          <summary><a href="{{ '/ftl-visual-simulator/mqsim/code-analysis/' | relative_url }}">MQSim 코드 분석</a></summary>
+                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim/' %} open{% endif %}>
+                          <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim/' | relative_url }}">MQSim</a></summary>
                           <ul class="nav-subitems">
-                            <li><a href="{{ '/ftl-visual-simulator/mqsim/code-analysis/overview/' | relative_url }}">MQSim 개괄</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/mqsim/code-analysis/concept-mapping/' | relative_url }}">FTL 개념 ↔ 파라미터·모듈 대응</a></li>
+                            <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/overview/' | relative_url }}">MQSim 개요</a></li>
+                            <li>
+                              <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim/code-analysis/' %} open{% endif %}>
+                                <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim/code-analysis/' | relative_url }}">MQSim 코드 분석</a></summary>
+                                <ul class="nav-subitems">
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/code-analysis/overview/' | relative_url }}">MQSim 개괄</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/' | relative_url }}">FTL 개념 ↔ 파라미터·모듈 대응</a></li>
+                                </ul>
+                              </details>
+                            </li>
                           </ul>
                         </details>
                       </li>
+                      <li><a href="{{ '/ftl-visual-simulator/reference/wasm-primer/' | relative_url }}">WASM · em++ 입문</a></li>
                     </ul>
                   </details>
                 </li>
