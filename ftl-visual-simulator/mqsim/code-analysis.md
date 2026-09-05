@@ -231,6 +231,513 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 
 <div style="margin-top: 60px;"></div>
 
+## 7. 주요 콜 플로우
+
+지금까지의 클래스별 설명을 실제 실행 순서로 다시 엮은 것. 색상은 어느 서브시스템을 지나는지 표시( <span style="color:#2563eb;font-weight:700;">파랑=Host/NVMe</span> · <span style="color:#7c3aed;font-weight:700;">보라=Cache</span> · <span style="color:#0d9488;font-weight:700;">청록=Address Mapping</span> · <span style="color:#d97706;font-weight:700;">주황=Block Manager</span> · <span style="color:#e11d48;font-weight:700;">빨강=GC</span> · <span style="color:#16a34a;font-weight:700;">초록=Wear-Leveling</span> · <span style="color:#4f46e5;font-weight:700;">남색=TSU</span> · <span style="color:#475569;font-weight:700;">회색=PHY/Channel/Chip</span> ).
+
+<div style="margin-top: 40px;"></div>
+
+### 7-1. Write 요청 전체 흐름
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 1180 320" style="width:100%;max-width:980px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrow-ca1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker>
+  </defs>
+  <style>
+    .t-ca1{font-size:13px;font-weight:700;text-anchor:middle;}
+    .b-ca1{font-size:10.5px;text-anchor:middle;}
+    .n-ca1{font-size:11px;font-weight:700;text-anchor:middle;fill:#fff;}
+    .f-ca1{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-ca1);fill:none;}
+  </style>
+
+  <rect x="10" y="30" width="150" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <circle cx="30" cy="45" r="10" fill="#2563eb"/><text x="30" y="49" class="n-ca1">1</text>
+  <text x="90" y="55" class="t-ca1" fill="#1e3a8a">Host_Interface_NVMe</text>
+  <text x="90" y="72" class="b-ca1" fill="#1e3a8a">SQE fetch, WRITE 요청</text>
+  <text x="90" y="87" class="b-ca1" fill="#1e3a8a">User_Request 생성</text>
+
+  <line x1="160" y1="65" x2="200" y2="65" class="f-ca1"/>
+
+  <rect x="200" y="30" width="150" height="70" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <circle cx="220" cy="45" r="10" fill="#7c3aed"/><text x="220" y="49" class="n-ca1">2</text>
+  <text x="280" y="55" class="t-ca1" fill="#4c1d95">Data_Cache_Manager</text>
+  <text x="280" y="72" class="b-ca1" fill="#4c1d95">DRAM 캐시에 먼저</text>
+  <text x="280" y="87" class="b-ca1" fill="#4c1d95">반영 (WRITE_CACHE)</text>
+
+  <line x1="350" y1="65" x2="390" y2="65" class="f-ca1"/>
+
+  <rect x="390" y="10" width="190" height="110" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <circle cx="410" cy="25" r="10" fill="#0d9488"/><text x="410" y="29" class="n-ca1">3</text>
+  <text x="485" y="35" class="t-ca1" fill="#134e4a">Address_Mapping_Unit</text>
+  <text x="485" y="55" class="b-ca1" fill="#134e4a">query_cmt() — CMT hit?</text>
+  <text x="485" y="70" class="b-ca1" fill="#134e4a">miss면 Waiting_unmapped_</text>
+  <text x="485" y="83" class="b-ca1" fill="#134e4a">program_transactions 대기</text>
+  <text x="485" y="100" class="b-ca1" fill="#134e4a" font-style="italic">translate_lpa_to_ppa()</text>
+
+  <line x1="580" y1="65" x2="620" y2="65" class="f-ca1"/>
+
+  <rect x="620" y="30" width="160" height="70" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <circle cx="640" cy="45" r="10" fill="#d97706"/><text x="640" y="49" class="n-ca1">4</text>
+  <text x="700" y="55" class="t-ca1" fill="#78350f">Flash_Block_Manager</text>
+  <text x="700" y="72" class="b-ca1" fill="#78350f">allocate_page_in_plane</text>
+  <text x="700" y="87" class="b-ca1" fill="#78350f">_for_user_write()</text>
+
+  <line x1="700" y1="100" x2="700" y2="150" class="f-ca1"/>
+  <text x="835" y="140" class="b-ca1" fill="#e11d48">free page 부족하면 →</text>
+  <rect x="620" y="150" width="240" height="70" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+  <circle cx="640" cy="165" r="10" fill="#e11d48"/><text x="640" y="169" class="n-ca1">4a</text>
+  <text x="740" y="175" class="t-ca1" fill="#881337">GC_and_WL_Unit</text>
+  <text x="740" y="192" class="b-ca1" fill="#881337">Check_gc_required() 트리거</text>
+  <text x="740" y="207" class="b-ca1" fill="#881337">(7-3절 GC 흐름으로 분기)</text>
+
+  <line x1="780" y1="65" x2="820" y2="65" class="f-ca1"/>
+
+  <rect x="820" y="30" width="140" height="70" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <circle cx="840" cy="45" r="10" fill="#4f46e5"/><text x="840" y="49" class="n-ca1">5</text>
+  <text x="890" y="55" class="t-ca1" fill="#312e81">TSU</text>
+  <text x="890" y="72" class="b-ca1" fill="#312e81">Submit_transaction()</text>
+  <text x="890" y="87" class="b-ca1" fill="#312e81">→ Schedule()</text>
+
+  <line x1="960" y1="65" x2="1000" y2="65" class="f-ca1"/>
+
+  <rect x="1000" y="30" width="170" height="70" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <circle cx="1020" cy="45" r="10" fill="#475569"/><text x="1020" y="49" class="n-ca1">6</text>
+  <text x="1085" y="55" class="t-ca1" fill="#1e293b">ONFI_Channel + Chip</text>
+  <text x="1085" y="72" class="b-ca1" fill="#1e293b">CMD_PROGRAM_PAGE</text>
+  <text x="1085" y="87" class="b-ca1" fill="#1e293b">program latency 경과</text>
+
+  <line x1="1085" y1="100" x2="1085" y2="260" class="f-ca1"/>
+  <line x1="1085" y1="260" x2="90" y2="260" class="f-ca1"/>
+  <text x="600" y="252" class="b-ca1" fill="#475569">완료 시 ConnectToTransactionServicedSignal 콜백 → AMU 매핑 확정, 이전 PPA invalidate(7절 후반)</text>
+  <rect x="10" y="240" width="150" height="40" rx="8" fill="#ecfccb" stroke="#65a30d" stroke-width="2"/>
+  <text x="85" y="264" class="t-ca1" fill="#365314">Stats 갱신</text>
+</svg>
+</div>
+
+**단계별 설명**
+
+1. `Host_Interface_NVMe::Request_Fetch_Unit_NVMe::Fetch_next_request()` 가 NVMe 제출 큐(SQ)에서 명령을 DMA 로 읽어와 `User_Request` 를 만든다.
+2. `Data_Cache_Manager` 가 `Caching_Mode::WRITE_CACHE` 설정에 따라 DRAM 캐시에 먼저 데이터를 반영한다( 캐시 자체의 접근 지연은 `estimate_dram_access_time()` 으로 계산 ).
+3. `Address_Mapping_Unit_Page_Level::query_cmt()` 가 CMT( Cached Mapping Table )에서 LPA 를 조회한다. hit 이면 바로 `translate_lpa_to_ppa()`, miss 면 `request_mapping_entry()` 로 매핑 페이지를 flash 에서 읽어와야 하고, 그마저 안 되면 `Waiting_unmapped_program_transactions` 에 넣고 대기시킨다.
+4. `translate_lpa_to_ppa()` 안에서 write 요청은 `allocate_plane_for_user_write()` → `allocate_page_in_plane_for_user_write()` 로 `Flash_Block_Manager` 에게 새 PPA 를 요청한다. 이 시점에 write frontier( `Data_wf` ) 블록에 남은 free page 가 부족하면 —
+   - **4a.** `GC_and_WL_Unit::Check_gc_required()` 가 불려 GC 가 트리거된다( 자세한 내용은 7-3절 ).
+5. PPA 가 확정되면 `ftl->TSU->Submit_transaction()` 으로 트랜잭션이 제출되고, 리스트 처리가 끝나면 `ftl->TSU->Schedule()` 이 한 번 호출된다( 7-4절 참고 — die/plane-level 병렬성을 살리기 위해 여러 트랜잭션을 모아서 한 번에 스케줄링 ).
+6. TSU 가 채널이 idle 이 되는 시점에 `NVM_PHY_ONFI::Send_command_to_chip()` 으로 `CMD_PROGRAM_PAGE` 를 내려보낸다. `Flash_Chip::Get_command_execution_latency()` 가 MLC 기준 750,000ns( `Page_Program_Latency_*` ) 지연을 계산해 완료 이벤트를 예약한다.
+7. 커맨드가 끝나면 PHY 가 `broadcastTransactionServicedSignal()` 로 콜백을 호출 — `Flash_Block_Manager::Program_transaction_serviced()`( block bookkeeping 갱신 ), 필요하면 기존 PPA 를 `Invalidate_page_in_block()` 으로 무효화, `Stats` 카운터 갱신까지 이어진다.
+
+<div style="margin-top: 60px;"></div>
+
+### 7-2. Read 요청 흐름 — CMT hit vs miss
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 1000 260" style="width:100%;max-width:860px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-ca2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t-ca2{font-size:12.5px;font-weight:700;text-anchor:middle;}
+    .b-ca2{font-size:10px;text-anchor:middle;}
+    .f-ca2{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-ca2);fill:none;}
+    .diamond-ca2{fill:#fff6df;stroke:#b8860b;stroke-width:2;}
+  </style>
+
+  <rect x="10" y="90" width="150" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="85" y="115" class="t-ca2" fill="#1e3a8a">NVMe READ</text>
+  <text x="85" y="132" class="b-ca2" fill="#1e3a8a">요청 도착</text>
+
+  <line x1="160" y1="120" x2="200" y2="120" class="f-ca2"/>
+
+  <polygon points="200,90 290,120 200,150 110,120" class="diamond-ca2" transform="translate(90,0)"/>
+  <text x="380" y="115" class="t-ca2">CMT 에</text>
+  <text x="380" y="130" class="t-ca2">있나?</text>
+
+  <line x1="470" y1="120" x2="510" y2="120" class="f-ca2"/>
+  <text x="490" y="108" class="b-ca2" fill="#0d9488">HIT</text>
+
+  <rect x="510" y="90" width="180" height="60" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="600" y="115" class="t-ca2" fill="#134e4a">translate_lpa_to_ppa()</text>
+  <text x="600" y="132" class="b-ca2" fill="#134e4a">CMT->Retrieve_ppa()</text>
+
+  <line x1="470" y1="150" x2="470" y2="210" class="f-ca2"/>
+  <text x="500" y="185" class="b-ca2" fill="#e11d48">MISS</text>
+
+  <rect x="330" y="210" width="280" height="40" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+  <text x="470" y="228" class="t-ca2" fill="#881337">request_mapping_entry()</text>
+  <text x="470" y="242" class="b-ca2" fill="#881337">generate_flash_read_request_for_mapping_data()</text>
+
+  <line x1="610" y1="230" x2="700" y2="230" class="f-ca2"/>
+  <line x1="700" y1="230" x2="700" y2="150" class="f-ca2"/>
+  <line x1="700" y1="150" x2="690" y2="150" class="f-ca2"/>
+  <text x="770" y="200" class="b-ca2">매핑 페이지 read 완료 후</text>
+  <text x="770" y="214" class="b-ca2">online_create_entry_for_reads()</text>
+  <text x="770" y="228" class="b-ca2">로 CMT에 새 entry 삽입 후 재시도</text>
+
+  <line x1="690" y1="120" x2="730" y2="120" class="f-ca2"/>
+
+  <rect x="730" y="90" width="150" height="60" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="805" y="115" class="t-ca2" fill="#1e293b">CMD_READ_PAGE</text>
+  <text x="805" y="132" class="b-ca2" fill="#1e293b">Chip 에서 실행</text>
+</svg>
+</div>
+
+**단계별 설명**
+
+1. `query_cmt()` 가 `Mapping_entry_accessible()` 로 CMT 존재 여부를 확인한다.
+2. **HIT** — 바로 `translate_lpa_to_ppa()` → `domains[stream]->Get_ppa()` 로 PPA 를 얻고, `Read_transaction_issued()` 로 block bookkeeping 을 갱신한 뒤 TSU 로 넘어간다.
+3. **MISS** — `request_mapping_entry()` 가 먼저 "혹시 지금 write-back 중인 항목에서 잡을 수 있는지"를 확인하고, 안 되면 `generate_flash_read_request_for_mapping_data()` 로 매핑 테이블 페이지(MVPN/MPPN, GTD 항목) 자체를 flash 에서 읽어오는 **별도의 flash read 트랜잭션**을 만든다.
+4. 이 매핑 read 가 끝나면 `online_create_entry_for_reads()` 가 CMT 에 새 entry 를 채우고, 원래 대기 중이던 `Waiting_unmapped_read_transactions` 를 다시 꺼내 처리한다.
+5. 이 "매핑 자체를 읽어와야 하는" 2단계 구조가 바로 DFTL 류 캐시가 page-level 풀매핑보다 read 지연이 더 걸릴 수 있는 이유이고, `Stats::readTR_CMT_miss` 카운터로 빈도를 추적한다.
+
+<div style="margin-top: 60px;"></div>
+
+### 7-3. GC 흐름 — 트리거부터 정책별 victim 선정까지
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 1080 230" style="width:100%;max-width:920px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-ca3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t-ca3{font-size:12px;font-weight:700;text-anchor:middle;}
+    .b-ca3{font-size:9.5px;text-anchor:middle;}
+    .f-ca3{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-ca3);fill:none;}
+  </style>
+  <rect x="10" y="70" width="150" height="70" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="85" y="95" class="t-ca3" fill="#78350f">free_block_pool</text>
+  <text x="85" y="112" class="b-ca3" fill="#78350f">&lt; block_pool_gc</text>
+  <text x="85" y="125" class="b-ca3" fill="#78350f">_threshold ?</text>
+
+  <line x1="160" y1="105" x2="200" y2="105" class="f-ca3"/>
+
+  <rect x="200" y="10" width="230" height="190" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+  <text x="315" y="30" class="t-ca3" fill="#881337">block_selection_policy 별 victim 선정</text>
+  <text x="215" y="52" class="b-ca3" fill="#881337" text-anchor="start">GREEDY : 전 블록 스캔, invalid 최다 &amp; full</text>
+  <text x="215" y="70" class="b-ca3" fill="#881337" text-anchor="start">RGA : log2(N)개 무작위 셋 중 invalid 최다</text>
+  <text x="215" y="88" class="b-ca3" fill="#881337" text-anchor="start">RANDOM : 안전 조건만 만족하면 무작위</text>
+  <text x="215" y="106" class="b-ca3" fill="#881337" text-anchor="start">RANDOM_P : + full block 만</text>
+  <text x="215" y="124" class="b-ca3" fill="#881337" text-anchor="start">RANDOM_PP : + invalid ≥ threshold</text>
+  <text x="215" y="142" class="b-ca3" fill="#881337" text-anchor="start">FIFO : Block_usage_history 큐에서 pop</text>
+  <text x="215" y="164" class="b-ca3" fill="#881337" font-style="italic" text-anchor="start">공통 조건 : is_safe_gc_wl_candidate()</text>
+  <text x="215" y="180" class="b-ca3" fill="#881337" font-style="italic" text-anchor="start">— write frontier 아님 + 진행 중 program 없음</text>
+
+  <line x1="430" y1="105" x2="470" y2="105" class="f-ca3"/>
+
+  <rect x="470" y="70" width="150" height="70" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="545" y="95" class="t-ca3" fill="#78350f">block_manager</text>
+  <text x="545" y="112" class="b-ca3" fill="#78350f">GC_WL_started()</text>
+  <text x="545" y="125" class="b-ca3" fill="#78350f">barrier 설정</text>
+
+  <line x1="620" y1="105" x2="660" y2="105" class="f-ca3"/>
+
+  <rect x="660" y="10" width="190" height="70" rx="8" fill="#0d9488" fill-opacity="0.15" stroke="#0d9488" stroke-width="2"/>
+  <text x="755" y="30" class="t-ca3" fill="#134e4a">valid page migration</text>
+  <text x="755" y="50" class="b-ca3" fill="#134e4a">Get_data_mapping_info_for_gc()</text>
+  <text x="755" y="65" class="b-ca3" fill="#134e4a">→ read 후 새 PPA 에 재기록</text>
+
+  <line x1="660" y1="105" x2="660" y2="45" class="f-ca3"/>
+  <line x1="660" y1="105" x2="660" y2="165" class="f-ca3"/>
+
+  <rect x="660" y="130" width="190" height="70" rx="8" fill="#16a34a" fill-opacity="0.15" stroke="#16a34a" stroke-width="2"/>
+  <text x="755" y="150" class="t-ca3" fill="#14532d">(옵션) static WL</text>
+  <text x="755" y="170" class="b-ca3" fill="#14532d">check_static_wl_required()</text>
+  <text x="755" y="185" class="b-ca3" fill="#14532d">erase count 편차 &gt; threshold</text>
+
+  <line x1="850" y1="105" x2="890" y2="105" class="f-ca3"/>
+
+  <rect x="890" y="70" width="170" height="70" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="975" y="95" class="t-ca3" fill="#1e293b">CMD_ERASE_BLOCK</text>
+  <text x="975" y="112" class="b-ca3" fill="#1e293b">Erase_count++</text>
+  <text x="975" y="125" class="b-ca3" fill="#1e293b">Add_erased_block_to_pool()</text>
+</svg>
+</div>
+
+**단계별 설명 — `GC_and_WL_Unit_Page_Level::Check_gc_required()` 실측 로직**
+
+1. `free_block_pool_size < block_pool_gc_threshold`( `GC_Exec_Threshold=0.05` 로부터 계산된 절대 개수 )이면 GC 후보를 찾기 시작한다. 이미 이 plane 에서 동시 진행 중인 erase 가 `max_ongoing_gc_reqs_per_plane`( 기본 10 )을 넘으면 즉시 리턴.
+2. `GC_Block_Selection_Policy_Type` 6가지 정책이 실제로 어떻게 다른지( 코드에서 직접 확인한 조건 ) —
+   - **GREEDY** : 0번 블록부터 끝까지 순회하며 "가득 찼고(`Current_page_write_index == pages_no_per_block`) invalid page 가 가장 많은" 블록을 선택.
+   - **RGA**( 기본 설정값 ) : `rga_set_size = log2(block_no_per_plane)`( 2048개 블록이면 11개 ) 만큼 무작위로 뽑은 안전한 후보 집합 중에서만 invalid 최다 블록을 고른다 — 전수 조사(GREEDY)보다 훨씬 싸면서 근사적으로 비슷한 효과.
+   - **RANDOM/RANDOM_P/RANDOM_PP** : 무작위 블록을 뽑되 각각 "안전 조건만", "+ 가득 찬 블록만", "+ invalid page 수가 `random_pp_threshold` 이상"이라는 조건을 추가로 만족할 때까지 재추첨.
+   - **FIFO** : 선정 로직이 없다 — `Block_usage_history` 큐(사용 순서 기록)에서 그냥 맨 앞을 꺼낸다.
+   - 6개 정책 모두 공통으로 `is_safe_gc_wl_candidate()`( write frontier 가 아니고, 해당 블록에 진행 중인 program 요청이 없어야 함 )를 만족해야 한다.
+3. 후보가 확정되면 `block_manager->GC_WL_started()` 로 블록 상태를 `Block_Service_Status::GC_WL` 로 바꾸고, `address_mapping_unit->Set_barrier_for_accessing_physical_block()` 로 барrier 를 걸어 이 블록의 LPA 들에 대한 새 요청을 막는다.
+4. `block->Current_page_write_index - block->Invalid_page_count > 0`( 살아있는 valid page 가 있음 )이면 그 수만큼 `NVM_Transaction_Flash_RD`(읽기) + 이어지는 write(새 위치에 재기록) 쌍을 생성한다 — 이게 GC 로 인한 "추가 쓰기"(Write Amplification 의 원인)다.
+5. 모든 valid page 이동이 끝나면 `NVM_Transaction_Flash_ER`( erase )가 실행되고, `Stats::Total_gc_executions++`, 블록의 `Erase_count++` 후 `Add_erased_block_to_pool()` 로 free pool 에 반환된다.
+6. Dynamic wear-leveling 은 이 GC 사이클에 자연히 얹혀 있다 — victim 선정 자체가 여러 블록 중 하나를 고르는 과정이므로, RGA/RANDOM 계열처럼 확률적으로 고르는 정책은 자동으로 특정 블록만 계속 지워지는 것을 완화한다. **Static wear-leveling** 은 별도로 `check_static_wl_required()` 가 " 이 plane 의 최대/최소 erase count 차이가 `Static_Wearleveling_Threshold`(기본 100)를 넘는지"를 확인해서, 넘으면 `run_static_wearleveling()` 이 **아직 한 번도 GC 대상이 안 된, erase count 가 가장 낮은( `Get_coldest_block_id()` ) 차가운 블록**을 강제로 옮겨 쓴다 — GC 트리거와 별개로 동작하는 독립 경로.
+
+<div style="margin-top: 60px;"></div>
+
+### 7-4. TSU 스케줄링 내부 흐름
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 1020 260" style="width:100%;max-width:880px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-ca4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t-ca4{font-size:12px;font-weight:700;text-anchor:middle;}
+    .b-ca4{font-size:9.5px;text-anchor:middle;}
+    .f-ca4{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-ca4);fill:none;}
+  </style>
+  <rect x="10" y="100" width="150" height="60" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <text x="85" y="123" class="t-ca4" fill="#312e81">transaction</text>
+  <text x="85" y="140" class="b-ca4" fill="#312e81">_receive_slots</text>
+
+  <line x1="160" y1="130" x2="200" y2="130" class="f-ca4"/>
+
+  <rect x="200" y="10" width="230" height="230" rx="8" fill="#e0e7ff" fill-opacity="0.5" stroke="#4f46e5" stroke-width="2"/>
+  <text x="315" y="30" class="t-ca4" fill="#312e81">Source × Type 별 큐 분류</text>
+  <text x="215" y="55" class="b-ca4" fill="#312e81" text-anchor="start">USERIO/CACHE, READ → UserReadTRQueue[ch][chip][priority]</text>
+  <text x="215" y="75" class="b-ca4" fill="#312e81" text-anchor="start">USERIO/CACHE, WRITE → UserWriteTRQueue[ch][chip][priority]</text>
+  <text x="215" y="95" class="b-ca4" fill="#312e81" text-anchor="start">MAPPING, READ/WRITE → MappingRead/WriteTRQueue[ch][chip]</text>
+  <text x="215" y="115" class="b-ca4" fill="#312e81" text-anchor="start">GC_WL, READ/WRITE → GCRead/WriteTRQueue[ch][chip]</text>
+  <text x="215" y="135" class="b-ca4" fill="#312e81" text-anchor="start">ERASE(전부 GC_WL) → GCEraseTRQueue[ch][chip]</text>
+  <text x="215" y="160" class="b-ca4" fill="#312e81" font-style="italic" text-anchor="start">우선순위 큐는 IO_Flow_Priority_Class</text>
+  <text x="215" y="176" class="b-ca4" fill="#312e81" font-style="italic" text-anchor="start">(HIGH/...) 별로 별도 큐</text>
+  <text x="215" y="200" class="b-ca4" fill="#312e81" font-style="italic" text-anchor="start">채널×칩 2차원 배열이라 die/plane</text>
+  <text x="215" y="216" class="b-ca4" fill="#312e81" font-style="italic" text-anchor="start">레벨 병렬성을 그대로 노출</text>
+
+  <line x1="430" y1="130" x2="470" y2="130" class="f-ca4"/>
+
+  <rect x="470" y="100" width="180" height="60" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <text x="560" y="123" class="t-ca4" fill="#312e81">채널별 라운드로빈</text>
+  <text x="560" y="140" class="b-ca4" fill="#312e81">Round_robin_turn_of_channel[ch]</text>
+
+  <line x1="650" y1="130" x2="690" y2="130" class="f-ca4"/>
+
+  <rect x="690" y="30" width="230" height="200" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="805" y="50" class="t-ca4" fill="#1e293b">칩 하나당 우선순위</text>
+  <text x="805" y="80" class="t-ca4" fill="#1e293b">service_read_transaction()</text>
+  <text x="805" y="100" class="b-ca4" fill="#1e293b">실패하면 ↓</text>
+  <text x="805" y="125" class="t-ca4" fill="#1e293b">service_write_transaction()</text>
+  <text x="805" y="145" class="b-ca4" fill="#1e293b">실패하면 ↓</text>
+  <text x="805" y="170" class="t-ca4" fill="#1e293b">service_erase_transaction()</text>
+  <text x="805" y="195" class="b-ca4" fill="#1e293b" font-style="italic">채널이 idle 일 때만 시도,</text>
+  <text x="805" y="210" class="b-ca4" fill="#1e293b" font-style="italic">성공하면 다음 채널로</text>
+</svg>
+</div>
+
+**단계별 설명 — `TSU_Priority_OutOfOrder::Schedule()` 실측 로직**
+
+1. `Prepare_for_transaction_submit()`/`Submit_transaction()` 으로 모인 트랜잭션들이 `Schedule()` 호출 시점에 한꺼번에 처리된다( `opened_scheduling_reqs` 카운터로 중첩 호출을 하나로 합침 — die/plane 레벨 병렬성을 살리려고 여러 트랜잭션을 모아서 스케줄 ).
+2. 각 트랜잭션은 `Type`(READ/WRITE/ERASE) × `Source`(USERIO/CACHE, MAPPING, GC_WL) 조합으로 서로 다른 큐에 들어간다 — **사용자 요청, 매핑 테이블 접근, GC 페이지 이동이 처음부터 물리적으로 분리된 큐를 쓴다**는 점이 중요( 우리 이벤트 로그에서 "이 트랜잭션이 왜 지금 실행됐는지" 설명할 때 소스 구분의 근거 ).
+3. 채널 하나씩 순회하며, 그 채널이 `BusChannelStatus::IDLE` 이면 `Round_robin_turn_of_channel[channelID]` 가 가리키는 칩부터 순서대로 시도한다 — 특정 칩만 계속 서비스되는 것을 막는 라운드로빈.
+4. 칩 하나에 대해 **read > write > erase** 순서로 서비스를 시도하고( `process_chip_requests()` ), 하나라도 성공하면 그 칩 순번을 다음으로 넘기고 다음 칩으로 넘어간다. 이 우선순위 때문에 read 요청이 섞여 있으면 GC/매핑 write 보다 먼저 실행된다.
+5. `service_read/write/erase_transaction()` 내부에서는 다시 `GCReadTRQueue`>`MappingReadTRQueue`>`UserReadTRQueue`( 또는 반대 순서, 정책별 세부 우선순위 )를 확인해 실제로 어떤 큐의 head 를 chip 에 내려보낼지 정한다.
+
+<div style="margin-top: 60px;"></div>
+
+### 7-5. NVMe multi-queue 요청 수신 흐름
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 980 240" style="width:100%;max-width:840px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-ca5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t-ca5{font-size:12px;font-weight:700;text-anchor:middle;}
+    .b-ca5{font-size:9.5px;text-anchor:middle;}
+    .f-ca5{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-ca5);fill:none;}
+  </style>
+  <rect x="10" y="20" width="220" height="80" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="120" y="42" class="t-ca5" fill="#1e3a8a">Host — Submission Queue</text>
+  <text x="120" y="62" class="b-ca5" fill="#1e3a8a">SQ tail++ (새 커맨드 push)</text>
+  <text x="120" y="78" class="b-ca5" fill="#1e3a8a">Submission_queue_tail_pointer_update()</text>
+
+  <line x1="230" y1="60" x2="270" y2="60" class="f-ca5"/>
+
+  <rect x="270" y="20" width="220" height="80" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="380" y="42" class="t-ca5" fill="#1e3a8a">Request_Fetch_Unit_NVMe</text>
+  <text x="380" y="62" class="b-ca5" fill="#1e3a8a">Fetch_next_request()</text>
+  <text x="380" y="78" class="b-ca5" fill="#1e3a8a">PCIe DMA 로 SQE 읽기</text>
+
+  <line x1="490" y1="60" x2="530" y2="60" class="f-ca5"/>
+
+  <rect x="530" y="20" width="220" height="80" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="640" y="42" class="t-ca5" fill="#134e4a">Input_Stream_Manager_NVMe</text>
+  <text x="640" y="62" class="b-ca5" fill="#134e4a">segment_user_request()</text>
+  <text x="640" y="78" class="b-ca5" fill="#134e4a">LBA 범위 → NVM_Transaction 분해</text>
+
+  <line x1="750" y1="60" x2="790" y2="60" class="f-ca5"/>
+
+  <rect x="790" y="20" width="180" height="80" rx="8" fill="#0d9488" fill-opacity="0.15" stroke="#0d9488" stroke-width="2"/>
+  <text x="880" y="42" class="t-ca5" fill="#134e4a">FTL 처리</text>
+  <text x="880" y="62" class="b-ca5" fill="#134e4a">(7-1/7-2절)</text>
+
+  <line x1="880" y1="100" x2="880" y2="160" class="f-ca5"/>
+  <line x1="880" y1="160" x2="380" y2="160" class="f-ca5"/>
+
+  <rect x="270" y="140" width="220" height="80" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="380" y="162" class="t-ca5" fill="#1e3a8a">Request_Fetch_Unit_NVMe</text>
+  <text x="380" y="182" class="b-ca5" fill="#1e3a8a">Send_completion_queue_element()</text>
+  <text x="380" y="198" class="b-ca5" fill="#1e3a8a">CQE 작성 + phase bit 토글</text>
+
+  <line x1="270" y1="180" x2="230" y2="180" class="f-ca5"/>
+
+  <rect x="10" y="140" width="220" height="80" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="120" y="162" class="t-ca5" fill="#1e3a8a">Host — Completion Queue</text>
+  <text x="120" y="182" class="b-ca5" fill="#1e3a8a">CQ head/tail 갱신</text>
+  <text x="120" y="198" class="b-ca5" fill="#1e3a8a">인터럽트로 완료 통지</text>
+</svg>
+</div>
+
+**단계별 설명**
+
+1. 호스트가 NVMe 제출 큐(SQ)의 tail 포인터를 갱신하면(`Submission_queue_tail_pointer_update`), 디바이스는 SQ 에 새 커맨드가 쌓였음을 안다.
+2. `Request_Fetch_Unit_NVMe::Fetch_next_request()` 가 PCIe DMA 로 실제 커맨드(Submission Queue Entry)를 읽어온다 — `Input_Stream_NVMe` 구조체가 스트림별 `Submission_head`/`Submission_tail` 링버퍼 포인터를 따로 관리하므로, 여러 스트림(=여러 I/O 큐, multi-queue 의 핵심)이 서로 간섭 없이 동시에 처리된다.
+3. `Input_Stream_Manager_NVMe::segment_user_request()` 가 하나의 호스트 요청을 LBA 정렬 단위로 여러 `NVM_Transaction_Flash` 로 쪼갠다.
+4. 트랜잭션들이 FTL(캐시→매핑→블록매니저→TSU→PHY)을 거쳐 처리된다(7-1, 7-2절).
+5. 모두 완료되면 `Send_completion_queue_element()` 가 완료 큐(CQ)에 엔트리를 쓰고 phase bit 을 토글한다 — 호스트는 이 phase bit 변화로 "새 완료가 있다"를 폴링 없이 알아챈다.
+6. SATA(`Host_Interface_SATA`)는 이 전체 과정이 스트림별 큐 대신 **단일 큐**로 처리된다는 점이 유일한 차이 — 그래서 NVMe 만 진짜 "multi-queue" 시연에 쓸 수 있다( Session 2 결론과 동일 ).
+
+<div style="margin-top: 60px;"></div>
+
+### 7-6. Flash chip 커맨드 실행 & suspend 흐름
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 900 220" style="width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-ca6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t-ca6{font-size:12px;font-weight:700;text-anchor:middle;}
+    .b-ca6{font-size:9.5px;text-anchor:middle;}
+    .f-ca6{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-ca6);fill:none;}
+  </style>
+  <rect x="10" y="70" width="170" height="70" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="95" y="95" class="t-ca6" fill="#1e293b">ONFI_Channel</text>
+  <text x="95" y="112" class="b-ca6" fill="#1e293b">SetStatus(BUSY)</text>
+  <text x="95" y="127" class="b-ca6" fill="#1e293b">커맨드 전송 시작</text>
+
+  <line x1="180" y1="105" x2="220" y2="105" class="f-ca6"/>
+
+  <rect x="220" y="70" width="200" height="70" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="320" y="90" class="t-ca6" fill="#1e293b">Flash_Chip</text>
+  <text x="320" y="108" class="b-ca6" fill="#1e293b">start_command_execution()</text>
+  <text x="320" y="123" class="b-ca6" fill="#1e293b">Get_command_execution_latency()</text>
+
+  <line x1="420" y1="105" x2="460" y2="105" class="f-ca6"/>
+  <text x="440" y="95" class="b-ca6" fill="#e11d48">ERASE 중 read 요청?</text>
+
+  <rect x="460" y="10" width="200" height="60" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+  <text x="560" y="32" class="t-ca6" fill="#881337">Suspend(dieID)</text>
+  <text x="560" y="50" class="b-ca6" fill="#881337">RemainingSuspendedExecTime 저장</text>
+  <line x1="460" y1="105" x2="460" y2="40" class="f-ca6"/>
+
+  <rect x="460" y="90" width="200" height="70" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="560" y="115" class="t-ca6" fill="#1e293b">아니면 그대로</text>
+  <text x="560" y="132" class="b-ca6" fill="#1e293b">latency 만큼 대기 후</text>
+  <text x="560" y="147" class="b-ca6" fill="#1e293b">finish_command_execution()</text>
+
+  <line x1="660" y1="125" x2="700" y2="125" class="f-ca6"/>
+
+  <rect x="700" y="90" width="180" height="70" rx="8" fill="#0d9488" fill-opacity="0.15" stroke="#0d9488" stroke-width="2"/>
+  <text x="790" y="115" class="t-ca6" fill="#134e4a">broadcast</text>
+  <text x="790" y="132" class="b-ca6" fill="#134e4a">TransactionServicedSignal</text>
+  <text x="790" y="147" class="b-ca6" fill="#134e4a">→ AMU/GC/TSU 콜백</text>
+</svg>
+</div>
+
+**단계별 설명**
+
+1. TSU 가 채널을 통해 칩에 커맨드를 내려보내면 `ONFI_Channel_Base::SetStatus(BUSY)` 로 채널이 점유된다 — 같은 채널의 다른 칩은 이 시간 동안 커맨드를 못 받는다( 버스 경합 모델링 ).
+2. `Flash_Chip::start_command_execution()` 이 `Get_command_execution_latency()` 로 지연시간을 계산한다 — MLC 는 페이지 인덱스가 짝/홀수인지(LSB/CSB)로 지연이 갈리고, TLC 는 페이지 위치에 따라 3단계로 갈린다( 실제 NAND 가 페이지 위치별로 program 시간이 다른 특성을 반영 ).
+3. `CMD_Suspension_Support=ERASE`( 우리 설정값 ) 인 경우, 진행 중인 erase(3,800,000ns 로 매우 김) 도중 read 요청이 도착하면 `Suspend()` 로 erase 를 일시 중단하고 read 를 먼저 처리한 뒤 `Resume()` 으로 이어서 마저 지운다 — read 지연시간이 GC 의 긴 erase 뒤에서 무한정 기다리지 않게 하는 QoS 장치.
+4. 커맨드가 완료되면 `finish_command_execution()` → `broadcast_ready_signal()` 을 거쳐, PHY 계층의 `broadcastTransactionServicedSignal()` 이 등록된 콜백들( `Address_Mapping_Unit_Page_Level::handle_transaction_serviced_signal_from_PHY`, `GC_and_WL_Unit_Base` 쪽, `TSU_Base::handle_transaction_serviced_signal_from_PHY` 등 )을 순서대로 호출한다 — 각 상위 계층이 "이 트랜잭션이 끝났다"는 신호를 받는 지점이 정확히 여기다.
+
+<div style="margin-top: 60px;"></div>
+
+### 7-7. Preconditioning 흐름 — steady-state 초기 점유율 채우기
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 940 200" style="width:100%;max-width:800px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-ca7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t-ca7{font-size:12px;font-weight:700;text-anchor:middle;}
+    .b-ca7{font-size:9.5px;text-anchor:middle;}
+    .f-ca7{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-ca7);fill:none;}
+  </style>
+  <rect x="10" y="70" width="170" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="95" y="93" class="t-ca7" fill="#78350f">Initial_Occupancy</text>
+  <text x="95" y="110" class="b-ca7" fill="#78350f">_Percentage (예: 50%)</text>
+
+  <line x1="180" y1="100" x2="220" y2="100" class="f-ca7"/>
+
+  <rect x="220" y="70" width="230" height="60" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="335" y="93" class="t-ca7" fill="#134e4a">Allocate_address_for_preconditioning()</text>
+  <text x="335" y="110" class="b-ca7" fill="#134e4a">plane 별 목표 점유율에 맞게 LPA 분배</text>
+
+  <line x1="450" y1="100" x2="490" y2="100" class="f-ca7"/>
+
+  <rect x="490" y="70" width="230" height="60" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="605" y="90" class="t-ca7" fill="#134e4a">steady-state 분포로</text>
+  <text x="605" y="107" class="b-ca7" fill="#134e4a">블록별 valid page 개수 배정</text>
+
+  <line x1="720" y1="100" x2="760" y2="100" class="f-ca7"/>
+
+  <rect x="760" y="70" width="170" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="845" y="90" class="t-ca7" fill="#78350f">Flash_Block_Manager</text>
+  <text x="845" y="107" class="b-ca7" fill="#78350f">나머지 page invalidate</text>
+</svg>
+</div>
+
+**단계별 설명**
+
+1. MQSim 논문의 핵심 주장 중 하나가 "SSD 의 steady-state( 어느 정도 채워지고 GC 가 정상적으로 도는 상태 )를 정확히 모델링해야 한다"였다 — 그래서 시뮬레이션을 0%(완전히 빈 상태)부터 시작하지 않고, `Enabled_Preconditioning=true` 면 시작 전에 미리 목표 점유율만큼 채워 넣는다.
+2. `Allocate_address_for_preconditioning()` 이 각 plane 에 배정될 LPA 개수를 `Logical_Address_Partitioning_Unit::Get_share_of_physcial_pages_in_plane()` 비율대로 나눈다.
+3. 단순히 앞에서부터 채우는 게 아니라, **블록별 valid page 개수 분포(steady-state distribution)**를 입력받아 "이 블록엔 valid page 200개, 저 블록엔 50개" 식으로 GC 가 실제로 운영되던 중간 상태처럼 흩뿌린다.
+4. `Flash_Block_Manager::Allocate_Pages_in_block_and_invalidate_remaining_for_preconditioning()` 이 각 블록에서 배정된 개수만큼만 valid 로 두고 나머지는 invalid 로 표시 — 이렇게 해야 시뮬레이션 시작 직후부터 곧바로 GC 가 현실적인 빈도로 발생한다( Session 2 에서 확인한 "기본 워크로드로는 GC 가 0번" 문제가, occupancy/workload 조정 시 이 preconditioning 로직과 맞물려 있다 ).
+
+<div style="margin-top: 60px;"></div>
+
+### 7-8. 시뮬레이션 시나리오 루프 — 프로그램 전체 생명주기
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 1000 200" style="width:100%;max-width:860px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-ca8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t-ca8{font-size:11.5px;font-weight:700;text-anchor:middle;}
+    .b-ca8{font-size:9px;text-anchor:middle;}
+    .f-ca8{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-ca8);fill:none;}
+  </style>
+  <rect x="10" y="20" width="150" height="60" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="85" y="45" class="t-ca8" fill="#1e293b">CLI 인자 파싱</text>
+  <text x="85" y="62" class="b-ca8" fill="#1e293b">-i / -w 경로</text>
+
+  <line x1="160" y1="50" x2="195" y2="50" class="f-ca8"/>
+  <rect x="195" y="20" width="150" height="60" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="270" y="45" class="t-ca8" fill="#1e293b">설정/workload</text>
+  <text x="270" y="62" class="b-ca8" fill="#1e293b">XML 파싱</text>
+
+  <line x1="345" y1="50" x2="380" y2="50" class="f-ca8"/>
+  <rect x="380" y="20" width="150" height="60" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <text x="455" y="45" class="t-ca8" fill="#312e81">시나리오 루프</text>
+  <text x="455" y="62" class="b-ca8" fill="#312e81">Simulator-&gt;Reset()</text>
+
+  <line x1="530" y1="50" x2="565" y2="50" class="f-ca8"/>
+  <rect x="565" y="20" width="180" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="655" y="42" class="t-ca8" fill="#1e3a8a">SSD_Device + Host_System</text>
+  <text x="655" y="60" class="b-ca8" fill="#1e3a8a">조립, host.Attach_ssd_device()</text>
+
+  <line x1="745" y1="50" x2="780" y2="50" class="f-ca8"/>
+  <rect x="780" y="20" width="200" height="60" rx="8" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <text x="880" y="42" class="t-ca8" fill="#312e81">Start_simulation()</text>
+  <text x="880" y="60" class="b-ca8" fill="#312e81">EventTree 루프( 7절 전체 )</text>
+
+  <line x1="880" y1="80" x2="880" y2="130" class="f-ca8"/>
+  <line x1="880" y1="130" x2="150" y2="130" class="f-ca8"/>
+
+  <rect x="10" y="110" width="220" height="60" rx="8" fill="#ecfccb" stroke="#65a30d" stroke-width="2"/>
+  <text x="120" y="132" class="t-ca8" fill="#365314">collect_results()</text>
+  <text x="120" y="150" class="b-ca8" fill="#365314">workload_scenario_N.xml 기록</text>
+
+  <line x1="230" y1="140" x2="270" y2="140" class="f-ca8" transform="translate(0,0)"/>
+  <text x="480" y="150" class="b-ca8" fill="#475569">다음 IO_Scenario 있으면 → 시나리오 루프로 되돌아가 반복(9/4에 확인한 3개 시나리오)</text>
+</svg>
+</div>
+
+**단계별 설명**
+
+1. `command_line_args()` 가 `-i ssdconfig.xml -w workload.xml` 형태의 인자를 파싱한다.
+2. `read_configuration_parameters()`/`read_workload_definitions()` 가 각각 XML 을 파싱하되, **파일이 없으면 MQSim 내장 기본값으로 새로 파일을 써준다**( 우리가 처음 실행할 때 설정 파일을 안 줘도 동작하는 이유 ).
+3. `io_scenarios`( `IO_Scenario` 여러 개 ) 를 순회하는 것이 바깥쪽 루프 — 시나리오 하나가 우리가 9/4 에 본 `workload_scenario_1/2/3.xml` 각각에 대응한다.
+4. 시나리오마다 **반드시** `Simulator->Reset()` 으로 이벤트 엔진을 초기화한 뒤, `SSD_Device`/`Host_System` 을 새로 생성하고 `host.Attach_ssd_device(&ssd)` 로 연결한다.
+5. `Simulator->Start_simulation()` 이 호출되는 순간부터 7절에서 다룬 모든 콜 플로우( write/read/GC/TSU/... )가 실제로 일어난다 — `EventTree` 에 등록된 이벤트가 바닥날 때까지( 또는 `IO_Flow` 들의 `stop_time`/`Total_Requests_To_Generate` 조건 충족 시 ) 계속 진행된다.
+6. 시뮬레이션이 끝나면 `collect_results()` 가 `Host_System::Report_results_in_XML()` + `SSD_Device::Report_results_in_XML()` 을 호출해 결과를 하나의 XML 로 합쳐 쓴다 — 이 안에서 `Stats` 의 전역 카운터들이 최종적으로 소비된다.
+
+<div style="margin-top: 60px;"></div>
+
 ## 참고
 
 - 관련 문서 : [MQSim 개요](/ftl-visual-simulator/mqsim/overview/) · [개발 계획](/ftl-visual-simulator/plan/)
