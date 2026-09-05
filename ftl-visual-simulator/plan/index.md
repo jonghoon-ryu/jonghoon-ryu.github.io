@@ -30,6 +30,6 @@ FTL 시각화 시뮬레이터를 실제로 만들어가는 일정과 세션별 �
 
 ## 관련 문서
 
-- [FTL Visual Simulator 목표](/ftl-visual-simulator/)
+- [개발 동기/목표](/ftl-visual-simulator/motivation-goals/)
 - [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)
 - [개발 산출물](/ftl-visual-simulator/deliverables/)
