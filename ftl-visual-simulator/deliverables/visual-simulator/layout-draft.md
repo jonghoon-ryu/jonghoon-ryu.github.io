@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Visual Simulator Interface (초안)
-permalink: /ftl-visual-simulator/visual-simulator-interface-draft/
+title: Visual Simulator Layout (초안)
+permalink: /ftl-visual-simulator/deliverables/visual-simulator/layout-draft/
 ---
 <style>
 .sim-mockup {
@@ -255,7 +255,7 @@ permalink: /ftl-visual-simulator/visual-simulator-interface-draft/
 .preset-block { margin-bottom: 46px; }
 </style>
 
-# Visual Simulator Interface (초안)
+# Visual Simulator Layout (초안)
 
 실제 코드는 아직 한 줄도 없다. 이건 Session 3(설계)에서 다룰 내용을 미리 그림으로 그려본 **레이아웃 초안**이다 — 화면 구성에 대한 의견을 먼저 듣고 싶어서 만들었다.
 
