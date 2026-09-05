@@ -3,6 +3,27 @@ layout: default
 title: MQSim 코드 분석
 permalink: /ftl-visual-simulator/mqsim/code-analysis/
 ---
+<style>
+table.plan-calendar {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin: 1rem 0;
+}
+table.plan-calendar th, table.plan-calendar td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  text-align: left;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+table.plan-calendar th {
+  background: #f5f5f5;
+  color: #333;
+}
+</style>
+
 # MQSim 코드 분석
 
 `/home/ryuj/Ryu/MQSim` 소스를 직접 뜯어보고 정리한 기록. WASM 으로 컴파일해서 그대로 쓸 코드라서, hook 을 어디에 심을지 판단하려면 이 정도는 알아야 한다.
