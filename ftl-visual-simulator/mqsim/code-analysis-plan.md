@@ -269,9 +269,45 @@ table.plan-calendar .row-mark {
 
 읽을 파일 : `src/ssd/Address_Mapping_Unit_Page_Level.cpp` ( `Translate_lpa_to_ppa_and_dispatch` 중심 )
 
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 780 210" style="width:100%;max-width:640px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-p4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t4{font-size:11.5px;font-weight:700;text-anchor:middle;} .b4{font-size:9.5px;text-anchor:middle;}
+    .f4{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-p4);fill:none;}
+  </style>
+  <rect x="10" y="70" width="150" height="60" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="85" y="93" class="t4" fill="#134e4a">query_cmt()</text>
+  <text x="85" y="110" class="b4" fill="#134e4a">CMT hit/miss 판정</text>
+
+  <line x1="160" y1="100" x2="200" y2="100" class="f4"/>
+  <rect x="200" y="70" width="170" height="60" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="285" y="90" class="t4" fill="#134e4a">translate_lpa_to_ppa()</text>
+  <text x="285" y="107" class="b4" fill="#134e4a">READ/WRITE 분기</text>
+
+  <line x1="370" y1="100" x2="410" y2="100" class="f4"/>
+  <rect x="410" y="10" width="170" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="495" y="30" class="t4" fill="#78350f">allocate_plane_for</text>
+  <text x="495" y="47" class="b4" fill="#78350f">_user_write() (WRITE만)</text>
+  <line x1="410" y1="100" x2="410" y2="40" class="f4"/>
+
+  <rect x="410" y="70" width="170" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="495" y="90" class="t4" fill="#78350f">GC_and_WL_Unit</text>
+  <text x="495" y="107" class="b4" fill="#78350f">Stop_servicing_writes()?</text>
+
+  <line x1="580" y1="100" x2="620" y2="100" class="f4"/>
+  <rect x="620" y="70" width="150" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="695" y="90" class="t4" fill="#78350f">allocate_page_in</text>
+  <text x="695" y="107" class="b4" fill="#78350f">_plane_for_user_write()</text>
+
+  <text x="390" y="170" class="b4" fill="#475569" font-style="italic">READ 경로는 CMT miss 시 online_create_entry_for_reads() 로 분기 (code-analysis.md 7-2절 참고)</text>
+</svg>
+</div>
+
 - write 요청이 들어왔을 때 : 기존 매핑 조회( CMT hit/miss ) → 새 PPA 할당( `Flash_Block_Manager` 호출 ) → 매핑 갱신 → 기존 PPA invalidate, 이 순서를 코드에서 그대로 추적
 - read 요청 경로도 동일하게 추적
-- 체크포인트 : write 요청 하나가 `Translate_lpa_to_ppa_and_dispatch` 안에서 거치는 단계를 순서대로 나열
+- **주목할 점** : `translate_lpa_to_ppa()` 의 write 분기 안에서 `ftl->GC_and_WL_Unit->Stop_servicing_writes()` 가 true 를 반환하면 이 트랜잭션은 그 자리에서 실패 처리된다( free page 가 GC 전용으로만 남을 만큼 부족한 경우 ) — 매핑 코드 안에 GC 압박이 직접 개입하는 지점이라는 걸 놓치기 쉬움
+- 체크포인트 : write 요청 하나가 `Translate_lpa_to_ppa_and_dispatch` 안에서 거치는 단계를 순서대로 나열, `Stop_servicing_writes()` 가 어떤 조건에서 write 를 막는지 설명
 
 </div>
 
@@ -342,13 +378,44 @@ table.plan-calendar .row-mark {
 
 <div class="session" data-session="6" markdown="1">
 
-### 6. Hybrid 매핑과 마모 평준화
+### 6. Wear-Leveling 실제 동작, 그리고 Hybrid 매핑의 진실
 
-읽을 파일 : `src/ssd/Address_Mapping_Unit_Hybrid.h/cpp`, `GC_and_WL_Unit_Page_Level.cpp` 의 wear-leveling 관련 부분
+읽을 파일 : `src/ssd/Address_Mapping_Unit_Hybrid.h/cpp`, `GC_and_WL_Unit_Page_Level.cpp` 의 wear-leveling 관련 부분( `check_static_wl_required`, `run_static_wearleveling`, `Get_coldest_block_id` )
 
-- log-block 방식에서 merge( switch/partial/full )가 어떤 조건에서 어떤 방식으로 갈리는지
-- dynamic wear-leveling 이 GC 로직과 어떻게 얽혀 있는지( 같은 클래스 안에 있는 이유 )
-- 체크포인트 : page-level 매핑과 hybrid 매핑의 코드 구조 차이를 한 문단으로 요약
+> ⚠️ **계획 수정 (9/5 코드 재확인)** : `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어보면 **모든 메서드가 빈 스텁**( `{}` 또는 `return 0`, 파일 전체 53줄 )이다. log-block merge(switch/partial/full) 로직이 코드에 없다 — 애초 계획이 "hybrid 매핑은 이미 있으니 hook 만 추가하면 된다"고 잘못 전제하고 있었다. 그래서 이 세션은 **읽을 코드가 있는 wear-leveling 쪽에 집중**하고, hybrid 매핑은 Cost-Benefit GC 와 같은 성격의 확장 목표( 13~16번 버퍼, 시간이 남을 때 직접 구현 )로 옮긴다. 자세한 근거는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)의 "정확성 노트" 참고.
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 820 220" style="width:100%;max-width:680px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-p6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t6{font-size:11.5px;font-weight:700;text-anchor:middle;} .b6{font-size:9.5px;text-anchor:middle;}
+    .f6{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-p6);fill:none;}
+  </style>
+  <rect x="10" y="75" width="190" height="60" rx="8" fill="#16a34a" fill-opacity="0.15" stroke="#16a34a" stroke-width="2"/>
+  <text x="105" y="98" class="t6" fill="#14532d">GC 실행마다</text>
+  <text x="105" y="115" class="b6" fill="#14532d">check_static_wl_required()</text>
+
+  <line x1="200" y1="105" x2="240" y2="105" class="f6"/>
+  <polygon points="240,75 340,105 240,135 140,105" fill="#fff6df" stroke="#b8860b" stroke-width="2" transform="translate(100,0)"/>
+  <text x="440" y="100" class="t6">max-min</text>
+  <text x="440" y="115" class="t6">erase count &gt;</text>
+  <text x="440" y="128" class="b6">threshold(100)?</text>
+
+  <line x1="540" y1="105" x2="580" y2="105" class="f6"/>
+  <text x="560" y="93" class="b6" fill="#16a34a">예</text>
+  <rect x="580" y="75" width="220" height="60" rx="8" fill="#16a34a" fill-opacity="0.15" stroke="#16a34a" stroke-width="2"/>
+  <text x="690" y="95" class="t6" fill="#14532d">run_static_wearleveling()</text>
+  <text x="690" y="112" class="b6" fill="#14532d">Get_coldest_block_id() 강제 이동</text>
+
+  <line x1="440" y1="135" x2="440" y2="180" class="f6"/>
+  <text x="440" y="198" class="b6" fill="#475569">아니오 — 다음 GC까지 대기</text>
+</svg>
+</div>
+
+- **Static wear-leveling** : GC 로 자연스럽게 마모가 분산되지 않는 "차가운"(거의 안 바뀌는) 데이터가 있는 블록을 강제로 순환시키는 보완 장치. `check_static_wl_required()` 가 plane 내 블록들의 최대-최소 erase count 차이를 `Static_Wearleveling_Threshold`(설정값 100)와 비교하고, 넘으면 `Get_coldest_block_id()`( erase count 가 가장 낮은 블록 — 즉 가장 안 지워진, 정적인 데이터가 오래 눌러앉은 블록 )를 찾아 그 valid page 들을 강제로 다른 곳으로 옮기고 지운다.
+- **Dynamic wear-leveling** 은 별도 함수가 아니라 GC 의 victim 선정 정책 자체에 녹아 있다( RGA/RANDOM 계열이 확률적으로 블록을 고르기 때문에 자연히 마모가 퍼짐 ) — Session 5 에서 이미 확인한 내용과 이어진다.
+- (참고) Hybrid 매핑을 직접 구현해보고 싶다면 : `Address_Mapping_Unit_Base` 를 상속하는 뼈대는 이미 있으므로, `Address_Mapping_Unit_Page_Level` 을 참고해 log block 개념( 몇 개의 block 을 임시 로그로 쓰고 가득 차면 switch/partial/full merge )을 새로 구현하면 된다 — Cost-Benefit GC(13~14번)와 성격이 같은 "확장 구현" 과제.
+- 체크포인트 : static wear-leveling 이 트리거되는 조건과, 그것이 GC 트리거 조건(`Check_gc_required`)과 어떻게 다른 별도 경로인지 설명. `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어 실제로 빈 스텁인지 확인.
 
 </div>
 
