@@ -78,12 +78,15 @@ Host_Interface <-> Data_Cache_Manager <-> NVM_Firmware(FTL) <-> NVM_PHY <-> NVM_
 
 `FTL` 클래스( `NVM_Firmware` 상속 )가 아래 4개를 멤버로 들고 있다 — **우리가 시각화하려는 것들이 정확히 이 4개다.**
 
-| 멤버 | 클래스 | 역할 |
-|---|---|---|
-| `Address_Mapping_Unit` | `Address_Mapping_Unit_Base` → `_Page_Level`( 실제 구현 ) / `_Hybrid`( ⚠️ 빈 스텁 — 6절 "정확성 노트" 참고 ) | LPA(논리 페이지) → PPA(물리 페이지) 매핑. `Translate_lpa_to_ppa_and_dispatch()` 가 요청 처리의 실제 진입점 |
-| `BlockManager` | `Flash_Block_Manager_Base` → `Flash_Block_Manager` | block/page 의 free·valid·invalid 상태, erase count, write frontier(쓰기 중인 block) 관리 |
-| `GC_and_WL_Unit` | `GC_and_WL_Unit_Base` → `_Page_Level` | `Check_gc_required()` 로 GC 트리거 판단, victim block 선정, 마모 평준화 |
-| `TSU` | `TSU_Base` → `_FLIN` / `_OutofOrder` / `_Priority_OutOfOrder` | 여러 채널/칩에 대해 어떤 flash transaction(R/W/E)을 언제 실행할지 스케줄링 |
+<div style="overflow-x:auto;">
+<table class="plan-calendar">
+<tr><th>멤버</th><th>클래스</th><th>역할</th></tr>
+<tr><td><code>Address_Mapping_Unit</code></td><td><code>Address_Mapping_Unit_Base</code> → <code>_Page_Level</code>( 실제 구현 ) / <code>_Hybrid</code>( ⚠️ 빈 스텁 — 6절 "정확성 노트" 참고 )</td><td>LPA(논리 페이지) → PPA(물리 페이지) 매핑. <code>Translate_lpa_to_ppa_and_dispatch()</code> 가 요청 처리의 실제 진입점</td></tr>
+<tr><td><code>BlockManager</code></td><td><code>Flash_Block_Manager_Base</code> → <code>Flash_Block_Manager</code></td><td>block/page 의 free·valid·invalid 상태, erase count, write frontier(쓰기 중인 block) 관리</td></tr>
+<tr><td><code>GC_and_WL_Unit</code></td><td><code>GC_and_WL_Unit_Base</code> → <code>_Page_Level</code></td><td><code>Check_gc_required()</code> 로 GC 트리거 판단, victim block 선정, 마모 평준화</td></tr>
+<tr><td><code>TSU</code></td><td><code>TSU_Base</code> → <code>_FLIN</code> / <code>_OutofOrder</code> / <code>_Priority_OutOfOrder</code></td><td>여러 채널/칩에 대해 어떤 flash transaction(R/W/E)을 언제 실행할지 스케줄링</td></tr>
+</table>
+</div>
 
 - **`Address_Mapping_Unit_Page_Level`** 내부에는 CMT(Cached Mapping Table) 관련 메서드( `Exists`, `Retrieve_ppa`, `Reserve_slot_for_lpn` )가 따로 있다 — 매핑 테이블 전체를 메모리에 두지 않고 일부만 캐싱하는 DFTL 류의 구조가 이미 구현되어 있다는 뜻.
 - **`Flash_Block_Manager_Base`** 안의 `Block_Pool_Slot_Type` 이 진짜 "block 상태"를 들고 있다 — `Invalid_page_bitmap`( 페이지별 valid/invalid ), `Erase_count`, `Current_status`( IDLE/GC_WL/USER/GC_USER 등 상태 머신 ). 우리 시각화의 grid 색상은 결국 이 구조체를 읽으면 된다.
