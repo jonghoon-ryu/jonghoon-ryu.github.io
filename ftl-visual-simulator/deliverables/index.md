@@ -11,7 +11,7 @@ FTL 시각화 시뮬레이터를 실제로 만들어가면서 나오는 산출�
 
 ## 하위 문서
 
-( 아직 없음 — 세션이 진행되면서 채워질 예정 )
+- [Visual Simulator](/ftl-visual-simulator/deliverables/visual-simulator/) — 실제로 만들어지는 WASM 엔진 + 웹 UI 산출물
 
 <div style="margin-top: 60px;"></div>
 
