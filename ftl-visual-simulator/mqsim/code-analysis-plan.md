@@ -421,9 +421,11 @@ table.plan-calendar .row-mark {
 
 <div class="session" data-session="7" markdown="1">
 
-### 7. 요청이 들어오는 입구 — Host Interface 와 Cache
+### 7. Host 개념 정리( 가볍게 ) + FTL 3종 통합 점검
 
-읽을 파일 : `src/ssd/Host_Interface_Base.h`, `Host_Interface_NVMe.h/cpp`, `Data_Cache_Manager_Base.h`, `Data_Cache_Manager_Flash_Simple.cpp`
+> ⚠️ **계획 수정( 9/5 )** — 원래 이 세션은 Host Interface 코드를 줄 단위로 읽는 딥다이브였는데, "FTL 만 깊이 보고 Host 는 개념만"이라는 방향에 맞춰 가볍게 바꿨다. Host 는 아래 그림 정도의 개념만 확인하고, 대신 지금까지 세션 3~6 에서 각각 따로 읽은 **FTL 3종( 주소 매핑 / 블록 관리 / GC·WL )을 한 번에 다시 훑어 통합**하는 데 이 세션의 시간을 쓴다.
+
+읽을 파일 : ( Host 개념만, 코드 깊이 안 읽음 ) `Host_Interface_NVMe.h`, `Data_Cache_Manager_Base.h` — ( FTL 통합 점검, 이 세션의 핵심 ) `Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp`, `GC_and_WL_Unit_Page_Level.cpp` 를 세션 3~6 노트와 함께 다시 열어보기
 
 <div style="overflow-x:auto;">
 <svg viewBox="0 0 760 240" style="width:100%;max-width:620px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
@@ -462,9 +464,13 @@ table.plan-calendar .row-mark {
 </svg>
 </div>
 
-- NVMe 의 multi-queue 구조( `Input_Stream_Manager_NVMe`, `Request_Fetch_Unit_NVMe` )가 SATA 단일 큐와 어떻게 다른지 — 위 그림 왼쪽, 스트림마다 독립된 링버퍼가 있어야 진짜 병렬 접수가 가능하다는 점
-- 캐시 히트 시 FTL 까지 안 내려가는 경로가 있는지 확인 — 위 그림 오른쪽 분기, `Data_Cache_Manager_Flash_Simple` vs `_Flash_Advanced` 가 이 hit/miss 판정 로직에서 어떻게 다른지도 비교
-- 체크포인트 : 호스트 요청이 `Host_Interface` 에서 `FTL` 까지 가는 경로를 그림으로( 위 그림을 안 보고 직접 그려보기 ), 캐시 hit 과 miss 각각 몇 단계를 거치는지 설명
+**Host 개념( 가볍게, 코드 안 읽어도 됨 )**
+- NVMe 의 multi-queue 구조가 SATA 단일 큐와 어떻게 다른지 — 위 그림 왼쪽, "스트림마다 독립된 링버퍼가 있어야 진짜 병렬 접수가 가능하다" 정도만 이해하면 충분
+- 캐시 히트 시 FTL 까지 안 내려가는 경로가 있다는 것만 확인 — 위 그림 오른쪽 분기
+
+**FTL 3종 통합 점검( 이 세션의 핵심 )**
+- 세션 3~4( 주소 매핑 ), 세션 5( GC ), 세션 6( wear-leveling )에서 각각 따로 읽었던 코드를 이번엔 **하나의 write 요청이 세 클래스를 순서대로 거치는 흐름**으로 다시 추적 — `Address_Mapping_Unit_Page_Level::translate_lpa_to_ppa()` → `Flash_Block_Manager::Allocate_block_and_page_in_plane_for_user_write()` → ( 블록이 다 찼으면 ) `GC_and_WL_Unit::Check_gc_required()`
+- 체크포인트 : Host 개념( NVMe vs SATA, 캐시 hit/miss )을 한 문단으로 요약. 그리고 write 요청 하나가 FTL 3종 클래스를 순서대로 거치는 과정을, 이번엔 코드 파일/함수 이름을 직접 대면서( 위 그림 없이 ) 설명
 
 </div>
 

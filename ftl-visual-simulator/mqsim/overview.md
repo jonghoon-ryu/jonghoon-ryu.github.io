@@ -86,7 +86,7 @@ FTL 을 시뮬레이션하는 오픈소스 도구는 MQSim 말고도 여럿 있�
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>이름</th><th>특징</th><th>이번 프로젝트 적합성</th></tr>
-<tr><td><b>MQSim</b></td><td>Standalone C++ 바이너리. VM/QEMU 불필요. NVMe/SATA, page-level·hybrid 매핑, GC/WL 모두 구현. MIT 라이선스. GitHub 385 stars, 2025-08 최근 커밋</td><td>✅ 채택 — 외부 의존성 없어 WASM 컴파일에 유리, 코드 규모도 적당( ~19K 줄 )해서 hook 추가 작업이 감당할 만함</td></tr>
+<tr><td><b>MQSim</b></td><td>Standalone C++ 바이너리. VM/QEMU 불필요. NVMe/SATA, page-level 매핑, GC/WL 모두 구현( ⚠️ hybrid 매핑은 클래스 골격만 있고 실제 로직은 빈 스텁 — 9/5 코드 확인 ). MIT 라이선스. GitHub 385 stars, 2025-08 최근 커밋</td><td>✅ 채택 — 외부 의존성 없어 WASM 컴파일에 유리, 코드 규모도 적당( ~19K 줄 )해서 hook 추가 작업이 감당할 만함</td></tr>
 <tr><td>FEMU</td><td>QEMU 기반 FPGA/소프트웨어 에뮬레이터. 실제 VM 위에서 실제 데이터를 읽고 씀. 591 stars, 활발히 유지보수( 최근 커밋 매우 최근 )</td><td>❌ 부적합 — QEMU/KVM 풀 시스템이 전제라서 브라우저 WASM 으로 가져오기 사실상 불가능</td></tr>
 <tr><td>SimpleSSD</td><td>gem5 등 full-system 시뮬레이터와 연동하는 고정밀 SSD 스택 모델. GPLv3. 54 stars, 마지막 커밋 2022-11</td><td>❌ 부적합 — 단독 실행 목적이 아니라 다른 시뮬레이터에 붙는 구조라 복잡도가 높고, 최근 유지보수도 뜸함</td></tr>
 <tr><td>VSSIM</td><td>QEMU/KVM 기반 virtual machine SSD 시뮬레이터. IDE 인터페이스만 지원. 2013년 전후 연구, 사실상 유지보수 종료</td><td>❌ 부적합 — VM 기반이라 WASM 화 불가능, 기술도 오래됨</td></tr>
@@ -112,5 +112,6 @@ FTL 을 시뮬레이션하는 오픈소스 도구는 MQSim 말고도 여럿 있�
 
 - GitHub : [github.com/CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim)
 - 논문(PDF) : [MQSim: A Framework for Enabling Realistic Studies of Modern Multi-Queue SSD Devices](https://people.inf.ethz.ch/omutlu/pub/MQSim-SSD-simulation-framework_fast18.pdf)
+- 강의 : [Understanding & Designing Modern Storage Systems - L3: MQSim](https://www.youtube.com/watch?v=9YZGHl6yxBc)
 - 비교 대상 중 하나, 실제 임베디드용 FTL 라이브러리 : [github.com/dlbeer/dhara](https://github.com/dlbeer/dhara)
 - 관련 프로젝트 : [개발 계획](/ftl-visual-simulator/plan/)

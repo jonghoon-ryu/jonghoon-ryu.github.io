@@ -69,6 +69,13 @@ table.plan-calendar .buffer-mark {
 
 **1차 완성 목표일 : 2026-10-11**. 9/4(금)를 시작일로 삼아, 이후 주말( 토/일 ) + 공휴일( 10/5, 10/9 ) 기준 하루 5시간씩 총 12세션 커리큘럼. 10/11 에 결과물을 직접 리뷰하고, 필요하면 10/17~10/18, 10/24~10/25 를 이용해 수정한다.
 
+> **9/5(토, 원래 휴무일) 추가 작업 기록** — 쉬는 날이지만 세션 2 마무리 겸 문서 전반을 손봤다.
+> - [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)에 파일별 상세 설명(FTL 코드 라인 수 포함) + 콜 플로우 다이어그램 8개 추가
+> - [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) 문서 신설
+> - **개발 계획(이 문서) 검토 및 수정** : Session 6 을 "Hybrid 매핑 구현되어 있음" 전제에서 "실제로는 빈 스텁 → 마모 평준화 중심으로 수정"으로 정정, Session 2 에 MQSim 강의 영상 추가
+> - **[MQSim 코드 분석 계획](/ftl-visual-simulator/mqsim/code-analysis-plan/) 수정** : Session 6 정정(위와 동일 이유), Session 7 을 Host 딥다이브에서 "Host 개념만 + FTL 통합 점검"으로 축소( FTL 만 깊이 보고 Host 는 개념만 파악하기로 함 ), Session 4/13 파일 위치 오류 수정
+> - 코드 재검증으로 발견한 오류 정정 : GC 트리거는 매 쓰기가 아니라 write frontier 블록이 다 찼을 때만 확인됨, dynamic wear-leveling 은 GC 정책이 아니라 free block pool 배정(erase count 최소 블록 우선)에서 동작, `Preemptible_GC_Enabled=false` 설정에서는 GC 가 항상 긴급 모드, MQSim 에는 bad block 관리가 없음(통계용 카운터만 존재)
+
 <div style="margin-top: 60px;"></div>
 
 ## 전제 조건
@@ -101,7 +108,7 @@ table.plan-calendar .buffer-mark {
 <tr><td>-</td><td>9/24 (목)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td><td>—</td></tr>
 <tr><td>-</td><td>9/25 (금)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td><td>—</td></tr>
 <tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td><td>GC 이론( greedy vs cost-benefit ) + `GC_and_WL_Unit_Page_Level.cpp` victim selection</td><td class="table-mark buffer-mark" data-session="5">☐</td></tr>
-<tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td><td>Hybrid 매핑 이론 + `Address_Mapping_Unit_Hybrid.cpp`</td><td class="table-mark buffer-mark" data-session="6">☐</td></tr>
+<tr><td>6</td><td>9/27 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (3)</td><td>마모 평준화(dynamic/static WL) 이론 + `GC_and_WL_Unit_Base.cpp`/`Flash_Block_Manager_Base.cpp`( Hybrid 매핑은 빈 스텁이라 확장 목표로 이동, 9/5 확인 )</td><td class="table-mark buffer-mark" data-session="6">☐</td></tr>
 <tr><td>7</td><td>10/3 (토)</td><td>주말</td><td>Phase 5 — 시각화 (1)</td><td>시각화 요소와 `Stats.cpp` 통계 항목 대응 관계 확인</td><td class="table-mark buffer-mark" data-session="7">☐</td></tr>
 <tr><td>8</td><td>10/4 (일)</td><td>주말</td><td>Phase 5 — 시각화 (2)</td><td>9/4 결과( `workload_scenario_*.xml` )와 대시보드 지표 대조</td><td class="table-mark buffer-mark" data-session="8">☐</td></tr>
 <tr><td>9</td><td>10/5 (월)</td><td>공휴일</td><td>Phase 6 — 인터랙션 (1)</td><td>`ssdconfig.xml` 파라미터 범위/의미 재확인</td><td class="table-mark buffer-mark" data-session="9">☐</td></tr>
@@ -110,7 +117,7 @@ table.plan-calendar .buffer-mark {
 <tr><td>12</td><td>10/11 (일)</td><td>주말 · 1차 마감</td><td>Phase 7 — 마무리 (2) · 배포 · 리뷰</td><td>캡스톤 — write 요청 하나를 매핑→GC→flash 까지 전체 설명</td><td class="table-mark buffer-mark" data-session="12">☐</td></tr>
 <tr><td>13</td><td>10/17 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>Cost-Benefit GC 이론 복습 + 기존 GC 코드 구조 재설계 지점 파악</td><td class="table-mark buffer-mark" data-session="13">☐</td></tr>
 <tr><td>14</td><td>10/18 (일)</td><td>주말</td><td>리뷰 및 수정</td><td>Cost-Benefit GC 코드 리뷰, RGA 대비 비교 검증</td><td class="table-mark buffer-mark" data-session="14">☐</td></tr>
-<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>전체 hook 코드 최종 재점검( 매핑/GC/WL/hybrid )</td><td class="table-mark buffer-mark" data-session="15">☐</td></tr>
+<tr><td>15</td><td>10/24 (토)</td><td>주말</td><td>리뷰 및 수정</td><td>전체 hook 코드 최종 재점검( 매핑/GC/WL, hybrid 는 구현했다면 포함 )</td><td class="table-mark buffer-mark" data-session="15">☐</td></tr>
 <tr><td>16</td><td>10/25 (일)</td><td>주말</td><td>리뷰 및 수정</td><td>최종 캡스톤 — 확장 기능까지 포함해 전체 시스템 설명</td><td class="table-mark buffer-mark" data-session="16">☐</td></tr>
 </table>
 </div>
@@ -136,7 +143,7 @@ table.plan-calendar .buffer-mark {
 - NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write" — 이미 잘 알고 있음 ✅
 - 주소 매핑 방식 : page-level, block-level mapping — 이미 잘 알고 있음 ✅
 - 마모 평준화( static/dynamic ), bad block 관리, over-provisioning — 이미 잘 알고 있음 ✅
-- Hybrid(log-block, FAST) mapping — **Session 6(엔진에 hybrid 매핑 추가) 때 실습과 함께 다루기로 미룸**
+- Hybrid(log-block, FAST) mapping — MQSim 에는 실제로 구현되어 있지 않음(빈 스텁, 9/5 확인) → **직접 구현이 필요한 확장 목표로 13~16번 버퍼에서 다루기로 미룸**
 - Garbage Collection ( victim block 선정 알고리즘 등 ) — **Session 5(GC 알고리즘 구현) 때 실습과 함께 깊이 다루기로 미룸**
 - DFTL 같은 demand-based 매핑 캐싱 — **확장 기능으로 나중에 실습할 때(DFTL 매핑 캐시 시각화) 같이 다루기로 미룸**
 - 결과물 : 개발 계획 수립
@@ -150,7 +157,8 @@ table.plan-calendar .buffer-mark {
 
 **Ryu 가 할 일**
 - **MQSim/FTL 심화** : [MQSim 문서](/ftl-visual-simulator/mqsim/) 를 읽으며 MQSim 이 뭘 모델링하는지, 어떤 기능이 있는지, 다른 오픈소스 시뮬레이터와 비교했을 때 왜 이걸 골랐는지 개괄적으로 이해
-- Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해
+- Claude 가 정리한 XML 설정 항목·모듈 구조·파이프라인 다이어그램( [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/mqsim/concept-mapping/) )을 리뷰하며, 각 파라미터·모듈이 FTL 개념상 무엇을 의미하는지 실제로 이해
+- **강의 시청** : [Understanding & Designing Modern Storage Systems - L3: MQSim](https://www.youtube.com/watch?v=9YZGHl6yxBc) — 제목상 "스토리지 시스템 설계" 강의 시리즈의 MQSim 전용 회차(L3). 위 문서들로 정리한 내용을 강의 설명으로 한 번 더 교차 확인하는 용도( 영상 자체를 열어보지 못했으니 실제 내용은 시청하면서 직접 확인 필요 )
 
 **Claude 가 할 일**
 - [CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim) clone, 빌드, 샘플 설정으로 실행 ✅ ( 9/4 에 미리 진행 — g++13 에서 수정 없이 바로 빌드/실행 됨, `/home/ryuj/Ryu/MQSim` )
@@ -175,9 +183,9 @@ table.plan-calendar .buffer-mark {
 - MVP 범위 초안 : flash block/page grid ( free / valid / invalid / erasing 상태 ), 매핑 테이블, GC 이벤트, 통계( WAF, valid page 비율 )
 - **엔진 아키텍처 확정** : 자체 TS 엔진을 새로 짜지 않고, **MQSim C++ 코드를 Emscripten 으로 WASM 컴파일해서 그대로 사용**. UI 는 React + Vite, WASM 모듈과는 얇은 JS/TS 바인딩 레이어로 연결, GitHub Pages 정적 배포
 - **계측(instrumentation) 지점 설계** : MQSim 은 XML → 실행 → 결과 XML 이라는 일괄 실행 구조라 중간 상태를 못 봄. 시각화를 위해 어디에 hook 을 심어야 하는지 설계 —
-  - `Address_Mapping_Unit_Page_Level.cpp`, `Address_Mapping_Unit_Hybrid.cpp` : 매핑 갱신 시점
-  - `GC_and_WL_Unit_Page_Level.cpp` : GC 시작/victim 선정/migration/erase 시점
-  - `Flash_Block_Manager.cpp` : block/page 상태(free/valid/invalid) 변경 시점
+  - `Address_Mapping_Unit_Page_Level.cpp` : 매핑 갱신 시점( `Address_Mapping_Unit_Hybrid.cpp` 는 빈 스텁이라 제외 — hybrid 를 확장 구현하게 되면 그때 같이 hook 추가 )
+  - `GC_and_WL_Unit_Page_Level.cpp`, `GC_and_WL_Unit_Base.cpp` : GC 시작/victim 선정/migration/erase 시점 + dynamic/static wear-leveling 시점
+  - `Flash_Block_Manager.cpp`/`Flash_Block_Manager_Base.cpp` : block/page 상태(free/valid/invalid) 변경 시점
   - 이 지점들에서 이벤트를 JS 로 넘기는 방식 결정 ( Emscripten `EM_ASM`/exported 콜백으로 즉시 통지 vs. 주기적 상태 스냅샷 )
 - 파라미터/워크로드 입력 방식 설계 : 파라미터 패널에서 만든 값을 실제 `ssdconfig.xml`/`workload.xml` 형식 텍스트로 만들어 Emscripten 가상 파일시스템(MEMFS)에 써넣고, MQSim 기존 XML 파싱 코드를 그대로 재사용
 - **초심자 학습 요소를 MVP 범위에 포함** :
@@ -229,20 +237,21 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 <div class="session" data-session="6" markdown="1">
 
-### 6. (9/27) 시뮬레이션 엔진 (3) — hybrid/마모평준화 노출과 바인딩 마무리
+### 6. (9/27) 시뮬레이션 엔진 (3) — 마모평준화 노출과 바인딩 마무리
 
+> ⚠️ **계획 수정( 9/5 코드 재확인)** : `Address_Mapping_Unit_Hybrid.cpp` 를 직접 열어보니 **모든 메서드가 빈 스텁**( 53줄, log-block merge 로직 없음 )이었다. "hybrid 매핑도 이미 구현되어 있어서 hook 만 추가하면 된다"는 원래 전제가 틀렸음 — 자세한 근거는 [MQSim 코드 분석](/ftl-visual-simulator/mqsim/code-analysis/)의 "정확성 노트" 참고. 그래서 이 세션은 **실제로 구현되어 있는 마모 평준화(dynamic/static WL)에 집중**하고, hybrid 매핑은 직접 구현이 필요한 확장 목표( Cost-Benefit GC 와 같은 성격, 13~16번 버퍼 )로 옮긴다.
 
-Hybrid 매핑과 마모 평준화도 MQSim 에 이미 구현되어 있음( `Address_Mapping_Unit_Hybrid.cpp`, wear-leveling 로직 ) — 마찬가지로 hook 추가와 WASM 바인딩 API 마무리가 중심.
+마모 평준화는 MQSim 에 실제로 구현되어 있음( `GC_and_WL_Unit_Base.cpp` 의 dynamic/static WL 로직 — [코드 분석 7-3절](/ftl-visual-simulator/mqsim/code-analysis/) 참고 ) — hook 추가와 WASM 바인딩 API 마무리가 중심.
 
 **Ryu 가 할 일**
-- **Hybrid(log-block, FAST) mapping 이론 학습** ( Session 1 에서 미뤄둔 부분 )
+- **마모 평준화(dynamic/static WL) 이론 재확인** ( Session 5 GC 이론에 이어서, Session 1 에서 미뤄둔 부분 )
 - 리뷰·테스트
-- **MQSim/FTL 심화** : `Address_Mapping_Unit_Hybrid.cpp` 를 읽고 log-block merge(switch/partial/full merge) 가 실제로 어떻게 도는지 확인
-- **코드 스터디** : Claude 가 추가한 hybrid 매핑·마모 평준화 hook 코드를 원본 로직과 나란히 읽으며, 방금 배운 이론이 코드 어디에 해당하는지 확인
+- **MQSim/FTL 심화** : `GC_and_WL_Unit_Base.cpp`( `check_static_wl_required`/`run_static_wearleveling` )와 `Flash_Block_Manager_Base.cpp`( `Add_to_free_block_pool`/`Get_a_free_block` — dynamic WL 이 실제로 여기서 "erase count 가 가장 낮은 free 블록 우선 배정"으로 동작 )를 읽고 실제로 어떻게 도는지 확인
+- **코드 스터디** : Claude 가 추가한 마모 평준화 hook 코드를 원본 로직과 나란히 읽으며, 방금 확인한 메커니즘이 코드 어디에 해당하는지 확인
 
 **Claude 가 할 일**
-- dynamic wear leveling, bad block 관련 코드에 상태 변경 hook 추가
-- `Address_Mapping_Unit_Hybrid.cpp` 에도 동일하게 hook 추가해서 사용자가 매핑 방식을 page-level ↔ hybrid 로 전환해볼 수 있게 함
+- dynamic wear-leveling( `Add_to_free_block_pool`/`Get_a_free_block` ), static wear-leveling( `run_static_wearleveling` ) 코드에 상태 변경 hook 추가
+- ( Hybrid 매핑은 빈 스텁이라 이 세션에서는 hook 추가 대상에서 제외 — 확장 목표로 이동 )
 - WASM 바인딩 API 확정 ( init(config), step()/run(n), getState(), configure() )
 - 결과물 : UI 없이도 동작·테스트가 끝난 WASM 엔진 + 바인딩
 
