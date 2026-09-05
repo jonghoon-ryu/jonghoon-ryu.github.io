@@ -425,9 +425,46 @@ table.plan-calendar .row-mark {
 
 읽을 파일 : `src/ssd/Host_Interface_Base.h`, `Host_Interface_NVMe.h/cpp`, `Data_Cache_Manager_Base.h`, `Data_Cache_Manager_Flash_Simple.cpp`
 
-- NVMe 의 multi-queue 구조( `Input_Stream_Manager_NVMe`, `Request_Fetch_Unit_NVMe` )가 SATA 단일 큐와 어떻게 다른지
-- 캐시 히트 시 FTL 까지 안 내려가는 경로가 있는지 확인
-- 체크포인트 : 호스트 요청이 `Host_Interface` 에서 `FTL` 까지 가는 경로를 그림으로
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 760 240" style="width:100%;max-width:620px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-p7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t7{font-size:11.5px;font-weight:700;text-anchor:middle;} .b7{font-size:9.5px;text-anchor:middle;}
+    .f7{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-p7);fill:none;}
+  </style>
+  <rect x="10" y="20" width="220" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="120" y="42" class="t7" fill="#1e3a8a">NVMe : 스트림별 SQ/CQ</text>
+  <text x="120" y="60" class="b7" fill="#1e3a8a">Input_Stream_NVMe 링버퍼</text>
+  <text x="120" y="75" class="b7" fill="#1e3a8a">(멀티큐 병렬 접수)</text>
+
+  <rect x="10" y="120" width="220" height="60" rx="8" fill="#dbeafe" fill-opacity="0.5" stroke="#2563eb" stroke-width="2"/>
+  <text x="120" y="142" class="t7" fill="#1e3a8a">SATA : 단일 큐</text>
+  <text x="120" y="160" class="b7" fill="#1e3a8a">Host_Interface_SATA</text>
+
+  <line x1="230" y1="55" x2="270" y2="90" class="f7"/>
+  <line x1="230" y1="150" x2="270" y2="105" class="f7"/>
+
+  <rect x="270" y="70" width="200" height="60" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="370" y="92" class="t7" fill="#4c1d95">Data_Cache_Manager</text>
+  <text x="370" y="110" class="b7" fill="#4c1d95">write cache hit?</text>
+
+  <line x1="470" y1="90" x2="510" y2="60" class="f7"/>
+  <text x="530" y="45" class="b7" fill="#7c3aed">hit → 즉시 응답</text>
+  <rect x="510" y="20" width="220" height="50" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="620" y="40" class="t7" fill="#4c1d95">캐시에서 바로 서비스</text>
+  <text x="620" y="55" class="b7" fill="#4c1d95">FTL 까지 안 내려감</text>
+
+  <line x1="470" y1="110" x2="510" y2="140" class="f7"/>
+  <text x="530" y="140" class="b7" fill="#7c3aed">miss → FTL 로</text>
+  <rect x="510" y="120" width="220" height="60" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="620" y="142" class="t7" fill="#134e4a">FTL.Address_Mapping_Unit</text>
+  <text x="620" y="160" class="b7" fill="#134e4a">(Session 3~4 로 이어짐)</text>
+</svg>
+</div>
+
+- NVMe 의 multi-queue 구조( `Input_Stream_Manager_NVMe`, `Request_Fetch_Unit_NVMe` )가 SATA 단일 큐와 어떻게 다른지 — 위 그림 왼쪽, 스트림마다 독립된 링버퍼가 있어야 진짜 병렬 접수가 가능하다는 점
+- 캐시 히트 시 FTL 까지 안 내려가는 경로가 있는지 확인 — 위 그림 오른쪽 분기, `Data_Cache_Manager_Flash_Simple` vs `_Flash_Advanced` 가 이 hit/miss 판정 로직에서 어떻게 다른지도 비교
+- 체크포인트 : 호스트 요청이 `Host_Interface` 에서 `FTL` 까지 가는 경로를 그림으로( 위 그림을 안 보고 직접 그려보기 ), 캐시 hit 과 miss 각각 몇 단계를 거치는지 설명
 
 </div>
 
@@ -435,12 +472,36 @@ table.plan-calendar .row-mark {
 
 ### 8. 요청이 빠져나가는 출구 — TSU 와 물리 계층
 
-읽을 파일 : `src/ssd/TSU_Base.h`, `TSU_FLIN.cpp` 또는 `TSU_OutofOrder.cpp`, `NVM_PHY_ONFI.h/cpp`, `ONFI_Channel_Base.h/cpp`
+읽을 파일 : `src/ssd/TSU_Base.h`, `TSU_Priority_OutOfOrder.cpp`( 우리 설정의 실제 정책 ), `NVM_PHY_ONFI.h/cpp`, `ONFI_Channel_Base.h/cpp`, `nvm_chip/flash_memory/Flash_Chip.h`
 
-- `TSU.Schedule()` 이 여러 채널/칩 중 무엇을 언제 실행시킬지 정하는 기준
-- ONFI 타이밍 모델( read/program/erase 지연시간 )이 어디서 더해지는지
-- 채널 하나에 여러 칩이 붙을 때 버스 경합이 어떻게 처리되는지
-- 체크포인트 : flash transaction 하나가 큐에 들어가서 실제로 실행되기까지의 대기 이유를 설명
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 640 260" style="width:100%;max-width:520px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <style>
+    .t8{font-size:12px;font-weight:700;text-anchor:middle;} .b8{font-size:10px;}
+  </style>
+  <text x="320" y="20" class="t8" fill="#1e293b">ssdconfig.xml 지연시간 파라미터 — 실제 배율(로그 축 아님, 상대 길이)</text>
+
+  <text x="60" y="55" class="b8" fill="#0d9488" text-anchor="end">Read</text>
+  <rect x="70" y="40" width="30" height="24" rx="4" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="110" y="57" class="b8" fill="#134e4a">75,000ns (Page_Read_Latency)</text>
+
+  <text x="60" y="105" class="b8" fill="#d97706" text-anchor="end">Program</text>
+  <rect x="70" y="90" width="300" height="24" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="380" y="107" class="b8" fill="#78350f">750,000ns (Page_Program_Latency) — read의 10배</text>
+
+  <text x="60" y="155" class="b8" fill="#e11d48" text-anchor="end">Erase</text>
+  <rect x="70" y="140" width="560" height="24" rx="4" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+  <text x="360" y="157" class="b8" fill="#881337">3,800,000ns (Block_Erase_Latency) — read의 50배 이상</text>
+
+  <text x="70" y="200" class="b8" fill="#475569">→ GC 한 번 = program(migration) 여러 번 + erase 한 번 → 매우 비싼 연산</text>
+  <text x="70" y="220" class="b8" fill="#475569">→ CMD_Suspension_Support=ERASE 라서, 이 긴 erase 도중 급한 read 가 오면 Suspend()/Resume() 으로 잠깐 끼어들 수 있음</text>
+</svg>
+</div>
+
+- `TSU.Schedule()` 이 여러 채널/칩 중 무엇을 언제 실행시킬지 정하는 기준 — 실제로는 채널별 라운드로빈 + 칩 하나당 read>write>erase 우선순위( `TSU_Priority_OutOfOrder::Schedule()` 실제 코드로 확인, [코드 분석 7-4절](/ftl-visual-simulator/mqsim/code-analysis/) 참고 )
+- ONFI 타이밍 모델( read/program/erase 지연시간 )이 어디서 더해지는지 — 위 그림의 실제 배율을 코드(`Get_command_execution_latency()`)에서 확인
+- 채널 하나에 여러 칩이 붙을 때 버스 경합이 어떻게 처리되는지 — `ONFI_Channel_Base::SetStatus()` 가 상태 전이를 어떻게 검증하는지
+- 체크포인트 : flash transaction 하나가 큐에 들어가서 실제로 실행되기까지의 대기 이유를 설명, program 이 read 보다 왜 10배 느린지 NAND 물리 원리로 설명
 
 </div>
 
@@ -450,8 +511,38 @@ table.plan-calendar .row-mark {
 
 읽을 파일 : `src/ssd/Stats.h/cpp`, `src/utils/XMLWriter.h/cpp`, `main.cpp` 의 `collect_results()`
 
-- `Total_GC_Executions`, WAF 관련 카운터 등이 시뮬레이션 도중 어디서 증가되는지 역추적( GC_and_WL_Unit 쪽 카운터 증가 지점 )
-- 왜 MQSim 은 중간 상태 없이 "끝나고 나서" 결과를 한 번에 XML 로 쓰는 구조인지( = 우리가 hook 을 심어야 하는 이유 재확인 )
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 900 220" style="width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-p9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t9{font-size:11px;font-weight:700;text-anchor:middle;} .b9{font-size:9px;text-anchor:middle;}
+    .f9{stroke:#7f8c8d;stroke-width:1.5;marker-end:url(#arrow-p9);fill:none;}
+  </style>
+  <rect x="10" y="10" width="180" height="50" rx="8" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="100" y="30" class="t9" fill="#134e4a">query_cmt()</text>
+  <text x="100" y="45" class="b9" fill="#134e4a">CMT_hits / CMT_miss++</text>
+  <line x1="190" y1="35" x2="620" y2="35" class="f9"/>
+
+  <rect x="10" y="80" width="180" height="50" rx="8" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+  <text x="100" y="100" class="t9" fill="#881337">Check_gc_required()</text>
+  <text x="100" y="115" class="b9" fill="#881337">Total_gc_executions++</text>
+  <line x1="190" y1="105" x2="620" y2="105" class="f9"/>
+
+  <rect x="10" y="150" width="180" height="50" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="100" y="170" class="t9" fill="#78350f">GC 페이지 이동</text>
+  <text x="100" y="185" class="b9" fill="#78350f">Total_page_movements_for_gc++</text>
+  <line x1="190" y1="175" x2="620" y2="175" class="f9"/>
+
+  <rect x="620" y="70" width="270" height="80" rx="8" fill="#ecfccb" stroke="#65a30d" stroke-width="2"/>
+  <text x="755" y="95" class="t9" fill="#365314">Stats:: 전역 정적 카운터</text>
+  <text x="755" y="115" class="b9" fill="#365314">시뮬레이션 내내 누적만 됨</text>
+  <text x="755" y="130" class="b9" fill="#365314">(중간에 읽지 않음)</text>
+</svg>
+</div>
+
+- `Total_GC_Executions`( XML 태그명, 코드에서는 `Stats::Total_gc_executions` ), CMT hit/miss, `Total_page_movements_for_gc` 등이 시뮬레이션 도중 어디서 증가되는지 역추적 — 위 그림처럼 여러 파일에 흩어진 지점들이 전부 같은 `Stats` 전역 정적 변수에 모인다는 게 핵심
+- `main.cpp` 의 `collect_results()` → `Host_System::Report_results_in_XML()` + `SSD_Device::Report_results_in_XML()` 이 이 정적 카운터들을 XML 로 직렬화하는 지점
+- 왜 MQSim 은 중간 상태 없이 "끝나고 나서" 결과를 한 번에 XML 로 쓰는 구조인지( = 우리가 hook 을 심어야 하는 이유 재확인 ) — `Stats` 는 시뮬레이션 도중 계속 누적되기만 하고, 그 값을 "실시간으로" 내보내는 경로가 원래 없다
 - 체크포인트 : 9/4 에 봤던 결과 XML 의 특정 숫자 하나를 골라, 그 값이 코드 어디서 만들어지는지 추적
 
 </div>
@@ -462,9 +553,42 @@ table.plan-calendar .row-mark {
 
 읽을 파일 : `src/host/IO_Flow_Base.h`, `IO_Flow_Synthetic.cpp`, `IO_Flow_Trace_Based.cpp`
 
-- synthetic 워크로드가 파라미터( 분포, hot region 비율 등 )로부터 실제 요청을 어떻게 생성하는지
-- trace 기반 워크로드( `tpcc-small.trace` )가 파일을 어떻게 파싱해서 같은 형태의 요청으로 변환하는지
-- 체크포인트 : 두 방식이 최종적으로 `Host_Interface` 에 요청을 넘기는 지점이 왜 동일한 인터페이스로 수렴하는지 설명
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 760 220" style="width:100%;max-width:620px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <defs><marker id="arrow-p10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs>
+  <style>
+    .t10{font-size:11.5px;font-weight:700;text-anchor:middle;} .b10{font-size:9.5px;text-anchor:middle;}
+    .f10{stroke:#7f8c8d;stroke-width:2;marker-end:url(#arrow-p10);fill:none;}
+  </style>
+  <rect x="10" y="10" width="260" height="80" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="140" y="32" class="t10" fill="#1e3a8a">IO_Flow_Synthetic</text>
+  <text x="140" y="50" class="b10" fill="#1e3a8a">read 비율, 주소분포(RANDOM_UNIFORM),</text>
+  <text x="140" y="65" class="b10" fill="#1e3a8a">hot region 비율, 요청크기 분포</text>
+  <text x="140" y="80" class="b10" fill="#1e3a8a">→ RandomGenerator 로 즉석 생성</text>
+
+  <rect x="10" y="120" width="260" height="80" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="140" y="142" class="t10" fill="#4c1d95">IO_Flow_Trace_Based</text>
+  <text x="140" y="160" class="b10" fill="#4c1d95">tpcc-small.trace 파일을</text>
+  <text x="140" y="175" class="b10" fill="#4c1d95">한 줄씩 파싱(ASCII_Trace_Definition)</text>
+  <text x="140" y="190" class="b10" fill="#4c1d95">→ total_replay_no 만큼 반복 재생 가능</text>
+
+  <line x1="270" y1="50" x2="330" y2="105" class="f10"/>
+  <line x1="270" y1="160" x2="330" y2="115" class="f10"/>
+
+  <rect x="330" y="90" width="200" height="50" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="430" y="112" class="t10" fill="#1e293b">Generate_next_request()</text>
+  <text x="430" y="128" class="b10" fill="#1e293b">→ Host_IO_Request (동일 형태)</text>
+
+  <line x1="530" y1="115" x2="570" y2="115" class="f10"/>
+  <rect x="570" y="90" width="180" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="660" y="112" class="t10" fill="#1e3a8a">Host_Interface</text>
+  <text x="660" y="128" class="b10" fill="#1e3a8a">동일 인터페이스로 수렴</text>
+</svg>
+</div>
+
+- synthetic 워크로드가 파라미터( 분포, hot region 비율 등 )로부터 실제 요청을 어떻게 생성하는지 — `IO_Flow_Synthetic` 이 주소분포/요청크기/도착간격마다 **서로 다른 `RandomGenerator` 시드**를 쓴다는 점 확인( `ssdconfig.xml` 의 `Seed` 하나가 아니라 내부적으로 여러 개 파생 )
+- trace 기반 워크로드( `tpcc-small.trace` )가 파일을 어떻게 파싱해서 같은 형태의 요청으로 변환하는지 — `ASCII_Trace_Definition.h`, `percentage_to_be_simulated`( trace 의 일부만 재생하는 옵션 )
+- 체크포인트 : 두 방식이 최종적으로 `Host_Interface` 에 요청을 넘기는 지점이 왜 동일한 인터페이스( `Generate_next_request()` → `Host_IO_Request` )로 수렴하는지 설명 — 이 다형성 덕분에 우리 workload 컨트롤 UI(Session 10 원 계획)가 두 방식을 같은 방식으로 다룰 수 있음
 
 </div>
 
@@ -500,12 +624,40 @@ table.plan-calendar .row-mark {
 
 ### 13. Cost-Benefit GC 이론 복습과 설계 지점 파악
 
-읽을 파일 : `src/ssd/GC_and_WL_Unit_Page_Level.cpp` 의 `GC_Block_Selection_Policy` switch-case 전체, `SSD_Defs.h` 의 `GC_Block_Selection_Policy_Type` enum
+읽을 파일 : `src/ssd/GC_and_WL_Unit_Page_Level.cpp` 의 `GC_Block_Selection_Policy` switch-case 전체(`Check_gc_required()`), `src/ssd/GC_and_WL_Unit_Base.h` 의 `GC_Block_Selection_Policy_Type` enum( ⚠️ 예전엔 `SSD_Defs.h` 로 적어뒀었는데, 9/5 재확인 결과 실제로는 `GC_and_WL_Unit_Base.h` 에 선언되어 있음 )
+
+<div style="overflow-x:auto;">
+<svg viewBox="0 0 780 260" style="width:100%;max-width:640px;height:auto;display:block;margin:1rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <style>
+    .t13{font-size:11.5px;font-weight:700;} .b13{font-size:9.5px;}
+    .ax13{stroke:#475569;stroke-width:1.5;}
+  </style>
+  <text x="390" y="20" text-anchor="middle" class="t13" fill="#1e293b">두 블록 후보 비교 — GREEDY 는 B를, Cost-Benefit 은 A를 고를 수 있다</text>
+
+  <line x1="80" y1="220" x2="80" y2="40" class="ax13"/>
+  <line x1="80" y1="220" x2="740" y2="220" class="ax13"/>
+  <text x="60" y="40" text-anchor="end" class="b13" fill="#475569">age(오래됨)</text>
+  <text x="740" y="240" text-anchor="end" class="b13" fill="#475569">invalid page 비율(1-u)</text>
+
+  <circle cx="160" cy="70" r="10" fill="#16a34a" stroke="#14532d" stroke-width="2"/>
+  <text x="160" y="55" text-anchor="middle" class="t13" fill="#14532d">A</text>
+  <text x="160" y="95" text-anchor="middle" class="b13" fill="#14532d">age 높음(오래 안 지워짐)</text>
+  <text x="160" y="108" text-anchor="middle" class="b13" fill="#14532d">invalid 적음(u 큼)</text>
+  <text x="160" y="121" text-anchor="middle" class="b13" fill="#14532d" font-weight="700">Cost-Benefit 이 선호</text>
+
+  <circle cx="600" cy="180" r="10" fill="#e11d48" stroke="#881337" stroke-width="2"/>
+  <text x="600" y="165" text-anchor="middle" class="t13" fill="#881337">B</text>
+  <text x="600" y="205" text-anchor="middle" class="b13" fill="#881337">age 낮음(최근에도 지워짐)</text>
+  <text x="600" y="218" text-anchor="middle" class="b13" fill="#881337" font-weight="700">GREEDY/RGA 가 선호</text>
+
+  <text x="390" y="255" text-anchor="middle" class="b13" fill="#475569" font-style="italic">GREEDY/RGA 는 invalid_page_count 하나만 비교 → age 축을 아예 못 봄. Cost-Benefit = age × (1-u)/(1+u) 로 두 축을 함께 반영</text>
+</svg>
+</div>
 
 - LFS/Rosenblum cost-benefit 공식( `age × (1-u)/(1+u)`, u = valid page 비율 ) 복습 — Session 1/5 에서 배운 이론을 실제 수식으로
-- 기존 GREEDY/RGA 케이스가 어떤 정보( invalid page 수, block age )를 쓰는지 vs cost-benefit 이 추가로 필요한 정보( block 의 마지막 접근 시각 등 )
-- enum 에 새 값을 추가하고 switch-case 에 새 분기를 넣는 지점을 미리 표시해두기( 실제 구현은 Claude 담당 )
-- 체크포인트 : cost-benefit 정책이 greedy 와 다르게 "오래됐지만 invalid page 는 적은 block"을 왜 고르려 하는지 설명
+- 기존 GREEDY/RGA 케이스가 실제로 비교하는 값은 **오직 `Invalid_page_count`( 그리고 GREEDY 는 `Current_page_write_index == pages_no_per_block` 조건 )뿐**이라는 것을 코드로 재확인( 9/5 코드 확인 결과 — "age" 개념 자체가 지금 코드엔 없음 ). Cost-Benefit 을 구현하려면 블록별로 "마지막으로 valid page 가 갱신된 시각" 같은 age 정보를 `Block_Pool_Slot_Type` 에 새로 추가해야 한다
+- enum 에 새 값(`COST_BENEFIT`)을 추가하고 `Check_gc_required()` 의 switch-case 에 새 분기를 넣을 지점을 미리 표시해두기( 실제 구현은 Claude 담당 )
+- 체크포인트 : cost-benefit 정책이 greedy 와 다르게 "오래됐지만 invalid page 는 적은 block"(위 그림의 A)을 왜 고르려 하는지 설명, 지금 코드에 age 정보가 없다는 게 무엇을 새로 추가해야 한다는 뜻인지 설명
 
 </div>
 
