@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 구현 작업 상세
+title: Claude 구현 작업 상세
 permalink: /ftl-visual-simulator/plan/implementation/
 ---
 <style>
@@ -24,7 +24,7 @@ table.plan-calendar th {
 }
 </style>
 
-# 구현 작업 상세
+# Claude 구현 작업 상세
 
 [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/)의 각 세션에 있는 "Claude 가 할 일"은 세션 단위로 짧게만 적혀 있다. 이 문서는 그 내용을 **컴포넌트/기능 단위로 다시 묶어서**, 실제 코드에서 확인한 정확한 파일·함수 이름까지 포함해 상세하게 기록한 것 — 실제로 구현할 때 참고할 상세 스펙.
 
