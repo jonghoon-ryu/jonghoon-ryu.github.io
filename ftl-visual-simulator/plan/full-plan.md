@@ -209,10 +209,12 @@ table.plan-calendar .buffer-mark {
 - **코드 스터디** : Claude 가 `Address_Mapping_Unit_Page_Level.cpp` 에 추가한 계측 코드(hook)를 원본 로직과 나란히 읽으며, FTL 매핑 갱신이 코드 상 어느 시점인지 이해
 
 **Claude 가 할 일**
-- 프로젝트 scaffold ( Vite + React + TS )
-- Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 )
-- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성
-- host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인
+- 프로젝트 scaffold ( Vite + React + TS ) ✅ ( 9/5 진행 )
+- Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 ) ✅ ( 9/5 진행 — [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), `MQSim_Interface` 로 분리 )
+- `init`/`step`/`run`/`configure` WASM 바인딩 작성 ✅ ( 9/5 진행 — [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )
+  - ⚠️ 이 바인딩을 검증하다가 **WASM 빌드가 네이티브와 다른 시뮬레이션 결과를 내는** 심각한 버그를 발견 — MQSim 원본의 이식성 버그 4개( RNG 정수 오버플로우, 소멸자 6개, 미초기화 포인터, 근본 원인인 `std::multimap::find()` 가정 오류 )가 원인이었음. 전부 찾아 고치고 68개 시나리오로 검증 완료. 자세한 건 [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) 참고
+- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성 — **아직( 다음 세션에서 이어감 )**
+- host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인 — **아직**
 - ( 시간이 여유로울 때 ) 위에서 만든 라이브러리 분리 구조에 **GTest 프레임워크를 바로 연결** — main.cpp 리팩터링을 두 번 하지 않으려면 지금이 최적의 타이밍( 자세한 이유는 [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 참고 )
 
 </div>
@@ -370,7 +372,7 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 ## 참고
 
-- 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) · [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [개발 동기/목표](/ftl-visual-simulator/motivation-goals/) · [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/) · [Visual Simulator Layout (초안)](/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/)
+- 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) · [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) · [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) · [개발 동기/목표](/ftl-visual-simulator/motivation-goals/) · [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/) · [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/) · [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/) · [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) · [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) · [Visual Simulator Layout (초안)](/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/)
 
 <script>
 (function () {
