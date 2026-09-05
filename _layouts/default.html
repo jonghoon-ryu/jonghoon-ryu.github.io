@@ -110,5 +110,20 @@
       </footer>
     </div>
 
+    <script>
+      // Clicking a nav link whose details/summary group is already open
+      // natively toggles it closed AND cancels the link's own navigation
+      // (a Chrome quirk with a link inside summary) - that's the "needs two
+      // clicks" bug. Handling
+      // the click ourselves and navigating explicitly sidesteps it entirely;
+      // the correct open/closed tree state is recomputed server-side from
+      // page.url on whichever page we land on, so no extra JS is needed for that.
+      document.querySelectorAll('.nav-group summary a').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.location.href = link.getAttribute('href');
+        });
+      });
+    </script>
   </body>
 </html>
