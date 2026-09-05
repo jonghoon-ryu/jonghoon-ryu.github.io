@@ -202,18 +202,18 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>파일</th><th>설명</th></tr>
-<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">exec/ — 조립 · 설정</th></tr>
+<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">exec/ — 조립 · 설정</td></tr>
 <tr><td><code>main.cpp</code></td><td>진입점. 인자 파싱 → <code>Execution_Parameter_Set</code> 로드 → workload XML 파싱 → 시나리오별로 <code>Simulator-&gt;Reset()</code> → <code>SSD_Device</code>/<code>Host_System</code> 생성 → <code>Simulator-&gt;Start_simulation()</code> → 결과 XML 기록을 반복한다.</td></tr>
 <tr><td><code>SSD_Device.h/cpp</code></td><td>"SSD 한 대"에 해당하는 조립 클래스. <code>Host_interface</code>, <code>Cache_manager</code>, <code>Firmware</code>(FTL), <code>PHY</code>, <code>Channels</code> 를 실제로 new 해서 서로 연결한다. 헤더 주석에 파이프라인 전체가 한 줄로 적혀 있다.</td></tr>
 <tr><td><code>Host_System.h/cpp</code></td><td>workload 정의로부터 <code>IO_Flow</code> 들을 만들고 <code>SSD_Device</code> 에 붙이는(<code>Attach_ssd_device</code>) 역할.</td></tr>
 <tr><td><code>Execution_Parameter_Set.h/cpp</code></td><td><code>ssdconfig.xml</code> 전체를 담는 최상위 컨테이너. <code>Host_Configuration</code>(Host_Parameter_Set) + <code>SSD_Device_Configuration</code>(Device_Parameter_Set) 두 덩어리로 나뉜다.</td></tr>
 <tr><td><code>Device_Parameter_Set.h/cpp</code>, <code>Flash_Parameter_Set.h/cpp</code>, <code>Host_Parameter_Set.h/cpp</code>, <code>IO_Flow_Parameter_Set.h/cpp</code></td><td>XML 태그 하나하나를 그대로 멤버 변수로 들고 있는 설정 구조체 + <code>XML_serialize</code>/<code>XML_deserialize</code>. [MQSim 개요](/ftl-visual-simulator/mqsim/overview/)의 파라미터 표가 바로 이 파일들의 필드 목록이다.</td></tr>
-<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">sim/ — 이산 이벤트 엔진</th></tr>
+<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">sim/ — 이산 이벤트 엔진</td></tr>
 <tr><td><code>Sim_Object.h</code></td><td>모든 시뮬레이션 구성요소의 베이스. 순수 가상 함수 <code>Execute_simulator_event()</code>( 이벤트 수신 진입점 ), <code>Start_simulation()</code>, <code>Validate_simulation_config()</code> 를 강제한다.</td></tr>
 <tr><td><code>Sim_Event.h</code></td><td>이벤트 하나 = <code>{Fire_time, Target_sim_object, Parameters, Type}</code>. <code>Next_event</code> 포인터로 같은 시각 이벤트를 연결 리스트로 묶는다.</td></tr>
 <tr><td><code>Engine.h/cpp</code></td><td>싱글턴( <code>Simulator</code> 매크로 ). <code>Register_sim_event()</code> 로 이벤트 등록, <code>Start_simulation()</code> 이 "가장 이른 이벤트 pop → 해당 객체의 <code>Execute_simulator_event</code> 호출"을 반복하는 메인 루프.</td></tr>
 <tr><td><code>EventTree.h/cpp</code></td><td>Red-Black 트리로 구현된 이벤트 큐. 시각(<code>sim_time_type</code>)을 key 로 정렬해서 <code>Get_min_value()</code> 로 항상 가장 빠른 이벤트를 O(log n)에 꺼낸다.</td></tr>
-<tr><td colspan="2" style="background:#475569;color:#fff;font-weight:700;">host/ + ssd/Host_Interface_* — Host 계층 ( 🔹 개념만 파악, 코드는 깊이 안 읽음 )</th></tr>
+<tr><td colspan="2" style="background:#475569;color:#fff;font-weight:700;">host/ + ssd/Host_Interface_* — Host 계층 ( 🔹 개념만 파악, 코드는 깊이 안 읽음 )</td></tr>
 <tr><td colspan="2">
 호스트가 요청을 SSD 에 전달하는 방식 — <b>이 프로젝트에서는 다음 개념만 알면 충분</b>.<br><br>
 · <b>NVMe</b>(<code>Host_Interface_NVMe</code>) 는 스트림마다 독립된 SQ/CQ 링버퍼를 갖는 <b>multi-queue</b> 구조라서 여러 큐가 동시에 처리된다. <b>SATA</b>(<code>Host_Interface_SATA</code>) 는 큐가 하나뿐이다 — 이 차이 때문에 이 프로젝트는 NVMe 만 시연 대상으로 삼는다.<br>
@@ -221,7 +221,7 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 · <code>PCIe_Root_Complex/Switch/Link</code>, <code>SATA_HBA</code> 는 각 프로토콜의 물리 링크 지연시간 모델 — FTL 로직과 무관.<br><br>
 <span style="color:#94a3b8;font-size:11px;">( 해당 파일 : IO_Flow_Base/Synthetic/Trace_Based, PCIe_Root_Complex/Switch/Link, SATA_HBA, Host_Interface_Base/NVMe/SATA — 총 3,640줄, 자세히 안 읽어도 됨 )</span>
 </td></tr>
-<tr><td colspan="2" style="background:#0d9488;color:#fff;font-weight:700;">ssd/ — FTL 4대 클래스 ( 🔸 이 프로젝트의 핵심, 줄 단위로 읽는 대상 )</th></tr>
+<tr><td colspan="2" style="background:#0d9488;color:#fff;font-weight:700;">ssd/ — FTL 4대 클래스 ( 🔸 이 프로젝트의 핵심, 줄 단위로 읽는 대상 )</td></tr>
 <tr><td><code>FTL.h/cpp</code></td><td><code>NVM_Firmware</code> 를 상속하는 조립 클래스. <code>Address_Mapping_Unit</code>/<code>BlockManager</code>/<code>GC_and_WL_Unit</code>/<code>TSU</code>/<code>PHY</code> 5개 포인터를 멤버로 들고 생성자에서 순서대로 new 한다.<br><span style="color:#0d9488;font-weight:700;">📏 55 + 908 = 963줄</span></td></tr>
 <tr><td><code>Address_Mapping_Unit_Base.h/cpp</code></td><td>매핑 계층의 추상 인터페이스. <code>Translate_lpa_to_ppa_and_dispatch()</code>( 요청 처리 진입점 )와, GC 가 LPA/블록에 거는 barrier 관련 함수( <code>Set_barrier_for_accessing_*</code> )들이 순수 가상으로 선언되어 있다.<br><span style="color:#0d9488;font-weight:700;">📏 118 + 46 = 164줄</span></td></tr>
 <tr><td><code>Address_Mapping_Unit_Page_Level.h/cpp</code></td><td>실제로 쓰이는 매핑 구현( DFTL 스타일 ). <code>Cached_Mapping_Table</code>( LRU CMT ), <code>AddressMappingDomain</code>( 스트림별 GMT/GTD ), <code>query_cmt()</code>( CMT hit/miss 판정 ), <code>translate_lpa_to_ppa()</code>( 실제 PPA 할당/조회 )가 핵심.<br><span style="color:#0d9488;font-weight:700;">📏 204 + 1,935 = 2,139줄</span> — FTL 전체의 약 32%, 가장 큰 파일</td></tr>
@@ -231,7 +231,7 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 <tr><td><code>TSU_Base.h/cpp</code>, <code>TSU_FLIN.h/cpp</code>, <code>TSU_OutofOrder.h/cpp</code>, <code>TSU_Priority_OutOfOrder.h/cpp</code></td><td><code>Prepare_for_transaction_submit()</code>→<code>Submit_transaction()</code>→<code>Schedule()</code> 3단계 API. <code>Schedule()</code> 이 트랜잭션을 채널/칩별 큐에 분류하고, read&gt;write&gt;erase 우선순위로 실행시킨다( 정책별 세부 규칙만 다름 — 우리 설정은 <code>PRIORITY_OUT_OF_ORDER</code> ).<br><span style="color:#0d9488;font-weight:700;">📏 120+140 + 93+591 + 60+421 + 66+555 = 2,046줄</span> — 정책 4개 중 실제 쓰는 건 Priority_OutOfOrder 하나뿐이라 나머지는 참고용</td></tr>
 <tr><td><code>Flash_Transaction_Queue.h/cpp</code></td><td>TSU 가 채널/칩/우선순위별로 들고 있는 실제 트랜잭션 큐 자료구조.<br><span style="color:#0d9488;font-weight:700;">📏 31 + 91 = 122줄</span></td></tr>
 <tr><td colspan="2" style="text-align:right;font-weight:700;background:#ecfccb;color:#365314;">FTL 관련 코드 합계 → 963+164+2,139+105+540+630+2,046+122 = <span style="font-size:14px;">6,709줄</span>( MQSim 전체 19,309줄의 약 35% )</td></tr>
-<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">ssd/ — 그 밖의 지원 클래스 ( 참고용, FTL 은 아님 )</th></tr>
+<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">ssd/ — 그 밖의 지원 클래스 ( 참고용, FTL 은 아님 )</td></tr>
 <tr><td><code>Data_Cache_Manager_Base.h/cpp</code></td><td>SSD 내부 DRAM 캐시 공통 로직. <code>estimate_dram_access_time()</code> 이 tRCD/tCL/tRP 기반으로 DRAM 접근 지연을 계산한다.</td></tr>
 <tr><td><code>Data_Cache_Manager_Flash_Simple.h/cpp</code>, <code>_Flash_Advanced.h/cpp</code>, <code>Data_Cache_Flash.h/cpp</code></td><td>Simple 은 캐시 없이 바로 통과에 가까운 구현, Advanced 는 실제 캐시 라인 관리( 우리 설정의 <code>Caching_Mechanism=ADVANCED</code> ）가 쓰는 쪽.</td></tr>
 <tr><td><code>NVM_PHY_Base.h/cpp</code>, <code>NVM_PHY_ONFI.h/cpp</code>, <code>NVM_PHY_ONFI_NVDDR2.h/cpp</code></td><td>FTL 과 물리 칩 사이의 컨트롤러. <code>Send_command_to_chip()</code> 이 실제 커맨드를 내려보내고, 완료 시 <code>ConnectToTransactionServicedSignal</code> 로 등록된 콜백( AMU/GC/TSU 각자 )을 깨운다.</td></tr>
@@ -239,11 +239,11 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 <tr><td><code>NVM_Transaction.h</code>, <code>NVM_Transaction_Flash.h/cpp</code>, <code>_RD/_WR/_ER.h/cpp</code></td><td>flash 트랜잭션 하나의 데이터 모델. <code>Source</code>(USERIO/CACHE/MAPPING/GC_WL), <code>Type</code>(READ/WRITE/ERASE), <code>Address</code>, <code>LPA</code>/<code>PPA</code> — TSU 의 큐 분류·우선순위가 전부 이 두 필드(Source, Type) 기준.</td></tr>
 <tr><td><code>Stats.h/cpp</code></td><td>전역 정적 카운터 모음. <code>Total_gc_executions</code>, <code>CMT_hits</code>/<code>CMT_miss</code>, <code>Total_page_movements_for_gc</code> 등 — hook 이 잡아야 할 이벤트와 최종 카운터를 1:1로 대조할 때 기준이 되는 파일.</td></tr>
 <tr><td><code>User_Request.h/cpp</code></td><td>호스트 요청 하나( 여러 섹터에 걸칠 수 있음 )가 여러 개의 <code>NVM_Transaction_Flash</code> 로 쪼개지기 전의 상위 단위.</td></tr>
-<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">nvm_chip/flash_memory/ — 물리 NAND 모델</th></tr>
+<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">nvm_chip/flash_memory/ — 물리 NAND 모델</td></tr>
 <tr><td><code>Flash_Chip.h/cpp</code></td><td>칩 하나. <code>Get_command_execution_latency()</code> 가 MLC/TLC 기술과 페이지 위치(LSB/CSB/MSB)에 따라 다른 지연시간을 반환. <code>Suspend()</code>/<code>Resume()</code> 으로 erase/program suspend 를 지원.</td></tr>
 <tr><td><code>Die.h/cpp</code>, <code>Plane.h/cpp</code>, <code>Block.h/cpp</code>, <code>Page.h</code></td><td>Chip→Die→Plane→Block→Page 물리 계층 그대로. <code>Page</code> 는 <code>Metadata.LPA</code> 하나만 들고 있는 아주 얇은 클래스 — 실제 valid/invalid 상태는 <code>Block_Pool_Slot_Type.Invalid_page_bitmap</code>( <code>Flash_Block_Manager</code> 쪽 )에서 관리된다는 점이 처음 읽을 때 헷갈리는 부분.</td></tr>
 <tr><td><code>Physical_Page_Address.h/cpp</code></td><td>{ChannelID, ChipID, DieID, PlaneID, BlockID, PageID} 6-tuple. 이 프로젝트의 모든 물리 주소가 이 구조체 하나로 표현된다.</td></tr>
-<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">utils/ · 기타</th></tr>
+<tr><td colspan="2" style="background:#2c3e50;color:#fff;font-weight:700;">utils/ · 기타</td></tr>
 <tr><td><code>XMLWriter.h/cpp</code></td><td>결과를 <code>workload_scenario_N.xml</code> 로 직렬화. <code>Write_open_tag</code>/<code>Write_close_tag</code> 스타일의 최소 XML writer.</td></tr>
 <tr><td><code>Logical_Address_Partitioning_Unit.h/cpp</code></td><td>여러 I/O 스트림에 채널/칩/다이/플레인을 어떻게 나눠줄지 계산 — preconditioning 때 스트림별 물리 공간 배분에 쓰인다.</td></tr>
 <tr><td><code>RandomGenerator.h/cpp</code>, <code>CMRRandomGenerator.h/cpp</code>, <code>DistributionTypes.h</code></td><td>시드 기반 난수 생성기( workload 주소/크기/도착시간 분포, GC 의 RANDOM 계열 정책이 모두 이걸 사용 ).</td></tr>
