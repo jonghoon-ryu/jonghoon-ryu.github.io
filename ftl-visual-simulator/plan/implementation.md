@@ -55,7 +55,7 @@ table.plan-calendar th {
 
 ## 1. 프로젝트 뼈대 & 빌드 파이프라인 ( Session 3~4 )
 
-- Vite + React + TS scaffold 생성 ✅ ( 9/5 진행 — [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) )
+- Vite + React + TS scaffold 생성 ( 9/5 진행 — [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) )
 - Emscripten 툴체인 설치, MQSim 빌드 확인( 기존 `Makefile` 대신 Emscripten 용 빌드 스크립트 필요 )
 - **`main.cpp` 라이브러리화** — 현재 `main()` 안에 있는 "설정 파싱 → workload 파싱 → 시나리오 루프( `Simulator->Reset()` → `SSD_Device` 생성 → `Host_System` 생성 → `Simulator->Start_simulation()` → `collect_results()` )" 흐름을 재호출 가능한 함수로 분리
 - ( 여유 있으면 ) 이 라이브러리 분리 구조에 **GTest 프레임워크 연결** — 같은 리팩터링을 GMock 테스트 바이너리용으로도 재사용( 7-3 참고 )
