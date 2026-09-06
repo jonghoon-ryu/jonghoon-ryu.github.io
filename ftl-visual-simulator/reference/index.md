@@ -15,6 +15,7 @@ permalink: /ftl-visual-simulator/reference/
 - [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) — WASM 이 뭔지, em++ 가 뭔지, 그리고 `main.cpp` 를 라이브러리로 바꾸는 작업을 포함해 앞으로 진행할 작업들이 왜 필요한지에 대한 설명
 - [프론트엔드 스택 입문 (Vite · React · TS)](/ftl-visual-simulator/reference/frontend-stack/) — Vite, React, TypeScript, scaffold 가 각각 뭔지, 그리고 화면 쪽 구현에 왜 필요한지에 대한 설명
 - [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) — WASM 빌드가 네이티브와 다른 결과를 내던 문제를 추적해서 찾아낸 MQSim 원본의 이식성 버그 4개와 수정 기록
+- [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/) — static 마모 평준화 hook 작업 중 발견한 MQSim 원본의 로직 버그 2개 — 위 이식성 버그와 달리, 고치면 이 프로젝트가 upstream MQSim 과 의도적으로 다르게 동작하게 되는 경우라 별도로 기록
 
 <div style="margin-top: 60px;"></div>
 

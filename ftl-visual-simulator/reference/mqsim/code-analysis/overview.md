@@ -259,6 +259,10 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 - 실제로 hybrid 매핑을 시각화하려면 Cost-Benefit GC( 확장 목표 7번 )처럼 **직접 구현**해야 하는 작업이 된다 — page-level 매핑처럼 "이미 있는 로직에 hook만 추가"가 아니라 새로운 기능 개발.
 - 두 가지 선택지가 있다 : (1) Session 6 범위를 hybrid 매핑 없이 wear-leveling( 이건 `GC_and_WL_Unit_Page_Level.cpp` 에 실제로 구현되어 있음, 확인됨 )만으로 축소하고 hybrid 매핑은 13~16번 버퍼( Cost-Benefit GC 와 같은 성격의 확장 목표 )로 미룬다, 또는 (2) 애초 계획대로 Session 6 에서 hybrid 매핑을 직접 구현한다. 시간이 빠듯한 1차 마감(10/11) 사정을 고려하면 (1)이 안전하다 — 계획 수정은 [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) 문서에서 별도로 반영 필요.
 
+### ⚠️ 정확성 노트 — static 마모 평준화(WL) 트리거 로직에 버그 2개
+
+`GC_and_WL_Unit_Base.cpp`/`Flash_Block_Manager_Base.cpp` 를 직접 읽으며 WL hook 을 추가하던 중, static 마모 평준화가 언제 발동할지 정하는 로직 자체에 버그 2개를 발견했다 — 하나는 메모리 안전성 문제, 하나는 "erase count 차이"를 계산해야 하는 함수가 실제로는 엉뚱한 값(블록 번호 차이, 심하면 unsigned 언더플로우)을 반환하던 문제. 위 hybrid 매핑 건과 달리 이건 **네이티브 MQSim 자체의 로직 오류**라, 고치면 이 프로젝트가 upstream MQSim 과 의도적으로 다르게 동작하게 된다 — 그래서 별도 문서에 상세히 남겨뒀다 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/).
+
 <div style="margin-top: 60px;"></div>
 
 ## 7. 주요 콜 플로우
