@@ -102,12 +102,14 @@ table.plan-calendar th {
 - `Add_erased_block_to_pool()` : erase 완료 후 free pool 복귀 이벤트
 - `Program_transaction_serviced()`, `Invalidate_page_in_block()` : valid→invalid 전환 이벤트
 
-### 3-3. GC — `GC_and_WL_Unit_Page_Level.cpp`
+### 3-3. GC — `GC_and_WL_Unit_Page_Level.cpp` / `GC_and_WL_Unit_Base.cpp`
 
-- `Check_gc_required()` : GC 트리거 판단 + 정책별( GREEDY/RGA/RANDOM 계열/FIFO ) victim block 선정 결과 이벤트
-- valid page migration 루프 : 이동 중인 각 페이지 이벤트( read → 새 PPA 재기록 )
-- block erase 실행 이벤트
-- **검증** : hook 이 카운트한 GC 실행 횟수가 `Stats::Total_gc_executions` 와 정확히 일치해야 함( 회귀 테스트 )
+> ⚠️ **( 9/6 정정 )** GC 실행에는 즉시 실행 경로( `Check_gc_required()`, Page_Level.cpp )와 다른 요청 때문에 지연됐다가 나중에 실행되는 경로( `handle_transaction_serviced_signal_from_PHY()`, **Base.cpp** )가 따로 있어서, 아래 hook 은 두 파일 모두에 추가했다. `Stats::Total_gc_executions`/`Stats::Total_page_movements_for_gc` 도 이 두 곳에서 나눠 증가하므로 검증 항목도 두 경로 합산 기준. 지연 실행 경로는 Session 6 의 static 마모평준화와 코드를 공유하고, MQSim 자신도 이 둘을 구분해서 세지 않는다(`Simulation_Events.h` 의 주석 참고).
+
+- `Check_gc_required()` : GC 트리거 판단 + 정책별( GREEDY/RGA/RANDOM 계열/FIFO ) victim block 선정 결과 이벤트 ( 9/6 완료 — `GC_Started_Event`, 즉시/지연 두 실행 경로 모두 )
+- valid page migration 루프 : 이동 중인 각 페이지 이벤트( read → 새 PPA 재기록 ) ( 9/6 완료 — `GC_Page_Migrated_Event` )
+- block erase 실행 이벤트 ( 9/6 완료 — `GC_Block_Erased_Event`, erase 트랜잭션이 실제로 완료되는 시점 )
+- **검증** : hook 이 카운트한 GC 실행 횟수가 `Stats::Total_gc_executions` 와 정확히 일치해야 함( 회귀 테스트 ) ( 9/6 완료 — 기본 샘플 설정은 GC 가 안 일어나서 GC_Exec_Threshold 를 임시로 높인 스트레스 설정으로 검증 : gc_started 17회/page migration 4323회 모두 Stats 와 정확히 일치, 결과 XML MD5 는 hook 추가 전후 동일 )
 
 ### 3-4. 마모 평준화 — `GC_and_WL_Unit_Base.cpp` / `Flash_Block_Manager_Base.cpp`
 
@@ -190,7 +192,11 @@ table.plan-calendar th {
     'i0': true,
     'i1': true,
     'i2': true,
-    'i5': { comment: '9/6 완료 (PR #3) - read/write 두 분기 모두에서 발행. getState()/setEventCallback 바인딩도 함께 구현' }
+    'i5': { comment: '9/6 완료 (PR #3) - read/write 두 분기 모두에서 발행. getState()/setEventCallback 바인딩도 함께 구현' },
+    'i10': true,
+    'i11': true,
+    'i12': true,
+    'i13': true
   };
   var SKIP_HEADINGS = ['0. 전체 아키텍처', '참고'];
 

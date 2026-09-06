@@ -243,6 +243,8 @@ table.plan-calendar .buffer-mark {
 
 GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_Page_Level.cpp` ) — 새로 짜는 게 아니라, 그 기존 로직이 실행되는 시점을 JS 로 노출하는 hook 을 추가하는 세션.
 
+> ⚠️ **( 9/6 기록 ) 계획과 달리 hook 을 두 파일에 나눠 추가함.** GC 는 "victim block 선정 즉시 실행" 경로( `GC_and_WL_Unit_Page_Level::Check_gc_required` )와 "다른 요청 때문에 미뤄졌다가 나중에 실행" 경로가 따로 있는데, 후자와 block erase 완료 처리는 실제로는 `GC_and_WL_Unit_Base.cpp` 쪽 코드( `handle_transaction_serviced_signal_from_PHY` )에 있었음 — `Stats::Total_gc_executions` 도 이 두 곳에서 나눠 증가시키고 있어서, 정확한 hook 이 되려면 둘 다 계측해야 했음. 이 지연 실행 경로는 Session 6 의 static 마모평준화와 코드를 공유하고 MQSim 자신도 둘을 구분해서 세지 않는다는 것도 확인함 — 자세한 내용은 `Simulation_Events.h` 의 주석 참고.
+
 **Ryu 가 할 일**
 - **GC 이론 학습** ( Session 1 에서 미뤄둔 부분 ) : victim block 선정 알고리즘( greedy vs cost-benefit ), GC 트리거 정책과 WAF 관계
 - 테스트 결과(WAF, GC 발생 횟수 등)로 hook 이 실제 GC 실행과 정확히 맞아떨어지는지 검증
@@ -250,8 +252,8 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 - **코드 스터디** : Claude 가 추가한 GC hook 코드를 원본 victim selection 로직과 나란히 읽으며, 방금 배운 GC 이론이 실제 코드 어디에 해당하는지 확인
 
 **Claude 가 할 일**
-- `GC_and_WL_Unit_Page_Level.cpp` 에 hook 추가 : GC 시작 / victim block 선정 / valid page migration / block erase 각 시점에서 JS 로 이벤트 통지
-- WASM 모듈만 따로 단위 테스트 ( 샘플 write 시퀀스를 흘려보내 WAF, GC 발생 횟수 등이 hook 을 통해 정확히 잡히는지 검증 )
+- `GC_and_WL_Unit_Page_Level.cpp` 에 hook 추가 : GC 시작 / victim block 선정 / valid page migration / block erase 각 시점에서 JS 로 이벤트 통지 ( 9/6 진행 — 실제로는 `GC_and_WL_Unit_Base.cpp` 에도 hook 필요, 위 기록 참고 )
+- WASM 모듈만 따로 단위 테스트 ( 샘플 write 시퀀스를 흘려보내 WAF, GC 발생 횟수 등이 hook 을 통해 정확히 잡히는지 검증 ) ( 9/6 진행 — 기본 샘플 설정은 GC 가 아예 안 일어나서, GC_Exec_Threshold 를 임시로 높인 스트레스 설정으로 검증 : hook 카운트(gc_started 17회, page migration 4323회)가 `Stats::Total_gc_executions`/`Stats::Total_page_movements_for_gc` 와 정확히 일치, 네이티브·WASM 결과 XML도 hook 추가 전후 MD5 동일 )
 
 </div>
 
@@ -458,7 +460,9 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
     's4-i5': true,
     's4-i6': true,
     's4-i7': true,
-    's4-i8': true
+    's4-i8': true,
+    's5-i4': true,
+    's5-i5': true
   };
 
   function load() {
