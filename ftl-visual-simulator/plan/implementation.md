@@ -190,7 +190,7 @@ table.plan-calendar th {
     'i0': true,
     'i1': true,
     'i2': true,
-    'i5': { comment: '9/6 완료 - read/write 두 분기 모두에서 발행. getState()/setEventCallback 바인딩도 함께 구현' }
+    'i5': { comment: '9/6 완료 (PR #3) - read/write 두 분기 모두에서 발행. getState()/setEventCallback 바인딩도 함께 구현' }
   };
   var SKIP_HEADINGS = ['0. 전체 아키텍처', '참고'];
 

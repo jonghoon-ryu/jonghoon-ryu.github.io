@@ -230,7 +230,7 @@ table.plan-calendar .buffer-mark {
 - Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 ) ( 9/5 진행 — [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), `MQSim_Interface` 로 분리 )
 - `init`/`step`/`run`/`configure` WASM 바인딩 작성 ( 9/5 진행 — [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )
   - ⚠️ 이 바인딩을 검증하다가 **WASM 빌드가 네이티브와 다른 시뮬레이션 결과를 내는** 심각한 버그를 발견 — MQSim 원본의 이식성 버그 4개( RNG 정수 오버플로우, 소멸자 6개, 미초기화 포인터, 근본 원인인 `std::multimap::find()` 가정 오류 )가 원인이었음. 전부 찾아 고치고 68개 시나리오로 검증 완료. 자세한 건 [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) 참고
-- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성 ( 9/6 진행 — `translate_lpa_to_ppa()`의 read/write 두 분기 모두에서 이벤트 발행, `getState()`/`setEventCallback` WASM 바인딩 추가 )
+- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성 ( 9/6 진행 — [PR #3](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/3), `translate_lpa_to_ppa()`의 read/write 두 분기 모두에서 이벤트 발행, `getState()`/`setEventCallback` WASM 바인딩 추가 )
 - host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인 ( 9/6 진행 — Node 스모크 테스트로 `setEventCallback` 이벤트 수신과 `getState()` 매핑 스냅샷을 실제로 확인 )
 - ( 시간이 여유로울 때 ) 위에서 만든 라이브러리 분리 구조에 **GTest 프레임워크를 바로 연결** — main.cpp 리팩터링을 두 번 하지 않으려면 지금이 최적의 타이밍( 자세한 이유는 [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 참고 )
 
