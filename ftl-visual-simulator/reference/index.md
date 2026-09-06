@@ -18,6 +18,7 @@ permalink: /ftl-visual-simulator/reference/
 - [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/) — static 마모 평준화 hook 작업 중 발견한 MQSim 원본의 로직 버그 2개 — 위 이식성 버그와 달리, 고치면 이 프로젝트가 upstream MQSim 과 의도적으로 다르게 동작하게 되는 경우라 별도로 기록
 - [재구성 크래시 버그](/ftl-visual-simulator/reference/reconfigure-crash-bug/) — DRAM 캐시 대기열의 이중 소유권(use-after-free) 버그. 원본 CLI는 항상 완주 후에만 정리하기 때문에 절대 안 겪지만, 이 프로젝트처럼 일시정지·재구성 UI를 얹는 순간 실제 위험이 됨
 - [초기화되지 않은 Bandwidth 필드 버그](/ftl-visual-simulator/reference/bandwidth-divide-by-zero-bug/) — Session 10 workload 컨트롤 작업 중 발견한 0 나누기 크래시. 네이티브 CLI로는 재현이 안 되는 WASM 전용 버그라 UBSan + Node.js 로 WASM 을 직접 재생하는 방식으로 원인을 밝힘
+- [정적 마모 평준화 설정이 아예 전달되지 않던 버그](/ftl-visual-simulator/reference/wl-threshold-not-wired-bug/) — "마모평준화 시연"을 실제 엔진에 연동하려다 발견한 세 번째 마모 평준화 버그. `Static_Wearleveling_Threshold` 가 설정과 무관하게 항상 무시되고 있었고, 고친 뒤 이 프로젝트 최초로 static WL 을 실제로 발동시키는 데 성공함
 
 <div style="margin-top: 60px;"></div>
 
