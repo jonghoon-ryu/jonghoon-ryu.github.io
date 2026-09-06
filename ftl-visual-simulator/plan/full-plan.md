@@ -149,9 +149,9 @@ table.plan-calendar .buffer-mark {
 ### 1. (9/4) FTL 개념 — 매핑 · GC · 마모 평준화 · Over-provisioning
 
 
-- NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write" — 이미 잘 알고 있음 ✅
-- 주소 매핑 방식 : page-level, block-level mapping — 이미 잘 알고 있음 ✅
-- 마모 평준화( static/dynamic ), bad block 관리, over-provisioning — 이미 잘 알고 있음 ✅
+- NAND flash 의 물리적 제약 : page / block / plane 구조, "erase-before-write" — 이미 잘 알고 있음
+- 주소 매핑 방식 : page-level, block-level mapping — 이미 잘 알고 있음
+- 마모 평준화( static/dynamic ), bad block 관리, over-provisioning — 이미 잘 알고 있음
 - Hybrid(log-block, FAST) mapping — MQSim 에는 실제로 구현되어 있지 않음(빈 스텁, 9/5 확인) → **직접 구현이 필요한 확장 목표로 13~16번 버퍼에서 다루기로 미룸**
 - Garbage Collection ( victim block 선정 알고리즘 등 ) — **Session 5(GC 알고리즘 구현) 때 실습과 함께 깊이 다루기로 미룸**
 - DFTL 같은 demand-based 매핑 캐싱 — **확장 기능으로 나중에 실습할 때(DFTL 매핑 캐시 시각화) 같이 다루기로 미룸**
@@ -172,7 +172,7 @@ table.plan-calendar .buffer-mark {
 - **강의 시청** : [Understanding & Designing Modern Storage Systems - L3: MQSim](https://www.youtube.com/watch?v=9YZGHl6yxBc) — 제목상 "스토리지 시스템 설계" 강의 시리즈의 MQSim 전용 회차(L3). 위 문서들로 정리한 내용을 강의 설명으로 한 번 더 교차 확인하는 용도( 영상 자체를 열어보지 못했으니 실제 내용은 시청하면서 직접 확인 필요 )
 
 **Claude 가 할 일**
-- [CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim) clone, 빌드, 샘플 설정으로 실행 ✅ ( 9/4 에 미리 진행 — g++13 에서 수정 없이 바로 빌드/실행 됨, `/home/ryuj/Ryu/MQSim` )
+- [CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim) clone, 빌드, 샘플 설정으로 실행 ( 9/4 에 미리 진행 — g++13 에서 수정 없이 바로 빌드/실행 됨, `/home/ryuj/Ryu/MQSim` )
   - 샘플 `ssdconfig.xml` + `workload.xml` 로 3개 시나리오(synthetic 2개 + trace 기반 tpcc-small) 모두 정상 실행, 결과는 `workload_scenario_*.xml` 로 출력
   - 주목할 점 : 기본 설정(75% occupancy, 짧은 워크로드)으로는 `Total_GC_Executions="0"` — GC 가 한 번도 안 일어남. Session 5 에서 GC 를 실제로 보려면 occupancy 를 높이거나 워크로드를 늘려야 함
 - XML 설정 구조( Flash parameter, FTL parameter, GC 정책, cache ) 조사·정리
@@ -222,9 +222,9 @@ table.plan-calendar .buffer-mark {
 - **코드 스터디** : Claude 가 `Address_Mapping_Unit_Page_Level.cpp` 에 추가한 계측 코드(hook)를 원본 로직과 나란히 읽으며, FTL 매핑 갱신이 코드 상 어느 시점인지 이해
 
 **Claude 가 할 일**
-- 프로젝트 scaffold ( Vite + React + TS ) ✅ ( 9/5 진행 )
-- Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 ) ✅ ( 9/5 진행 — [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), `MQSim_Interface` 로 분리 )
-- `init`/`step`/`run`/`configure` WASM 바인딩 작성 ✅ ( 9/5 진행 — [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )
+- 프로젝트 scaffold ( Vite + React + TS ) ( 9/5 진행 )
+- Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 ) ( 9/5 진행 — [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), `MQSim_Interface` 로 분리 )
+- `init`/`step`/`run`/`configure` WASM 바인딩 작성 ( 9/5 진행 — [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )
   - ⚠️ 이 바인딩을 검증하다가 **WASM 빌드가 네이티브와 다른 시뮬레이션 결과를 내는** 심각한 버그를 발견 — MQSim 원본의 이식성 버그 4개( RNG 정수 오버플로우, 소멸자 6개, 미초기화 포인터, 근본 원인인 `std::multimap::find()` 가정 오류 )가 원인이었음. 전부 찾아 고치고 68개 시나리오로 검증 완료. 자세한 건 [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) 참고
 - `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성 — **아직( 다음 세션에서 이어감 )**
 - host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인 — **아직**
