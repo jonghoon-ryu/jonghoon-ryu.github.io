@@ -78,10 +78,13 @@ table.plan-calendar th {
 <tr><th>함수</th><th>역할</th></tr>
 <tr><td><code>init(config)</code></td><td>ssdconfig.xml/workload.xml 텍스트를 MEMFS 에 쓰고 <code>SSD_Device</code>/<code>Host_System</code> 초기화( <code>main.cpp</code> 의 시나리오 루프 앞부분에 대응 )</td></tr>
 <tr><td><code>step()</code> / <code>run(n)</code></td><td><code>Engine::Start_simulation()</code> 의 이벤트 루프를 이벤트 1개( 또는 n개 )만큼만 실행 — 재생 컨트롤(4장)의 기반</td></tr>
-<tr><td><code>getState()</code></td><td>매핑 테이블·block/page 상태 스냅샷을 JS 객체로 반환( 매핑 테이블 뷰어의 데이터 소스 )</td></tr>
+<tr><td><code>getState()</code></td><td>매핑 테이블·block/page 상태 스냅샷을 JS 객체로 반환( 매핑 테이블 뷰어의 데이터 소스 )<br>( 9/6 구현 — 현재는 <code>{ mapping: [...] }</code> 만 반환. block/page grid 상태는 3-2/3-3 hook 이 붙으면 여기에 추가 )</td></tr>
+<tr><td><code>setEventCallback(fn)</code></td><td>( 9/6 추가, 원래 표에 없던 항목 ) 매핑 갱신 등 시뮬레이션 이벤트가 발생할 때마다 JS 함수 <code>fn(event)</code> 를 호출하도록 등록 — 재생 중 실시간 애니메이션(4장)의 데이터 소스</td></tr>
 <tr><td><code>configure()</code></td><td>파라미터 변경 후 WASM 모듈 재구성(reset) — 파라미터 패널(5장)에서 호출</td></tr>
 </table>
 </div>
+
+> ⚠️ **( 9/6 기록 ) LPA/PPA 는 JS 로 넘어올 때 `BigInt` 다.** MQSim 의 LPA/PPA 는 64비트 정수라 embind 가 JS `number` 대신 `BigInt` 로 변환한다 — 화면에 그대로 찍으려면 `.toString()`, JSON 으로 보내려면 커스텀 replacer 가 필요( `JSON.stringify` 는 BigInt 를 기본적으로 직렬화 못 함 ). React 컴포넌트(4장)에서 이 값을 다룰 때 실수하기 쉬운 지점이라 미리 적어둠.
 
 <div style="margin-top: 60px;"></div>
 
@@ -186,7 +189,8 @@ table.plan-calendar th {
   var CLAUDE_DONE = {
     'i0': true,
     'i1': true,
-    'i2': true
+    'i2': true,
+    'i5': { comment: '9/6 완료 - read/write 두 분기 모두에서 발행. getState()/setEventCallback 바인딩도 함께 구현' }
   };
   var SKIP_HEADINGS = ['0. 전체 아키텍처', '참고'];
 

@@ -217,7 +217,7 @@ table.plan-calendar .buffer-mark {
 
 ### 4. (9/20) 시뮬레이션 엔진 (1) — MQSim WASM 빌드 · 매핑 상태 노출
 
-> ⚠️ **( 9/6 기록 ) 엔진 빌드 관련 항목은 9/5 에 이미 완료 — Session 3(설계) 보다 먼저 진행됨.** "Session 4 예습"으로 시작한 Emscripten 빌드 가능성 확인이 그대로 실제 구현( PR #1, PR #2 )으로 이어지면서 순서가 뒤바뀌었다. 남은 항목( 매핑 hook, `getState()` )은 원래 계획대로 이 세션의 몫으로 남겨둠.
+> ⚠️ **( 9/6 기록 ) 엔진 빌드 관련 항목은 9/5 에 이미 완료 — Session 3(설계) 보다 먼저 진행됨.** "Session 4 예습"으로 시작한 Emscripten 빌드 가능성 확인이 그대로 실제 구현( PR #1, PR #2 )으로 이어지면서 순서가 뒤바뀌었다. 매핑 hook 과 `getState()` 도 9/6 에 마저 끝나서, 이 세션의 Claude 항목은 이제 전부 완료( GTest 연결은 원래도 "시간이 여유로울 때"인 선택 항목 ).
 
 
 **Ryu 가 할 일**
@@ -230,8 +230,8 @@ table.plan-calendar .buffer-mark {
 - Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 ) ( 9/5 진행 — [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), `MQSim_Interface` 로 분리 )
 - `init`/`step`/`run`/`configure` WASM 바인딩 작성 ( 9/5 진행 — [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )
   - ⚠️ 이 바인딩을 검증하다가 **WASM 빌드가 네이티브와 다른 시뮬레이션 결과를 내는** 심각한 버그를 발견 — MQSim 원본의 이식성 버그 4개( RNG 정수 오버플로우, 소멸자 6개, 미초기화 포인터, 근본 원인인 `std::multimap::find()` 가정 오류 )가 원인이었음. 전부 찾아 고치고 68개 시나리오로 검증 완료. 자세한 건 [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) 참고
-- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성 — **아직( 다음 세션에서 이어감 )**
-- host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인 — **아직**
+- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성 ( 9/6 진행 — `translate_lpa_to_ppa()`의 read/write 두 분기 모두에서 이벤트 발행, `getState()`/`setEventCallback` WASM 바인딩 추가 )
+- host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인 ( 9/6 진행 — Node 스모크 테스트로 `setEventCallback` 이벤트 수신과 `getState()` 매핑 스냅샷을 실제로 확인 )
 - ( 시간이 여유로울 때 ) 위에서 만든 라이브러리 분리 구조에 **GTest 프레임워크를 바로 연결** — main.cpp 리팩터링을 두 번 하지 않으려면 지금이 최적의 타이밍( 자세한 이유는 [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 참고 )
 
 </div>
@@ -456,7 +456,9 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
     's4-i3': true,
     's4-i4': true,
     's4-i5': true,
-    's4-i6': true
+    's4-i6': true,
+    's4-i7': true,
+    's4-i8': true
   };
 
   function load() {
