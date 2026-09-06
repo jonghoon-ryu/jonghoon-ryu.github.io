@@ -96,6 +96,7 @@ table.plan-calendar .buffer-mark {
 - **10/11 이 1차 마감** — 이 날짜 안에 "동작하는 배포본"을 만드는 것이 최우선이고, 그 다음 리뷰 결과에 따라 10/17~10/25 에 수정
 - 세션 순서가 날짜보다 중요함. 한 세션이 밀리면 다음 세션도 그만큼 밀린다고 생각하고, 억지로 두 세션을 하루에 몰아넣지 않기
 - ⚠️ **( 9/6 기록 ) 이 원칙이 실제로는 지켜지지 않았음** — 9/5 에 "Session 4 예습"( Emscripten 빌드가 애초에 가능한지만 확인하려던 `/tmp` 실험 )이 그대로 실제 구현( `main.cpp` 라이브러리화 [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), WASM 바인딩 [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )으로 이어지면서, **Session 3( 설계 : MVP 범위 확정, 와이어프레임, hook 위치 설계표 )를 건너뛰고 Session 4 의 엔진 빌드 작업이 먼저 끝나버림**. Session 3 의 설계 산출물은 아직 하나도 만들어지지 않은 상태 — 아래 세션 3 항목이 전부 미완료로 남아있는 이유가 이것( 세션 3/4 항목별 표시 참고 )
+- ⚠️ **( 9/6 기록, 두 번째 순서 변경 ) Session 12 의 "GitHub Pages 배포"도 앞당김** — 매 작업 결과를 그때그때 확인하고 싶다는 요청으로, Session 7 시작 시점에 배포 파이프라인을 미리 만들어둠([PR #9](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/9), 자세한 내용은 Session 12 항목 참고). 이번엔 의도적인 선택 — Session 3/4 때처럼 실수로 순서가 밀린 게 아니라, 처음부터 앞당기기로 정하고 진행함
 - **구현은 전부 Claude 담당** — Ryu 는 visual simulator 를 만드는 방법을 몰라도 됨. 설계·코딩·빌드·배포 등 구체적인 작업은 모두 Claude 가 하고, 여러 방식 중 선택이 필요한 지점( 예 : 매핑 방식, 색상 스킴, GC 정책 이름 등 )에서만 Claude 가 Ryu 에게 옵션을 제시해 결정을 구함
 - **모든 세션에 FTL 개념 공부 + MQSim 코드 이해가 들어감** — Ryu 의 역할은 방향 결정, 코드/결과 리뷰, 브라우저 테스트에 더해 **매 세션 그 단계와 연결된 FTL 개념과 MQSim 실제 소스코드를 함께 이해하는 것**( 각 세션의 "MQSim/FTL 심화" 항목 )
 - **( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기** — 조사 결과 MQSim 은 GC 정책으로 GREEDY/RGA/RANDOM/RANDOM_P/RANDOM_PP/FIFO 만 지원하고 **Cost-Benefit GC**( LFS/Rosenblum 방식, valid page 비율과 block age 를 함께 고려하는 정책, Session 1/5 에서 배운 "greedy vs cost-benefit" 비교의 그 cost-benefit )는 없음 → 시간이 남으면 13~16번 버퍼 기간에 이 정책을 새로 구현해 RGA 와 비교해보는 것을 확장 목표로 삼음
@@ -368,13 +369,14 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 ### 12. (10/11) 마무리 (2) — 최종 테스트 · 배포 · 리뷰
 
+> ⚠️ **( 9/6 기록 ) "GitHub Pages 배포" 부분은 여기까지 기다리지 않고 Session 7 시작 시점에 앞당겨 만들어둠** — 매 작업 결과를 그때그때 실제로 확인하고 싶다는 요청 때문. Session 4 가 Session 3 보다 먼저 끝났던 것과 같은 종류의 순서 변경. `main` 에 push 될 때마다 자동으로 빌드·배포되는 파이프라인([PR #9](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/9))을 만들어뒀고, 사이트 주소는 https://jonghoon-ryu.github.io/ftl-visual-simulator/ — 이 세션의 "최종 테스트"만 실제로 이 시점에 남아있는 몫.
 
 **Ryu 가 할 일**
 - 배포된 사이트를 직접 리뷰 — 1차 완성본 리뷰, 여기서 나온 피드백은 10/17 이후 버퍼 기간에 반영
 - **MQSim/FTL 심화(캡스톤)** : host write 요청 하나를 골라, 매핑 조회 → GC 트리거 여부 → flash 물리 동작까지 전체 경로를 도움 없이 처음부터 끝까지 설명해보기 — 설명이 막힘없이 이어지면 이번 1차 완성 목표가 제대로 달성된 것
 
 **Claude 가 할 일**
-- 최종 테스트, GitHub Pages 배포
+- 최종 테스트, GitHub Pages 배포 ( 9/6 배포 파이프라인 자체는 이미 완료 — 위 기록 참고. 최종 테스트는 10/11 시점에 별도로 진행 )
 
 </div>
 
