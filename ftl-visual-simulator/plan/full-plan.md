@@ -252,7 +252,7 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 - **코드 스터디** : Claude 가 추가한 GC hook 코드를 원본 victim selection 로직과 나란히 읽으며, 방금 배운 GC 이론이 실제 코드 어디에 해당하는지 확인
 
 **Claude 가 할 일**
-- `GC_and_WL_Unit_Page_Level.cpp` 에 hook 추가 : GC 시작 / victim block 선정 / valid page migration / block erase 각 시점에서 JS 로 이벤트 통지 ( 9/6 진행 — 실제로는 `GC_and_WL_Unit_Base.cpp` 에도 hook 필요, 위 기록 참고 )
+- `GC_and_WL_Unit_Page_Level.cpp` 에 hook 추가 : GC 시작 / victim block 선정 / valid page migration / block erase 각 시점에서 JS 로 이벤트 통지 ( 9/6 진행 — [PR #4](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/4), 실제로는 `GC_and_WL_Unit_Base.cpp` 에도 hook 필요, 위 기록 참고 )
 - WASM 모듈만 따로 단위 테스트 ( 샘플 write 시퀀스를 흘려보내 WAF, GC 발생 횟수 등이 hook 을 통해 정확히 잡히는지 검증 ) ( 9/6 진행 — 기본 샘플 설정은 GC 가 아예 안 일어나서, GC_Exec_Threshold 를 임시로 높인 스트레스 설정으로 검증 : hook 카운트(gc_started 17회, page migration 4323회)가 `Stats::Total_gc_executions`/`Stats::Total_page_movements_for_gc` 와 정확히 일치, 네이티브·WASM 결과 XML도 hook 추가 전후 MD5 동일 )
 
 </div>
