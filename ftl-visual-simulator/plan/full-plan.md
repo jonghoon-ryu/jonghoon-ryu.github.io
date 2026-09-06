@@ -95,6 +95,7 @@ table.plan-calendar .buffer-mark {
 - 10/5(월), 10/9(금) 은 공휴일이라 평일이지만 주말과 동일하게 5시간 작업일로 포함
 - **10/11 이 1차 마감** — 이 날짜 안에 "동작하는 배포본"을 만드는 것이 최우선이고, 그 다음 리뷰 결과에 따라 10/17~10/25 에 수정
 - 세션 순서가 날짜보다 중요함. 한 세션이 밀리면 다음 세션도 그만큼 밀린다고 생각하고, 억지로 두 세션을 하루에 몰아넣지 않기
+- ⚠️ **( 9/6 기록 ) 이 원칙이 실제로는 지켜지지 않았음** — 9/5 에 "Session 4 예습"( Emscripten 빌드가 애초에 가능한지만 확인하려던 `/tmp` 실험 )이 그대로 실제 구현( `main.cpp` 라이브러리화 [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), WASM 바인딩 [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )으로 이어지면서, **Session 3( 설계 : MVP 범위 확정, 와이어프레임, hook 위치 설계표 )를 건너뛰고 Session 4 의 엔진 빌드 작업이 먼저 끝나버림**. Session 3 의 설계 산출물은 아직 하나도 만들어지지 않은 상태 — 아래 세션 3 항목이 전부 미완료로 남아있는 이유가 이것( 세션 3/4 항목별 표시 참고 )
 - **구현은 전부 Claude 담당** — Ryu 는 visual simulator 를 만드는 방법을 몰라도 됨. 설계·코딩·빌드·배포 등 구체적인 작업은 모두 Claude 가 하고, 여러 방식 중 선택이 필요한 지점( 예 : 매핑 방식, 색상 스킴, GC 정책 이름 등 )에서만 Claude 가 Ryu 에게 옵션을 제시해 결정을 구함
 - **모든 세션에 FTL 개념 공부 + MQSim 코드 이해가 들어감** — Ryu 의 역할은 방향 결정, 코드/결과 리뷰, 브라우저 테스트에 더해 **매 세션 그 단계와 연결된 FTL 개념과 MQSim 실제 소스코드를 함께 이해하는 것**( 각 세션의 "MQSim/FTL 심화" 항목 )
 - **( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기** — 조사 결과 MQSim 은 GC 정책으로 GREEDY/RGA/RANDOM/RANDOM_P/RANDOM_PP/FIFO 만 지원하고 **Cost-Benefit GC**( LFS/Rosenblum 방식, valid page 비율과 block age 를 함께 고려하는 정책, Session 1/5 에서 배운 "greedy vs cost-benefit" 비교의 그 cost-benefit )는 없음 → 시간이 남으면 13~16번 버퍼 기간에 이 정책을 새로 구현해 RGA 와 비교해보는 것을 확장 목표로 삼음
@@ -112,8 +113,8 @@ table.plan-calendar .buffer-mark {
 <tr><td>2</td><td>9/5~9/6 (토~일)</td><td>주말( 9/5 는 원래 휴무 예정이었으나 작업일로 포함 )</td><td>Phase 2 — MQSim 개괄</td><td>MQSim 개요 문서 학습, XML 설정/모듈 구조 리뷰, 코드 재검증으로 문서 오류 정정</td><td class="table-mark buffer-mark" data-session="2">☐</td></tr>
 <tr><td>-</td><td>9/12 (토)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td><td>—</td></tr>
 <tr><td>-</td><td>9/13 (일)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td><td>—</td></tr>
-<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계</td><td>`Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 읽기</td><td class="table-mark buffer-mark" data-session="3">☐</td></tr>
-<tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)</td><td>`Address_Mapping_Unit_Page_Level.cpp` 의 lookup/allocate 로직 추적</td><td class="table-mark buffer-mark" data-session="4">☐</td></tr>
+<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계<br>⚠️ 아직 미진행 — Session 4 가 먼저 끝남</td><td>`Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 읽기</td><td class="table-mark buffer-mark" data-session="3">☐</td></tr>
+<tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)<br>⚠️ 엔진 빌드 부분은 9/5 에 이미 완료( Session 3 보다 먼저 )</td><td>`Address_Mapping_Unit_Page_Level.cpp` 의 lookup/allocate 로직 추적</td><td class="table-mark buffer-mark" data-session="4">☐</td></tr>
 <tr><td>-</td><td>9/24 (목)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td><td>—</td></tr>
 <tr><td>-</td><td>9/25 (금)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td><td>—</td></tr>
 <tr><td>5</td><td>9/26 (토)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (2)</td><td>GC 이론( greedy vs cost-benefit ) + `GC_and_WL_Unit_Page_Level.cpp` victim selection</td><td class="table-mark buffer-mark" data-session="5">☐</td></tr>
@@ -188,6 +189,7 @@ table.plan-calendar .buffer-mark {
 
 ### 3. (9/19) 시뮬레이터 설계 — 범위 · 스택 · 데이터 모델
 
+> ⚠️ **( 9/6 기록 ) 아직 진행되지 않음** — 아래 항목들( MVP 범위 확정, 와이어프레임, hook 위치 설계표 )은 하나도 만들어지지 않았다. 대신 Session 4 의 엔진 빌드 작업이 9/5 에 먼저 끝났다( 위쪽 "전제 조건" 목록 참고 ). "엔진 아키텍처 확정" 항목만 예외적으로, Session 1 에서 이미 논의된 결정( MQSim 을 WASM 으로 그대로 컴파일 )을 여기 다시 적어둔 것이라 사실상 완료된 것으로 볼 수 있음.
 
 **Ryu 가 할 일**
 - MVP 범위, 사용자 조절 파라미터 방향 결정 및 Claude 초안 검토·조정
@@ -214,6 +216,8 @@ table.plan-calendar .buffer-mark {
 <div class="session" data-session="4" markdown="1">
 
 ### 4. (9/20) 시뮬레이션 엔진 (1) — MQSim WASM 빌드 · 매핑 상태 노출
+
+> ⚠️ **( 9/6 기록 ) 엔진 빌드 관련 항목은 9/5 에 이미 완료 — Session 3(설계) 보다 먼저 진행됨.** "Session 4 예습"으로 시작한 Emscripten 빌드 가능성 확인이 그대로 실제 구현( PR #1, PR #2 )으로 이어지면서 순서가 뒤바뀌었다. 남은 항목( 매핑 hook, `getState()` )은 원래 계획대로 이 세션의 몫으로 남겨둠.
 
 
 **Ryu 가 할 일**
