@@ -265,6 +265,8 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 마모 평준화는 MQSim 에 실제로 구현되어 있음( `GC_and_WL_Unit_Base.cpp` 의 dynamic/static WL 로직 — [코드 분석 7-3절](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 참고 ) — hook 추가와 WASM 바인딩 API 마무리가 중심.
 
+> ⚠️ **( 9/6 기록 ) static WL hook 은 완료, dynamic WL hook 은 아직( 다음에 이어감 ).** static WL 작업 중 원본 MQSim 코드에서 버그 2개를 발견해서 고쳤다 — (1) `run_static_wearleveling()`이 블록 주소 대신 블록 ID(정수)를 그대로 넘겨서 엉뚱한 블록의 bookkeeping 을 건드리던 문제, (2) `Get_min_max_erase_difference()`가 "erase count 차이"가 아니라 "블록 인덱스 차이"를 반환하던 문제( unsigned 언더플로우까지 겹쳐서 static WL 트리거 조건이 사실상 무작위였음 ). 둘 다 고쳤지만, 이 프로젝트 테스트 규모( 짧은 워크로드 )에서는 GC/Translation 쓰기 프론티어 블록이 "가장 안 지워진 블록"으로 계속 뽑히면서 실제 후보에서 매번 제외되는 구조적인 이유로 static WL 이 실제로 발동하는 걸 끝내 재현하지 못했다 — hook 코드 자체는 GC hook 과 동일한 패턴으로 정확하다고 보지만, 살아있는 실행으로 직접 확인은 못한 상태. 자세한 내용은 `Simulation_Events.h` 주석과 PR 설명 참고.
+
 **Ryu 가 할 일**
 - **마모 평준화(dynamic/static WL) 이론 재확인** ( Session 5 GC 이론에 이어서, Session 1 에서 미뤄둔 부분 )
 - 리뷰·테스트
@@ -272,7 +274,7 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 - **코드 스터디** : Claude 가 추가한 마모 평준화 hook 코드를 원본 로직과 나란히 읽으며, 방금 확인한 메커니즘이 코드 어디에 해당하는지 확인
 
 **Claude 가 할 일**
-- dynamic wear-leveling( `Add_to_free_block_pool`/`Get_a_free_block` ), static wear-leveling( `run_static_wearleveling` ) 코드에 상태 변경 hook 추가
+- dynamic wear-leveling( `Add_to_free_block_pool`/`Get_a_free_block` ), static wear-leveling( `run_static_wearleveling` ) 코드에 상태 변경 hook 추가 ( 9/6 진행 — static WL 만 완료. dynamic WL 은 `PlaneBookKeepingType`( plane 좌표를 모르는 클래스 )에 있어서 이벤트에 필요한 물리 주소를 만들려면 호출부 쪽에서 손봐야 함 — 다음에 이어감 )
 - ( Hybrid 매핑은 빈 스텁이라 이 세션에서는 hook 추가 대상에서 제외 — 확장 목표로 이동 )
 - WASM 바인딩 API 확정 ( init(config), step()/run(n), getState(), configure() )
 - 결과물 : UI 없이도 동작·테스트가 끝난 WASM 엔진 + 바인딩
