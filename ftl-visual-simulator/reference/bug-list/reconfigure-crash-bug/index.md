@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 재구성 크래시 버그 — DRAM 캐시 대기열의 이중 소유권
-permalink: /ftl-visual-simulator/reference/reconfigure-crash-bug/
+permalink: /ftl-visual-simulator/reference/bug-list/reconfigure-crash-bug/
 ---
 <style>
 table.plan-calendar {
@@ -33,7 +33,7 @@ pre {
 
 # 재구성 크래시 버그 — DRAM 캐시 대기열의 이중 소유권
 
-Session 9("GC 시연" 프리셋을 실제 엔진에 연동하려고 워크로드를 크게 튜닝하던 중)에 원본 MQSim 코드에서 **힙 use-after-free(해제된 메모리 참조) 버그**를 발견했다. [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/)의 이식성 버그들과도, [마모 평준화 버그](/ftl-visual-simulator/reference/wl-bug-deviation/)와도 성격이 다르다 — 이번 건 **"시뮬레이션이 끝까지 다 돌기 전에 중간에 정리(teardown)하면" 크래시하는 버그**다. 이 문서는 발견 경위, 정확한 원인, 왜 지금까지 아무도 이 버그에 부딪힌 적이 없는지, 그리고 어떻게 고쳤는지를 기록한다.
+Session 9("GC 시연" 프리셋을 실제 엔진에 연동하려고 워크로드를 크게 튜닝하던 중)에 원본 MQSim 코드에서 **힙 use-after-free(해제된 메모리 참조) 버그**를 발견했다. [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/)의 이식성 버그들과도, [마모 평준화 버그](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/)와도 성격이 다르다 — 이번 건 **"시뮬레이션이 끝까지 다 돌기 전에 중간에 정리(teardown)하면" 크래시하는 버그**다. 이 문서는 발견 경위, 정확한 원인, 왜 지금까지 아무도 이 버그에 부딪힌 적이 없는지, 그리고 어떻게 고쳤는지를 기록한다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -182,6 +182,6 @@ case SSD_Components::Cache_Sharing_Mode::SHARED:
 
 ## 참고
 
-- 관련 문서 : [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/), [마모 평준화 버그와 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/)
+- 관련 문서 : [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/), [마모 평준화 버그와 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/)
 - [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) — Session 9
 - [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드

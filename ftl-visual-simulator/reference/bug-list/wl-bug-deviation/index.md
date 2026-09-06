@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 마모 평준화 버그와 의도적 동작 변경
-permalink: /ftl-visual-simulator/reference/wl-bug-deviation/
+permalink: /ftl-visual-simulator/reference/bug-list/wl-bug-deviation/
 ---
 <style>
 table.plan-calendar {
@@ -33,13 +33,13 @@ pre {
 
 # 마모 평준화 버그와 의도적 동작 변경
 
-Session 6(마모 평준화 hook)을 진행하다가, 원본 MQSim 코드에서 static 마모 평준화(wear-leveling)가 사실상 제대로 동작하지 않는 버그 2개를 발견했다. 이 문서는 그 버그가 정확히 뭔지, 왜 [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/)의 4개 버그와 성격이 다른지, 그리고 **왜 "원본 그대로 재현"이라는 이 프로젝트의 원칙을 깨고 고치기로 했는지**를 상세히 기록한 것.
+Session 6(마모 평준화 hook)을 진행하다가, 원본 MQSim 코드에서 static 마모 평준화(wear-leveling)가 사실상 제대로 동작하지 않는 버그 2개를 발견했다. 이 문서는 그 버그가 정확히 뭔지, 왜 [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/)의 4개 버그와 성격이 다른지, 그리고 **왜 "원본 그대로 재현"이라는 이 프로젝트의 원칙을 깨고 고치기로 했는지**를 상세히 기록한 것.
 
 <div style="margin-top: 60px;"></div>
 
 ## 1. 이게 왜 "버그 헌트"와 다른 문서인가
 
-[MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) 문서의 버그 4개는 전부 **이식성(portability) 버그** 였다 — 네이티브 빌드와 WASM 빌드가 서로 다른 결과를 냈던 원인들(RNG 정수 오버플로우, 소멸자, 미초기화 포인터, `multimap::find()` 가정 오류). 그 버그들을 고친다고 해서 "네이티브 MQSim이 원래 하던 동작"이 바뀌지는 않는다 — 오히려 WASM 이 네이티브와 **똑같이** 동작하도록 맞추는, 이 프로젝트의 핵심 전제("실제 MQSim 과 100% 동일하게 동작")를 **지키기 위한** 수정이었다.
+[MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/) 문서의 버그 4개는 전부 **이식성(portability) 버그** 였다 — 네이티브 빌드와 WASM 빌드가 서로 다른 결과를 냈던 원인들(RNG 정수 오버플로우, 소멸자, 미초기화 포인터, `multimap::find()` 가정 오류). 그 버그들을 고친다고 해서 "네이티브 MQSim이 원래 하던 동작"이 바뀌지는 않는다 — 오히려 WASM 이 네이티브와 **똑같이** 동작하도록 맞추는, 이 프로젝트의 핵심 전제("실제 MQSim 과 100% 동일하게 동작")를 **지키기 위한** 수정이었다.
 
 이번에 찾은 버그 2개는 다르다. **둘 다 네이티브 MQSim 자체의 로직 오류**다 — 플랫폼과 무관하게, CMU-SAFARI 원본 저장소를 그대로 빌드해도 존재하는 문제다. 이걸 고친다는 건 "이 프로젝트의 시뮬레이터가 upstream MQSim 과 다르게 동작하기로 의도적으로 결정한다"는 뜻이다. 그래서 별도 문서로 명확히 남겨둔다.
 
@@ -159,7 +159,7 @@ return plane_record->Blocks[max_erased_block].Erase_count - plane_record->Blocks
 
 즉, 이번 버그가 "실제로 다른 결과를 낳는다"는 걸 이 프로젝트 안에서 직접 재현하지는 못했다 — 논리적으로는 명백히 잘못된 코드지만, 그 잘못된 계산이 실제 결과에 영향을 주려면 static WL 이 최소 한 번은 성공적으로 실행돼야 하는데, 그 조건 자체를 이 프로젝트의 테스트 규모 안에서 만들어내지 못했다.
 
-> **( 이후 기록 )** "마모평준화 시연" 프리셋을 실제로 연동하면서 **세 번째 버그**(`Static_Wearleveling_Threshold`가 설정과 무관하게 항상 무시되던 문제)를 찾아 고쳤고, 그 뒤 이 프로젝트 최초로 static WL 을 실제로 1회 발동시키는 데 성공했다 — 즉 이 문서에서 고친 두 로직 버그가 실제로 유효한 상태에서 작동하는 걸 확인했다는 뜻이다. 자세한 내용은 [정적 마모 평준화 설정이 아예 전달되지 않던 버그](/ftl-visual-simulator/reference/wl-threshold-not-wired-bug/) 참고.
+> **( 이후 기록 )** "마모평준화 시연" 프리셋을 실제로 연동하면서 **세 번째 버그**(`Static_Wearleveling_Threshold`가 설정과 무관하게 항상 무시되던 문제)를 찾아 고쳤고, 그 뒤 이 프로젝트 최초로 static WL 을 실제로 1회 발동시키는 데 성공했다 — 즉 이 문서에서 고친 두 로직 버그가 실제로 유효한 상태에서 작동하는 걸 확인했다는 뜻이다. 자세한 내용은 [정적 마모 평준화 설정이 아예 전달되지 않던 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) 참고.
 
 <div style="margin-top: 60px;"></div>
 
@@ -174,7 +174,7 @@ return plane_record->Blocks[max_erased_block].Erase_count - plane_record->Blocks
 
 ## 참고
 
-- 관련 문서 : [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) — 이식성 버그 4개(성격이 다름, 1절 참고)
+- 관련 문서 : [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/) — 이식성 버그 4개(성격이 다름, 1절 참고)
 - [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) — Session 6
 - [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) — 3-4절(마모 평준화 hook)
 - [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) — 실제 코드

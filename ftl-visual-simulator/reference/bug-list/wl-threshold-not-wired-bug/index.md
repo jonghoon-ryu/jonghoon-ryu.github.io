@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 정적 마모 평준화 설정이 아예 전달되지 않던 버그 — 그리고 마침내 발동시킨 이야기
-permalink: /ftl-visual-simulator/reference/wl-threshold-not-wired-bug/
+permalink: /ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/
 ---
 <style>
 table.plan-calendar {
@@ -33,7 +33,7 @@ pre {
 
 # 정적 마모 평준화 설정이 아예 전달되지 않던 버그 — 그리고 마침내 발동시킨 이야기
 
-[마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/) 문서는 Session 6에서 고친 로직 버그 2개를 다루면서 "static 마모 평준화가 이 프로젝트 안에서 실제로 발동하는 걸 한 번도 확인 못 했다"고 끝맺었다. "마모평준화 시연" 프리셋을 실제 엔진에 연동하려고 다시 조사하다가 **세 번째 버그, 이번엔 완전히 다른 종류의 버그**를 찾았고 — 그걸 고치고 나서야 static WL 을 실제로 한 번 발동시키는 데 성공했다. 이 문서는 그 과정을 기록한다.
+[마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) 문서는 Session 6에서 고친 로직 버그 2개를 다루면서 "static 마모 평준화가 이 프로젝트 안에서 실제로 발동하는 걸 한 번도 확인 못 했다"고 끝맺었다. "마모평준화 시연" 프리셋을 실제 엔진에 연동하려고 다시 조사하다가 **세 번째 버그, 이번엔 완전히 다른 종류의 버그**를 찾았고 — 그걸 고치고 나서야 static WL 을 실제로 한 번 발동시키는 데 성공했다. 이 문서는 그 과정을 기록한다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -113,7 +113,7 @@ gcwl = new SSD_Components::GC_and_WL_Unit_Page_Level(..., max_rho, 10,
 step=1500000 minErase=0 maxErase=1 diff=1 GC=7 WL=1 blocks=64
 ```
 
-**`Total_WL_Executions` 가 마침내 1이 됐다.** [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/)에서 고친 두 로직 버그(`GC_WL_started()` 인자 타입 오류, erase count 차이 계산 오류)가 실제로 의미 있는 상태에서 작동하는 걸 처음으로 확인한 순간이다.
+**`Total_WL_Executions` 가 마침내 1이 됐다.** [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/)에서 고친 두 로직 버그(`GC_WL_started()` 인자 타입 오류, erase count 차이 계산 오류)가 실제로 의미 있는 상태에서 작동하는 걸 처음으로 확인한 순간이다.
 
 다만 이후 1500만 step 을 더 돌려도(diff 가 7까지 계속 벌어졌음에도) **WL 은 다시 발동하지 않았다.** 원인은 그 문서가 이미 짚었던 구조적 특성과 맞물려 있다: WL 이 하나의 "가장 안 지워진" 블록을 비우고 free pool 로 돌려보내면, dynamic 마모 평준화가 "가장 안 닳은 free 블록을 우선적으로 재사용"하는 정책 때문에 그 블록이 곧바로 **새로운 write frontier** 로 재배정된다. Frontier 블록은 `is_safe_gc_wl_candidate()`가 명시적으로 제외 대상이므로, 다시 "안전하게 고를 수 있는 가장 안 지워진 블록"이 나타나려면 이번에 새로 frontier 가 된 그 블록이 다 채워지고 회전할 때까지 기다려야 한다 — 이게 처음 한 번 걸리는 시간만큼 다시 걸린다.
 
@@ -134,7 +134,7 @@ step=1500000 minErase=0 maxErase=1 diff=1 GC=7 WL=1 blocks=64
 ## 6. 요약
 
 - 세 번째 real MQSim 버그(설정값 전달 누락) 발견 + 수정 — golden 회귀 테스트에 영향 없음 확인.
-- 이 수정 덕분에 [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/) 문서의 로직 수정 2개가 실제로 유효한 상태에서 작동하는 걸 이 프로젝트 최초로 확인했다.
+- 이 수정 덕분에 [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) 문서의 로직 수정 2개가 실제로 유효한 상태에서 작동하는 걸 이 프로젝트 최초로 확인했다.
 - "마모평준화 시연" 프리셋을 real 엔진에 연동 완료 — 단, 재생 1회당 WL 발동은 정확히 1번. 여러 번 반복해서 보여주는 건 이 데모 규모에서는 비현실적이라 시도하지 않았다.
 - Block 개수 64, `staticWlThreshold: 1` 등 정확한 튜닝값은 `src/data/mqsimConfigs.ts`의 `DEFAULT_WL_PARAMS`/`buildWlWorkloadXml` 참고.
 
@@ -142,5 +142,5 @@ step=1500000 minErase=0 maxErase=1 diff=1 GC=7 WL=1 blocks=64
 
 ## 참고
 
-- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/) — 이 문서가 이어받는 이전 조사
+- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) — 이 문서가 이어받는 이전 조사
 - [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드

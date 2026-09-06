@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 잘못된 inline 선언 버그 — 유닛 테스트가 처음으로 밖에서 불러본 함수
-permalink: /ftl-visual-simulator/reference/inline-linkage-bug/
+permalink: /ftl-visual-simulator/reference/bug-list/inline-linkage-bug/
 ---
 <style>
 table.plan-calendar {
@@ -110,7 +110,7 @@ bool GC_and_WL_Unit_Base::check_static_wl_required(const NVM::FlashMemory::Physi
 ## 6. 요약
 
 - 버그라기보단 **몇 년째 아무도 안 밟은 지뢰**에 가깝다 — protected 메서드를 같은 파일 밖에서 부르는 코드가 이 프로젝트의 유닛 테스트가 처음이었다.
-- [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/)의 이식성 버그들이나 [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/wl-threshold-not-wired-bug/)처럼 실제 시뮬레이션 결과에 영향을 주는 버그와는 성격이 다르다 — 순수하게 **빌드/링크 문제**이고, 고쳐도 동작은 완전히 동일하다.
+- [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/)의 이식성 버그들이나 [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/)처럼 실제 시뮬레이션 결과에 영향을 주는 버그와는 성격이 다르다 — 순수하게 **빌드/링크 문제**이고, 고쳐도 동작은 완전히 동일하다.
 - "유닛 테스트를 작성하면서 실제 버그를 하나 더 찾았다"는 점에서, GMock 도입이 왜 필요한지를 보여주는 또 하나의 사례로 기록해둔다 — 이번엔 로직 버그가 아니라 빌드 구조의 결함이었다는 점이 다를 뿐.
 
 <div style="margin-top: 60px;"></div>

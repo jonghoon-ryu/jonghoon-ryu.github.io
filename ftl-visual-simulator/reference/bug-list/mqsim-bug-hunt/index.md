@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MQSim 버그 헌트
-permalink: /ftl-visual-simulator/reference/mqsim-bug-hunt/
+permalink: /ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/
 ---
 <style>
 table.plan-calendar {

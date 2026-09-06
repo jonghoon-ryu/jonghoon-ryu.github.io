@@ -14,12 +14,7 @@ permalink: /ftl-visual-simulator/reference/
 - [MQSim](/ftl-visual-simulator/reference/mqsim/) — 엔진으로 그대로 가져다 쓰는 MQSim 에 대한 문서 모음( 하위 문서 : [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/), [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/) → [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) / [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/) )
 - [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) — WASM 이 뭔지, em++ 가 뭔지, 그리고 `main.cpp` 를 라이브러리로 바꾸는 작업을 포함해 앞으로 진행할 작업들이 왜 필요한지에 대한 설명
 - [프론트엔드 스택 입문 (Vite · React · TS)](/ftl-visual-simulator/reference/frontend-stack/) — Vite, React, TypeScript, scaffold 가 각각 뭔지, 그리고 화면 쪽 구현에 왜 필요한지에 대한 설명
-- [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/) — WASM 빌드가 네이티브와 다른 결과를 내던 문제를 추적해서 찾아낸 MQSim 원본의 이식성 버그 4개와 수정 기록
-- [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/) — static 마모 평준화 hook 작업 중 발견한 MQSim 원본의 로직 버그 2개 — 위 이식성 버그와 달리, 고치면 이 프로젝트가 upstream MQSim 과 의도적으로 다르게 동작하게 되는 경우라 별도로 기록
-- [재구성 크래시 버그](/ftl-visual-simulator/reference/reconfigure-crash-bug/) — DRAM 캐시 대기열의 이중 소유권(use-after-free) 버그. 원본 CLI는 항상 완주 후에만 정리하기 때문에 절대 안 겪지만, 이 프로젝트처럼 일시정지·재구성 UI를 얹는 순간 실제 위험이 됨
-- [초기화되지 않은 Bandwidth 필드 버그](/ftl-visual-simulator/reference/bandwidth-divide-by-zero-bug/) — Session 10 workload 컨트롤 작업 중 발견한 0 나누기 크래시. 네이티브 CLI로는 재현이 안 되는 WASM 전용 버그라 UBSan + Node.js 로 WASM 을 직접 재생하는 방식으로 원인을 밝힘
-- [정적 마모 평준화 설정이 아예 전달되지 않던 버그](/ftl-visual-simulator/reference/wl-threshold-not-wired-bug/) — "마모평준화 시연"을 실제 엔진에 연동하려다 발견한 세 번째 마모 평준화 버그. `Static_Wearleveling_Threshold` 가 설정과 무관하게 항상 무시되고 있었고, 고친 뒤 이 프로젝트 최초로 static WL 을 실제로 발동시키는 데 성공함
-- [잘못된 inline 선언 버그](/ftl-visual-simulator/reference/inline-linkage-bug/) — GMock 유닛 테스트를 작성하다 만난 링크 에러. `.cpp` 에만 있는 정의에 잘못 붙은 `inline` 때문에, 같은 파일 밖에서 그 protected 메서드를 처음 불러본 순간(유닛 테스트) 외부 심볼이 없어서 링크 실패
+- [버그 목록](/ftl-visual-simulator/reference/bug-list/) — 이 프로젝트를 진행하며 실제 MQSim 원본에서 찾아낸 버그들을 모아두는 카테고리( 하위 문서 : [버그 목록표](/ftl-visual-simulator/reference/bug-list/table/)(전체 요약 표) / [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/) / [마모 평준화 버그와 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) / [재구성 크래시 버그](/ftl-visual-simulator/reference/bug-list/reconfigure-crash-bug/) / [초기화되지 않은 Bandwidth 필드 버그](/ftl-visual-simulator/reference/bug-list/bandwidth-divide-by-zero-bug/) / [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) / [잘못된 inline 선언 버그](/ftl-visual-simulator/reference/bug-list/inline-linkage-bug/) )
 
 <div style="margin-top: 60px;"></div>
 

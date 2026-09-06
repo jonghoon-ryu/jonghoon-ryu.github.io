@@ -33,7 +33,7 @@ pre {
 
 # 마모평준화 시연 연동 작업 기록
 
-Session 12(1차 완성)까지는 "마모평준화 시연" 프리셋이 정적 목업으로 남아있었다 — [Session 6 조사](/ftl-visual-simulator/reference/wl-bug-deviation/)에서 로직 버그 2개를 고쳤음에도 static 마모 평준화(WL)가 데모 규모에서 한 번도 실제로 발동하지 않았기 때문에, 확인 안 된 상태로 UI 에 연결하지 않기로 했었다. 이 문서는 1차 완성 이후 이 프리셋을 실제로 연동한 작업 전체를 기록한다 — [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/wl-threshold-not-wired-bug/) 문서가 버그 자체의 근본 원인 분석에 집중한다면, 이 문서는 **왜 그 버그를 찾게 됐는지, 어떤 시도들을 거쳤는지, 최종적으로 어떻게 튜닝했는지** 작업 과정 전체를 다룬다.
+Session 12(1차 완성)까지는 "마모평준화 시연" 프리셋이 정적 목업으로 남아있었다 — [Session 6 조사](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/)에서 로직 버그 2개를 고쳤음에도 static 마모 평준화(WL)가 데모 규모에서 한 번도 실제로 발동하지 않았기 때문에, 확인 안 된 상태로 UI 에 연결하지 않기로 했었다. 이 문서는 1차 완성 이후 이 프리셋을 실제로 연동한 작업 전체를 기록한다 — [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) 문서가 버그 자체의 근본 원인 분석에 집중한다면, 이 문서는 **왜 그 버그를 찾게 됐는지, 어떤 시도들을 거쳤는지, 최종적으로 어떻게 튜닝했는지** 작업 과정 전체를 다룬다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -59,7 +59,7 @@ Session 12(1차 완성)까지는 "마모평준화 시연" 프리셋이 정적 �
 
 ## 3. 근본 원인 — 설정값이 엔진까지 전달되지 않고 있었다
 
-`check_static_wl_required()` 안에 디버그 프린트를 심어서 실제로 비교되는 threshold 값을 직접 찍어보니 **항상 100**이었다 — XML 에 뭘 넣든 무시되고 있었다. `SSD_Device.cpp`가 `GC_and_WL_Unit_Page_Level`을 생성할 때 `Dynamic_Wearleveling_Enabled`/`Static_Wearleveling_Enabled`/`Static_Wearleveling_Threshold` 세 인자를 통째로 생략해서, 항상 컴파일 타임 기본값(`true, true, 100`)을 쓰고 있었던 것 — 근본 원인과 수정 내용의 전체 분석은 [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/wl-threshold-not-wired-bug/) 문서 참고.
+`check_static_wl_required()` 안에 디버그 프린트를 심어서 실제로 비교되는 threshold 값을 직접 찍어보니 **항상 100**이었다 — XML 에 뭘 넣든 무시되고 있었다. `SSD_Device.cpp`가 `GC_and_WL_Unit_Page_Level`을 생성할 때 `Dynamic_Wearleveling_Enabled`/`Static_Wearleveling_Enabled`/`Static_Wearleveling_Threshold` 세 인자를 통째로 생략해서, 항상 컴파일 타임 기본값(`true, true, 100`)을 쓰고 있었던 것 — 근본 원인과 수정 내용의 전체 분석은 [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) 문서 참고.
 
 <div style="margin-top: 60px;"></div>
 
@@ -110,6 +110,6 @@ step=1500000 minErase=0 maxErase=1 diff=1 GC=7 WL=1 blocks=64
 
 ## 참고
 
-- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/) (Session 6, 로직 버그 2개), [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/wl-threshold-not-wired-bug/) (이번에 찾은 버그의 근본 원인 분석)
+- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) (Session 6, 로직 버그 2개), [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) (이번에 찾은 버그의 근본 원인 분석)
 - [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/), [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/)
 - [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드
