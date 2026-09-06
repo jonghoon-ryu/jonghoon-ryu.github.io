@@ -27,6 +27,7 @@ FTL 시각화 시뮬레이터를 실제로 만들어가는 일정과 세션별 �
 - [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) — Claude 가 할 일을 컴포넌트/기능 단위로 다시 묶어 정확한 파일·함수명까지 상세히 기록
 - [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) — MQSim 소스코드를 처음부터 끝까지 읽는 16세션 커리큘럼
 - [To do list](/ftl-visual-simulator/plan/todo-list/) — 세션 중 나중으로 미룬 자잘한 확인/처리 항목 모음
+- [마모평준화 시연 연동 작업 기록](/ftl-visual-simulator/plan/wear-leveling-integration/) — 1차 완성 이후 "마모평준화 시연" 프리셋을 실제 엔진에 연동한 전체 과정(시행착오, 버그 발견, 최종 튜닝, 검증)
 
 <div style="margin-top: 60px;"></div>
 
