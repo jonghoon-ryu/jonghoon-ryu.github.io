@@ -172,7 +172,7 @@ table.plan-calendar th {
 ### 7-3. GTest/GMock 테스트 스위트
 
 - Session 4 의 라이브러리 분리 리팩터링 시점에 테스트 바이너리 연결( 1장 참고 — 같은 리팩터링을 두 번 하지 않기 위함 )
-- **골든/회귀 테스트**( GMock 불필요 ) : 고정 시나리오 실행 → 결과 통계 스냅샷 비교
+- **골든/회귀 테스트**( GMock 불필요 ) : 고정 시나리오 실행 → 결과 통계 스냅샷 비교 ( 9/6 완료 — `engine/run-regression-tests.sh`/`npm run test:engine`, 샘플 시나리오 3개 결과를 `engine/tests/golden/` 과 바이트 단위 비교. 매핑/GC hook 검증 때마다 임시로 만들던 테스트를 저장소에 남는 형태로 정리한 것 )
 - **단위 테스트**( GMock 필요 ) : `Address_Mapping_Unit_Base`/`Flash_Block_Manager_Base`/`GC_and_WL_Unit_Base`/`TSU_Base` 4개 추상 인터페이스를 mock 으로 갈아끼워 매핑/GC 로직만 격리 테스트 — Cost-Benefit GC 같은 새 로직 검증에 특히 유용
 
 <div style="margin-top: 60px;"></div>
@@ -196,7 +196,8 @@ table.plan-calendar th {
     'i10': true,
     'i11': true,
     'i12': true,
-    'i13': true
+    'i13': true,
+    'i42': true
   };
   var SKIP_HEADINGS = ['0. 전체 아키텍처', '참고'];
 
