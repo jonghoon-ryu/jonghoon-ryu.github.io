@@ -48,7 +48,6 @@
             <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/' %} open{% endif %}>
               <summary><a href="{{ '/ftl-visual-simulator/' | relative_url }}">FTL Visual Simulator</a></summary>
               <ul class="nav-subitems">
-                <li><a href="{{ '/ftl-visual-simulator/run-simulator/' | relative_url }}">시뮬레이터 실행</a></li>
                 <li><a href="{{ '/ftl-visual-simulator/motivation-goals/' | relative_url }}">개발 동기/목표</a></li>
                 <li>
                   <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/plan/' %} open{% endif %}>
@@ -57,6 +56,21 @@
                       <li><a href="{{ '/ftl-visual-simulator/plan/full-plan/' | relative_url }}">전체 개발 계획</a></li>
                       <li><a href="{{ '/ftl-visual-simulator/plan/implementation/' | relative_url }}">Claude 구현 작업 상세</a></li>
                       <li><a href="{{ '/ftl-visual-simulator/plan/code-analysis-plan/' | relative_url }}">MQSim 코드 분석 계획</a></li>
+                    </ul>
+                  </details>
+                </li>
+                <li>
+                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/deliverables/' %} open{% endif %}>
+                    <summary><a href="{{ '/ftl-visual-simulator/deliverables/' | relative_url }}">개발 산출물</a></summary>
+                    <ul class="nav-subitems">
+                      <li>
+                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/deliverables/visual-simulator/' %} open{% endif %}>
+                          <summary><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/' | relative_url }}">Visual Simulator</a></summary>
+                          <ul class="nav-subitems">
+                            <li><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/' | relative_url }}">Visual Simulator Layout (초안)</a></li>
+                          </ul>
+                        </details>
+                      </li>
                     </ul>
                   </details>
                 </li>
@@ -88,21 +102,7 @@
                     </ul>
                   </details>
                 </li>
-                <li>
-                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/deliverables/' %} open{% endif %}>
-                    <summary><a href="{{ '/ftl-visual-simulator/deliverables/' | relative_url }}">개발 산출물</a></summary>
-                    <ul class="nav-subitems">
-                      <li>
-                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/deliverables/visual-simulator/' %} open{% endif %}>
-                          <summary><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/' | relative_url }}">Visual Simulator</a></summary>
-                          <ul class="nav-subitems">
-                            <li><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/' | relative_url }}">Visual Simulator Layout (초안)</a></li>
-                          </ul>
-                        </details>
-                      </li>
-                    </ul>
-                  </details>
-                </li>
+                <li><a href="{{ '/ftl-visual-simulator/run-simulator/' | relative_url }}">시뮬레이터 실행</a></li>
               </ul>
             </details>
           </li>
