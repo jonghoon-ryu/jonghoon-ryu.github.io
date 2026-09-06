@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 초기화되지 않은 Bandwidth 필드 버그 — 반복 재구성 시 0 나누기 크래시
-permalink: /ftl-visual-simulator/reference/bandwidth-divide-by-zero-bug/
+permalink: /ftl-visual-simulator/reference/bug-list/bandwidth-divide-by-zero-bug/
 ---
 <style>
 table.plan-calendar {
@@ -33,7 +33,7 @@ pre {
 
 # 초기화되지 않은 Bandwidth 필드 버그 — 반복 재구성 시 0 나누기 크래시
 
-Session 10("workload 컨트롤" — 접근 패턴/read 비율/burst 크기를 실제 조작 가능하게 만드는 작업) 도중, 워크로드 설정을 몇 번 연달아 바꾸면 `divide by zero`로 WASM 엔진이 죽는 버그를 발견했다. [재구성 크래시 버그](/ftl-visual-simulator/reference/reconfigure-crash-bug/)와 마찬가지로 **"인터랙티브하게 여러 번 재구성해야만" 드러나는 버그**지만, 원인은 메모리 소유권이 아니라 **초기화되지 않은 변수**다. 이 문서는 재현 과정, 정확한 원인, 그리고 수정 내용을 기록한다.
+Session 10("workload 컨트롤" — 접근 패턴/read 비율/burst 크기를 실제 조작 가능하게 만드는 작업) 도중, 워크로드 설정을 몇 번 연달아 바꾸면 `divide by zero`로 WASM 엔진이 죽는 버그를 발견했다. [재구성 크래시 버그](/ftl-visual-simulator/reference/bug-list/reconfigure-crash-bug/)와 마찬가지로 **"인터랙티브하게 여러 번 재구성해야만" 드러나는 버그**지만, 원인은 메모리 소유권이 아니라 **초기화되지 않은 변수**다. 이 문서는 재현 과정, 정확한 원인, 그리고 수정 내용을 기록한다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -57,7 +57,7 @@ Error: divide by zero
 - 같은 워크로드를 네이티브 CLI로 여러 시나리오를 이어붙여 돌려도 크래시하지 않음
 - `Load_workload → Initialize_scenario → Run_step → Finalize_scenario`를 그대로 흉내내는 작은 C++ 테스트 하니스를 만들어 재구성을 8번, 그 뒤엔 40번까지 반복해봐도 크래시하지 않음
 
-즉 **네이티브 빌드에서는 재현이 안 되는, WASM 전용 버그**였다([MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/)의 이식성 버그들과 같은 계열). 그래서 실제 WASM 모듈(`mqsim.mjs`/`mqsim.wasm`)을 브라우저 없이 Node.js에서 직접 로드해 똑같은 호출 순서(`init` → `configure` 반복)를 재생하는 스크립트로 바꿔봤더니, 재현됐다 — 브라우저가 필요한 게 아니라 WASM 런타임 자체가 필요했던 것.
+즉 **네이티브 빌드에서는 재현이 안 되는, WASM 전용 버그**였다([MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/)의 이식성 버그들과 같은 계열). 그래서 실제 WASM 모듈(`mqsim.mjs`/`mqsim.wasm`)을 브라우저 없이 Node.js에서 직접 로드해 똑같은 호출 순서(`init` → `configure` 반복)를 재생하는 스크립트로 바꿔봤더니, 재현됐다 — 브라우저가 필요한 게 아니라 WASM 런타임 자체가 필요했던 것.
 
 <div style="margin-top: 60px;"></div>
 
@@ -114,7 +114,7 @@ unsigned int Bandwidth;  // 기본값 없음
 
 ## 5. 왜 지금까지 아무도 못 봤나
 
-[재구성 크래시 버그](/ftl-visual-simulator/reference/reconfigure-crash-bug/)와 똑같은 이유다 — **원본 MQSim 은 이 코드 경로를 절대 반복 실행하지 않는다.**
+[재구성 크래시 버그](/ftl-visual-simulator/reference/bug-list/reconfigure-crash-bug/)와 똑같은 이유다 — **원본 MQSim 은 이 코드 경로를 절대 반복 실행하지 않는다.**
 
 - upstream 예제 `workload.xml`들과 `MQSim_Interface.cpp`의 기본 워크로드 폴백 코드는 `Bandwidth`를 항상 명시적으로 채워 넣는다(예: `io_flow_1->Bandwidth = 262144;`) — 애초에 이 필드가 비어있는 상황 자체를 안 만든다.
 - 이 프로젝트가 만드는 워크로드는 처음으로 "필요 없는 필드는 아예 안 쓴다"는 방식으로 XML을 생성했고, 동시에 "같은 프로세스에서 설정을 몇 번이고 다시 로드한다"는 것도 이 프로젝트가 처음 만든 사용 패턴이다. 두 조건이 겹쳐야만 드러나는 버그라, 배치 실행 한 번으로 끝나는 원본 CLI 사용 방식에서는 나올 수가 없었다.
@@ -164,6 +164,6 @@ unsigned int Bandwidth = 0;
 
 ## 참고
 
-- 관련 문서 : [재구성 크래시 버그](/ftl-visual-simulator/reference/reconfigure-crash-bug/), [MQSim 버그 헌트](/ftl-visual-simulator/reference/mqsim-bug-hunt/)
+- 관련 문서 : [재구성 크래시 버그](/ftl-visual-simulator/reference/bug-list/reconfigure-crash-bug/), [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/)
 - [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) — Session 10
 - [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드

@@ -261,7 +261,7 @@ Session 2 결과물 중 하나 — 지금까지 읽은 구조에서 뭘 그대�
 
 ### ⚠️ 정확성 노트 — static 마모 평준화(WL) 트리거 로직에 버그 2개
 
-`GC_and_WL_Unit_Base.cpp`/`Flash_Block_Manager_Base.cpp` 를 직접 읽으며 WL hook 을 추가하던 중, static 마모 평준화가 언제 발동할지 정하는 로직 자체에 버그 2개를 발견했다 — 하나는 메모리 안전성 문제, 하나는 "erase count 차이"를 계산해야 하는 함수가 실제로는 엉뚱한 값(블록 번호 차이, 심하면 unsigned 언더플로우)을 반환하던 문제. 위 hybrid 매핑 건과 달리 이건 **네이티브 MQSim 자체의 로직 오류**라, 고치면 이 프로젝트가 upstream MQSim 과 의도적으로 다르게 동작하게 된다 — 그래서 별도 문서에 상세히 남겨뒀다 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/).
+`GC_and_WL_Unit_Base.cpp`/`Flash_Block_Manager_Base.cpp` 를 직접 읽으며 WL hook 을 추가하던 중, static 마모 평준화가 언제 발동할지 정하는 로직 자체에 버그 2개를 발견했다 — 하나는 메모리 안전성 문제, 하나는 "erase count 차이"를 계산해야 하는 함수가 실제로는 엉뚱한 값(블록 번호 차이, 심하면 unsigned 언더플로우)을 반환하던 문제. 위 hybrid 매핑 건과 달리 이건 **네이티브 MQSim 자체의 로직 오류**라, 고치면 이 프로젝트가 upstream MQSim 과 의도적으로 다르게 동작하게 된다 — 그래서 별도 문서에 상세히 남겨뒀다 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/).
 
 <div style="margin-top: 60px;"></div>
 
