@@ -176,3 +176,5 @@ return plane_record->Blocks[max_erased_block].Erase_count - plane_record->Blocks
 - [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) — Session 6
 - [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) — 3-4절(마모 평준화 hook)
 - [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) — 실제 코드
+- [PR #5](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/5) — 이 문서에서 다루는 버그 수정 (hook 과 분리된 순수 버그 수정 커밋)
+- [PR #6](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/6) — 이 버그 수정을 베이스로 한 static WL hook 추가
