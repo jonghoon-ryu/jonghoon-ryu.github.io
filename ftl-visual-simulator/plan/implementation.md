@@ -115,7 +115,7 @@ table.plan-calendar th {
 
 > ⚠️ **( 9/6 기록 ) static WL, dynamic WL hook 모두 완료.** 버그 수정([PR #5](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/5))과 static WL hook 추가([PR #7](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/7))를 별도 PR 로 분리했다. static WL 검증 중 원본 MQSim 버그 2개(`run_static_wearleveling()`의 블록 주소/ID 혼동, `Get_min_max_erase_difference()`의 인덱스-차 vs erase-count-차 혼동)를 발견해 고쳤다 — 상세 내용과 "이건 upstream 과 의도적으로 다르게 동작하기로 한 결정"이라는 점은 [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/wl-bug-deviation/) 참고. dynamic WL 은 `PlaneBookKeepingType`( plane 좌표를 모르는 클래스 ) 자신이 아니라 이미 좌표를 갖고 있는 호출부(`Flash_Block_Manager.cpp`)에 계측했다 — GC/static WL 과 달리 매 write frontier 재배정마다 항상 관여해서 이벤트도 그만큼 자주 발생한다(기본 샘플만 돌려도 1493회).
 
-- `PlaneBookKeepingType::Add_to_free_block_pool()` / `Get_a_free_block()` : dynamic WL 로 인해 어떤 블록이 다음 write frontier 로 선택됐는지 이벤트( erase count 최소 블록 우선 배정 ) ( 9/6 완료 — `Dynamic_WL_Block_Allocated_Event`/`Dynamic_WL_Block_Freed_Event`, 호출부 5곳에 계측 )
+- `PlaneBookKeepingType::Add_to_free_block_pool()` / `Get_a_free_block()` : dynamic WL 로 인해 어떤 블록이 다음 write frontier 로 선택됐는지 이벤트( erase count 최소 블록 우선 배정 ) ( 9/6 완료 — [PR #8](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/8), `Dynamic_WL_Block_Allocated_Event`/`Dynamic_WL_Block_Freed_Event`, 호출부 5곳에 계측 )
 - `check_static_wl_required()` / `run_static_wearleveling()` : static WL 발동 이벤트( `Get_coldest_block_id()` 로 고른 블록 ) ( 9/6 완료 — `WL_Started_Event`/`WL_Page_Migrated_Event`/`WL_Block_Erased_Event`. 실제 발동은 재현 못했지만( 위 기록 참고 ) GC hook 과 동일 패턴으로 구현·회귀 테스트는 통과 )
 
 ### 3-5. 통계 — `Stats.h/cpp`
