@@ -104,6 +104,8 @@ if (block_pool_gc_threshold < max_ongoing_gc_reqs_per_plane)
 
 이 변경만으로는 "GC 시연" 프리셋의 데드락은 해결되지만, 여전히 기존 `Stop_Time` 안에서는 GC 가 발동하기엔 시간이 부족하다 — 이건 원본 코드 튜닝이 아니라 이 프로젝트 자체 프리셋 설정(`Stop_Time`, 재생 속도 배율)의 문제라 이 문서 대신 [개발 계획](/ftl-visual-simulator/plan/)에서 다룬다.
 
+같은 "GC 실행 횟수 0" 조사를 더 파고들다가, 애초에 이건 튜닝 문제가 아니라 **원본 MQSim 자체의 진짜 버그**(그것도 서로 얽힌 두 개)를 밟고 있었다는 걸 알게 됐다 - 자세한 내용은 [GC 자기 자신 경쟁 상태 버그](/ftl-visual-simulator/reference/bug-list/gc-self-victim-race-bug/) 참고.
+
 <div style="margin-top: 60px;"></div>
 
 ## 참고

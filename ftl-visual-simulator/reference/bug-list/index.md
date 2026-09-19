@@ -18,6 +18,7 @@ permalink: /ftl-visual-simulator/reference/bug-list/
 - [초기화되지 않은 Bandwidth 필드 버그](/ftl-visual-simulator/reference/bug-list/bandwidth-divide-by-zero-bug/) — workload 컨트롤 작업 중 발견한 0 나누기 크래시
 - [정적 마모 평준화 설정이 아예 전달되지 않던 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) — `Static_Wearleveling_Threshold` 가 설정과 무관하게 항상 무시되던 문제
 - [잘못된 inline 선언 버그](/ftl-visual-simulator/reference/bug-list/inline-linkage-bug/) — GMock 유닛 테스트가 처음 밖에서 불러본 protected 메서드의 링크 에러
+- [GC 자기 자신 경쟁 상태 버그](/ftl-visual-simulator/reference/bug-list/gc-self-victim-race-bug/) — GC 마이그레이션 쓰기의 진행-중 카운트 누락 + 이걸 고치자 드러난 RGA 후보 탐색의 무한 루프
 
 <div style="margin-top: 60px;"></div>
 
