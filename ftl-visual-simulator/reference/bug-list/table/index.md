@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 버그 목록표
 
-[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **12개** — 전부 수정해서 유지 중이다.
+[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **13개** — 전부 수정해서 유지 중이다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -146,6 +146,15 @@ table.plan-calendar th {
   <td>버그 11을 고치자 바로 드러남</td>
   <td>예(WASM 하네스로 확인)</td>
 </tr>
+<tr>
+  <td>13</td>
+  <td>RGA 후보 선택이 "다 쓴 block인지" 확인을 안 해서 빈 block도 후보에 포함됨</td>
+  <td><code>ssd/GC_and_WL_Unit_Page_Level.cpp</code></td>
+  <td>로직(후보 필터 누락) — RANDOM_P/RANDOM_PP는 이미 이 확인을 함</td>
+  <td>"매핑 기본"에서 GC 임계값/워크로드를 맞춰줘도 GC가 발동 안 하는 이유 조사 중</td>
+  <td>예(WASM 하네스로 확인)</td>
+  <td><a href="/ftl-visual-simulator/reference/bug-list/rga-incomplete-block-bug/">RGA 후보 선택이 아직 다 안 쓴 block도 포함하던 버그</a></td>
+</tr>
 </table>
 </div>
 
@@ -163,6 +172,7 @@ table.plan-calendar th {
 <tr><td>설정 누락</td><td>1개(#9)</td><td>파싱은 맞는데 실제로 쓰는 곳까지 배선이 안 됨 — 기본값과 우연히 같아서 안 드러남</td></tr>
 <tr><td>빌드/링크</td><td>1개(#10)</td><td>버그라기보단 아무도 그 코드 경로를 밖에서 불러본 적이 없어서 몇 년째 티가 안 났던 결함</td></tr>
 <tr><td>로직(경쟁 상태/무한 루프)</td><td>2개(#11-12)</td><td>#12는 이미 배포된 UI 조합(멀티 칩 + 최소 block 수)에서 재현 가능했던 라이브 이슈 - 발견 즉시 함께 수정</td></tr>
+<tr><td>로직(후보 필터 누락)</td><td>1개(#13)</td><td>실제 규모에서는 항상 참이라 안 드러남 - 이 프로젝트의 작은 데모 규모에서만 관찰 가능한 확률로 드러남</td></tr>
 </table>
 </div>
 
@@ -179,6 +189,7 @@ table.plan-calendar th {
 - **#9**: "마모평준화 시연"을 실제로 연동하려고 threshold 를 낮춰봤는데 반응이 없어서 발견
 - **#10**: 유닛 테스트를 작성하며 protected 메서드를 처음 파일 밖에서 불러보다가 발견
 - **#11-12**: "GC 시연" GC 실행 횟수가 0인 이유를 조사하다가 크래시(#11)를 발견, 고치는 과정에서 #12(무한 루프)가 바로 드러남
+- **#13**: "매핑 기본"에 "GC 시연"과 똑같은 임계값/워크로드를 줘도 GC가 여전히 발동 안 하는 이유를 계속 조사하다가 발견 (Ryu 가 직접 계산으로 반박하면서 진단이 더 정확해짐)
 
 <div style="margin-top: 60px;"></div>
 
