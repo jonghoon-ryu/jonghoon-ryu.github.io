@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 버그 목록표
 
-[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **10개** — 전부 수정해서 유지 중이다.
+[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **12개** — 전부 수정해서 유지 중이다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -129,6 +129,23 @@ table.plan-calendar th {
   <td>예(네이티브 빌드에서 발견)</td>
   <td><a href="/ftl-visual-simulator/reference/bug-list/inline-linkage-bug/">잘못된 inline 선언 버그</a></td>
 </tr>
+<tr>
+  <td>11</td>
+  <td>GC 마이그레이션 쓰기가 진행-중-쓰기 카운트를 전혀 남기지 않음</td>
+  <td><code>ssd/Flash_Block_Manager.cpp</code>, <code>ssd/GC_and_WL_Unit_Base.cpp</code></td>
+  <td>로직(카운트 누락 → 자기 자신 경쟁 상태)</td>
+  <td>"GC 시연" GC 실행 횟수 0 조사 중</td>
+  <td>예(WASM 하네스로 확인)</td>
+  <td rowspan="2"><a href="/ftl-visual-simulator/reference/bug-list/gc-self-victim-race-bug/">GC 자기 자신 경쟁 상태 버그</a></td>
+</tr>
+<tr>
+  <td>12</td>
+  <td>RGA 후보 탐색 루프에 반복 횟수 상한이 없어 무한 루프 가능</td>
+  <td><code>ssd/GC_and_WL_Unit_Page_Level.cpp</code></td>
+  <td>로직(무한 루프) — 이미 배포된 조합에서 재현 가능했던 라이브 이슈</td>
+  <td>버그 11을 고치자 바로 드러남</td>
+  <td>예(WASM 하네스로 확인)</td>
+</tr>
 </table>
 </div>
 
@@ -145,6 +162,7 @@ table.plan-calendar th {
 <tr><td>미초기화 변수</td><td>1개(#8)</td><td>XML 에 없는 필드가 힙 재사용 시 우연한 값으로 남음 — WASM 전용으로 재현</td></tr>
 <tr><td>설정 누락</td><td>1개(#9)</td><td>파싱은 맞는데 실제로 쓰는 곳까지 배선이 안 됨 — 기본값과 우연히 같아서 안 드러남</td></tr>
 <tr><td>빌드/링크</td><td>1개(#10)</td><td>버그라기보단 아무도 그 코드 경로를 밖에서 불러본 적이 없어서 몇 년째 티가 안 났던 결함</td></tr>
+<tr><td>로직(경쟁 상태/무한 루프)</td><td>2개(#11-12)</td><td>#12는 이미 배포된 UI 조합(멀티 칩 + 최소 block 수)에서 재현 가능했던 라이브 이슈 - 발견 즉시 함께 수정</td></tr>
 </table>
 </div>
 
@@ -160,6 +178,7 @@ table.plan-calendar th {
 - **#8**: workload 컨트롤을 추가하고 접근 패턴을 반복 전환하다가, 크래시가 나서 발견( Session 10 )
 - **#9**: "마모평준화 시연"을 실제로 연동하려고 threshold 를 낮춰봤는데 반응이 없어서 발견
 - **#10**: 유닛 테스트를 작성하며 protected 메서드를 처음 파일 밖에서 불러보다가 발견
+- **#11-12**: "GC 시연" GC 실행 횟수가 0인 이유를 조사하다가 크래시(#11)를 발견, 고치는 과정에서 #12(무한 루프)가 바로 드러남
 
 <div style="margin-top: 60px;"></div>
 
