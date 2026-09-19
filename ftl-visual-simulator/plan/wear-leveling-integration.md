@@ -82,7 +82,7 @@ step=1500000 minErase=0 maxErase=1 diff=1 GC=7 WL=1 blocks=64
 `src/data/mqsimConfigs.ts`:
 
 - **`DEFAULT_WL_PARAMS`** — 다른 두 프리셋의 `DEFAULT_MAPPING_PARAMS`를 베이스로, `blockNoPerPlane: 64`(다른 프리셋의 16보다 훨씬 큼 - 2절의 실험 결과), `gcExecThreshold: 0.5`("GC 시연"과 동일한 GC 강제 발생 튜닝), `staticWlThreshold: 1`(새로 추가한 필드 - `SsdParams`에 `staticWlThreshold` 필드 자체를 새로 추가하고 `buildSsdConfigXml`이 이를 XML 로 내보내도록 확장).
-- **`buildWlWorkloadXml()`** — "GC 시연"과 같은 워크로드 형태(`Working_Set_Percentage: 25`)에 `Stop_Time: 8000000000`(GC 시연의 2500000000 보다 김 - WL 발동에 필요한 event-group 수가 더 많기 때문). 네이티브 하니스로 측정한 최종 실행 규모: **약 279만 event-group, GC 32회, WL 1회, erase 33회** — 자연 종료(이벤트 큐 고갈이 아니라 Stop_Time 도달로 정상 종료됨을 확인).
+- **`buildWlWorkloadXml()`** — "GC 시연"과 같은 워크로드 형태(`Working_Set_Percentage: 25`)에 `Stop_Time: 8000000000`(GC 시연의 2500000000 보다 김 - WL 발동에 필요한 event-group 수가 더 많기 때문). 네이티브 하니스로 측정한 최종 실행 규모: **약 279만 event-group, GC 29회, WL 1회** — 자연 종료(이벤트 큐 고갈이 아니라 Stop_Time 도달로 정상 종료됨을 확인). (GC 횟수는 원래 32회로 측정됐으나, 이후 [RGA 후보 선택 버그](/ftl-visual-simulator/reference/bug-list/rga-incomplete-block-bug/) 수정으로 29회로 갱신 - 빈 block 을 잘못 고르던 낭비된 시도가 줄어든 결과.)
 - `App.tsx`의 `TICKS_MULTIPLIER`에 `'wear-leveling': 15000` 추가 — "GC 시연"의 5000 대비 279만/95만 ≈ 3배 규모이므로 그만큼 배속.
 
 `src/lib/mqsimWear.ts`(신규): 엔진의 실제 블록별 erase count 스냅샷(`getState().blocks[].eraseCount`)을 `WearLevelingView`가 그리는 `WearRow[]`로 변환. 기존 정적 목업은 `maxEraseCount: 120`(upstream 의 현실적인 `Block_PE_Cycles_Limit` 대비 스케일)을 고정값으로 썼지만, 이 데모 규모에서는 실제 erase count 가 한 자릿수뿐이라 고정 스케일을 그대로 쓰면 막대가 다 비어 보인다 — 대신 **그 시점에 관측된 최댓값 기준 상대 스케일**을 사용하도록 설계.
