@@ -20,6 +20,7 @@ permalink: /ftl-visual-simulator/reference/bug-list/
 - [잘못된 inline 선언 버그](/ftl-visual-simulator/reference/bug-list/inline-linkage-bug/) — GMock 유닛 테스트가 처음 밖에서 불러본 protected 메서드의 링크 에러
 - [GC 자기 자신 경쟁 상태 버그](/ftl-visual-simulator/reference/bug-list/gc-self-victim-race-bug/) — GC 마이그레이션 쓰기의 진행-중 카운트 누락 + 이걸 고치자 드러난 RGA 후보 탐색의 무한 루프
 - [RGA 후보 선택이 아직 다 안 쓴 block도 포함하던 버그](/ftl-visual-simulator/reference/bug-list/rga-incomplete-block-bug/) — RANDOM_P/RANDOM_PP와 달리 RGA만 "다 쓴 block인지" 확인을 안 해서, 빈 block을 청소 후보로 잘못 뽑던 문제
+- [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) — TSU 스케줄러의 switch-fallthrough·생성자 인자 순서·서스펜드/리쥼 카운터 어긋남까지 4개 결함이 사슬로 얽혀, 서스펜드 경로 자체가 몇 년째 죽어있던 문제
 
 <div style="margin-top: 60px;"></div>
 

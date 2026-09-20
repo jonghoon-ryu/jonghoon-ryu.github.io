@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 버그 목록표
 
-[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **13개** — 전부 수정해서 유지 중이다.
+[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **17개** — 전부 수정해서 유지 중이다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -155,6 +155,39 @@ table.plan-calendar th {
   <td>예(WASM 하네스로 확인)</td>
   <td><a href="/ftl-visual-simulator/reference/bug-list/rga-incomplete-block-bug/">RGA 후보 선택이 아직 다 안 쓴 block도 포함하던 버그</a></td>
 </tr>
+<tr>
+  <td>14</td>
+  <td>서스펜드 switch-case에 break 누락으로 서스펜드가 항상 무력화</td>
+  <td><code>ssd/TSU_OutofOrder.cpp</code>, <code>ssd/TSU_Priority_OutOfOrder.cpp</code>(6곳)</td>
+  <td>로직(switch fallthrough)</td>
+  <td>마모평준화 시연 threshold 인상 조사 중</td>
+  <td>예</td>
+  <td rowspan="4"><a href="/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/">명령 서스펜드가 한 번도 작동한 적이 없던 버그</a></td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>TSU_Base</code> 생성자 호출 시 bool 2개와 time 3개의 인자 순서가 뒤바뀜</td>
+  <td><code>ssd/TSU_OutofOrder.cpp</code>, <code>ssd/TSU_Priority_OutOfOrder.cpp</code></td>
+  <td>로직(인자 순서 오류)</td>
+  <td>버그 14를 고치자 바로 드러남</td>
+  <td>예</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td>단일 다이 구성에서 서스펜드 시 활성 다이 카운터가 리셋 안 됨</td>
+  <td><code>ssd/NVM_PHY_ONFI_NVDDR2.cpp</code></td>
+  <td>로직(조건 오류)</td>
+  <td>버그 15를 고치자 바로 드러남</td>
+  <td>예</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td>리쥼 시 활성 다이 카운터를 복원하지 않아 이후 unsigned 언더플로</td>
+  <td><code>ssd/NVM_PHY_ONFI_NVDDR2.h</code></td>
+  <td>로직(카운터 언더플로) → 칩 영구 정지</td>
+  <td>버그 16과 동시에 발견</td>
+  <td>예</td>
+</tr>
 </table>
 </div>
 
@@ -173,6 +206,7 @@ table.plan-calendar th {
 <tr><td>빌드/링크</td><td>1개(#10)</td><td>버그라기보단 아무도 그 코드 경로를 밖에서 불러본 적이 없어서 몇 년째 티가 안 났던 결함</td></tr>
 <tr><td>로직(경쟁 상태/무한 루프)</td><td>2개(#11-12)</td><td>#12는 이미 배포된 UI 조합(멀티 칩 + 최소 block 수)에서 재현 가능했던 라이브 이슈 - 발견 즉시 함께 수정</td></tr>
 <tr><td>로직(후보 필터 누락)</td><td>1개(#13)</td><td>실제 규모에서는 항상 참이라 안 드러남 - 이 프로젝트의 작은 데모 규모에서만 관찰 가능한 확률로 드러남</td></tr>
+<tr><td>로직(switch fallthrough/인자 순서/카운터 언더플로)</td><td>4개(#14-17)</td><td>서로 겹겹이 가려져 있던 결함 — #14가 서스펜드 자체를 막고 있어서 #15-17은 몇 년째 실행될 기회조차 없던 코드였음</td></tr>
 </table>
 </div>
 
@@ -190,6 +224,7 @@ table.plan-calendar th {
 - **#10**: 유닛 테스트를 작성하며 protected 메서드를 처음 파일 밖에서 불러보다가 발견
 - **#11-12**: "GC 시연" GC 실행 횟수가 0인 이유를 조사하다가 크래시(#11)를 발견, 고치는 과정에서 #12(무한 루프)가 바로 드러남
 - **#13**: "매핑 기본"에 "GC 시연"과 똑같은 임계값/워크로드를 줘도 GC가 여전히 발동 안 하는 이유를 계속 조사하다가 발견 (Ryu 가 직접 계산으로 반박하면서 진단이 더 정확해짐)
+- **#14-17**: "마모평준화 시연" WL 임계값을 올려보려다 시뮬레이션이 조용히 멈추는 문제를 다시 추적 — 이전 세션에 "TSU_FLIN" 으로 잘못 추정했던 바로 그 정지를 제대로 파고들며 연쇄적으로 발견
 
 <div style="margin-top: 60px;"></div>
 
