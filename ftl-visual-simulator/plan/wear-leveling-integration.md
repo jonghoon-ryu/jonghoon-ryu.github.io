@@ -108,8 +108,54 @@ step=1500000 minErase=0 maxErase=1 diff=1 GC=7 WL=1 blocks=64
 
 <div style="margin-top: 60px;"></div>
 
+## 8. 후속 작업 — WL 임계값을 1보다 높여보려는 시도
+
+1회 발동을 목표로 정리한 뒤, "erase count 차이가 겨우 1이어도 발동하는 게 맞냐"는 질문에서 시작해 threshold 를 더 현실적인 숫자(3, 5 등)로 올려볼 수 있는지 다시 파봤다. 결론부터 말하면 **못 올렸다** — 그 과정에서 진짜 데드락 버그 4개를 새로 찾아 고쳤고, 워크로드 자체를 바꾸는 시도도 구조적인 이유로 실패했다.
+
+<div style="margin-top: 60px;"></div>
+
+### 8.1 계기 — "재생 재개해도 배너가 안 사라짐" 버그 조사 중 진짜 데드락을 밟다
+
+UI 버그(재시작 후 WL 마커가 안 지워짐, 재생 재개해도 발동 배너가 안 사라짐 등) 몇 개를 고치던 중, threshold 를 2 이상으로 올려서 재현 테스트를 하다가 시뮬레이션이 에러 없이 조용히 멈추는(hang) 문제를 다시 마주쳤다. 이건 사실 훨씬 이전 세션에 "block 개수가 작을 때 TSU_FLIN 스케줄러에서 멈춘다"고 잘못 추정하고 [GitHub 이슈](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/issues/41)로만 남겨뒀던 바로 그 정지였다.
+
+이번엔 제대로 추적해서 `TSU_FLIN` 이 애초에 인스턴스화조차 안 되는 죽은 코드라는 걸 확인하고, 진짜 원인 — `TSU_OutOfOrder`/`TSU_Priority_OutOfOrder` 스케줄러에 걸쳐 서로를 가리고 있던 4개의 독립된 버그(switch-case fallthrough, 생성자 인자 순서 오류, 서스펜드/리쥼 시 활성 다이 카운터 어긋남) — 를 찾아 수정했다. 상세 분석과 수정 내용은 [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) 문서에 별도로 기록.
+
+<div style="margin-top: 60px;"></div>
+
+### 8.2 데드락을 고쳐도 threshold 2 이상은 여전히 발동 안 함
+
+데드락을 고친 뒤 재검증:
+
+- 기본 설정(threshold=1, Stop_Time 그대로): 100% 완주, `Total_WL_Executions=1` 유지 — 회귀 없음.
+- threshold 를 2~50 으로 올리면: 더 이상 멈추진 않지만(데드락은 확실히 해결) 기본 Stop_Time 안에서는 **한 번도 발동하지 않고 완주**해버림.
+- Stop_Time 을 2~3배로 늘려도(약 560만~840만 요청) 여전히 0회 — 그 이상(3.5~4배, 약 900만 요청) 늘리면 **아직 다 못 고친 잔여 stall**(같은 조사에서 발견, 근본 원인 미규명, 요청 수와만 상관관계 있고 threshold 값과는 무관하게 항상 같은 지점에서 발생)에 걸림.
+- Over-provisioning 을 5%/3%로 낮추거나, block 개수를 16개로 줄이거나, GC 정책을 RANDOM/GREEDY 로 바꿔봐도 마찬가지 — threshold=2조차 안 뜨거나(RANDOM 은 오히려 그 잔여 stall 을 더 일찍 밟음).
+
+원인: 이 프로젝트가 쓰는 GC 정책(RGA)은 애초에 "마모를 고르게 분산시키는" 것 자체가 목적이라, block 간 erase count 차이가 크게 벌어지질 않는다. static WL 이 잡아내야 할 "불균형"을 GC 자신이 이미 상당 부분 막고 있는 셈 — 그러니 threshold, OP, block 개수를 아무리 조정해도 근본적인 한계는 안 바뀐다.
+
+<div style="margin-top: 60px;"></div>
+
+### 8.3 워크로드 자체를 바꿔보기 — hot/cold 스큐도 구조적으로 막힘
+
+파라미터 조정이 안 되니 워크로드 생성 자체를 hot/cold 스큐(`Address_Distribution_Type::RANDOM_HOTCOLD`)로 바꿔서, 특정 LPN 에 쓰기를 집중시켜보려 했다. 두 단계에서 모두 막혔다:
+
+1. **DRAM 쓰기 캐시가 다 흡수해버림**: hot 영역을 좁게 잡으니(전체 주소 공간의 5~20%), 300만 개 넘는 요청 중 실제 flash 에 프로그램 명령이 나간 건 **단 9번**(`Issued_Flash_Program_CMD="9"`) — hot 영역의 distinct 페이지 수가 DRAM 쓰기 캐시 용량보다 작아서 거의 전부 캐시에서만 맴돌고 flash 까지 내려가질 않았다.
+2. **캐시를 꺼도(`Caching_Mode::TURNED_OFF`) 여전히 발동 안 함**: 이번엔 실제로 292번 소거가 일어났지만(`Average_Page_Movement_For_GC="0.000000"` — 전부 완전-무효 block 만 골라 마이그레이션 없이 청소), hot 비율(5~20%)·threshold(2~5) 어떤 조합에도 WL 은 여전히 0회.
+
+두 번째 결과의 진짜 이유는 **page-level FTL 의 논리/물리 주소 분리** 때문이다: 어떤 LPN 을 아무리 자주 덮어써도, 실제 쓰기는 그 LPN 의 "과거 위치"가 아니라 **그 순간의 write frontier(현재 활성 block)** 에 순차로 쌓인다. 즉 논리 주소 접근 빈도를 스큐해도, 그게 어느 physical block 을 더 닳게 하는지는 논리 주소값이 아니라 "쓰기 순서"가 결정한다 — 그래서 hot/cold 패턴을 아무리 강하게 줘도 물리 block 소거 횟수는 여전히 고르게 퍼진다. static WL 이 원래 잡아내야 하는 "한 block 에 cold 데이터가 오래 남아있는" 상황을 재현하려면, 그 데이터를 **아예 한 번도 다시 건드리지 않는** 진짜 cold 영역이 필요한데, MQSim 의 `RANDOM_HOTCOLD` 생성기는 두 영역 모두에 계속(비율만 다르게) 트래픽을 흘려보내는 방식이라 이 조건을 만들어주지 못한다.
+
+<div style="margin-top: 60px;"></div>
+
+### 8.4 결론 — threshold=1 유지
+
+이 preset 의 현재 설계(block 24개, RGA, OP 10%, 이 워크로드 생성기) 안에서는 **threshold=1 이 사실상 유일하게 동작하는 값**이라는 결론을 냈다. 더 큰 숫자로 "제대로" 보여주려면 파라미터 조정이 아니라, 워크로드 생성기 자체에 "한 번 쓰고 다시는 안 건드리는 진짜 cold 영역" 개념을 새로 추가하는 수준의 엔진 작업이 필요 — 오늘은 여기서 멈추고, threshold=1 그대로 유지하기로 했다.
+
+새로 찾은 데드락 버그 4개는 고쳐서 유지한다(threshold 조정과 무관하게 그 자체로 진짜 upstream 버그이자, 이후 threshold 를 조정할 여지를 다시 열어주는 전제 조건이므로).
+
+<div style="margin-top: 60px;"></div>
+
 ## 참고
 
-- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) (Session 6, 로직 버그 2개), [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) (이번에 찾은 버그의 근본 원인 분석)
+- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) (Session 6, 로직 버그 2개), [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) (처음 찾은 버그의 근본 원인 분석), [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) (8절에서 찾은 데드락 버그 4개)
 - [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/), [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/)
 - [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드
