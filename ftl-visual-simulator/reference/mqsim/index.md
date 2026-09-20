@@ -13,6 +13,7 @@ permalink: /ftl-visual-simulator/reference/mqsim/
 
 - [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/) — MQSim 이 뭔지, 다른 오픈소스 SSD 시뮬레이터와 비교해서 왜 이걸 골랐는지
 - [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/) — 코드 구조, 클래스별 역할, 동작 방식, 테스트 방식, FTL 개념 ↔ 파라미터·모듈 대응 등을 담은 하위 문서 모음
+- [쓰기 전에 읽으면 페이지가 소비되는 이유](/ftl-visual-simulator/reference/mqsim/read-before-write/) — 매핑 없는 주소를 읽으면 MQSim 이 그 자리에서 페이지를 예약하는 이유와, 이 프로젝트가 Read 비율 UI 를 없앤 이유
 
 <div style="margin-top: 60px;"></div>
 
