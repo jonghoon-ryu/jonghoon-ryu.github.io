@@ -158,7 +158,7 @@ UI 버그(재시작 후 WL 마커가 안 지워짐, 재생 재개해도 발동 �
 
 ## 9. 후속 작업 2 — threshold 3 달성 {#section-9}
 
-8절에서 멈췄던 두 가지를 다시 파서 둘 다 풀었다. 이 절은 프리셋 설계 쪽 기록이고, 엔진 버그의 상세 분석은 [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개](/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/)에 따로 있다.
+8절에서 멈췄던 두 가지를 다시 파서 둘 다 풀었다. 이 절은 프리셋 설계 쪽 기록이고, 엔진 버그의 상세 분석은 [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들](/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/)에 따로 있다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -207,6 +207,6 @@ threshold 를 올리고 Stop_Time 을 늘리며 여러 구성을 돌리자, 8.2�
 
 ## 참고
 
-- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) (Session 6, 로직 버그 2개), [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) (처음 찾은 버그의 근본 원인 분석), [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) (8절에서 찾은 데드락 버그 4개), [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개](/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/) (9절)
+- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) (Session 6, 로직 버그 2개), [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) (처음 찾은 버그의 근본 원인 분석), [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) (8절에서 찾은 데드락 버그 4개), [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들](/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/) (9절)
 - [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/), [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/)
 - [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드

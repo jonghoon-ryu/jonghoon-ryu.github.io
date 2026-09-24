@@ -195,7 +195,7 @@ table.plan-calendar th {
   <td>로직(후보 선정)</td>
   <td>threshold 2 이상이 발동 안 하는 이유 재조사 (2026-09-24)</td>
   <td>예</td>
-  <td rowspan="9"><a href="/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/">정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개</a></td>
+  <td rowspan="9"><a href="/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/">정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들</a></td>
 </tr>
 <tr>
   <td>19</td>
