@@ -96,6 +96,15 @@
                               </details>
                             </li>
                             <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/read-before-write/' | relative_url }}">쓰기 전에 읽으면 페이지가 소비되는 이유</a></li>
+                            <li>
+                              <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim/study-guide/' %} open{% endif %}>
+                                <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim/study-guide/' | relative_url }}">MQSim 2일 학습 가이드</a></summary>
+                                <ul class="nav-subitems">
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/study-guide/day1/' | relative_url }}">Day 1 — 뼈대·호스트·캐시</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/study-guide/day2/' | relative_url }}">Day 2 — FTL·GC·스케줄러·플래시</a></li>
+                                </ul>
+                              </details>
+                            </li>
                           </ul>
                         </details>
                       </li>
