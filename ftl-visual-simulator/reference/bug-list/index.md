@@ -5,6 +5,8 @@ permalink: /ftl-visual-simulator/reference/bug-list/
 ---
 # 버그 목록
 
+> 버그를 포함해 원본 MQSim 과 이 프로젝트 엔진의 **모든 코드 차이**를 종류별로 정리한 문서는 [원본 MQSim 대비 변경 사항](/ftl-visual-simulator/reference/upstream-diff/) 에 있다.
+
 이 프로젝트는 원본 MQSim C++ 코드를 그대로 컴파일해서 쓰기 때문에("힘들어도 정확하게" — [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) 참고), 재구현했다면 절대 마주치지 않았을 upstream MQSim 자체의 버그들을 실제로 밟아왔다. 이 카테고리는 그렇게 찾아낸 버그들을 발견 경위·근본 원인·수정 내용까지 상세히 기록한 하위 문서들과, 그걸 한눈에 볼 수 있는 요약 표를 모아둔다.
 
 <div style="margin-top: 60px;"></div>
