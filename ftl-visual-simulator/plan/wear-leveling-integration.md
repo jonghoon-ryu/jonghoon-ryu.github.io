@@ -133,6 +133,8 @@ UI 버그(재시작 후 WL 마커가 안 지워짐, 재생 재개해도 발동 �
 
 원인: 이 프로젝트가 쓰는 GC 정책(RGA)은 애초에 "마모를 고르게 분산시키는" 것 자체가 목적이라, block 간 erase count 차이가 크게 벌어지질 않는다. static WL 이 잡아내야 할 "불균형"을 GC 자신이 이미 상당 부분 막고 있는 셈 — 그러니 threshold, OP, block 개수를 아무리 조정해도 근본적인 한계는 안 바뀐다.
 
+> **정정 (2026-09-24)**: 위 원인 분석은 틀렸다. 진짜 원인은 static WL 이 대상을 고르는 방식의 버그(#18) — 평면 전체에서 erase count 가 가장 낮은 block 이 거의 항상 한 번도 안 쓰이는 write frontier 라서, 그게 거부되면 WL 은 그 뒤로 영원히 포기했다. 아래 "잔여 stall" 도 근본 원인을 찾았다(#21). [9절](#section-9) 참고.
+
 <div style="margin-top: 60px;"></div>
 
 ### 8.3 워크로드 자체를 바꿔보기 — hot/cold 스큐도 구조적으로 막힘
@@ -154,8 +156,57 @@ UI 버그(재시작 후 WL 마커가 안 지워짐, 재생 재개해도 발동 �
 
 <div style="margin-top: 60px;"></div>
 
+## 9. 후속 작업 2 — threshold 3 달성 {#section-9}
+
+8절에서 멈췄던 두 가지를 다시 파서 둘 다 풀었다. 이 절은 프리셋 설계 쪽 기록이고, 엔진 버그의 상세 분석은 [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개](/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/)에 따로 있다.
+
+<div style="margin-top: 60px;"></div>
+
+### 9.1 발동이 안 되던 진짜 이유 — 대상 선정 버그
+
+8.2의 "RGA 가 마모를 고르게 퍼뜨리기 때문"이라는 설명은 틀렸다. static WL 은 "평면에서 erase count 가 가장 낮은 block"을 대상으로 삼는데, 그 block 이 거의 항상 **한 번도 프로그램되지 않는 write frontier**(매핑 테이블이 CMT 에 다 들어가서 영원히 erase count 0 인 `Translation_wf`)였다. frontier 는 안전한 후보가 아니라서 거부되고, upstream 코드는 거기서 다음 후보를 찾지 않고 그냥 포기했다 — 그 frontier 의 erase count 는 영원히 0 이니 평생 포기. 대상을 "데이터가 있고 안전한 block" 중에서 고르도록 고쳤다(버그 #18).
+
+<div style="margin-top: 60px;"></div>
+
+### 9.2 워크로드 — "한 번 쓰고 다시 안 건드리는" 진짜 cold flow
+
+#18 을 고치자 8.3의 결론이 그대로 맞았음이 드러났다: 기존 워크로드(균일 무작위 한 flow)로는 threshold 1 에서 WL 이 151번 헛돌고, 2-5 에서는 0-1번. 동적 WL 이 마모를 평평하게 유지해서 erase count 차이가 1-2 이상 벌어지지 않는다.
+
+8.3에서 "`RANDOM_HOTCOLD` 는 두 영역 모두에 계속 트래픽을 흘려서 안 된다"고 했던 문제는, 생성기를 고치는 대신 **flow 를 두 개로 나눠서** 풀었다. MQSim 은 논리 주소 공간을 flow 수만큼 나누고, flow 마다 자기 write frontier 를 따로 가지므로 두 flow 의 데이터는 같은 block 에 섞이지 않는다:
+
+- **flow 0 (cold)**: `STREAMING` 으로 자기 영역의 절반을 순서대로 **딱 한 번씩** 쓰고 영원히 멈춘다(`Stop_Time=0` + `Total_Requests_To_Generate` = 그 영역의 page 수 - 1). DRAM 쓰기 캐시는 끈다 — 켜두면 8.3처럼 캐시가 전부 흡수해서 flash 까지 안 내려간다.
+- **flow 1 (hot)**: 기존과 같은 무작위 덮어쓰기, 자기 영역의 50%, 끝까지.
+
+cold block 은 erase count 0 에 머무르고 hot block 들만 계속 닳아서, static WL 이 원래 잡아내야 하는 불균형이 실제로 생긴다.
+
+<div style="margin-top: 60px;"></div>
+
+### 9.3 규모를 키우자 드러난 멈춤 버그들
+
+threshold 를 올리고 Stop_Time 을 늘리며 여러 구성을 돌리자, 8.2의 "잔여 stall" 을 비롯해 멈추거나 크래시하는 upstream 버그가 4개 연달아 나왔다(#21-24 — 하나를 고칠 때마다 다음 것이 드러나는 사슬). 전부 고친 뒤 29가지 구성(threshold 1-10, 칩 1/2/4, block 16-40, GC 임계값 1-95%, seed 3종, Stop_Time 4배)이 모두 모든 요청을 완료했다.
+
+<div style="margin-top: 60px;"></div>
+
+### 9.4 최종 설정
+
+<div style="overflow-x:auto;">
+<table class="plan-calendar">
+<tr><th>항목</th><th>이전</th><th>지금</th></tr>
+<tr><td>워크로드</td><td>균일 무작위 1 flow</td><td>cold(순차 1회) + hot(무작위) 2 flow</td></tr>
+<tr><td><code>staticWlThreshold</code></td><td>1</td><td>3</td></tr>
+<tr><td>기본 결과(24 block)</td><td>WL 1회</td><td>GC 58 / WL 7, 매번 cold block 한 개(16 page) 통째로 이동</td></tr>
+<tr><td>Block 개수 슬라이더 최솟값</td><td>8</td><td>16 (이 프리셋만 — flow 가 둘이라 frontier block 이 두 배)</td></tr>
+</table>
+</div>
+
+브라우저(WASM)에서도 기본 설정이 네이티브와 똑같이 GC 58 / WL 7 로 끝나는 것을 확인했다. 앱 쪽에서는 두 flow 가 같은 LPN 번호를 따로 쓰기 때문에(cold 의 LPN 5 ≠ hot 의 LPN 5), 로그와 덮어쓰기 표시가 쓰는 "LPN → 위치" 맵을 flow 별로 구분하도록 같이 고쳤다.
+
+남은 것: WL 임계값 슬라이더는 아직 UI 에 없고, block 마다 cold/hot 중 어느 flow 의 데이터인지 엔진이 알려주긴 하지만(`streamId`) 화면에는 아직 표시하지 않는다.
+
+<div style="margin-top: 60px;"></div>
+
 ## 참고
 
-- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) (Session 6, 로직 버그 2개), [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) (처음 찾은 버그의 근본 원인 분석), [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) (8절에서 찾은 데드락 버그 4개)
+- 관련 문서 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) (Session 6, 로직 버그 2개), [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) (처음 찾은 버그의 근본 원인 분석), [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) (8절에서 찾은 데드락 버그 4개), [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개](/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/) (9절)
 - [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/), [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/)
 - [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드
