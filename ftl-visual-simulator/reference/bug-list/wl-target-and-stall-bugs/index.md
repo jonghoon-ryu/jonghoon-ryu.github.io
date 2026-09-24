@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개
+title: 정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들
 permalink: /ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/
 ---
 <style>
@@ -37,7 +37,7 @@ svg .flow { stroke: #888; stroke-width: 1.2; fill: none; marker-end: url(#arrow)
 svg .note { font-size: 10px; fill: #888; font-style: italic; }
 </style>
 
-# 정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개
+# 정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들
 
 "마모평준화 시연"의 static WL 임계값을 1보다 높이려는 작업의 두 번째 라운드(2026-09-24). [지난번](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/)에 스케줄러 데드락 4개를 고치고도 threshold 2 이상은 여전히 발동하지 않았고, "약 900만 요청 근처에서 원인 불명으로 멈춘다"는 잔여 문제도 남아 있었다. 이번에 둘 다 끝까지 추적했다:
 
@@ -206,7 +206,9 @@ GC 검사(`Check_gc_required()`)는 write frontier 가 새 block 으로 넘어�
 
 **수정** (선정 정책 자체는 건드리지 않음):
 - 평면의 대기열에 첫 write 가 들어가는 순간 GC 검사를 요청(`Request_gc_check()`).
-- GC 검사가 아무것도 시작하지 못했는데, 대기 중인 write 가 있고, 진행 중 erase 가 없고, 실제로 청소할 수 있는 block 이 존재하면 1µs 뒤 다시 검사(`gc_retry_needed()`). 청소할 게 정말 없으면 재시도하지 않으므로 무한 루프가 되지 않는다.
+- GC 검사가 아무것도 시작하지 못했는데, 대기 중인 write 가 있고, 진행 중 erase 가 없고, 실제로 청소할 수 있는 block 이 존재하면 1µs 뒤 다시 검사(`gc_retry_needed()`). 청소할 게 정말 없으면 재시도하지 않는다.
+
+> **정정 (같은 날, 후속 스윕에서)**: 처음에는 "그래서 무한 루프가 되지 않는다"고 썼는데 틀렸다. 청소할 block 이 있어도 **선정 정책이 그 block 을 끝내 고르지 못하면**(FIFO 가 그랬다) 1µs 마다 영원히 재시도했다. 이전 엔진이라면 그냥 멈췄을 구성이, 이 수정 때문에 끝나지 않는 시뮬레이션이 된 것 — 이 프로젝트 자신의 회귀. 연속 재시도 횟수에 상한(1000번)을 두고, FIFO 쪽 원인도 고쳤다. [12절](#section-12) 참고.
 
 RGA 를 "빗나가면 greedy 로" 바꾸는 방법도 있었지만, 그러면 이 프로젝트의 RGA 가 원본과 다르게 동작한다. 재시도는 정책은 그대로 두고 "다시 물어볼 기회"만 보장한다.
 
@@ -238,9 +240,59 @@ RGA 를 "빗나가면 greedy 로" 바꾸는 방법도 있었지만, 그러면 �
 
 <div style="margin-top: 60px;"></div>
 
+## 12. 후속 스윕 — 다른 프리셋과 모든 GC 정책까지 {#section-12}
+
+위 검증은 "마모평준화 시연"에 RGA 정책만 썼다. 같은 날 범위를 넓혀, 세 프리셋 모두에서 UI 로 고를 수 있는 모든 파라미터의 극단값(칩 1/4, block 8-64, block 당 page 4/64, OP 0/30%, GC 임계값 양 끝, 순차/무작위)과 GC 정책 6종을 조합한 83가지 구성을 돌렸더니 11개가 실패했다. 실패한 구성은 모두 이전 엔진(`d5c7c94`, 오늘 작업 전)에서도 다시 돌려 비교했다.
+
+<div style="margin-top: 40px;"></div>
+
+### 12.1 회귀 — 9절의 재시도가 끝나지 않음
+
+"마모평준화 시연" + FIFO + 칩 4 + block 16 이 진행률 10% 에서 CPU 100% 로 멈춰 있었다. 이전 엔진에서는 요청 4개를 남기고 그냥 멈추던 구성이다. 9절의 재시도가 "청소할 block 이 있다"는 조건만 보고 계속 재시도했는데, FIFO 는 그 block 을 절대 고르지 못하는 상태였다(12.2). 연속 재시도를 1000번(시뮬레이션 시간 1ms)으로 제한했다 — FIFO 수정을 일부러 되돌린 빌드로 돌려보니, 끝나지 않던 실행이 0.3초 만에 "정지"로 끝나는 걸 확인했다. 정지도 버그지만, 끝나지 않는 것보다는 낫다.
+
+<div style="margin-top: 40px;"></div>
+
+### 12.2 버그 #25 — FIFO 후보 큐에서 block 이 영영 사라짐
+
+FIFO 는 `Block_usage_history` 큐에서 가장 오래된 "다 쓴 안전한 block"을 **꺼내서** victim 으로 돌려준다. 그런데 공통 코드가 바로 뒤에서 "invalid page 가 하나도 없으면 청소할 게 없다"며 `return` 하면, 꺼낸 block 은 **큐에 다시 들어가지 않는다.** 그 block 이 나중에 invalid page 가 생겨 평면의 유일한 회수 대상이 되면, FIFO 는 그걸 영원히 못 본다 — 이게 12.1 의 진짜 원인이자, 이전 엔진이 멈추던 이유.
+
+**수정**: 꺼내기 전에 거절될 조건(invalid page 0개, 12.4 의 이동 공간 부족)을 적격 검사에 포함해서, 거절될 block 은 꺼내지 않고 큐 뒤로 돌려보낸다.
+
+<div style="margin-top: 40px;"></div>
+
+### 12.3 버그 #26 — RANDOM 계열이 검증 안 된 후보를 그대로 사용
+
+RANDOM, RANDOM_P, RANDOM_PP 는 조건에 맞는 block 이 나올 때까지 무작위로 다시 뽑는데, block 수만큼 실패하면 반복을 멈추고 **마지막으로 뽑은 block 을 조건과 상관없이** 쓴다. 그게 현재 write frontier 면 `Inconsistency in the global mapping table when locking an LPA!` 로 종료된다(GC 시연, block 8 + 칩 4). 예전에 GREEDY/FIFO 에서 고쳤던 것과 같은 종류의 결함이 RANDOM 계열에도 남아 있었던 것. 같은 방식으로 최종 후보를 검증하고, 아니면 이번 GC 기회를 건너뛴다.
+
+<div style="margin-top: 40px;"></div>
+
+### 12.4 이 프로젝트의 튜닝이 드러낸 문제 — GC 이동 공간
+
+"마모평준화 시연" + RANDOM_P/RANDOM_PP 는 `Requesting a free block from an empty pool!` 로 종료됐다(이전 엔진에서는 정지). 종료 순간 평면을 보면 GC 3개가 동시에 돌면서 각각 7-15 page 를 옮기는 중이었다.
+
+upstream 은 GC 가 page 를 옮길 공간을 따로 확인하지 않는다. 대신 free block 이 `max_ongoing_gc_reqs_per_plane` 보다 적으면 사용자 쓰기를 막는데, 이 값이 동시 GC 개수의 상한도 겸한다 — GC 하나가 옮기는 양은 최대 block 하나이므로, upstream 의 10 이면 동시 GC 10개의 여유가 보장된다. 이 프로젝트는 [데모 규모에 맞추려고](/ftl-visual-simulator/reference/tweaked-code/) 이 값을 3 으로 낮췄다. 게다가 사용자 쓰기는 free block 이 정확히 3개일 때도 block 을 하나 가져갈 수 있고(남는 건 2개), flow 가 둘이면 GC write frontier 도 둘이다. RGA/GREEDY 는 invalid page 가 많은 victim 을 골라 옮길 양이 적어서 이 한계에 닿지 않지만, 아무 block 이나 고르는 RANDOM_P/RANDOM_PP 는 닿는다.
+
+**수정 (upstream 과 다른 동작)**: GC/WL 을 시작하기 전에, 이미 진행 중인 GC 들이 아직 옮길 page 와 이번 victim 의 valid page 를 free pool 이 다 담을 수 있는지 확인하고(`has_room_to_migrate()`), 모자라면 다음 기회로 미룬다. valid page 가 없는 victim 은 공간을 쓰지 않으므로 항상 허용.
+
+<div style="margin-top: 40px;"></div>
+
+### 12.5 버그가 아닌 것 — "매핑 기본"이 작은 용량에서 멈춤
+
+나머지 3개("매핑 기본" + block 당 page 4, block 8 + page 4, block 8 + OP 0)는 이전 엔진과 결과가 완전히 같았고, 원인도 버그가 아니었다. 종료 시점에 invalid page 가 **하나도 없다** — 이 프리셋은 논리 공간 100% 에 쓰기 때문에, 용량이 작으면 덮어쓰기가 일어나기도 전에 장치가 가득 차서 쓰기가 막힌다. 청소할 게 없으니 GC 도 할 일이 없다. 이건 이미 `DEFAULT_MAPPING_PARAMS` 주석에 "장치가 차면 데모가 거기서 끝난다"고 기록해둔 설계상 한계다. 다만 UI 에서 그 조합을 고를 수 있고 화면에 이유가 안 나오는 건 따로 정할 문제로 남겼다.
+
+<div style="margin-top: 40px;"></div>
+
+### 12.6 최종 검증
+
+- 83가지 + 기존 WL 29가지 = **112가지 구성 중 109개 완료**, 나머지 3개는 12.5 의 용량 한계.
+- 세 프리셋 기본값의 결과(매핑 기본 183 요청 / GC 0, GC 시연 GC 31, 마모평준화 시연 GC 58 / WL 7)는 수정 전과 **완전히 동일** — 이동 공간 확인이 영향을 준 건 block 8 + OP 0, 칩 4 + block 16 같은 빡빡한 구성뿐이었다.
+- `test:engine` 골든 3/3, `test:engine:unit` 14/14.
+
+<div style="margin-top: 60px;"></div>
+
 ## 참고
 
 - [버그 목록표](/ftl-visual-simulator/reference/bug-list/table/)
 - [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) — 이 작업의 첫 번째 라운드, 그리고 "남은 문제"로 적어뒀던 정지가 #21
 - [마모평준화 시연 연동 작업 기록](/ftl-visual-simulator/plan/wear-leveling-integration/) — 9절: threshold 3 달성과 2-flow 워크로드
-- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 커밋 `1199ac3`(엔진), `d60b897`(앱)
+- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 커밋 `1199ac3`(엔진), `d60b897`(앱), `0d66439`(12절의 후속 수정)
