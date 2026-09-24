@@ -28,6 +28,7 @@ FTL 시각화 시뮬레이터를 실제로 만들어가는 일정과 세션별 �
 - [MQSim 코드 분석 계획](/ftl-visual-simulator/plan/code-analysis-plan/) — MQSim 소스코드를 처음부터 끝까지 읽는 16세션 커리큘럼
 - [To do list](/ftl-visual-simulator/plan/todo-list/) — 세션 중 나중으로 미룬 자잘한 확인/처리 항목 모음
 - [마모평준화 시연 연동 작업 기록](/ftl-visual-simulator/plan/wear-leveling-integration/) — 1차 완성 이후 "마모평준화 시연" 프리셋을 실제 엔진에 연동한 전체 과정(시행착오, 버그 발견, 최종 튜닝, 검증)
+- [교육용 기능 추가 기록](/ftl-visual-simulator/plan/educational-features/) — FTL 개념 하나씩을 눈에 보이게 하는 기능 5개(빈 block 차트, GC victim 설명, GC 알고리즘 비교, 한 쓰기 따라가기, DRAM 쓰기 캐시 토글)
 
 <div style="margin-top: 60px;"></div>
 
