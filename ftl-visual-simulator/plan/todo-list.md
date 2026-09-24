@@ -21,7 +21,7 @@ permalink: /ftl-visual-simulator/plan/todo-list/
 
 - [x] ~~Session 3 설계 산출물(MVP 범위 문서, 와이어프레임, hook 위치 설계표)~~ — 작성하지 않고 **종료(대체됨)**. Session 4 엔진 작업이 먼저 끝나면서 건너뛰었고, 지금은 실제 앱과 [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/)·버그 문서들이 그 역할을 대신함 (2026-09-24 정리).
 
-- [ ] **Cost-Benefit GC 구현** (확장 목표, 10/17~18 버퍼): MQSim 에 없는 정책. 앱의 "GC 알고리즘 비교" 표에 한 줄 추가하면 RGA 등과 바로 비교 가능.
+- [x] ~~Cost-Benefit GC 구현~~ (2026-09-24 앱 커밋 `dd8746d` 로 완료, 버퍼 기간보다 앞당김) — LFS 의 (1-u)/(2u)×age 정책. 기본 설정에서 WAF 1.24× 로 RGA/Greedy(1.23×)와 비슷, Random(1.19×)이 여전히 최저.
 
 <div style="margin-top: 60px;"></div>
 
