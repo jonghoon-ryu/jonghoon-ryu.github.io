@@ -11,7 +11,7 @@ permalink: /ftl-visual-simulator/plan/todo-list/
 
 ## 열려있는 항목
 
-- [ ] **크로스 브라우저 확인 — Microsoft Edge**: Session 11("마무리 (1) — 다듬기")의 "크로스 브라우저 확인" 작업 중, Claude 쪽에서는 Chrome 밖에 확인할 수 없어서 Safari/Firefox/Edge 는 미확인 상태로 남겨뒀음. Safari/Firefox 는 Ryu 가 별도로 확인 완료(OK). **Edge 는 아직 확인 필요.**
+- [x] ~~크로스 브라우저 확인 — Microsoft Edge~~ — 별도 확인 없이 **종료**(2026-09-24, Ryu 결정). Chrome 에서 전부 확인했고 Safari/Firefox 도 Ryu 가 확인 완료(OK). Edge 는 Chrome 과 같은 Chromium 엔진이라 따로 볼 필요가 없다고 판단 — 사용자는 Chrome 으로 실행하면 됨.
 
 - [x] ~~멀티 칩(multi-chip) UI 지원~~ (2026-09-19 앱 커밋 `08cc312` 로 완료 — 칩 개수 선택(현재 1/2/4), 격자의 칩 배지로 "Chip N · Block M" 중복 문제 해결. 2026-09-24 에는 칩 색상을 색각 이상 기준을 통과하는 색으로 교체(`96ea771`)). 원래 메모: 앱이 칩/다이/플레인 수를 1로 하드코딩하고 있었고, 칩을 늘리면 칩마다 block 번호가 0부터 다시 시작해 라벨이 중복되던 문제.
 
