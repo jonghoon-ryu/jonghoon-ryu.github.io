@@ -290,9 +290,42 @@ upstream 은 GC 가 page 를 옮길 공간을 따로 확인하지 않는다. 대
 
 <div style="margin-top: 60px;"></div>
 
+## 13. 세 번째 스윕 — 조합 극단값과 4배 길이 {#section-13}
+
+12절까지로 "알려진 버그는 없음" 상태가 됐지만, 스윕은 파라미터를 하나(많아야 둘)씩만 극단으로 바꿨다. 그래서 여러 극단값을 **동시에** 건 구성(칩 4 + block 최소 + OP 0 또는 page 4 + 각 GC 정책, 반대로 칩 1 + block 64 + page 64 + OP 30%)과, 세 프리셋 모두를 **4배 실행 길이**로 돌리는 80가지 구성을 추가로 돌렸다. 그 전에 의심만 하던 것 하나를 먼저 확인했다.
+
+<div style="margin-top: 40px;"></div>
+
+### 13.1 버그 #27 — FIFO 후보 큐가 끝없이 커짐
+
+12.2 에서 FIFO 후보 큐(`Block_usage_history`)의 누수를 고치면서 하나가 더 의심스러웠다: upstream 은 block 이 새 write frontier 로 할당될 때마다 그 ID 를 큐에 넣고, **FIFO GC 가 victim 으로 고를 때만** 뺀다. 그러면 다른 경로 — 정적 WL, 또는 다른 정책의 GC — 로 지워진 block 은 옛 항목이 큐에 남은 채로, 다음에 할당될 때 또 들어간다.
+
+"마모평준화 시연" + FIFO 를 4배 길이로 돌리며 큐 길이를 찍어보니 실제로 그랬다: block 24개짜리 평면에서 큐가 **83개**까지 커졌고, WL 이 발동할 때마다 계속 늘었다. 메모리 문제만이 아니라, 남아 있는 옛 항목 때문에 FIFO 가 어떤 block 을 실제 사용 순서보다 **이른 자리**에서 만나게 된다 — "가장 오래된 block 부터"라는 FIFO 의 의미 자체가 틀어진다.
+
+**수정**: block 마다 할당될 때마다 1씩 늘어나는 번호(`Allocation_seq`)를 두고, 큐에는 (block, 그때의 번호) 쌍을 넣는다. 꺼냈을 때 번호가 지금 block 의 번호와 다르면 이미 지나간 사용 기록이므로 버린다. 새로 넣을 때 큐 앞쪽의 오래된 항목도 같이 정리한다. 같은 실행에서 큐는 최대 21개(block 수 이하)로 유지됐고 모든 요청이 완료됐다.
+
+<div style="margin-top: 40px;"></div>
+
+### 13.2 재시도 한도가 조용히 넘어가지 않게
+
+12.1 에서 넣은 재시도 한도(1000번)는 "끝나지 않음"을 "멈춤"으로 바꿀 뿐이라, 한도에 걸렸다는 건 여전히 어딘가에 문제가 있다는 뜻이다. 그런데 결과만 보면 12.5 의 "장치가 가득 참"과 구별이 안 된다. 그래서 한도에 걸리면 `WARNING: GC could not free space on plane ... after 1000 retries` 를 출력하고 통계(`Gc_retry_limit_hits`, 브라우저에서는 `gcRetryLimitHits`)에 남기도록 했다. FIFO 수정을 일부러 되돌린 빌드에서 멈춘 평면마다 경고가 한 번씩 나오는 것 확인. 스윕 스크립트도 이 경고를 실패로 센다.
+
+<div style="margin-top: 40px;"></div>
+
+### 13.3 결과
+
+80가지 중 52개 완료, 28개 실패 — 그리고 **28개 모두 "장치가 가득 참"**이었다. 재시도 한도에 걸린 실행은 0개. 멈춘 평면을 덤프해보면 전부 valid page 로 가득 차 있고 invalid page 가 **0개**(청소할 게 없음):
+
+- "매핑 기본" + block 8 + OP 0 또는 page 4 (20개), "매핑 기본" 4배 길이 (8개) — 12.5 와 같은 설계상 한계. 4배로 오래 쓰면 이 프리셋은 장치를 채운다.
+- "마모평준화 시연" + 칩 4 + block 16 + **OP 0** (6개) — 여유 공간이 전혀 없으니 칩 두 개가 valid 데이터로 꽉 참.
+
+GC 시연의 모든 조합, 그리고 GC 시연·마모평준화 시연의 4배 길이 실행은 GC 정책 6종 모두 완료. 이런 경우 화면에는 이제 "장치가 가득 찼어요" 안내가 뜬다.
+
+<div style="margin-top: 60px;"></div>
+
 ## 참고
 
 - [버그 목록표](/ftl-visual-simulator/reference/bug-list/table/)
 - [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) — 이 작업의 첫 번째 라운드, 그리고 "남은 문제"로 적어뒀던 정지가 #21
 - [마모평준화 시연 연동 작업 기록](/ftl-visual-simulator/plan/wear-leveling-integration/) — 9절: threshold 3 달성과 2-flow 워크로드
-- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 커밋 `1199ac3`(엔진), `d60b897`(앱), `0d66439`(12절의 후속 수정)
+- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 커밋 `1199ac3`(엔진), `d60b897`(앱), `0d66439`(12절의 후속 수정), `1f3a012`(13절)

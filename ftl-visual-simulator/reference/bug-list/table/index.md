@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 버그 목록표
 
-[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **26개** — 전부 수정해서 유지 중이다.
+[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **27개** — 전부 수정해서 유지 중이다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -195,7 +195,7 @@ table.plan-calendar th {
   <td>로직(후보 선정)</td>
   <td>threshold 2 이상이 발동 안 하는 이유 재조사 (2026-09-24)</td>
   <td>예</td>
-  <td rowspan="9"><a href="/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/">정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들</a></td>
+  <td rowspan="10"><a href="/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/">정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들</a></td>
 </tr>
 <tr>
   <td>19</td>
@@ -261,6 +261,14 @@ table.plan-calendar th {
   <td>같은 후속 스윕 (block 8 + 칩 4)</td>
   <td>예</td>
 </tr>
+<tr>
+  <td>27</td>
+  <td>FIFO 후보 큐에 다른 경로로 지워진 block 의 옛 항목이 남아 큐가 끝없이 커지고 FIFO 순서가 틀어짐</td>
+  <td><code>ssd/Flash_Block_Manager_Base.cpp</code>, <code>ssd/GC_and_WL_Unit_Page_Level.cpp</code></td>
+  <td>로직(자료구조 누수)</td>
+  <td>#25 수정 중 의심 → 4배 길이 실행에서 큐 길이를 찍어 확인</td>
+  <td>예</td>
+</tr>
 </table>
 </div>
 
@@ -281,7 +289,7 @@ table.plan-calendar th {
 <tr><td>로직(후보 필터 누락)</td><td>1개(#13)</td><td>실제 규모에서는 항상 참이라 안 드러남 - 이 프로젝트의 작은 데모 규모에서만 관찰 가능한 확률로 드러남</td></tr>
 <tr><td>로직(switch fallthrough/인자 순서/카운터 언더플로)</td><td>4개(#14-17)</td><td>서로 겹겹이 가려져 있던 결함 — #14가 서스펜드 자체를 막고 있어서 #15-17은 몇 년째 실행될 기회조차 없던 코드였음</td></tr>
 <tr><td>로직(static WL 후보 선정) + 통계 집계</td><td>3개(#18-20)</td><td>GC 와 WL 이 코드 경로를 공유하면서 WL 쪽 처리를 빠뜨림 — #18 때문에 "WL 은 한 번만 뜬다"를 오랫동안 다른 이유로 잘못 설명해왔음</td></tr>
-<tr><td>로직(조용한 정지/크래시 사슬)</td><td>6개(#21-26)</td><td>#14-17 처럼 하나를 고쳐야 다음이 드러나는 사슬 — #22-26은 실제 SSD 규모의 block 수에선 거의 안 드러나고, 이 프로젝트의 작은 데모 규모에서만 확률적으로 나타남</td></tr>
+<tr><td>로직(조용한 정지/크래시 사슬)</td><td>7개(#21-27)</td><td>#14-17 처럼 하나를 고쳐야 다음이 드러나는 사슬 — #22-27은 실제 SSD 규모의 block 수에선 거의 안 드러나고, 이 프로젝트의 작은 데모 규모에서만 확률적으로 나타남</td></tr>
 </table>
 </div>
 
@@ -302,6 +310,7 @@ table.plan-calendar th {
 - **#14-17**: "마모평준화 시연" WL 임계값을 올려보려다 시뮬레이션이 조용히 멈추는 문제를 다시 추적 — 이전 세션에 "TSU_FLIN" 으로 잘못 추정했던 바로 그 정지를 제대로 파고들며 연쇄적으로 발견
 - **#18-24**: 같은 작업의 두 번째 라운드 — threshold 가 안 올라가는 진짜 이유(#18)를 찾고, 2-flow 워크로드로 규모를 키워 29가지 구성을 돌리며 멈춤/크래시를 하나씩 추적 (#21 이 #14-17 문서에 "남은 문제"로 적어뒀던 정지)
 - **#25-26**: 같은 날 세 프리셋 전부와 GC 정책 6종으로 스윕 범위를 넓혀서 발견 — 그 과정에서 #24 수정이 FIFO 와 만나 무한 루프가 되는 이 프로젝트 자신의 회귀도 함께 잡음
+- **#27**: #25 를 고치면서 의심한 것을 4배 길이 실행에서 큐 길이를 직접 찍어 확인
 
 <div style="margin-top: 60px;"></div>
 
