@@ -16,6 +16,7 @@ permalink: /ftl-visual-simulator/reference/
 - [프론트엔드 스택 입문 (Vite · React · TS)](/ftl-visual-simulator/reference/frontend-stack/) — Vite, React, TypeScript, scaffold 가 각각 뭔지, 그리고 화면 쪽 구현에 왜 필요한지에 대한 설명
 - [버그 목록](/ftl-visual-simulator/reference/bug-list/) — 이 프로젝트를 진행하며 실제 MQSim 원본에서 찾아낸 버그들을 모아두는 카테고리( 하위 문서 : [버그 목록표](/ftl-visual-simulator/reference/bug-list/table/)(전체 요약 표) / [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/) / [마모 평준화 버그와 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) / [재구성 크래시 버그](/ftl-visual-simulator/reference/bug-list/reconfigure-crash-bug/) / [초기화되지 않은 Bandwidth 필드 버그](/ftl-visual-simulator/reference/bug-list/bandwidth-divide-by-zero-bug/) / [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) / [잘못된 inline 선언 버그](/ftl-visual-simulator/reference/bug-list/inline-linkage-bug/) )
 - [튜닝된 코드 (Tweaked Code)](/ftl-visual-simulator/reference/tweaked-code/) — 버그는 아니지만, 원본이 가정하는 규모와 이 프로젝트의 화면 규모가 달라서 일부러 upstream 과 다르게 동작하도록 바꾼 원본 C++ 코드 항목들
+- [원본 MQSim 대비 변경 사항](/ftl-visual-simulator/reference/upstream-diff/) — 처음 가져온 원본(`90b0fb1`)과 지금 엔진을 비교해, 버그 수정·의도적 동작 변경·규모 튜닝·새 기능·계측/WASM·테스트로 나눠 정리. 원본 버그 28개를 원본 코드·문제·증상·수정 순으로 한곳에
 
 <div style="margin-top: 60px;"></div>
 
