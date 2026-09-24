@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 버그 목록표
 
-[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **17개** — 전부 수정해서 유지 중이다.
+[버그 목록](/ftl-visual-simulator/reference/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **24개** — 전부 수정해서 유지 중이다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -188,6 +188,63 @@ table.plan-calendar th {
   <td>버그 16과 동시에 발견</td>
   <td>예</td>
 </tr>
+<tr>
+  <td>18</td>
+  <td>static WL 대상이 평면 전체 최소 erase count block 으로만 정해져, 한 번도 안 쓰이는 frontier 가 뽑히면 이후 영원히 발동 불가</td>
+  <td><code>ssd/GC_and_WL_Unit_Base.cpp</code></td>
+  <td>로직(후보 선정)</td>
+  <td>threshold 2 이상이 발동 안 하는 이유 재조사 (2026-09-24)</td>
+  <td>예</td>
+  <td rowspan="7"><a href="/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/">정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개</a></td>
+</tr>
+<tr>
+  <td>19</td>
+  <td>대기 후 재개된 WL 이 GC 실행으로 집계됨</td>
+  <td><code>ssd/GC_and_WL_Unit_Base.cpp</code></td>
+  <td>통계 집계</td>
+  <td>#18 수정 중 함께 발견</td>
+  <td>예</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td>WL 페이지 이동이 GC 로 집계돼 <code>Average_Page_Movement_For_WL</code> 이 항상 0</td>
+  <td><code>ssd/GC_and_WL_Unit_Base.cpp</code></td>
+  <td>통계 집계</td>
+  <td>#18 수정 중 함께 발견</td>
+  <td>예</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td>LPA barrier 에서 풀려난 트랜잭션의 완료가 broadcast 되지 않아 캐시 back-pressure 누수 → 정지</td>
+  <td><code>ssd/Address_Mapping_Unit_Page_Level.cpp</code></td>
+  <td>로직(완료 신호 누락) → 조용한 정지</td>
+  <td>threshold 를 올려 큰 규모로 돌리다 (지난번 "원인 불명 ~9e9 정지")</td>
+  <td>예</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td>대기했다 재개된 GC/WL 이 erase 트랜잭션을 TSU 에 제출하지 않음</td>
+  <td><code>ssd/GC_and_WL_Unit_Base.cpp</code></td>
+  <td>로직(제출 누락) → 조용한 정지</td>
+  <td>#21 수정 후 16 block 구성에서</td>
+  <td>예</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td>평면 대기열에서 풀려난 write 가 GC/WL LPA barrier 를 확인하지 않음</td>
+  <td><code>ssd/Address_Mapping_Unit_Page_Level.cpp</code></td>
+  <td>로직(경쟁 상태) → 크래시</td>
+  <td>#22 수정 후 멀티 칩/작은 block 구성에서</td>
+  <td>예</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td>GC 검사가 아무것도 못 했을 때, 평면의 write 가 전부 대기 중이면 다시 검사할 계기가 없음</td>
+  <td><code>ssd/GC_and_WL_Unit_Base.cpp</code>, <code>ssd/Address_Mapping_Unit_Page_Level.cpp</code></td>
+  <td>로직(재시도 누락) → 조용한 정지</td>
+  <td>#23 수정 후 4칩 16 block 구성에서</td>
+  <td>예</td>
+</tr>
 </table>
 </div>
 
@@ -207,6 +264,8 @@ table.plan-calendar th {
 <tr><td>로직(경쟁 상태/무한 루프)</td><td>2개(#11-12)</td><td>#12는 이미 배포된 UI 조합(멀티 칩 + 최소 block 수)에서 재현 가능했던 라이브 이슈 - 발견 즉시 함께 수정</td></tr>
 <tr><td>로직(후보 필터 누락)</td><td>1개(#13)</td><td>실제 규모에서는 항상 참이라 안 드러남 - 이 프로젝트의 작은 데모 규모에서만 관찰 가능한 확률로 드러남</td></tr>
 <tr><td>로직(switch fallthrough/인자 순서/카운터 언더플로)</td><td>4개(#14-17)</td><td>서로 겹겹이 가려져 있던 결함 — #14가 서스펜드 자체를 막고 있어서 #15-17은 몇 년째 실행될 기회조차 없던 코드였음</td></tr>
+<tr><td>로직(static WL 후보 선정) + 통계 집계</td><td>3개(#18-20)</td><td>GC 와 WL 이 코드 경로를 공유하면서 WL 쪽 처리를 빠뜨림 — #18 때문에 "WL 은 한 번만 뜬다"를 오랫동안 다른 이유로 잘못 설명해왔음</td></tr>
+<tr><td>로직(조용한 정지/크래시 사슬)</td><td>4개(#21-24)</td><td>#14-17 처럼 하나를 고쳐야 다음이 드러나는 사슬 — #22-24는 실제 SSD 규모의 block 수에선 거의 안 드러나고, 이 프로젝트의 작은 데모 규모에서만 확률적으로 나타남</td></tr>
 </table>
 </div>
 
@@ -225,6 +284,7 @@ table.plan-calendar th {
 - **#11-12**: "GC 시연" GC 실행 횟수가 0인 이유를 조사하다가 크래시(#11)를 발견, 고치는 과정에서 #12(무한 루프)가 바로 드러남
 - **#13**: "매핑 기본"에 "GC 시연"과 똑같은 임계값/워크로드를 줘도 GC가 여전히 발동 안 하는 이유를 계속 조사하다가 발견 (Ryu 가 직접 계산으로 반박하면서 진단이 더 정확해짐)
 - **#14-17**: "마모평준화 시연" WL 임계값을 올려보려다 시뮬레이션이 조용히 멈추는 문제를 다시 추적 — 이전 세션에 "TSU_FLIN" 으로 잘못 추정했던 바로 그 정지를 제대로 파고들며 연쇄적으로 발견
+- **#18-24**: 같은 작업의 두 번째 라운드 — threshold 가 안 올라가는 진짜 이유(#18)를 찾고, 2-flow 워크로드로 규모를 키워 29가지 구성을 돌리며 멈춤/크래시를 하나씩 추적 (#21 이 #14-17 문서에 "남은 문제"로 적어뒀던 정지)
 
 <div style="margin-top: 60px;"></div>
 

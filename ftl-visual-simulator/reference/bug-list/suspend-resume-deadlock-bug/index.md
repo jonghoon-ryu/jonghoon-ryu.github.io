@@ -136,6 +136,8 @@ void PrepareResume()  { HasSuspend = false; }  // 카운터를 복원하지 않�
 
 이 넷을 고친 뒤에도, 원래보다 훨씬 큰 스케일(같은 설정에서 이벤트 900만 개 이상, GC 사이클 여러 번을 정상적으로 거친 뒤)에서 한 번 더 비슷한 정지를 관찰했다. 이번엔 `No_of_active_dies` 이상은 아니었고(직접 계측해서 확인), 어느 GC 후보 block 의 마이그레이션이 끝까지 완료되지 못하고 이벤트 큐가 조용히 비어버리는 패턴이었다. 근본 원인은 아직 못 찾았다 — 이 프로젝트가 실제로 쓰는 규모(threshold=1, 기본 Stop_Time)에는 전혀 영향이 없어서 후순위로 남겨뒀다.
 
+> **해결됨 (2026-09-24)**: 이 정지는 LPA barrier 에서 풀려난 트랜잭션의 완료가 data cache manager 에 전달되지 않아 back-pressure 카운터가 새던 upstream 버그였다(#21). 고치고 나니 그 뒤에 숨어 있던 정지·크래시 버그 3개가 더 드러났다 — [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그 4개](/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/) 참고.
+
 <div style="margin-top: 60px;"></div>
 
 ## 참고
