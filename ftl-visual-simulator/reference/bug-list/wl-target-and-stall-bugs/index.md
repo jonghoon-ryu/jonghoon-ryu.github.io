@@ -323,9 +323,26 @@ GC 시연의 모든 조합, 그리고 GC 시연·마모평준화 시연의 4배 
 
 <div style="margin-top: 60px;"></div>
 
+## 14. 버그 #28 — suspend 판단의 unsigned 언더플로 {#section-14}
+
+"명령 일시정지(suspend)" 선택을 앱에 넣으려고 모드별 읽기 지연을 재보다가 나왔다. 읽기를 먼저 처리하려고 erase 를 잠깐 멈추는 기능인데, 켜면(기본값 ERASE) 오히려 **읽기가 크게 느려졌고**(캐시 끔, 일반 구간 평균 254µs → 1,387µs), program suspend + 읽기 30% 에서는 **segfault** 가 났다.
+
+AddressSanitizer 빌드로 보니, 칩이 program 을 끝내고 "완료" 를 알리는 도중에 스케줄러가 다시 불려서(DRAM 캐시가 새 쓰기를 내보냄), 이미 끝난 program 을 suspend 하려다 NULL 완료 이벤트를 참조하고 있었다. 원인은 TSU 의 "suspend 할 가치가 있나" 검사:
+
+```cpp
+if (Expected_finish_time(chip) - Simulator->Time() < reasonableSuspensionTime)
+    return false;   // 곧 끝나니 멈추지 말자
+```
+
+`sim_time_type` 은 unsigned 라, 예상 종료 시각이 이미 지났으면 뺄셈이 아주 큰 수로 넘어가 이 가드가 통과되지 않는다 — 9/20 에 고친 suspend 버그들(#14-17)과 같은 계열이다. "종료 시각 ≤ 지금이면 suspend 안 함" 을 3곳에 추가했다. (완료 처리 순서를 바꾸는 방법도 해봤지만 upstream 골든 결과까지 바뀌어서 되돌렸다.)
+
+수정 후 8가지(모드 4 × 캐시 켬/끔) 전부 모든 요청 완료, erase suspend 도 더 이상 읽기를 느리게 하지 않고, program + erase suspend 에서는 가장 느린 읽기가 줄었다(캐시 켬 19.7ms → 13.0ms). 기본 erase suspend 가 제대로 동작하게 되면서 기본 설정의 GC 횟수·WAF 도 조금 바뀌어, 앱에 적힌 수치를 갱신했다(예: GC 시연 WAF 1.27× → 1.23×). 골든 3/3 은 그대로.
+
+<div style="margin-top: 60px;"></div>
+
 ## 참고
 
 - [버그 목록표](/ftl-visual-simulator/reference/bug-list/table/)
 - [명령 서스펜드가 한 번도 작동한 적이 없던 버그](/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/) — 이 작업의 첫 번째 라운드, 그리고 "남은 문제"로 적어뒀던 정지가 #21
 - [마모평준화 시연 연동 작업 기록](/ftl-visual-simulator/plan/wear-leveling-integration/) — 9절: threshold 3 달성과 2-flow 워크로드
-- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 커밋 `1199ac3`(엔진), `d60b897`(앱), `0d66439`(12절의 후속 수정), `1f3a012`(13절)
+- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 커밋 `1199ac3`(엔진), `d60b897`(앱), `0d66439`(12절의 후속 수정), `1f3a012`(13절), `3f38ad5`(14절)
