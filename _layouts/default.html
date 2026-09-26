@@ -35,6 +35,21 @@
             </details>
           </li>
           <li>
+            <details class="nav-group"{% if page.url contains '/open-problems/' %} open{% endif %}>
+              <summary><a href="{{ '/open-problems/' | relative_url }}">Open Problems</a></summary>
+              <ul class="nav-subitems">
+                <li>
+                  <details class="nav-group"{% if page.url contains '/open-problems/busy-beaver/' %} open{% endif %}>
+                    <summary><a href="{{ '/open-problems/busy-beaver/' | relative_url }}">Busy Beaver Problem</a></summary>
+                    <ul class="nav-subitems">
+                      <li><a href="{{ '/open-problems/busy-beaver/bbchallenge-notes/' | relative_url }}">bbchallenge — Busy Beaver notes</a></li>
+                    </ul>
+                  </details>
+                </li>
+              </ul>
+            </details>
+          </li>
+          <li>
             <details class="nav-group"{% if page.url contains '/code-reviewer-agent/' %} open{% endif %}>
               <summary><a href="{{ '/code-reviewer-agent/' | relative_url }}">Code Reviewer Agent</a></summary>
               <ul class="nav-subitems">
