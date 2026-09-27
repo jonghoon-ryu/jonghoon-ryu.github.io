@@ -145,8 +145,8 @@ Phase A 에서 바뀌는 곳은 거의 이 표가 전부다. 책은 왼쪽을 �
   <tbody>
     <tr><td>부팅</td><td>QEMU <code>-kernel</code>, <code>entry.S</code>, <code>start.c</code> (M-mode → S-mode)</td><td>UEFI 로더 → 커널 진입 (이미 64비트 롱 모드)</td></tr>
     <tr><td>페이지 테이블</td><td>Sv39 (3단계), <code>satp</code></td><td>4단계, <code>CR3</code></td></tr>
-    <tr><td>트랩 진입</td><td><code>stvec</code>, <code>kernelvec.S</code></td><td>IDT, GDT/TSS</td></tr>
-    <tr><td>시스템 콜</td><td><code>ecall</code>, <code>trampoline.S</code></td><td><code>syscall</code>/<code>sysret</code>, <code>swapgs</code>, 트램펄린 (KPTI 구조)</td></tr>
+    <tr><td>트랩 진입</td><td><code>stvec</code> 을 kernelvec / uservec 로 바꿔 씀</td><td>IDT 두 개 (커널용 / 사용자용) 를 <code>lidt</code> 로 바꿔 씀, GDT/TSS</td></tr>
+    <tr><td>시스템 콜</td><td><code>ecall</code>, <code>trampoline.S</code></td><td><code>int $64</code>, <code>trampoline.S</code> (TSS.rsp0 가 TRAPFRAME 끝을 가리켜 CPU 가 trapframe 에 바로 저장)</td></tr>
     <tr><td>트랩 원인</td><td><code>scause</code>, <code>stval</code>, <code>sepc</code></td><td>벡터 번호, 에러 코드, <code>CR2</code>, <code>RIP</code></td></tr>
     <tr><td>인터럽트 컨트롤러</td><td>PLIC</td><td>IOAPIC (ACPI MADT 로 찾음)</td></tr>
     <tr><td>타이머</td><td><code>stimecmp</code></td><td>LAPIC 타이머</td></tr>
@@ -277,11 +277,11 @@ Phase A 에서 바뀌는 곳은 거의 이 표가 전부다. 책은 왼쪽을 �
 
 <div class="session" data-session="7" markdown="1">
 
-### Week 7 · 2026.12.20 (일) — 시스템 콜: syscall / sysret
+### Week 7 · 2026.12.20 (일) — 시스템 콜: int $64 와 트램펄린
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="7"> 완료</label>
 
-- **🤖 Claude (주중):** `trampoline.S` 대체: `syscall` 명령어 진입, 사용자 ↔ 커널 전환 (`swapgs`, CR3 교체) · `usys.pl` 이 `ecall` 대신 `syscall` 생성 · 인자 레지스터 대응
+- **🤖 Claude (주중):** `trampoline.S` 대체: 사용자용 IDT 의 진입 스텁, TSS.rsp0 로 CPU 가 트랩 프레임을 trapframe 에 바로 저장, CR3 교체, `iretq` 복귀 · `usys.pl` 이 `ecall` 대신 `int $64` 생성 · 인자 레지스터 대응 (rdi, rsi, rdx, r10, r8, r9)
 - **👤 Ryu (일요일 3h):** 책 **Ch.4.2–4.4** Traps from user space, Calling system calls, System call arguments
 - 🎯 **마일스톤:** 첫 사용자 프로그램 (`initcode`) 이 시스템 콜을 부른다
 
