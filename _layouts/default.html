@@ -19,7 +19,7 @@
         <h1 class="sidebar-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
         <ul class="sidebar-nav">
           <li>
-            <details class="nav-group"{% if page.url == '/learning-cs/' or page.url contains '/learning-cs/computation-theory/' or page.url contains '/learning-cs/os/' %} open{% endif %}>
+            <details class="nav-group"{% if page.url contains '/learning-cs/' %} open{% endif %}>
               <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
               <ul class="nav-subitems">
                 <li>
@@ -38,18 +38,18 @@
                     </ul>
                   </details>
                 </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <details class="nav-group"{% if page.url contains '/open-problems/' %} open{% endif %}>
-              <summary><a href="{{ '/open-problems/' | relative_url }}">Open Problems</a></summary>
-              <ul class="nav-subitems">
                 <li>
-                  <details class="nav-group"{% if page.url contains '/open-problems/busy-beaver/' %} open{% endif %}>
-                    <summary><a href="{{ '/open-problems/busy-beaver/' | relative_url }}">Busy Beaver Problem</a></summary>
+                  <details class="nav-group"{% if page.url contains '/learning-cs/open-problems/' %} open{% endif %}>
+                    <summary><a href="{{ '/learning-cs/open-problems/' | relative_url }}">Open Problems</a></summary>
                     <ul class="nav-subitems">
-                      <li><a href="{{ '/open-problems/busy-beaver/bbchallenge-notes/' | relative_url }}">bbchallenge — Busy Beaver notes</a></li>
+                      <li>
+                        <details class="nav-group"{% if page.url contains '/learning-cs/open-problems/busy-beaver/' %} open{% endif %}>
+                          <summary><a href="{{ '/learning-cs/open-problems/busy-beaver/' | relative_url }}">Busy Beaver Problem</a></summary>
+                          <ul class="nav-subitems">
+                            <li><a href="{{ '/learning-cs/open-problems/busy-beaver/bbchallenge-notes/' | relative_url }}">bbchallenge — Busy Beaver notes</a></li>
+                          </ul>
+                        </details>
+                      </li>
                     </ul>
                   </details>
                 </li>

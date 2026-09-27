@@ -1,7 +1,7 @@
 ---
 layout: default
 title: bbchallenge — Busy Beaver notes
-permalink: /open-problems/busy-beaver/bbchallenge-notes/
+permalink: /learning-cs/open-problems/busy-beaver/bbchallenge-notes/
 ---
 # bbchallenge — Busy Beaver notes
 
