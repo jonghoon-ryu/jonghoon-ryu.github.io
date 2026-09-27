@@ -52,4 +52,4 @@ permalink: /learning-cs/os/
 
 ## 진행 계획
 
-- [xv6 C++ 포팅 1년 계획](/learning-cs/os/study-plan/) — x86 판 xv6 를 매주 C 에서 C++ 로 번역 (Claude 번역, Ryu 리뷰 + 책 읽기), 2026.11 시작, 매주 일요일 3시간. QEMU → VirtualBox → 실제 UEFI PC
+- [xv6 x86-64 + C++ 1년 계획](/learning-cs/os/study-plan/) — xv6-riscv 를 x86-64 로 포팅한 뒤 C++ 로 번역 (Claude 가 코드, Ryu 가 리뷰 + 책 읽기), 2026.11 시작, 매주 일요일 3시간. QEMU → VirtualBox → 실제 UEFI PC
