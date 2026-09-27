@@ -52,4 +52,4 @@ permalink: /learning-cs/os/
 
 ## 진행 계획
 
-- [Weekend Study Plan](/learning-cs/os/study-plan/) — xv6 소스 코드 + xv6 강의 시리즈 + OSTEP 숙제, 주말 6시간 기준 15세션 커리큘럼
+- [xv6 C++ 포팅 1년 계획](/learning-cs/os/study-plan/) — x86 판 xv6 를 매주 C 에서 C++ 로 번역 (Claude 번역, Ryu 리뷰 + 책 읽기), 2026.11 시작, 매주 일요일 3시간. QEMU → VirtualBox → 실제 UEFI PC
