@@ -361,7 +361,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 - **토 (2h):** 강의 **L11** (뒷부분) · Sipser **Ch.6.2** (Th(ℕ,+) 결정 가능, Th(ℕ,+,×) 결정 불가능, 증명 불가능한 참인 문장)
 - **일 (2h):** Ch.6.2 의 "Turing-unprovable statement" 증명을 재귀 정리로 설명해 보기
-- 💡 연결: [Busy Beaver Problem](/open-problems/busy-beaver/) 페이지. BB(n) 이 계산 불가능한 이유 = 정지 문제
+- 💡 연결: [Busy Beaver Problem](/learning-cs/open-problems/busy-beaver/) 페이지. BB(n) 이 계산 불가능한 이유 = 정지 문제
 
 </div>
 
