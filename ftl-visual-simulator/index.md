@@ -16,3 +16,4 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 - [개발 산출물](/ftl-visual-simulator/deliverables/) — 화면 설계, 빌드 결과, 배포본 등 실제 산출물 모음( 하위 문서 : [Visual Simulator](/ftl-visual-simulator/deliverables/visual-simulator/) → [Visual Simulator Layout (초안)](/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/) )
 - [참고 자료](/ftl-visual-simulator/reference/) — 시뮬레이터를 만드는 데 필요한 배경 지식( 하위 문서 : [MQSim](/ftl-visual-simulator/reference/mqsim/) → [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/) / [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/), [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) )
 - [시뮬레이터 실행](/ftl-visual-simulator/run-simulator/) — 지금 배포된 시뮬레이터를 브라우저에서 바로 열어보기
+- [Evaluation Board](/ftl-visual-simulator/evaluation-board/) — 실제 평가 보드에서 FTL 을 돌리는 방법 논의( 하위 문서 : [평가 보드 추천과 부트로더 역할 분담](/ftl-visual-simulator/evaluation-board/board-recommendation/) )

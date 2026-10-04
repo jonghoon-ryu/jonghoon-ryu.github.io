@@ -163,6 +163,14 @@
                     </ul>
                   </details>
                 </li>
+                <li>
+                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/evaluation-board/' %} open{% endif %}>
+                    <summary><a href="{{ '/ftl-visual-simulator/evaluation-board/' | relative_url }}">Evaluation Board</a></summary>
+                    <ul class="nav-subitems">
+                      <li><a href="{{ '/ftl-visual-simulator/evaluation-board/board-recommendation/' | relative_url }}">평가 보드 추천과 부트로더 역할 분담</a></li>
+                    </ul>
+                  </details>
+                </li>
                 <li><a href="{{ '/ftl-visual-simulator/run-simulator/' | relative_url }}">시뮬레이터 실행</a></li>
               </ul>
             </details>
