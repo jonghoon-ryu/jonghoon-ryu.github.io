@@ -4,7 +4,7 @@
 }
 
 .sidebar {
-  width: 220px;
+  width: 520px;
   flex-shrink: 0;
   background: #1f1f1f;
   color: #fff;
@@ -40,6 +40,7 @@
 }
 
 .sidebar-nav a {
+  white-space: nowrap;
   color: #ddd;
   font-size: 1.05rem;
   text-decoration: none;
@@ -159,6 +160,17 @@ body {
 
 .post-tags {
   margin-top: -0.5rem;
+}
+
+@media (max-width: 1100px) {
+  /* narrow screens: let long titles wrap again instead of squeezing the page */
+  .sidebar {
+    width: 340px;
+  }
+
+  .sidebar-nav a {
+    white-space: normal;
+  }
 }
 
 @media (max-width: 700px) {
