@@ -117,6 +117,9 @@ Simulator->Reset();   // main.cpp:284
 2. `ssdconfig.xml` 을 지우고 실행하면? (`main.cpp:38` 이후)
 3. 시나리오가 3개면 `SSD_Device` 는 몇 번 만들어지나?
 
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
+
 <div style="margin-top: 60px;"></div>
 
 <div class="step-nav"><span>[◂ 튜토리얼 목차](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/)</span><span>[2. SSD 와 호스트 만들기 ▸](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step2-build-ssd/)</span></div>

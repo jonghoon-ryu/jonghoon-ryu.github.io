@@ -78,6 +78,9 @@ static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->Translate_lpa_to_ppa_and_
 2. 캐시가 꺼져 있고 읽기 요청이면 어느 줄에서 FTL 로 가나?
 3. 사용자 요청의 "완료" 는 flash program 이 끝난 뒤인가, DRAM 쓰기가 끝난 뒤인가?
 
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
+
 <div style="margin-top: 60px;"></div>
 
 <div class="step-nav"><span>[◂ 4. 요청의 탄생 — SSD 입구까지](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step4-request-enters/)</span><span>[6. FTL ① 주소 변환 ▸](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step6-translate/)</span></div>

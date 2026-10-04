@@ -52,6 +52,18 @@ make
 
 <div style="margin-top: 60px;"></div>
 
+## 부록
+
+| 부록 | 내용 |
+|---|---|
+| [A. 읽기 요청 따라가기](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-read-path/) | 본문은 쓰기 중심이었다. 읽기는 CMT · barrier · 캐시 부분 hit 와 어떻게 만나나 |
+| [B. 완료 경로](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-completion/) | flash 연산이 끝난 뒤 신호가 올라가 호스트 통계가 바뀌기까지 |
+| [C. 디버깅과 작은 실험](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-debugging/) | 빌드 · 20개 요청 실험 · `DEBUG` 로그 · gdb |
+| [D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) | 각 단계 끝 문제의 답과 근거 줄 |
+
+
+<div style="margin-top: 60px;"></div>
+
 ## 이 튜토리얼을 읽는 요령
 
 - **"이 함수가 이벤트를 예약하는가?"** 를 먼저 본다. 예약하면 흐름이 끊기고 나중에 이어진다([이벤트 엔진과 시간](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/event-engine/)).

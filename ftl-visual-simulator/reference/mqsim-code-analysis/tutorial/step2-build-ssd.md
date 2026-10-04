@@ -28,7 +28,7 @@ ftl->TSU    ftl->BlockManager    ftl->Address_Mapping_Unit
 ftl->GC_and_WL_Unit              ftl->Data_cache_manager
 ```
 
-**설정이 구현을 고른다.** 예를 들어 5번 TSU 는 `Transaction_Scheduling_Policy` 값에 따라 `TSU_OutOfOrder`(`:142`), `TSU_Priority_OutOfOrder`(`:150`), `TSU_FLIN`(`:168`) 중 하나가 된다. 7번 주소 매핑은 `Address_Mapping` 이 `PAGE_LEVEL` 이면 `Address_Mapping_Unit_Page_Level`(`:273`), `HYBRID` 면 `Address_Mapping_Unit_Hybrid`(`:282`)이다 — 후자는 빈 스텁이다([원본의 알려진 한계](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/known-limits/)).
+**설정이 구현을 고른다.** 예를 들어 5번 TSU 는 `Transaction_Scheduling_Policy` 값에 따라 `TSU_OutOfOrder`(`:142`) 또는 `TSU_Priority_OutOfOrder`(`:150`)가 된다. `FLIN` 을 위한 `case`(`:157`~)도 있지만 **주석 처리**되어 있어 고르면 `default` 의 예외로 떨어진다. 7번 주소 매핑은 `Address_Mapping` 이 `PAGE_LEVEL` 이면 `Address_Mapping_Unit_Page_Level`(`:273`), `HYBRID` 면 `Address_Mapping_Unit_Hybrid`(`:282`)이다 — 후자는 빈 스텁이다([원본의 알려진 한계](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/known-limits/)).
 
 7번 직전에는 `Logical_Address_Partitioning_Unit::Allocate_logical_address_for_flows()` 가 불려, **flow 마다 논리 주소 범위와 쓸 수 있는 채널·칩·다이·플레인을 나눈다.** flow 가 둘이면 논리 주소 공간이 반으로 갈라진다.
 
@@ -68,6 +68,9 @@ PCIe_switch->Attach_ssd_device(Host_interface)   // 스위치가 호스트 인�
 1. `ssdconfig.xml` 에서 `Transaction_Scheduling_Policy` 를 `FLIN` 으로 바꾸면 어느 줄이 실행되나?
 2. FTL 객체의 `Start_simulation()` 과 `Execute_simulator_event()` 는 무엇을 하나? (`FTL.cpp:891`, `:895`)
 3. 채널 객체는 왜 `Simulator->AddObject()` 를 하지 않을까?
+
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
 
 <div style="margin-top: 60px;"></div>
 

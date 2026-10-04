@@ -67,7 +67,7 @@ table.plan-calendar th {
 - **매핑 테이블 캐싱** : CMT(Cached Mapping Table) — DFTL 류의 demand-based 캐싱 개념과 동일한 발상
 - **Host interface** : NVMe / SATA — `Host_Interface_NVMe.cpp`, `Host_Interface_SATA.cpp`
 - **Flash 물리 계층** : ONFI 채널, NVDDR2 타이밍 모델 — `NVM_PHY_ONFI*.cpp`
-- **트랜잭션 스케줄링** : FLIN, out-of-order, priority out-of-order 등 여러 TSU 정책
+- **트랜잭션 스케줄링** : out-of-order, priority out-of-order 두 TSU 정책을 쓸 수 있다 (FLIN 은 원본에서 코드가 주석 처리되어 있어 선택할 수 없다)
 
 <div style="margin-top: 60px;"></div>
 

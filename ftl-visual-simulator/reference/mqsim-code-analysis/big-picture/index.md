@@ -55,12 +55,22 @@ MQSim 코드 약 1만 9천 줄(헤더 포함 19,309줄, `.cpp` 61개)을 읽기 
 | 페이지 | 답하는 질문 |
 |---|---|
 | [계층 구조와 모듈 지도](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/architecture/) | 어떤 클래스가 있고 누가 누구를 소유하는가? |
+| [호스트와 stream](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/host-and-streams/) | 호스트의 flow 와 SSD 의 stream 은 어떻게 대응하고, NVMe 큐는 어떻게 도나? |
 | [요청 하나가 지나가는 길](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/request-path/) | 쓰기·읽기 요청 하나가 어떤 단계를 거치는가? |
 | [플래시 구조와 주소 체계](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/flash-and-addresses/) | 채널·칩·다이·플레인·block·page 와 LHA/LPA/PPA 는? |
+| [플래시 칩과 PHY 깊이 보기](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/flash-chip-and-phy/) | 칩 안에서 명령은 어떻게 실행되고 채널은 어떻게 나눠 쓰나? |
 | [FTL 의 부품들과 자료구조](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/ftl-parts/) | 매핑 테이블, block 상태, write frontier 는 어떤 모양인가? |
+| [매핑 테이블은 어디에 저장되나 — translation page](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/translation-pages/) | 매핑 테이블 자체는 flash 어디에 어떻게 저장되나? |
+| [데이터 캐시 깊이 보기](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/data-cache/) | DRAM 데이터 캐시는 요청을 어떻게 흡수하나? |
+| [GC 와 사용자 I/O 의 경쟁 방지](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/concurrency-control/) | GC 와 사용자 I/O 가 같은 데이터를 건드리면? |
+| [TSU 스케줄러 정책](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/tsu-policies/) | 스케줄러는 큐를 어떤 순서로 비우나? |
+| [Preconditioning — 오래 쓴 SSD 로 시작하기](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/preconditioning/) | "오래 쓴 SSD" 로 시작하려면? |
 | [이벤트 엔진과 시간](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/event-engine/) | 시간은 어떻게 흐르고 객체들은 어떻게 연결되는가? |
+| [통계와 결과 파일](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/statistics/) | 결과 XML 은 어떻게 읽나? |
 | [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/concept-mapping/) | OP · GC · 마모평준화 같은 개념은 어느 설정, 어느 코드인가? |
+| [파일별 지도](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/file-map/) | 어느 파일에 무엇이 있고 어떤 순서로 읽을까? |
 | [원본의 알려진 한계](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/known-limits/) | 원본에 없는 것, 믿으면 안 되는 것은? |
+| [용어집](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/glossary/) | 이 말이 무슨 뜻이지? |
 
 
 <div style="margin-top: 60px;"></div>

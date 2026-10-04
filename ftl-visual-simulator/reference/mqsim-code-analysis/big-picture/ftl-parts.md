@@ -44,7 +44,7 @@ table { font-size:0.88rem; }
 | `Invalid_page_bitmap` | page 별 비트: 0 = valid, 1 = invalid |
 | `Invalid_page_count` | invalid page 수 (GC 가 victim 을 고를 때 본다) |
 | `Erase_count` | 지운 횟수 (마모 평준화의 기준) |
-| `Current_status` | IDLE / GC_WL / USER / GC_USER … (GC 와 사용자 I/O 의 경쟁 방지용 상태 기계) |
+| `Current_status` | IDLE / GC_WL / USER / GC_USER … 상태 기계를 의도한 필드이지만 **초기화 이후 쓰이지 않는다**. 실제 경쟁 방지는 위 카운트와 `Has_ongoing_gc_wl` 이 한다 |
 | `Has_ongoing_gc_wl` | 지금 GC/WL 대상이다 |
 | `Ongoing_user_read_count` · `…_program_count` | 이 block 에 진행 중인 사용자 I/O 수 — 0 이 돼야 GC 를 시작할 수 있다 |
 | `Stream_id` | 어느 flow 의 데이터를 담고 있나 |

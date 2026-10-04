@@ -83,6 +83,9 @@ while (true) {
 2. `Store_mapping_table_on_flash_at_start` 가 요청 전에 필요한 이유는? (6단계의 CMT miss 를 떠올려 보자)
 3. 이벤트를 하나도 등록하지 않은 채 `Start_simulation()` 을 부르면 루프는 어떻게 되나?
 
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
+
 <div style="margin-top: 60px;"></div>
 
 <div class="step-nav"><span>[◂ 2. SSD 와 호스트 만들기](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step2-build-ssd/)</span><span>[4. 요청의 탄생 — SSD 입구까지 ▸](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step4-request-enters/)</span></div>

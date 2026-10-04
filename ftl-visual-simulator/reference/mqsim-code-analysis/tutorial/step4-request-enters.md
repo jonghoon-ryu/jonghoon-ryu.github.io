@@ -84,6 +84,9 @@ access_status_bitmap = temp << (internal_lsa % sectors_per_page);     // 어느 
 2. `Queue_Fetch_Size` 보다 많은 요청이 SQ 에 쌓이면 나머지는 언제 가져오나? (`Handle_serviced_request`, `:98`)
 3. flow 가 둘일 때 같은 LHA 를 쓰면 LPA 가 같을까? (`internal_lsa` 계산을 보자)
 
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
+
 <div style="margin-top: 60px;"></div>
 
 <div class="step-nav"><span>[◂ 3. 엔진 시작과 이벤트 루프](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step3-engine/)</span><span>[5. 데이터 캐시 — FTL 의 문턱 ▸](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step5-cache/)</span></div>

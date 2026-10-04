@@ -33,7 +33,7 @@ table { font-size:0.88rem; }
 | page program | 750 µs | read 의 10배 — 쓰기가 비싼 이유 |
 | block erase | 3.8 ms | program 의 5배 — GC 가 비싼 이유 |
 
-지연은 `Flash_Chip::Get_command_execution_latency()` 가 정한다. MLC 는 page 위치(LSB/MSB)에 따라, TLC 는 3단계로 다르다. 이 세 숫자의 비율이 FTL 의 모든 정책 선택을 좌우한다 — **지우기를 피하고, 쓰기를 줄이고, 읽기는 아끼지 않는다.**
+지연은 `Flash_Chip::Get_command_execution_latency()` 가 정한다. MLC 는 page 위치(LSB/MSB)에 따라, TLC 는 3단계로 다르게 **설계되어 있다.** 다만 기본 `ssdconfig.xml` 은 LSB · CSB · MSB 지연을 **같은 값**(read 75 µs, program 750 µs)으로 두고 있어서 기본 설정에서는 차이가 드러나지 않는다. 이 세 숫자의 비율이 FTL 의 모든 정책 선택을 좌우한다 — **지우기를 피하고, 쓰기를 줄이고, 읽기는 아끼지 않는다.**
 
 
 <div style="margin-top: 60px;"></div>

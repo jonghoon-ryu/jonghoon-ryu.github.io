@@ -99,6 +99,9 @@ write frontier 는 **stream 별로** 있고, 사용자 쓰기(`Data_wf`)와 GC �
 2. 쓰기가 계속되는데 `Check_gc_required` 가 한 번도 안 불릴 수 있나? (frontier 가 안 차면?)
 3. 4 KB 쓰기가 8 KB page 에 처음 쓰이는 경우(`old_ppa == NO_PPA`)에도 update read 가 생기나?
 
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
+
 <div style="margin-top: 60px;"></div>
 
 <div class="step-nav"><span>[◂ 6. FTL ① 주소 변환](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step6-translate/)</span><span>[8. FTL ③ 스케줄러와 플래시 칩 ▸](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step8-tsu-chip/)</span></div>

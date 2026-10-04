@@ -122,6 +122,9 @@ GC 의 각 단계는 PHY 의 "트랜잭션 완료" 신호를 `GC_and_WL_Unit_Bas
 2. victim block 에 valid page 가 하나도 없으면 이동 transaction 은 몇 개고 erase 는 언제 서비스되나?
 3. GC 가 page 를 읽는 사이 호스트가 그 LPA 를 덮어쓰면 무슨 일이 생기나? (`Locked_LPAs` 와 barrier 를 떠올려 보자)
 
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
+
 <div style="margin-top: 60px;"></div>
 
 <div class="step-nav"><span>[◂ 8. FTL ③ 스케줄러와 플래시 칩](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step8-tsu-chip/)</span><span>[10. FTL ⑤ 마모평준화 ▸](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step10-wl/)</span></div>

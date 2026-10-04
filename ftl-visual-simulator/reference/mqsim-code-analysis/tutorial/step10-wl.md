@@ -89,6 +89,9 @@ void run_static_wearleveling(const Physical_Page_Address plane_address) {       
 2. static WL 이 이동시키는 page 는 WAF 계산에서 어디에 해당하나? ([9단계](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step9-gc/)의 표를 보자)
 3. 모든 block 이 거의 같은 횟수로 지워지고 있다면 static WL 이 발동하지 않는 것이 맞나?
 
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
+
 <div style="margin-top: 60px;"></div>
 
 <div class="step-nav"><span>[◂ 9. FTL ④ 가비지 컬렉션](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step9-gc/)</span><span>[11. 마무리 — 전체 콜 그래프 ▸](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step11-wrapup/)</span></div>

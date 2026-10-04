@@ -78,7 +78,7 @@ TSU → NVM_PHY_ONFI_NVDDR2::Send_command_to_chip()      NVM_PHY_ONFI_NVDDR2.cpp
 ```
 
 - 같은 채널의 칩들은 **버스를 나눠 쓰므로** 명령 전송 중에는 다른 칩이 명령을 받지 못한다. 채널이 BUSY 로 표시되는 이유다.
-- erase 도중 read 가 오면(`CMD_Suspension_Support`) `Send_command_to_chip` 의 `SuspendRequired` 경로에서 `Suspend()` 로 erase 를 일시 중단한다.
+- erase 도중 read 가 오면(`CMD_Suspension_Support`) `Send_command_to_chip` 의 `SuspendRequired` 경로에서 `Suspend()` 로 erase 를 일시 중단하도록 되어 있다. 단 **원본 `51f0f2d` 의 `TSU_Priority_OutOfOrder` 에서는 이 경로에 닿지 못한다** — `switch` 가 `suspensionRequired = true` 뒤에서 `break` 없이 `default: return false` 로 떨어지기 때문이다([서스펜드 깊이 보기](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/flash-chip-and-phy/)).
 
 ### 완료는 위로 올라간다
 
@@ -108,6 +108,9 @@ PHY: Send_command_to_chip → 채널 BUSY → Flash_Chip 지연 → 완료 신�
 1. 사용자 write 와 GC write 가 같은 칩에 동시에 대기하면 누가 먼저인가? (`service_write_transaction`, `:471`)
 2. `Preemptible_GC_Enabled` 를 true 로 바꾸면 어느 분기가 달라지나? `GC_Hard_Threshold` 는 언제 읽히나? (`GC_and_WL_Unit_Page_Level.cpp:24`)
 3. 채널 하나에 칩이 4개일 때 명령 전송 시간 동안 다른 칩은 무엇을 하나?
+
+> 풀이는 [부록 D. 확인해 보기 — 풀이](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/appendix-answers/) 에 있다. 먼저 코드에서 직접 찾아 보자.
+
 
 <div style="margin-top: 60px;"></div>
 
