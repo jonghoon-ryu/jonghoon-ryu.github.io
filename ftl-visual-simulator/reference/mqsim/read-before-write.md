@@ -33,7 +33,7 @@ pre {
 
 # 쓰기 전에 읽으면 페이지가 소비되는 이유
 
-**결함은 아니다.** MQSim 이 의도한 대로 동작하는 것이고, 고쳐도 upstream 과 달라지지 않으니 [버그 목록](/ftl-visual-simulator/reference/bug-list/)에는 안 들어간다. 원본 C++ 코드도 건드리지 않았으니 [튜닝된 코드](/ftl-visual-simulator/reference/tweaked-code/)에도 안 들어간다. 대신 MQSim 내부 동작 자체를 이해해야 왜 이런 선택을 했는지 설명되는 사례라 이 문서에 남긴다.
+**결함은 아니다.** MQSim 이 의도한 대로 동작하는 것이고, 고쳐도 upstream 과 달라지지 않으니 [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)에는 안 들어간다. 원본 C++ 코드도 건드리지 않았으니 [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/)에도 안 들어간다. 대신 MQSim 내부 동작 자체를 이해해야 왜 이런 선택을 했는지 설명되는 사례라 이 문서에 남긴다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -160,7 +160,7 @@ void SSD_Device::Perform_preconditioning(std::vector<Utils::Workload_Statistics 
 ## 참고
 
 - [MQSim](/ftl-visual-simulator/reference/mqsim/) — 상위 문서
-- [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/)
-- [버그 목록](/ftl-visual-simulator/reference/bug-list/) — 진짜 결함을 모아두는 자매 문서
-- [튜닝된 코드](/ftl-visual-simulator/reference/tweaked-code/) — 원본 C++ 코드에 손댄 경우를 모아두는 자매 문서
+- [MQSim](/ftl-visual-simulator/reference/mqsim/)
+- [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) — 진짜 결함을 모아두는 자매 문서
+- [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/) — 원본 C++ 코드에 손댄 경우를 모아두는 자매 문서
 - [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app)

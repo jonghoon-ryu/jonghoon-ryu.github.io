@@ -71,34 +71,7 @@
               <summary><a href="{{ '/ftl-visual-simulator/' | relative_url }}">FTL Visual Simulator</a></summary>
               <ul class="nav-subitems">
                 <li><a href="{{ '/ftl-visual-simulator/motivation-goals/' | relative_url }}">개발 동기/목표</a></li>
-                <li>
-                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/plan/' %} open{% endif %}>
-                    <summary><a href="{{ '/ftl-visual-simulator/plan/' | relative_url }}">개발 계획</a></summary>
-                    <ul class="nav-subitems">
-                      <li><a href="{{ '/ftl-visual-simulator/plan/full-plan/' | relative_url }}">전체 개발 계획</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/plan/implementation/' | relative_url }}">Claude 구현 작업 상세</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/plan/code-analysis-plan/' | relative_url }}">MQSim 코드 분석 계획</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/plan/todo-list/' | relative_url }}">To do list</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/plan/wear-leveling-integration/' | relative_url }}">마모평준화 시연 연동 작업 기록</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/plan/educational-features/' | relative_url }}">교육용 기능 추가 기록</a></li>
-                    </ul>
-                  </details>
-                </li>
-                <li>
-                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/deliverables/' %} open{% endif %}>
-                    <summary><a href="{{ '/ftl-visual-simulator/deliverables/' | relative_url }}">개발 산출물</a></summary>
-                    <ul class="nav-subitems">
-                      <li>
-                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/deliverables/visual-simulator/' %} open{% endif %}>
-                          <summary><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/' | relative_url }}">Visual Simulator</a></summary>
-                          <ul class="nav-subitems">
-                            <li><a href="{{ '/ftl-visual-simulator/deliverables/visual-simulator/layout-draft/' | relative_url }}">Visual Simulator Layout (초안)</a></li>
-                          </ul>
-                        </details>
-                      </li>
-                    </ul>
-                  </details>
-                </li>
+                <li><a href="{{ '/ftl-visual-simulator/plan/' | relative_url }}">개발 계획</a></li>
                 <li>
                   <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/' %} open{% endif %}>
                     <summary><a href="{{ '/ftl-visual-simulator/reference/' | relative_url }}">참고 자료</a></summary>
@@ -107,23 +80,43 @@
                         <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim/' %} open{% endif %}>
                           <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim/' | relative_url }}">MQSim</a></summary>
                           <ul class="nav-subitems">
-                            <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/overview/' | relative_url }}">MQSim 개요</a></li>
+                            <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/read-before-write/' | relative_url }}">쓰기 전에 읽으면 페이지가 소비되는 이유</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim-code-analysis/' %} open{% endif %}>
+                          <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/' | relative_url }}">MQSim 코드 분석</a></summary>
+                          <ul class="nav-subitems">
                             <li>
-                              <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim/code-analysis/' %} open{% endif %}>
-                                <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim/code-analysis/' | relative_url }}">MQSim 코드 분석</a></summary>
+                              <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/' %} open{% endif %}>
+                                <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/' | relative_url }}">큰 그림</a></summary>
                                 <ul class="nav-subitems">
-                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/code-analysis/overview/' | relative_url }}">MQSim 개괄</a></li>
-                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/' | relative_url }}">FTL 개념 ↔ 파라미터·모듈 대응</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/architecture/' | relative_url }}">계층 구조와 모듈 지도</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/request-path/' | relative_url }}">요청 하나가 지나가는 길</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/flash-and-addresses/' | relative_url }}">플래시 구조와 주소 체계</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/ftl-parts/' | relative_url }}">FTL 의 부품들과 자료구조</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/event-engine/' | relative_url }}">이벤트 엔진과 시간</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/concept-mapping/' | relative_url }}">FTL 개념 ↔ 파라미터·모듈 대응</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/known-limits/' | relative_url }}">원본의 알려진 한계</a></li>
                                 </ul>
                               </details>
                             </li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/read-before-write/' | relative_url }}">쓰기 전에 읽으면 페이지가 소비되는 이유</a></li>
                             <li>
-                              <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim/study-guide/' %} open{% endif %}>
-                                <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim/study-guide/' | relative_url }}">MQSim 2일 학습 가이드</a></summary>
+                              <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/' %} open{% endif %}>
+                                <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/' | relative_url }}">튜토리얼</a></summary>
                                 <ul class="nav-subitems">
-                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/study-guide/day1/' | relative_url }}">Day 1 — 뼈대·호스트·캐시</a></li>
-                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim/study-guide/day2/' | relative_url }}">Day 2 — FTL·GC·스케줄러·플래시</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step1-run-and-main/' | relative_url }}">1. 실행 명령과 main()</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step2-build-ssd/' | relative_url }}">2. SSD 와 호스트 만들기</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step3-engine/' | relative_url }}">3. 엔진 시작과 이벤트 루프</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step4-request-enters/' | relative_url }}">4. 요청의 탄생 — SSD 입구까지</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step5-cache/' | relative_url }}">5. 데이터 캐시 — FTL 의 문턱</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step6-translate/' | relative_url }}">6. FTL ① 주소 변환</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step7-write-alloc/' | relative_url }}">7. FTL ② 쓰기와 page 할당</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step8-tsu-chip/' | relative_url }}">8. FTL ③ 스케줄러와 플래시 칩</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step9-gc/' | relative_url }}">9. FTL ④ 가비지 컬렉션</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step10-wl/' | relative_url }}">10. FTL ⑤ 마모평준화</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step11-wrapup/' | relative_url }}">11. 마무리 — 전체 콜 그래프</a></li>
                                 </ul>
                               </details>
                             </li>
@@ -131,43 +124,42 @@
                         </details>
                       </li>
                       <li>
-                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/mqsim-code-analysis-20261004/' %} open{% endif %}>
-                          <summary><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis-20261004/' | relative_url }}">MQSim 코드 분석 ( 2026/10/04 )</a></summary>
+                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/code-change/' %} open{% endif %}>
+                          <summary><a href="{{ '/ftl-visual-simulator/reference/code-change/' | relative_url }}">Code Change</a></summary>
                           <ul class="nav-subitems">
-                            <li><a href="{{ '/ftl-visual-simulator/reference/mqsim-code-analysis-20261004/startup-flow/' | relative_url }}">workload.xml 과 시작 과정 — FTL 진입까지</a></li>
+                            <li>
+                              <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/code-change/bug-list/' %} open{% endif %}>
+                                <summary><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/' | relative_url }}">버그 목록</a></summary>
+                                <ul class="nav-subitems">
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/table/' | relative_url }}">버그 목록표</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/mqsim-bug-hunt/' | relative_url }}">MQSim 버그 헌트</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/wl-bug-deviation/' | relative_url }}">마모 평준화 버그와 동작 변경</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/reconfigure-crash-bug/' | relative_url }}">재구성 크래시 버그</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/bandwidth-divide-by-zero-bug/' | relative_url }}">초기화되지 않은 Bandwidth 필드 버그</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/wl-threshold-not-wired-bug/' | relative_url }}">정적 마모 평준화 설정 누락 버그</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/inline-linkage-bug/' | relative_url }}">잘못된 inline 선언 버그</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/gc-self-victim-race-bug/' | relative_url }}">GC 자기 자신 경쟁 상태 버그</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/rga-incomplete-block-bug/' | relative_url }}">RGA 후보 선택이 아직 다 안 쓴 block도 포함하던 버그</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/suspend-resume-deadlock-bug/' | relative_url }}">명령 서스펜드가 한 번도 작동한 적이 없던 버그</a></li>
+                                  <li><a href="{{ '/ftl-visual-simulator/reference/code-change/bug-list/wl-target-and-stall-bugs/' | relative_url }}">정적 마모 평준화 대상 선정 버그와 멈춤 버그들</a></li>
+                                </ul>
+                              </details>
+                            </li>
+                            <li><a href="{{ '/ftl-visual-simulator/reference/code-change/tweaked-code/' | relative_url }}">튜닝된 코드 (Tweaked Code)</a></li>
+                            <li><a href="{{ '/ftl-visual-simulator/reference/code-change/upstream-diff/' | relative_url }}">원본 MQSim 대비 변경 사항</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/evaluation-board/' %} open{% endif %}>
+                          <summary><a href="{{ '/ftl-visual-simulator/reference/evaluation-board/' | relative_url }}">Evaluation Board</a></summary>
+                          <ul class="nav-subitems">
+                            <li><a href="{{ '/ftl-visual-simulator/reference/evaluation-board/board-recommendation/' | relative_url }}">평가 보드 추천과 부트로더 역할 분담</a></li>
                           </ul>
                         </details>
                       </li>
                       <li><a href="{{ '/ftl-visual-simulator/reference/wasm-primer/' | relative_url }}">WASM · em++ 입문</a></li>
                       <li><a href="{{ '/ftl-visual-simulator/reference/frontend-stack/' | relative_url }}">프론트엔드 스택 입문</a></li>
-                      <li>
-                        <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/reference/bug-list/' %} open{% endif %}>
-                          <summary><a href="{{ '/ftl-visual-simulator/reference/bug-list/' | relative_url }}">버그 목록</a></summary>
-                          <ul class="nav-subitems">
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/table/' | relative_url }}">버그 목록표</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/' | relative_url }}">MQSim 버그 헌트</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/' | relative_url }}">마모 평준화 버그와 동작 변경</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/reconfigure-crash-bug/' | relative_url }}">재구성 크래시 버그</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/bandwidth-divide-by-zero-bug/' | relative_url }}">초기화되지 않은 Bandwidth 필드 버그</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/' | relative_url }}">정적 마모 평준화 설정 누락 버그</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/inline-linkage-bug/' | relative_url }}">잘못된 inline 선언 버그</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/gc-self-victim-race-bug/' | relative_url }}">GC 자기 자신 경쟁 상태 버그</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/rga-incomplete-block-bug/' | relative_url }}">RGA 후보 선택이 아직 다 안 쓴 block도 포함하던 버그</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/suspend-resume-deadlock-bug/' | relative_url }}">명령 서스펜드가 한 번도 작동한 적이 없던 버그</a></li>
-                            <li><a href="{{ '/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/' | relative_url }}">정적 마모 평준화 대상 선정 버그와 멈춤 버그들</a></li>
-                          </ul>
-                        </details>
-                      </li>
-                      <li><a href="{{ '/ftl-visual-simulator/reference/tweaked-code/' | relative_url }}">튜닝된 코드 (Tweaked Code)</a></li>
-                      <li><a href="{{ '/ftl-visual-simulator/reference/upstream-diff/' | relative_url }}">원본 MQSim 대비 변경 사항</a></li>
-                    </ul>
-                  </details>
-                </li>
-                <li>
-                  <details class="nav-group"{% if page.url contains '/ftl-visual-simulator/evaluation-board/' %} open{% endif %}>
-                    <summary><a href="{{ '/ftl-visual-simulator/evaluation-board/' | relative_url }}">Evaluation Board</a></summary>
-                    <ul class="nav-subitems">
-                      <li><a href="{{ '/ftl-visual-simulator/evaluation-board/board-recommendation/' | relative_url }}">평가 보드 추천과 부트로더 역할 분담</a></li>
                     </ul>
                   </details>
                 </li>

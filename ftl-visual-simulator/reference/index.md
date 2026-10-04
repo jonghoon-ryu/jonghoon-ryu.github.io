@@ -5,19 +5,23 @@ permalink: /ftl-visual-simulator/reference/
 ---
 # 참고 자료
 
-시뮬레이터를 만드는 데 필요한 배경 지식을 모아두는 카테고리 — 엔진으로 쓰는 MQSim 자체에 대한 문서, 그리고 WASM/em++ 처럼 이 프로젝트에서 새로 등장하는 도구·개념에 대한 설명.
+시뮬레이터를 만들고 쓰는 데 필요한 배경 지식을 모아두는 카테고리 — 엔진으로 쓰는 MQSim 자체에 대한 문서, 그 코드를 읽는 방법, 원본에서 바꾼 것, 그리고 WASM/em++ 처럼 이 프로젝트에서 새로 등장하는 도구·개념에 대한 설명.
 
 <div style="margin-top: 60px;"></div>
 
 ## 하위 문서
 
-- [MQSim](/ftl-visual-simulator/reference/mqsim/) — 엔진으로 그대로 가져다 쓰는 MQSim 에 대한 문서 모음( 하위 문서 : [MQSim 개요](/ftl-visual-simulator/reference/mqsim/overview/), [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/) → [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) / [FTL 개념 ↔ 파라미터·모듈 대응](/ftl-visual-simulator/reference/mqsim/code-analysis/concept-mapping/) )
-- [MQSim 코드 분석 ( 2026/10/04 )](/ftl-visual-simulator/reference/mqsim-code-analysis-20261004/) — Claude 와 함께 코드를 직접 따라가며 확인한 내용의 날짜별 기록( 하위 문서 : [workload.xml 과 시작 과정 — FTL 진입까지](/ftl-visual-simulator/reference/mqsim-code-analysis-20261004/startup-flow/) )
-- [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) — WASM 이 뭔지, em++ 가 뭔지, 그리고 `main.cpp` 를 라이브러리로 바꾸는 작업을 포함해 앞으로 진행할 작업들이 왜 필요한지에 대한 설명
-- [프론트엔드 스택 입문 (Vite · React · TS)](/ftl-visual-simulator/reference/frontend-stack/) — Vite, React, TypeScript, scaffold 가 각각 뭔지, 그리고 화면 쪽 구현에 왜 필요한지에 대한 설명
-- [버그 목록](/ftl-visual-simulator/reference/bug-list/) — 이 프로젝트를 진행하며 실제 MQSim 원본에서 찾아낸 버그들을 모아두는 카테고리( 하위 문서 : [버그 목록표](/ftl-visual-simulator/reference/bug-list/table/)(전체 요약 표) / [MQSim 버그 헌트](/ftl-visual-simulator/reference/bug-list/mqsim-bug-hunt/) / [마모 평준화 버그와 동작 변경](/ftl-visual-simulator/reference/bug-list/wl-bug-deviation/) / [재구성 크래시 버그](/ftl-visual-simulator/reference/bug-list/reconfigure-crash-bug/) / [초기화되지 않은 Bandwidth 필드 버그](/ftl-visual-simulator/reference/bug-list/bandwidth-divide-by-zero-bug/) / [정적 마모 평준화 설정 누락 버그](/ftl-visual-simulator/reference/bug-list/wl-threshold-not-wired-bug/) / [잘못된 inline 선언 버그](/ftl-visual-simulator/reference/bug-list/inline-linkage-bug/) )
-- [튜닝된 코드 (Tweaked Code)](/ftl-visual-simulator/reference/tweaked-code/) — 버그는 아니지만, 원본이 가정하는 규모와 이 프로젝트의 화면 규모가 달라서 일부러 upstream 과 다르게 동작하도록 바꾼 원본 C++ 코드 항목들
-- [원본 MQSim 대비 변경 사항](/ftl-visual-simulator/reference/upstream-diff/) — 처음 가져온 원본(`90b0fb1`)과 지금 엔진을 비교해, 버그 수정·의도적 동작 변경·규모 튜닝·새 기능·계측/WASM·테스트로 나눠 정리. 원본 버그 28개를 원본 코드·문제·증상·수정 순으로 한곳에
+- [MQSim](/ftl-visual-simulator/reference/mqsim/) — MQSim 이 무엇이고, 다른 오픈소스 SSD 시뮬레이터 대신 왜 이것을 골랐는지( 하위 문서 : [쓰기 전에 읽으면 페이지가 소비되는 이유](/ftl-visual-simulator/reference/mqsim/read-before-write/) )
+- [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim-code-analysis/) — 코드를 **구조**와 **흐름** 두 갈래로 정리
+  - [큰 그림](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/) — 그림 위주로 보는 MQSim ( [계층 구조](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/architecture/) · [요청의 길](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/request-path/) · [플래시와 주소](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/flash-and-addresses/) · [FTL 부품](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/ftl-parts/) · [이벤트 엔진](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/event-engine/) · [개념 ↔ 파라미터](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/concept-mapping/) · [알려진 한계](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/known-limits/) )
+  - [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/) — `./MQSim` 실행부터 함수 호출을 따라가는 11단계, FTL 중심
+- [Code Change](/ftl-visual-simulator/reference/code-change/) — 처음 가져온 원본과 지금 엔진의 모든 차이
+  - [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) — 원본에서 찾아 고친 버그 28개
+  - [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/) — 버그는 아니지만 화면 규모에 맞게 일부러 바꾼 곳
+  - [원본 MQSim 대비 변경 사항](/ftl-visual-simulator/reference/code-change/upstream-diff/) — 종류별로 정리한 전체 비교
+- [Evaluation Board](/ftl-visual-simulator/reference/evaluation-board/) — 실제 평가 보드에서 FTL 을 돌려 보는 방법 논의
+- [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) — WASM 이 뭔지, em++ 가 뭔지, 왜 필요한지
+- [프론트엔드 스택 입문 (Vite · React · TS)](/ftl-visual-simulator/reference/frontend-stack/) — 화면 쪽 구현 도구 설명
 
 <div style="margin-top: 60px;"></div>
 
@@ -25,4 +29,3 @@ permalink: /ftl-visual-simulator/reference/
 
 - [개발 동기/목표](/ftl-visual-simulator/motivation-goals/)
 - [개발 계획](/ftl-visual-simulator/plan/)
-- [개발 산출물](/ftl-visual-simulator/deliverables/)

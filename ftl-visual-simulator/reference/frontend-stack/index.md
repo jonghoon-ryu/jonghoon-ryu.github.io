@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 프론트엔드 스택 입문 (Vite · React · TS)
 
-[개발 계획](/ftl-visual-simulator/plan/) 과 [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) 에 "Vite", "React", "TS(TypeScript)", "scaffold" 같은 말이 아무 설명 없이 등장한다. 이 문서는 **이 세 가지가 각각 뭔지, 그리고 이 프로젝트에 왜 필요한지**를 프론트엔드를 전혀 몰라도 이해할 수 있게 정리한 것이다. [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) 이 "엔진(MQSim)을 브라우저로 들여오는 방법"에 대한 문서라면, 이 문서는 "그 엔진을 사람이 볼 수 있는 화면으로 보여주는 방법"에 대한 문서다.
+[개발 계획](/ftl-visual-simulator/plan/) 에 "Vite", "React", "TS(TypeScript)", "scaffold" 같은 말이 아무 설명 없이 등장한다. 이 문서는 **이 세 가지가 각각 뭔지, 그리고 이 프로젝트에 왜 필요한지**를 프론트엔드를 전혀 몰라도 이해할 수 있게 정리한 것이다. [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) 이 "엔진(MQSim)을 브라우저로 들여오는 방법"에 대한 문서라면, 이 문서는 "그 엔진을 사람이 볼 수 있는 화면으로 보여주는 방법"에 대한 문서다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -78,7 +78,7 @@ WASM 으로 컴파일한 MQSim 은 **화면이 없다.** 함수를 호출하면 
 
 명령어 하나(`npm create vite@latest`)를 실행하면, React+TS 프로젝트에 필요한 폴더 구조, 설정 파일, "Hello World" 수준의 기본 코드가 자동으로 생성된다. 이후 작업은 이 뼈대 위에 실제 컴포넌트(flash grid, 매핑 테이블 뷰 등)를 채워 넣는 방식으로 진행된다.
 
-**이 프로젝트에 왜 필요한가** — MQSim 을 g++ 로 처음 빌드했을 때 이미 완성된 소스 트리가 있었던 것과 달리, 화면 쪽은 아무것도 없는 상태에서 시작해야 한다. scaffold 를 쓰면 "React/TS/Vite 가 서로 맞물려 돌아가게 만드는" 초기 설정( 어떤 파일이 어떤 파일을 불러오는지, 빌드 설정이 뭔지 )을 처음부터 손으로 짜지 않고, 검증된 기본값으로 바로 시작할 수 있다. [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) Session 3~4 에서 "scaffold" 라고 부르는 것이 바로 이 초기 뼈대 생성 작업이다.
+**이 프로젝트에 왜 필요한가** — MQSim 을 g++ 로 처음 빌드했을 때 이미 완성된 소스 트리가 있었던 것과 달리, 화면 쪽은 아무것도 없는 상태에서 시작해야 한다. scaffold 를 쓰면 "React/TS/Vite 가 서로 맞물려 돌아가게 만드는" 초기 설정( 어떤 파일이 어떤 파일을 불러오는지, 빌드 설정이 뭔지 )을 처음부터 손으로 짜지 않고, 검증된 기본값으로 바로 시작할 수 있다. [개발 계획](/ftl-visual-simulator/plan/) Session 3~4 에서 "scaffold" 라고 부르는 것이 바로 이 초기 뼈대 생성 작업이다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -156,6 +156,5 @@ WASM 으로 컴파일한 MQSim 은 **화면이 없다.** 함수를 호출하면 
 ## 참고
 
 - 관련 문서 : [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) — 이 문서가 다루는 "화면 쪽" 스택과 짝을 이루는 "엔진 쪽" 스택 설명
-- [Claude 구현 작업 상세](/ftl-visual-simulator/plan/implementation/) — 이 스택이 실제로 어느 컴포넌트·파일에 적용되는지의 상세 스펙
-- [전체 개발 계획](/ftl-visual-simulator/plan/full-plan/) — Session 3~4 의 "scaffold" 항목이 바로 이 문서에서 설명한 작업
+- [개발 계획](/ftl-visual-simulator/plan/) — 이 스택으로 실제로 무엇을 만들었는지
 - [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) — 실제 코드

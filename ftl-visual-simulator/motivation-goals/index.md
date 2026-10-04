@@ -11,7 +11,7 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 
 ## 왜 이 프로젝트를 시작했나?
 
-- MQSim 이라는 오픈소스 SSD 시뮬레이터가 있음 ( 논문 기반, C++ ) — FEMU/SimpleSSD/VSSIM/Amber/Dhara 등 다른 오픈소스 SSD/FTL 시뮬레이터와 비교해서 고른 선택이다. 왜 MQSim 인지( VM/QEMU 불필요, 표준 C++11만 사용, 코드 규모, MIT 라이선스, 논문 기반 검증된 정확도 등 )는 [MQSim 이란? — 결론 : 왜 MQSim 인가](/ftl-visual-simulator/reference/mqsim/overview/#결론--왜-mqsim-인가) 에 비교표와 함께 정리해 뒀다
+- MQSim 이라는 오픈소스 SSD 시뮬레이터가 있음 ( 논문 기반, C++ ) — FEMU/SimpleSSD/VSSIM/Amber/Dhara 등 다른 오픈소스 SSD/FTL 시뮬레이터와 비교해서 고른 선택이다. 왜 MQSim 인지( VM/QEMU 불필요, 표준 C++11만 사용, 코드 규모, MIT 라이선스, 논문 기반 검증된 정확도 등 )는 [MQSim](/ftl-visual-simulator/reference/mqsim/#결론--왜-mqsim-인가) 에 비교표와 함께 정리해 뒀다
 - 로그/통계 파일 기반이라 내부 동작( 매핑, GC, 마모 평준화 )을 직관적으로 이해하기 어려움
 - FTL 개념을 눈으로 보면서 제대로 익히고 싶음
 - 겸사겸사 웹 기반 인터랙티브 시각화 도구도 하나 만들어보고 싶음
@@ -26,7 +26,7 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 4. **초심자도 FTL 개념을 쉽게 익힐 수 있는 학습 환경 만들기** — 나만 이해하는 도구가 아니라, MQSim 의 raw 통계/설정을 잘 모르는 사람도 화면만 보고 "아, 이게 GC 구나" 하고 감을 잡을 수 있어야 함
 5. **2026-10-11 까지 1차 완성** → 직접 리뷰하고 필요하면 10/17~10/25 사이에 수정
 6. ( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기 — 예 : Cost-Benefit GC 정책, Hybrid(log-block) 매핑( 9/5 확인 결과 `Address_Mapping_Unit_Hybrid.cpp` 가 빈 스텁이라 이것도 직접 구현이 필요한 대상 )
-7. ( 시간이 여유로울 때 ) Google Test/Mock 기반 테스트 스위트 추가 — MQSim 자체엔 테스트가 없지만, 4개 핵심 클래스가 이미 추상 인터페이스라 GMock 으로 단위 테스트가 가능함( [MQSim 개괄](/ftl-visual-simulator/reference/mqsim/code-analysis/overview/) 참고 )
+7. ( 시간이 여유로울 때 ) Google Test/Mock 기반 테스트 스위트 추가 — MQSim 자체엔 테스트가 없지만, 4개 핵심 클래스가 이미 추상 인터페이스라 GMock 으로 단위 테스트가 가능함( [큰 그림](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/) 참고 )
 
 <div style="margin-top: 60px;"></div>
 
@@ -51,4 +51,4 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 
 - MQSim ( GitHub ): [github.com/CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim)
 - 관련 배경 지식 : [OS 공부](/learning-cs/os/) 에서 다루는 페이지 매핑, 캐싱, 스케줄링 개념이 FTL 을 이해하는 데도 많이 겹침
-- 관련 문서 : [FTL Visual Simulator](/ftl-visual-simulator/) · [개발 계획](/ftl-visual-simulator/plan/) · [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim/code-analysis/) · [개발 산출물](/ftl-visual-simulator/deliverables/)
+- 관련 문서 : [FTL Visual Simulator](/ftl-visual-simulator/) · [개발 계획](/ftl-visual-simulator/plan/) · [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim-code-analysis/) · 
