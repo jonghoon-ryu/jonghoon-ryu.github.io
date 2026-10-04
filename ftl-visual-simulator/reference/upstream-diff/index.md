@@ -183,6 +183,7 @@ flash 의 program(쓰기)·erase(지우기)는 read 보다 수십~수백 배 오
 ## 6. D — 새 기능 (upstream 에 없음)
 
 - **Cost-Benefit GC 정책** (`GC_Block_Selection_Policy_Type::COST_BENEFIT`, 설정값 `COST_BENEFIT`) — LFS(Rosenblum & Ousterhout, 1991)의 정책: `(1 − u) / (2u) × age` 가 가장 큰 block 을 고른다(u = valid 비율, age = 그 block 이 write frontier 로 할당된 뒤 지난 시간). 이를 위해 block 에 `Allocation_time` 필드를 추가했다. 새 enum 값이라 기존 설정의 동작은 불변.
+- **TRIM** (`Address_Mapping_Unit_Page_Level::Trim_lpa`, WASM `trimRange`) — upstream MQSim 에는 TRIM/deallocate 가 전혀 없다(코드에 `trim` 이 한 번도 안 나온다). 호스트가 "이 LPN 은 이제 필요 없다" 고 알리면 그 LPN 의 현재 물리 page 를 invalid 로 표시하고 매핑 항목을 비운다. 이미 GC/WL 이 옮기는 중인 LPN(잠긴 LPN), 한 번도 안 쓴 LPN, 이미 TRIM 한 LPN 은 건너뛴다. 새 함수일 뿐이라 호출하지 않으면 기존 동작은 불변(골든 3/3). 호스트 인터페이스(NVMe 커맨드)는 거치지 않고 UI 가 직접 부른다. 한계: DRAM 쓰기 캐시 안에 남아 있는 해당 LPN 의 데이터는 건드리지 않는다. 검증은 `npm run test:engine:trim`.
 - **`Unmapped_Reads_Return_Zeros` 설정** — B 표 참고. `Device_Parameter_Set` 의 새 파라미터(기본 false).
 - **조회·통계 추가** (동작 불변) — UI 가 필요한 값을 읽을 수 있도록: 평면별 빈 block 수와 GC 임계값, 빈 page 를 기다리는 쓰기 수(장치 가득 참 판단), 처리된 호스트 요청 수, 읽기 지연 누적값과 "마지막 조회 이후 가장 느린 읽기", GC 재시도 한도 도달 횟수(`Stats::Gc_retry_limit_hits`), block 스냅샷의 `Stream_id`(어느 flow 의 데이터인지).
 
@@ -204,6 +205,7 @@ flash 의 program(쓰기)·erase(지우기)는 read 보다 수십~수백 배 오
 ## 8. F — 테스트 (원본에는 테스트가 전혀 없음)
 
 - **골든 회귀 테스트** (`engine/tests/golden/`, `npm run test:engine`) — upstream 샘플 시나리오 3개의 결과를 바이트 단위로 비교. 9/6 이후 한 번도 다시 만들지 않음.
+- **TRIM 검사** (`engine/tests/trim/`, `npm run test:engine:trim`) — 실제 WASM 엔진에서 TRIM 한 LPN 이 매핑에서 사라지고 그만큼 valid page 가 invalid 로 바뀌는지, 두 번 TRIM 해도 안전한지, TRIM 하는 호스트의 WAF 가 더 낮은지 확인.
 - **GMock/GTest 유닛 테스트 14개** (`engine/tests/unit/`, `npm run test:engine:unit`) — 매핑 유닛·block 매니저·GC/WL 유닛·스케줄러를 가짜 협력 객체로 떼어내, 특정 조건(erase 차이, 임계값, 대상 선정)을 수백만 이벤트를 돌리지 않고 바로 검사.
 - 그 밖에 이 프로젝트가 직접 돌린 구성 스윕(세 프리셋 × 모든 파라미터 극단값 × GC 정책, 최대 112가지)은 코드로 저장하지 않은 임시 하니스라 여기엔 포함하지 않았다 — 결과는 [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들](/ftl-visual-simulator/reference/bug-list/wl-target-and-stall-bugs/) 12~13절에.
 
