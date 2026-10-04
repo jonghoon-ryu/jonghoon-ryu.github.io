@@ -12,7 +12,7 @@ table { font-size:0.88rem; }
 
 # 큰 그림 — MQSim 한눈에
 
-MQSim 코드 약 1만 9천 줄을 읽기 전에, **어떤 부품이 있고 서로 어떻게 이어지는지**를 먼저 머리에 넣는 곳이다. 코드는 거의 나오지 않고 그림이 대부분이다. 한 줄씩 따라가며 읽는 것은 [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/)에서 한다.
+MQSim 코드 약 1만 9천 줄(헤더 포함 19,309줄, `.cpp` 61개)을 읽기 전에, **어떤 부품이 있고 서로 어떻게 이어지는지**를 먼저 머리에 넣는 곳이다. 코드는 거의 나오지 않고 그림이 대부분이다. 한 줄씩 따라가며 읽는 것은 [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/)에서 한다.
 
 기준은 MQSim 원본의 `51f0f2d` 커밋이다. 이 프로젝트가 고친 것은 [Code Change](/ftl-visual-simulator/reference/code-change/)에 따로 있다.
 
@@ -42,9 +42,10 @@ MQSim 코드 약 1만 9천 줄을 읽기 전에, **어떤 부품이 있고 서�
 | `utils/` | XML 파서(rapidxml), 난수, 문자열 | 6 | 1,194 |
 | `sim/` | 이벤트 엔진 | 2 | 874 |
 | `nvm_chip/` | NAND 칩 물리 모델 | 5 | 817 |
-| 합계 | | 61 | 18,997 |
+| `main.cpp` (루트) | `main()` — 실행 진입점 | 1 | 312 |
+| 합계 | | 61 | 19,309 |
 
-표준 C++11 과 STL 만 쓰고 외부 라이브러리가 없다. FTL 이 사는 `ssd/` 가 전체의 61% 이다.
+표준 C++11 과 STL 만 쓰고 외부 라이브러리가 없다. FTL 이 사는 `ssd/` 가 전체의 60% 이다.
 
 
 <div style="margin-top: 60px;"></div>

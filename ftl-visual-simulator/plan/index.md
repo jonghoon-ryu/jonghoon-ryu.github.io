@@ -144,9 +144,9 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 
 - **레슨 순서 바와 "왜 FTL 이 필요할까?" 인트로**, 용어 설명 팝오버(WAF · OP · GC …).
 - 비교 실험 3개 추가: **순차 vs 무작위 쓰기**, **TRIM**, **핫/콜드 분리**. TRIM 은 MQSim 에 없어서 엔진에 `Trim_lpa()` 를 직접 만들었다.
-- 오른쪽 패널을 **"설정 · 통계" / "비교 실험실"** 두 탭으로 나눴다.
+- 오른쪽 패널을 **"설정 · 통계"(기본) / "비교 실험실"** 두 탭으로 나눴다. 비교 실험실은 **GC 시연에서만** 나타나고, "빈 block 수 변화" · "읽기 지연" 차트도 그 탭 맨 아래로 옮겼다.
 - **Playwright 브라우저 테스트** 8개를 추가했고, 이 과정에서 "로드 직후 ▶ 가 취소되는 버그" 를 찾아 고쳤다.
-- 문서: 평가 보드 조사([Evaluation Board](/ftl-visual-simulator/reference/evaluation-board/)), 그리고 MQSim 코드 분석을 [큰 그림](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/)과 [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/)으로 다시 썼다.
+- 문서: 평가 보드 조사([Evaluation Board](/ftl-visual-simulator/reference/evaluation-board/) — 보드 추천 · 라즈베리파이 의견), MQSim 코드 분석을 [큰 그림](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/)과 [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/)로 다시 쓰기, 계획·산출물 문서 정리, 그리고 이 사이트 전체를 현재 상태에 맞게 점검했다.
 
 ### 테스트가 늘어난 모습
 
@@ -183,7 +183,7 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 
 ## 남은 일
 
-- 문서: 이 사이트의 나머지 페이지 정리
+- 문서는 코드가 바뀔 때마다 어긋나기 쉽다 — 큰 기능을 추가하면 [시뮬레이터 실행](/ftl-visual-simulator/run-simulator/) · [원본 대비 변경 사항](/ftl-visual-simulator/reference/code-change/upstream-diff/) · 이 문서를 함께 갱신하기
 - **Hybrid(log-block) 매핑**과 **mapping granularity** 비교 — 가장 큰 미구현 개념
 - bad block · ECC — 평가 보드로 갈 경우
 - 모바일 폭 레이아웃 확인, 공유 가능한 링크(프리셋 · 파라미터를 URL 에 담기)
@@ -210,8 +210,8 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 - 10/5(월), 10/9(금) 은 공휴일이라 평일이지만 주말과 동일하게 5시간 작업일로 포함
 - **10/11 이 1차 마감** — 이 날짜 안에 "동작하는 배포본"을 만드는 것이 최우선이고, 그 다음 리뷰 결과에 따라 10/17~10/25 에 수정
 - 세션 순서가 날짜보다 중요함. 한 세션이 밀리면 다음 세션도 그만큼 밀린다고 생각하고, 억지로 두 세션을 하루에 몰아넣지 않기
-- ⚠️ **( 9/6 기록 ) 이 원칙이 실제로는 지켜지지 않았음** — 9/5 에 "Session 4 예습"( Emscripten 빌드가 애초에 가능한지만 확인하려던 `/tmp` 실험 )이 그대로 실제 구현( `main.cpp` 라이브러리화 [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), WASM 바인딩 [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )으로 이어지면서, **Session 3( 설계 : MVP 범위 확정, 와이어프레임, hook 위치 설계표 )를 건너뛰고 Session 4 의 엔진 빌드 작업이 먼저 끝나버림**. Session 3 의 설계 산출물은 아직 하나도 만들어지지 않은 상태 — 아래 세션 3 항목이 전부 미완료로 남아있는 이유가 이것( 세션 3/4 항목별 표시 참고 )
-- ⚠️ **( 9/6 기록, 두 번째 순서 변경 ) Session 12 의 "GitHub Pages 배포"도 앞당김** — 매 작업 결과를 그때그때 확인하고 싶다는 요청으로, Session 7 시작 시점에 배포 파이프라인을 미리 만들어둠([PR #9](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/9), 자세한 내용은 Session 12 항목 참고). 이번엔 의도적인 선택 — Session 3/4 때처럼 실수로 순서가 밀린 게 아니라, 처음부터 앞당기기로 정하고 진행함
+- ⚠️ **( 9/6 기록 ) 이 원칙이 실제로는 지켜지지 않았음** — 9/5 에 "Session 4 예습"( Emscripten 빌드가 애초에 가능한지만 확인하려던 `/tmp` 실험 )이 그대로 실제 구현( `main.cpp` 라이브러리화 [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/1), WASM 바인딩 [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/2) )으로 이어지면서, **Session 3( 설계 : MVP 범위 확정, 와이어프레임, hook 위치 설계표 )를 건너뛰고 Session 4 의 엔진 빌드 작업이 먼저 끝나버림**. Session 3 의 설계 산출물은 아직 하나도 만들어지지 않은 상태 — 아래 세션 3 항목이 전부 미완료로 남아있는 이유가 이것( 세션 3/4 항목별 표시 참고 )
+- ⚠️ **( 9/6 기록, 두 번째 순서 변경 ) Session 12 의 "GitHub Pages 배포"도 앞당김** — 매 작업 결과를 그때그때 확인하고 싶다는 요청으로, Session 7 시작 시점에 배포 파이프라인을 미리 만들어둠([PR #9](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/9), 자세한 내용은 Session 12 항목 참고). 이번엔 의도적인 선택 — Session 3/4 때처럼 실수로 순서가 밀린 게 아니라, 처음부터 앞당기기로 정하고 진행함
 - **구현은 전부 Claude 담당** — Ryu 는 visual simulator 를 만드는 방법을 몰라도 됨. 설계·코딩·빌드·배포 등 구체적인 작업은 모두 Claude 가 하고, 여러 방식 중 선택이 필요한 지점( 예 : 매핑 방식, 색상 스킴, GC 정책 이름 등 )에서만 Claude 가 Ryu 에게 옵션을 제시해 결정을 구함
 - **모든 세션에 FTL 개념 공부 + MQSim 코드 이해가 들어감** — Ryu 의 역할은 방향 결정, 코드/결과 리뷰, 브라우저 테스트에 더해 **매 세션 그 단계와 연결된 FTL 개념과 MQSim 실제 소스코드를 함께 이해하는 것**( 각 세션의 "MQSim/FTL 심화" 항목 )
 - **( 가능하다면 ) MQSim 에 없는 기능을 직접 구현해보기** — 조사 결과 MQSim 은 GC 정책으로 GREEDY/RGA/RANDOM/RANDOM_P/RANDOM_PP/FIFO 만 지원하고 **Cost-Benefit GC**( LFS/Rosenblum 방식, valid page 비율과 block age 를 함께 고려하는 정책, Session 1/5 에서 배운 "greedy vs cost-benefit" 비교의 그 cost-benefit )는 없음 → 시간이 남으면 13~16번 버퍼 기간에 이 정책을 새로 구현해 RGA 와 비교해보는 것을 확장 목표로 삼음
@@ -229,7 +229,7 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 <tr><td>2</td><td>9/5~9/6 (토~일)</td><td>주말( 9/5 는 원래 휴무 예정이었으나 작업일로 포함 )</td><td>Phase 2 — MQSim 개괄</td><td>MQSim 개요 문서 학습, XML 설정/모듈 구조 리뷰, 코드 재검증으로 문서 오류 정정</td><td class="table-mark buffer-mark" data-session="2">☐</td></tr>
 <tr><td>-</td><td>9/12 (토)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td><td>—</td></tr>
 <tr><td>-</td><td>9/13 (일)</td><td>주말 (휴업)</td><td>개인 사유로 휴업</td><td>—</td><td>—</td></tr>
-<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계<br>⚠️ 아직 미진행 — Session 4 가 먼저 끝남</td><td>`Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 읽기</td><td class="table-mark buffer-mark" data-session="3">☐</td></tr>
+<tr><td>3</td><td>9/19 (토)</td><td>주말</td><td>Phase 3 — 설계<br>⚠️ 끝내 문서로는 만들지 않음(생략) — Session 4 가 먼저 끝났고, 실제 앱과 코드 분석 문서가 설계를 대신함</td><td>`Address_Mapping_Unit_Page_Level.cpp`, `Flash_Block_Manager.cpp` 읽기</td><td class="table-mark buffer-mark" data-session="3">☐</td></tr>
 <tr><td>4</td><td>9/20 (일)</td><td>주말</td><td>Phase 4 — 시뮬레이션 엔진 (1)<br>⚠️ 엔진 빌드 부분은 9/5 에 이미 완료( Session 3 보다 먼저 )</td><td>`Address_Mapping_Unit_Page_Level.cpp` 의 lookup/allocate 로직 추적</td><td class="table-mark buffer-mark" data-session="4">☐</td></tr>
 <tr><td>-</td><td>9/24 (목)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td><td>—</td></tr>
 <tr><td>-</td><td>9/25 (금)</td><td>공휴일 (휴업)</td><td>추석</td><td>—</td><td>—</td></tr>
@@ -305,7 +305,7 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 
 #### 3. (9/19) 시뮬레이터 설계 — 범위 · 스택 · 데이터 모델
 
-> ⚠️ **( 9/6 기록 ) 아직 진행되지 않음** — 아래 항목들( MVP 범위 확정, 와이어프레임, hook 위치 설계표 )은 하나도 만들어지지 않았다. 대신 Session 4 의 엔진 빌드 작업이 9/5 에 먼저 끝났다( 위쪽 "전제 조건" 목록 참고 ). "엔진 아키텍처 확정" 항목만 예외적으로, Session 1 에서 이미 논의된 결정( MQSim 을 WASM 으로 그대로 컴파일 )을 여기 다시 적어둔 것이라 사실상 완료된 것으로 볼 수 있음.
+> ⚠️ **( 9/6 기록, 이후에도 만들지 않아 생략 확정 ) 진행되지 않음** — 아래 항목들( MVP 범위 확정, 와이어프레임, hook 위치 설계표 )은 하나도 만들어지지 않았다. 대신 Session 4 의 엔진 빌드 작업이 9/5 에 먼저 끝났다( 위쪽 "전제 조건" 목록 참고 ). "엔진 아키텍처 확정" 항목만 예외적으로, Session 1 에서 이미 논의된 결정( MQSim 을 WASM 으로 그대로 컴파일 )을 여기 다시 적어둔 것이라 사실상 완료된 것으로 볼 수 있음.
 
 **Ryu 가 할 일**
 - MVP 범위, 사용자 조절 파라미터 방향 결정 및 Claude 초안 검토·조정
@@ -343,10 +343,10 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 
 **Claude 가 할 일**
 - 프로젝트 scaffold ( Vite + React + TS ) ( 9/5 진행 )
-- Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 ) ( 9/5 진행 — [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/1), `MQSim_Interface` 로 분리 )
-- `init`/`step`/`run`/`configure` WASM 바인딩 작성 ( 9/5 진행 — [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/2) )
+- Emscripten 툴체인 셋업, MQSim 을 WASM 으로 빌드 ( CLI 진입점(`main.cpp`) 을 라이브러리 형태로 호출 가능하게 최소 리팩터링 ) ( 9/5 진행 — [PR #1](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/1), `MQSim_Interface` 로 분리 )
+- `init`/`step`/`run`/`configure` WASM 바인딩 작성 ( 9/5 진행 — [PR #2](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/2) )
   - ⚠️ 이 바인딩을 검증하다가 **WASM 빌드가 네이티브와 다른 시뮬레이션 결과를 내는** 심각한 버그를 발견 — MQSim 원본의 이식성 버그 4개( RNG 정수 오버플로우, 소멸자 6개, 미초기화 포인터, 근본 원인인 `std::multimap::find()` 가정 오류 )가 원인이었음. 전부 찾아 고치고 68개 시나리오로 검증 완료. 자세한 건 [MQSim 버그 헌트](/ftl-visual-simulator/reference/code-change/bug-list/mqsim-bug-hunt/) 참고
-- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성 ( 9/6 진행 — [PR #3](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/3), `translate_lpa_to_ppa()`의 read/write 두 분기 모두에서 이벤트 발행, `getState()`/`setEventCallback` WASM 바인딩 추가 )
+- `Address_Mapping_Unit_Page_Level.cpp` 에 매핑 갱신 hook 추가, 매핑 테이블 상태를 JS 에서 읽을 수 있는 export 함수 작성 ( 9/6 진행 — [PR #3](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/3), `translate_lpa_to_ppa()`의 read/write 두 분기 모두에서 이벤트 발행, `getState()`/`setEventCallback` WASM 바인딩 추가 )
 - host write/read 요청을 WASM 모듈에 넣고 매핑 테이블 변화를 JS 로 받아오는 최소 동작 확인 ( 9/6 진행 — Node 스모크 테스트로 `setEventCallback` 이벤트 수신과 `getState()` 매핑 스냅샷을 실제로 확인 )
 - ( 시간이 여유로울 때 ) 위에서 만든 라이브러리 분리 구조에 **GTest 프레임워크를 바로 연결** — main.cpp 리팩터링을 두 번 하지 않으려면 지금이 최적의 타이밍( 자세한 이유는 [큰 그림](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/) 참고 )
 
@@ -368,7 +368,7 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 - **코드 스터디** : Claude 가 추가한 GC hook 코드를 원본 victim selection 로직과 나란히 읽으며, 방금 배운 GC 이론이 실제 코드 어디에 해당하는지 확인
 
 **Claude 가 할 일**
-- `GC_and_WL_Unit_Page_Level.cpp` 에 hook 추가 : GC 시작 / victim block 선정 / valid page migration / block erase 각 시점에서 JS 로 이벤트 통지 ( 9/6 진행 — [PR #4](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/4), 실제로는 `GC_and_WL_Unit_Base.cpp` 에도 hook 필요, 위 기록 참고 )
+- `GC_and_WL_Unit_Page_Level.cpp` 에 hook 추가 : GC 시작 / victim block 선정 / valid page migration / block erase 각 시점에서 JS 로 이벤트 통지 ( 9/6 진행 — [PR #4](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/4), 실제로는 `GC_and_WL_Unit_Base.cpp` 에도 hook 필요, 위 기록 참고 )
 - WASM 모듈만 따로 단위 테스트 ( 샘플 write 시퀀스를 흘려보내 WAF, GC 발생 횟수 등이 hook 을 통해 정확히 잡히는지 검증 ) ( 9/6 진행 — 기본 샘플 설정은 GC 가 아예 안 일어나서, GC_Exec_Threshold 를 임시로 높인 스트레스 설정으로 검증 : hook 카운트(gc_started 17회, page migration 4323회)가 `Stats::Total_gc_executions`/`Stats::Total_page_movements_for_gc` 와 정확히 일치, 네이티브·WASM 결과 XML도 hook 추가 전후 MD5 동일 )
 
 </div>
@@ -381,7 +381,7 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 마모 평준화는 MQSim 에 실제로 구현되어 있음( `GC_and_WL_Unit_Base.cpp` 의 dynamic/static WL 로직 — [튜토리얼 9·10단계](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/step9-gc/) 참고 ) — hook 추가와 WASM 바인딩 API 마무리가 중심.
 
-> ⚠️ **( 9/6 기록 ) static WL, dynamic WL hook 모두 완료.** 버그 수정([PR #5](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/5))과 static WL hook 추가([PR #7](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/7)), dynamic WL hook 추가([PR #8](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/8))를 각각 별도 PR 로 분리해뒀다 — static WL 작업 중 원본 MQSim 코드에서 버그 2개를 발견해서 고쳤다 — (1) `run_static_wearleveling()`이 블록 주소 대신 블록 ID(정수)를 그대로 넘겨서 엉뚱한 블록의 bookkeeping 을 건드리던 문제, (2) `Get_min_max_erase_difference()`가 "erase count 차이"가 아니라 "블록 인덱스 차이"를 반환하던 문제( unsigned 언더플로우까지 겹쳐서 static WL 트리거 조건이 사실상 무작위였음 ). 둘 다 고쳤지만, 이 프로젝트 테스트 규모( 짧은 워크로드 )에서는 GC/Translation 쓰기 프론티어 블록이 "가장 안 지워진 블록"으로 계속 뽑히면서 실제 후보에서 매번 제외되는 구조적인 이유로 static WL 이 실제로 발동하는 걸 끝내 재현하지 못했다 — hook 코드 자체는 GC hook 과 동일한 패턴으로 정확하다고 보지만, 살아있는 실행으로 직접 확인은 못한 상태. 버그 2번은 **이 프로젝트가 upstream MQSim 과 의도적으로 다르게 동작하기로 한 지점**이라 별도 문서로 상세히 남겨둠 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/code-change/bug-list/wl-bug-deviation/).
+> ⚠️ **( 9/6 기록 ) static WL, dynamic WL hook 모두 완료.** 버그 수정([PR #5](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/5))과 static WL hook 추가([PR #7](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/7)), dynamic WL hook 추가([PR #8](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/8))를 각각 별도 PR 로 분리해뒀다 — static WL 작업 중 원본 MQSim 코드에서 버그 2개를 발견해서 고쳤다 — (1) `run_static_wearleveling()`이 블록 주소 대신 블록 ID(정수)를 그대로 넘겨서 엉뚱한 블록의 bookkeeping 을 건드리던 문제, (2) `Get_min_max_erase_difference()`가 "erase count 차이"가 아니라 "블록 인덱스 차이"를 반환하던 문제( unsigned 언더플로우까지 겹쳐서 static WL 트리거 조건이 사실상 무작위였음 ). 둘 다 고쳤지만, 이 프로젝트 테스트 규모( 짧은 워크로드 )에서는 GC/Translation 쓰기 프론티어 블록이 "가장 안 지워진 블록"으로 계속 뽑히면서 실제 후보에서 매번 제외되는 구조적인 이유로 static WL 이 실제로 발동하는 걸 끝내 재현하지 못했다 — hook 코드 자체는 GC hook 과 동일한 패턴으로 정확하다고 보지만, 살아있는 실행으로 직접 확인은 못한 상태. 버그 2번은 **이 프로젝트가 upstream MQSim 과 의도적으로 다르게 동작하기로 한 지점**이라 별도 문서로 상세히 남겨둠 : [마모 평준화 버그와 의도적 동작 변경](/ftl-visual-simulator/reference/code-change/bug-list/wl-bug-deviation/).
 
 **Ryu 가 할 일**
 - **마모 평준화(dynamic/static WL) 이론 재확인** ( Session 5 GC 이론에 이어서, Session 1 에서 미뤄둔 부분 )
@@ -484,7 +484,7 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
 
 #### 12. (10/11) 마무리 (2) — 최종 테스트 · 배포 · 리뷰
 
-> ⚠️ **( 9/6 기록 ) "GitHub Pages 배포" 부분은 여기까지 기다리지 않고 Session 7 시작 시점에 앞당겨 만들어둠** — 매 작업 결과를 그때그때 실제로 확인하고 싶다는 요청 때문. Session 4 가 Session 3 보다 먼저 끝났던 것과 같은 종류의 순서 변경. `main` 에 push 될 때마다 자동으로 빌드·배포되는 파이프라인([PR #9](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/9))을 만들어뒀고, 사이트 주소는 https://jonghoon-ryu.github.io/ftl-visual-simulator/ — 이 세션의 "최종 테스트"만 실제로 이 시점에 남아있는 몫.
+> ⚠️ **( 9/6 기록 ) "GitHub Pages 배포" 부분은 여기까지 기다리지 않고 Session 7 시작 시점에 앞당겨 만들어둠** — 매 작업 결과를 그때그때 실제로 확인하고 싶다는 요청 때문. Session 4 가 Session 3 보다 먼저 끝났던 것과 같은 종류의 순서 변경. `main` 에 push 될 때마다 자동으로 빌드·배포되는 파이프라인([PR #9](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/9))을 만들어뒀고, 사이트 주소는 https://jonghoon-ryu.github.io/ftl-visual-simulator/ — 이 세션의 "최종 테스트"만 실제로 이 시점에 남아있는 몫.
 
 **Ryu 가 할 일**
 - 배포된 사이트를 직접 리뷰 — 1차 완성본 리뷰, 여기서 나온 피드백은 10/17 이후 버퍼 기간에 반영

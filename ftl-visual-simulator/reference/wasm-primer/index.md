@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # WASM · em++ 입문
 
-이 프로젝트를 진행하면서 "WASM", "em++", "라이브러리화", "hook" 같은 낯선 말이 계속 나온다. 이 문서는 **그 용어들이 정확히 뭔지, 그리고 앞으로 진행할 작업들이 왜 필요한지**를, WASM/em++ 를 전혀 몰라도 이해할 수 있게 정리한 것. [개발 계획](/ftl-visual-simulator/plan/)에서 "이 작업을 왜 하는지"가 궁금해질 때마다 돌아와서 참고하면 된다.
+이 프로젝트를 진행하면서 "WASM", "em++", "라이브러리화", "hook" 같은 낯선 말이 계속 나온다. 이 문서는 **그 용어들이 정확히 뭔지, 그리고 이 프로젝트에서 한 작업들이 왜 필요했는지**를, WASM/em++ 를 전혀 몰라도 이해할 수 있게 정리한 것. [개발 계획](/ftl-visual-simulator/plan/)에서 "이 작업을 왜 하는지"가 궁금해질 때마다 돌아와서 참고하면 된다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -36,7 +36,7 @@ table.plan-calendar th {
 
 원래 브라우저에서 동작하는 언어는 JavaScript 하나뿐이었다. 그런데 C++/Rust 같은 언어로 이미 짜여진, 검증된 프로그램을 브라우저에서 그대로 돌리고 싶은 경우가 많다 — 이 프로젝트의 MQSim 이 정확히 그런 경우다. WASM 은 이런 언어로 짠 코드를 미리 컴파일해서, 브라우저가 이해할 수 있는 이진 형식으로 바꿔주는 실행 형식이다. JavaScript 엔진 옆에서 같이 돌아가며, JS 보다 훨씬 빠르게 실행된다(원래 컴파일 언어의 속도에 가깝다).
 
-비유하자면 : JavaScript 가 "브라우저 안에서 태어난 언어"라면, WASM 은 "다른 언어로 이미 짠 프로그램을 브라우저 안으로 들여오는 통로"다. 이 프로젝트에서는 이 통로를 통해 **MQSim(C++ 로 짠 실제 SSD 시뮬레이터)을 브라우저 안으로 그대로 들여오는 것**이 목표다.
+비유하자면 : JavaScript 가 "브라우저 안에서 태어난 언어"라면, WASM 은 "다른 언어로 이미 짠 프로그램을 브라우저 안으로 들여오는 통로"다. 이 프로젝트에서는 이 통로를 통해 **MQSim(C++ 로 짠 실제 SSD 시뮬레이터)을 브라우저 안으로 그대로 들여오는 것**이 이 프로젝트의 출발점이었고, 지금은 실제로 그렇게 돌아간다.
 
 <div style="margin-top: 40px;"></div>
 
@@ -69,7 +69,7 @@ FTL 개념( 매핑, GC, 마모 평준화 )을 보여주는 화면만 필요하�
 
 1. `-i`/`-w` 옵션으로 받은 설정 파일(`ssdconfig.xml`, `workload.xml`)을 읽는다
 2. 시나리오별로 `SSD_Device`/`Host_System` 을 만들고, `Simulator->Start_simulation()` 으로 **시뮬레이션을 끝까지 통째로 돌린다**
-3. 다 끝나면 결과를 `result.xml` 에 쓰고, **프로세스가 종료된다**
+3. 다 끝나면 결과를 `workload_scenario_N.xml`(시나리오마다 하나)에 쓰고, **프로세스가 종료된다**
 
 이건 전형적인 "배치(batch) 프로그램" 구조다 — 명령어 한 줄 실행하면, 중간에 아무것도 보여주지 않다가, 끝나야 결과 파일 하나가 뚝 떨어진다. `em++` 로 컴파일해도 이 구조는 그대로 남는다 — "한 번 실행되고 끝나는 프로그램"을 "브라우저에서 한 번 실행되고 끝나는 프로그램"으로 옮겨온 것 뿐이다.
 
@@ -109,7 +109,7 @@ FTL 개념( 매핑, GC, 마모 평준화 )을 보여주는 화면만 필요하�
   <line x1="510" y1="90" x2="550" y2="90" class="flow"/>
 
   <rect x="550" y="45" width="250" height="90" rx="8" class="box"/>
-  <text x="675" y="75" class="title">result.xml 저장</text>
+  <text x="675" y="75" class="title">결과 XML 저장</text>
   <text x="675" y="98" class="body">프로세스 종료</text>
   <text x="675" y="115" class="body">(WASM 이면 모듈 종료)</text>
 
@@ -117,7 +117,7 @@ FTL 개념( 매핑, GC, 마모 평준화 )을 보여주는 화면만 필요하�
 
   <line x1="20" y1="200" x2="880" y2="200" stroke="#ddd" stroke-width="1"/>
 
-  <text x="10" y="235" class="rowlabel">After — 이번 프로젝트가 만들 구조 ( 라이브러리, 여러 번 호출 )</text>
+  <text x="10" y="235" class="rowlabel">After — 이번 프로젝트가 만든 구조 ( 라이브러리, 여러 번 호출 )</text>
 
   <rect x="10" y="255" width="190" height="130" rx="8" class="boxAlt"/>
   <text x="105" y="285" class="titleAlt">웹 UI</text>
@@ -155,12 +155,12 @@ FTL 개념( 매핑, GC, 마모 평준화 )을 보여주는 화면만 필요하�
 왜 이게 꼭 필요한가 하면, 시각화 시뮬레이터가 하려는 것 자체가 지금 구조로는 불가능하기 때문이다.
 
 - **재생 컨트롤**( step / play·pause / 속도 조절 )을 만들려면, "이벤트 딱 하나만 실행하고 멈추기"가 가능해야 한다. 지금 `main()` 은 한 번 시작하면 끝까지 멈추지 않고 실행된다 — 중간에 멈춰서 한 걸음씩 보여줄 수가 없다.
-- **매핑 테이블 뷰어/통계 대시보드**는 시뮬레이션이 진행되는 중간중간 "지금 상태 좀 보여줘" 라고 물어봐야 한다. 지금 구조는 다 끝나야 `result.xml` 하나를 뱉을 뿐, 중간 상태를 물어볼 방법 자체가 없다.
+- **매핑 테이블 뷰어/통계 대시보드**는 시뮬레이션이 진행되는 중간중간 "지금 상태 좀 보여줘" 라고 물어봐야 한다. 지금 구조는 다 끝나야 결과 파일 하나를 뱉을 뿐, 중간 상태를 물어볼 방법 자체가 없다.
 - **파라미터를 바꾸면 다시 시작**하려면, 처음부터 다시 초기화할 수 있어야 한다. 지금 구조는 프로세스가 한 번 끝나면(=WASM 이면 모듈이 끝나면) 그걸로 끝이다 — 다시 쓰려면 처음부터 새로 만들어야 하는데, 이건 매번 페이지를 새로고침하는 것과 다름없다.
 
-그래서 Session 4 에서 `main()` 의 흐름을 `init(config)` / `step()` / `getState()` / `configure()` 같은, **독립적으로 몇 번이고 다시 호출할 수 있는 함수들**로 나누는 리팩터링을 한다( 실제 구현은 [개발 계획](/ftl-visual-simulator/plan/) 참고 ). 이 작업이 끝나야 비로소 WASM 으로 컴파일한 MQSim 이 "한 번 쓰고 버리는 배치 프로그램"에서 "브라우저가 계속 말 걸 수 있는 라이브러리"가 된다.
+그래서 `main()` 의 흐름을 `init(config)` / `step()` / `getState()` / `configure()` 같은, **독립적으로 몇 번이고 다시 호출할 수 있는 함수들**로 나눴다(`MQSim_Interface`, 9/5 — [개발 계획](/ftl-visual-simulator/plan/) 참고). 이 작업 덕분에 WASM 으로 컴파일한 MQSim 이 "한 번 쓰고 버리는 배치 프로그램"에서 "브라우저가 계속 말 걸 수 있는 라이브러리"가 됐다. 지금 WASM 이 내보내는 함수들은 아래 [실제로 만들어진 API](#실제로-만들어진-api) 와 같다.
 
-( 덧붙이면, 이 리팩터링은 나중에 GTest/GMock 테스트를 붙일 때도 그대로 필요한 작업이라 — 어차피 한 번은 해야 하니 Session 4 에서 미리 해두는 것이 시간을 아끼는 길이다. )
+( 덧붙이면, 이 리팩터링은 GTest/GMock 유닛 테스트를 붙일 때도 그대로 필요한 작업이었다 — 같은 시점에 해 둔 덕분에 뒤에 유닛 테스트 14개를 어렵지 않게 붙일 수 있었다. )
 
 <div style="margin-top: 60px;"></div>
 
@@ -173,6 +173,23 @@ FTL 개념( 매핑, GC, 마모 평준화 )을 보여주는 화면만 필요하�
 **hook** 은 바로 그 "코드가 알고 지나가는 그 순간"에, "이 사실을 JS 한테도 알려줘" 라는 코드 몇 줄을 끼워 넣는 것이다. 예를 들어 `Address_Mapping_Unit_Page_Level.cpp` 의 `translate_lpa_to_ppa()` 함수는 원래 "매핑을 갱신하고 다음 코드로 넘어갈 뿐"이지만, 여기에 한 줄을 추가해서 "매핑이 갱신됐다"는 사건을 즉시 JS 쪽으로 통지하게 만드는 식이다. 원래 로직은 전혀 바뀌지 않고, "이 일이 일어났다는 걸 밖으로 알려주는" 코드만 옆에 덧붙는 것 — 그래서 hook 을 다 추가해도 시뮬레이션 결과 자체( `Stats` 값들 )는 hook 이 없을 때와 정확히 똑같아야 한다( [개발 계획](/ftl-visual-simulator/plan/) 3장의 "hook 이 카운트한 값과 `Stats` 값이 정확히 일치해야 함" 검증이 이 얘기다 ).
 
 정리하면 : 라이브러리화가 "언제든 실행/조회할 수 있게" 만드는 작업이라면, hook 은 "실행되는 동안 무슨 일이 있었는지 하나하나 알려주게" 만드는 작업이다. 시각화 시뮬레이터에는 둘 다 필요하다.
+
+<div style="margin-top: 60px;"></div>
+
+## 실제로 만들어진 API
+
+지금 `src/wasm/bindings.cpp` 가 JavaScript 로 내보내는 함수는 다음과 같다.
+
+| 함수 | 하는 일 |
+|---|---|
+| `init(ssdConfigXml, workloadXml)` / `configure(…)` | 설정 XML 문자열(MEMFS)로 시뮬레이션을 처음부터 다시 만든다 — 파라미터를 바꿀 때 쓴다 |
+| `step()` / `run(n)` | 이벤트 묶음 하나 / n 개를 실행한다 |
+| `stepIo()` / `stepEvent()` / `runEvents(n)` | 읽기·쓰기 하나 / 로그 한 줄 / n 줄이 생길 때까지 실행한다 — 재생 컨트롤의 "로그 1줄" 이 이것이다 |
+| `getState()` | 매핑 테이블, 모든 block 의 page 상태, 통계(빈 block 수, GC · WL 횟수, 읽기 지연 …)를 돌려준다 |
+| `setEventCallback(fn)` | 매핑 갱신 · GC · WL · TRIM 같은 사건을 일어나는 즉시 JS 로 통지받는다 (hook) |
+| `trimRange(start, count)` / `totalLogicalPages()` | TRIM — 원본 MQSim 에 없어서 이 프로젝트가 추가했다 |
+
+또 한 가지, **WASM 모듈은 Web Worker 안에서 돈다.** 시뮬레이션이 길어도 화면이 멈추지 않게 하려는 것이다. 화면에 보이는 시뮬레이션용 워커(`mqsim.worker.ts`)와, "비교 실험실" 의 실험을 끝까지 돌리는 **별도 워커**(`compare.worker.ts`, 자기 모듈 인스턴스를 가진다)가 있어서 비교 실험이 재생 중인 화면을 건드리지 않는다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -212,4 +229,4 @@ Emscripten 은 이 문제를 해결하는 **MEMFS( 메모리 파일 시스템 )*
 
 - 관련 문서 : [개발 계획](/ftl-visual-simulator/plan/) — 이 문서에서 설명한 작업이 실제로 어떻게 진행됐는지
 - [MQSim](/ftl-visual-simulator/reference/mqsim/) — WASM 으로 컴파일하는 대상 자체에 대한 문서
-- [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) — 실제 코드
+- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드

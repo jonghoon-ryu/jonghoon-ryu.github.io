@@ -45,9 +45,9 @@ pre {
 <table class="plan-calendar">
 <tr><th>항목</th><th>내용</th></tr>
 <tr><td>원본</td><td>앱 저장소의 첫 커밋 <code>90b0fb1</code>(2026-09-05) 에 들어간 <code>engine/mqsim/src</code> — upstream MQSim 을 수정 없이 그대로 복사한 상태</td></tr>
-<tr><td>현재</td><td>2026-09-24 기준 <code>dd8746d</code></td></tr>
-<tr><td>규모</td><td><code>engine/mqsim/src</code> 39개 파일, <b>+2,579 / −432 줄</b> (그중 약 800줄은 새 파일 <code>MQSim_Interface.*</code>, <code>Simulation_Events.*</code>, <code>wasm/bindings.cpp</code>). 테스트는 별도로 <code>engine/tests</code> 9개 파일 +2,173 줄</td></tr>
-<tr><td>직접 비교하는 법</td><td><code>git diff 90b0fb1..HEAD -- engine/mqsim/src</code> (앱 저장소에서). 코드 안의 변경 지점에는 <code>BUG FIX (this project, upstream MQSim)</code>, <code>DEVIATION FROM UPSTREAM MQSim</code>, <code>SCALE TWEAK</code>, <code>Not in upstream MQSim</code> 주석이 달려 있어 <code>grep</code> 으로 찾을 수 있다</td></tr>
+<tr><td>현재</td><td>2026-10-04 기준 <code>47b4bc7</code></td></tr>
+<tr><td>규모</td><td><code>engine/mqsim/src</code> 39개 파일, <b>+2,715 / −432 줄</b> (그중 약 1,250줄은 새 파일 <code>MQSim_Interface.*</code>, <code>Simulation_Events.*</code>, <code>wasm/bindings.cpp</code>). 테스트는 별도로 <code>engine/tests</code> 10개 파일 +2,243 줄과 브라우저 테스트 <code>e2e/</code></td></tr>
+<tr><td>직접 비교하는 법</td><td><code>git diff 90b0fb1..HEAD -- engine/mqsim/src</code> (앱 저장소에서). 코드 안의 변경 지점에는 <code>BUG FIX (this project, upstream MQSim)</code>, <code>DEVIATION FROM UPSTREAM MQSim</code>, <code>SCALE TWEAK</code>, <code>Not in upstream MQSim</code>, <code>PROJECT ADDITION</code> 주석이 달려 있어 <code>grep</code> 으로 찾을 수 있다</td></tr>
 </table>
 </div>
 
@@ -63,9 +63,9 @@ pre {
 <tr><td>A. 원본의 버그 수정</td><td>28개(버그 목록표) + 표에 따로 없는 수정 4건</td><td>대부분 골든 불변. 작은 규모·특정 설정에서만 결과가 달라짐(원래는 크래시/멈춤/잘못된 값)</td><td><code>GC_and_WL_Unit_*</code>, <code>Address_Mapping_Unit_Page_Level</code>, <code>Flash_Block_Manager*</code>, <code>TSU_*</code>, <code>NVM_PHY_ONFI_NVDDR2</code>, <code>utils/</code></td></tr>
 <tr><td>B. 의도적으로 upstream 과 다르게 바꾼 동작</td><td>4건</td><td>있음 — 데모 규모에서 원본 동작이 의미가 없거나 멈추는 경우만</td><td><code>GC_and_WL_Unit_Base</code>, <code>Flash_Block_Manager_Base</code>, <code>Address_Mapping_Unit_Page_Level</code></td></tr>
 <tr><td>C. 데모 규모 튜닝</td><td>1건</td><td>있음(의도)</td><td><code>SSD_Device.cpp</code></td></tr>
-<tr><td>D. 새 기능 (upstream 에 없음)</td><td>2건 + 통계/조회 추가</td><td>없음(기본값 꺼짐) — 앱이 켤 때만</td><td><code>GC_and_WL_Unit_Page_Level</code>, <code>Device_Parameter_Set</code></td></tr>
+<tr><td>D. 새 기능 (upstream 에 없음)</td><td>3건(Cost-Benefit GC, <code>Unmapped_Reads_Return_Zeros</code>, TRIM) + 통계/조회 추가</td><td>없음(기본값 꺼짐) — 앱이 켤 때만</td><td><code>GC_and_WL_Unit_Page_Level</code>, <code>Device_Parameter_Set</code>, <code>Address_Mapping_Unit_Page_Level</code></td></tr>
 <tr><td>E. 시각화를 위한 계측·라이브러리화·WASM</td><td>새 파일 3개 + 여러 hook</td><td>없음(골든 불변)</td><td><code>MQSim_Interface.*</code>, <code>Simulation_Events.*</code>, <code>wasm/bindings.cpp</code>, <code>main.cpp</code>, <code>sim/Engine.cpp</code></td></tr>
-<tr><td>F. 테스트</td><td>골든 3개 + GMock 유닛 14개</td><td>—</td><td><code>engine/tests/</code></td></tr>
+<tr><td>F. 테스트</td><td>골든 3개 + GMock 유닛 14개 + TRIM 검사 7개 + 브라우저 8개</td><td>—</td><td><code>engine/tests/</code></td></tr>
 </table>
 </div>
 
@@ -195,7 +195,7 @@ flash 의 program(쓰기)·erase(지우기)는 read 보다 수십~수백 배 오
 
 - **라이브러리화** (`exec/MQSim_Interface.*` 새 파일, `main.cpp` −261줄) — 원본 `main.cpp` 에 통째로 있던 "설정 읽기 → 시나리오 만들기 → 끝까지 실행 → 결과 쓰기"를 `Load_workload` / `Initialize_scenario` / `Run_step` / `Run_to_completion` / `Write_results` / `Finalize_scenario` 함수로 쪼갰다. `main.cpp` 는 이것들을 순서대로 부르는 얇은 CLI 가 됐다(그래서 골든 테스트가 같은 코드를 네이티브로 돌릴 수 있다).
 - **한 단계씩 실행** (`sim/Engine.cpp`) — 원본 `Start_simulation()` 의 while 루프 한 바퀴를 `Run_next_event_group()` 으로 꺼내고, 준비 단계를 `Setup_simulation()` 으로 분리. 재생 ▶ / "1 step" 버튼이 이걸 부른다.
-- **이벤트 hook** (`exec/Simulation_Events.*` 새 파일) — 매핑 갱신, GC 시작/page 이동/erase, 정적 WL 시작/이동/erase, 동적 WL block 할당/반납 시점에 콜백을 부른다. 콜백이 없으면 아무 일도 안 한다. GC 시작 이벤트에는 victim 의 valid/invalid 수와 빈 block·임계값을 담는다("왜 이 block?" 설명용).
+- **이벤트 hook** (`exec/Simulation_Events.*` 새 파일) — 매핑 갱신, GC 시작/page 이동/erase, 정적 WL 시작/이동/erase, 동적 WL block 할당/반납, TRIM 시점에 콜백을 부른다. 콜백이 없으면 아무 일도 안 한다. GC 시작 이벤트에는 victim 의 valid/invalid 수와 빈 block·임계값을 담는다("왜 이 block?" 설명용).
 - **상태 스냅샷** — 매핑 테이블(`Get_mapping_table_snapshot`), 전체 block/page 상태(`Get_block_state_snapshot`) 조회 함수.
 - **UI 한 단계가 의미 있는 단위가 되도록 미룬 호출** — 원본은 어떤 쓰기가 frontier 를 넘기는 순간 그 안에서 바로 GC 검사를 하고, 요청 완료 처리 안에서 바로 대기 GC 를 실행했다. 이러면 "쓰기 한 번"과 "GC 시작"이 한 이벤트 묶음에 섞여 화면의 "1 step" 으로 나눌 수 없어서, 이런 호출들을 별도의 시뮬레이터 이벤트로 미뤘다(`GC_Deferred_Event_Type`, 대기 쓰기를 한 번에 하나씩 푸는 `RELEASE_WAITING_WRITE`). 골든 불변으로 결과에 영향 없음을 확인.
 - **WASM 바인딩** (`wasm/bindings.cpp` 새 파일) — `init` / `configure` / `step` / `run` / `stepEvent`(로그 한 줄 단위) / `runEvents` / `getState` / `setEventCallback` 을 JavaScript 로 노출. 설정 XML 은 Emscripten 메모리 파일시스템에 써서 **원본의 XML 파서 그대로** 읽힌다.
@@ -207,6 +207,7 @@ flash 의 program(쓰기)·erase(지우기)는 read 보다 수십~수백 배 오
 - **골든 회귀 테스트** (`engine/tests/golden/`, `npm run test:engine`) — upstream 샘플 시나리오 3개의 결과를 바이트 단위로 비교. 9/6 이후 한 번도 다시 만들지 않음.
 - **TRIM 검사** (`engine/tests/trim/`, `npm run test:engine:trim`) — 실제 WASM 엔진에서 TRIM 한 LPN 이 매핑에서 사라지고 그만큼 valid page 가 invalid 로 바뀌는지, 두 번 TRIM 해도 안전한지, TRIM 하는 호스트의 WAF 가 더 낮은지 확인.
 - **GMock/GTest 유닛 테스트 14개** (`engine/tests/unit/`, `npm run test:engine:unit`) — 매핑 유닛·block 매니저·GC/WL 유닛·스케줄러를 가짜 협력 객체로 떼어내, 특정 조건(erase 차이, 임계값, 대상 선정)을 수백만 이벤트를 돌리지 않고 바로 검사.
+- **브라우저 스모크 테스트 8개** (`e2e/`, `npm run test:e2e`, Playwright) — 엔진이 아니라 앱 화면을 확인한다: 인트로 · 세 프리셋 재생 · 비교 실험실의 모든 실험이 결과를 내는지 · 콘솔 오류가 없는지. 엔진 코드는 아니지만 이 테스트가 "로드 직후 ▶ 가 취소되는" 앱 버그를 찾았다.
 - 그 밖에 이 프로젝트가 직접 돌린 구성 스윕(세 프리셋 × 모든 파라미터 극단값 × GC 정책, 최대 112가지)은 코드로 저장하지 않은 임시 하니스라 여기엔 포함하지 않았다 — 결과는 [정적 마모 평준화 대상 선정 버그와 조용히 멈추던 버그들](/ftl-visual-simulator/reference/code-change/bug-list/wl-target-and-stall-bugs/) 12~13절에.
 
 <div style="margin-top: 60px;"></div>

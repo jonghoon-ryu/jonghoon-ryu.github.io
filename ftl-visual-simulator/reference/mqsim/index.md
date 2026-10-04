@@ -96,7 +96,7 @@ table.plan-calendar th {
 </table>
 </div>
 
-이 중 파라미터 패널( Session 9 )에 그대로 노출할 것 : `Address_Mapping`, `Overprovisioning_Ratio`, `GC_Exec_Threshold`/`GC_Hard_Threshold`, `GC_Block_Selection_Policy`, `Dynamic_Wearleveling_Enabled`, `Block_No_Per_Plane`/`Page_No_Per_Block`( 그리드 크기 ). 나머지( PCIe 대역폭, DRAM 캐시 타이밍, 채널 타이밍 세부값 )는 시뮬레이션 정확도에는 필요하지만 초심자 UI 에는 노출하지 않고 기본값으로 고정한다.
+이 중 시뮬레이터의 파라미터 패널에 **실제로 노출한 것** : 칩 개수(`Chip_No_Per_Channel`), `Block_No_Per_Plane`, `Page_No_Per_Block`, `Page_Capacity`, `Overprovisioning_Ratio`, `GC_Exec_Threshold`, `GC_Block_Selection_Policy`(원본 6개 + 이 프로젝트의 Cost-Benefit), `Static_Wearleveling_Threshold`(마모평준화 시연), `CMD_Suspension_Support`, 두 시드. workload 쪽은 접근 패턴, 읽기 비율, DRAM 쓰기 캐시(`Device_Level_Data_Caching_Mode`)를 조절할 수 있다. `Address_Mapping` 은 보이지만 `PAGE_LEVEL` 만 고를 수 있다(Hybrid 는 원본에서도 빈 스텁). `GC_Hard_Threshold` · `Dynamic_Wearleveling_Enabled` 는 기본값으로 고정했고, PCIe 대역폭 · DRAM 타이밍 · 채널 타이밍 같은 세부값도 기본값에 둔다. 채널 · 다이 · 플레인 수는 1 로 고정해서 화면에 다 그린다.
 
 <div style="margin-top: 60px;"></div>
 

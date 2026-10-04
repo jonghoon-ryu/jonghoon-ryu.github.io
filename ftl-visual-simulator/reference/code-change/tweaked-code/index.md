@@ -54,17 +54,17 @@ pre {
   <td>1</td>
   <td><code>max_ongoing_gc_reqs_per_plane</code></td>
   <td><code>exec/SSD_Device.cpp</code>(<code>GC_and_WL_Unit_Page_Level</code> 생성자 호출)</td>
-  <td>10 → 4</td>
+  <td>10 → 3 (처음 4, 9/20 에 3 으로 한 번 더)</td>
   <td>"GC 시연" 프리셋 데드락 조사 중 발견</td>
 </tr>
 </table>
 </div>
 
-지금까지는 이 항목 하나뿐이다.
+지금까지는 이 항목 하나뿐이다(2026-10-04 기준).
 
 <div style="margin-top: 60px;"></div>
 
-## #1. `max_ongoing_gc_reqs_per_plane`: 10 → 4
+## #1. `max_ongoing_gc_reqs_per_plane`: 10 → 4 → 3
 
 ### 이 상수가 하는 일
 
@@ -86,7 +86,7 @@ if (block_pool_gc_threshold < max_ongoing_gc_reqs_per_plane)
     block_pool_gc_threshold = max_ongoing_gc_reqs_per_plane;
 ```
 
-원본이 가정하는 수천 개 block 규모에서는 이 clamp(끌어올림)가 사실상 절대 발동하지 않는다. 그런데 "GC 시연" 프리셋의 규모(block 16개, `GC_Exec_Threshold` 50%)에서는 `floor(0.5 × 16) = 8`이 나와서, 이 clamp 때문에 GC 의 발동 기준도 그대로 `10`으로 끌어올려진다 — **"GC 시작" 기준과 "write 전면 차단" 기준이 정확히 같은 지점에서 동시에 발동**하게 된 것이다.
+원본이 가정하는 수천 개 block 규모에서는 이 clamp(끌어올림)가 사실상 절대 발동하지 않는다. 그런데 "GC 시연" 프리셋의 규모(당시 block 16개, `GC_Exec_Threshold` 50%)에서는 `floor(0.5 × 16) = 8`이 나와서, 이 clamp 때문에 GC 의 발동 기준도 그대로 `10`으로 끌어올려진다 — **"GC 시작" 기준과 "write 전면 차단" 기준이 정확히 같은 지점에서 동시에 발동**하게 된 것이다.
 
 이렇게 되면: 빈 block 이 처음으로 10 밑으로 떨어지는 순간, GC 는 청소할 만한(무효 페이지가 있는) block 을 찾아보지만 — 아직 이른 시점이라 그런 block 이 하나도 없을 수 있다 — 아무것도 못 찾고 그냥 넘어간다. 그런데 바로 그 순간 write 도 전면 차단됐다. write 가 막히면 그 무엇도 다시는 무효화(overwrite)될 일이 없으므로, GC 가 청소할 거리는 **영원히** 생기지 않는다. 실제로 "GC 시연" 프리셋을 처음부터 끝까지 돌려보면 GC 실행 횟수가 0 인 채로 멈춰 있었다 — 성능이 느린 게 아니라 진짜로 멈춰버린 상태였다(시뮬레이션 내부 시각을 확인해보면 `Stop_Time` 을 아무리 늘려도 항상 똑같은 시점에서 멈춘다).
 
@@ -96,10 +96,14 @@ if (block_pool_gc_threshold < max_ongoing_gc_reqs_per_plane)
 
 반대로 `max_ongoing_gc_reqs_per_plane` 자체를 낮추면, 화면에 보이는 block 개수는 그대로 두고도 clamp 가 걸리는 지점만 낮아진다 — 16개짜리 규모에서도 GC 기준(8)이 write 차단 기준(4) 보다 이미 높아서, 둘이 겹치지 않는다. `0`이 아니라 `4`를 고른 이유는 이 상수의 "동시 GC 작업 개수 제한"이라는 원래 역할도 완전히 무의미해지지 않게(0 이면 GC 가 동시에 아무 작업도 못 하게 됨) 여유를 조금 남겨두기 위해서다.
 
+### 그 뒤 — 4 에서 3 으로
+
+처음에는 4 로 낮췄다. 그런데 9/20 에 기본 구성을 칩 2개 · block 12개 · Over-provisioning 10% 로 바꾸면서 보니, block 이 적은 곳(8개)에서는 `floor(threshold × 8)` 이 4 를 넘지 못해 **GC 임계값 슬라이더의 낮은 쪽 범위 전체가 같은 결과로 눌렸다**(clamp 가 지배). 그래서 **3 으로 한 번 더 낮췄고**, 지금 코드(`exec/SSD_Device.cpp` 의 `GC_and_WL_Unit_Page_Level` 생성자 인자)는 `3` 이다. 여전히 0 보다 크므로 "동시 GC 수 제한"과 "쓰기 차단 하한"이라는 원래 역할은 남아 있다.
+
 ### 검증
 
 - `npm run test:engine`(골든 리그레션, 실제 규모 샘플 시나리오 3개): 변경 전후 결과 동일 — 애초에 이 시나리오들은 block 수가 훨씬 커서 4든 10이든 이 clamp 근처에도 안 간다.
-- `npm run test:engine:unit`(GMock, 12개): 전부 통과 — `GcTriggerTest` 등은 `max_ongoing_gc_reqs_per_plane`을 이 상수 값에 의존하지 않고 테스트 안에서 직접 원하는 값(10, 2 등)으로 생성해서 쓰기 때문에 이 변경과 무관하다.
+- `npm run test:engine:unit`(GMock, 당시 12개 · 지금은 14개): 전부 통과 — `GcTriggerTest` 등은 `max_ongoing_gc_reqs_per_plane`을 이 상수 값에 의존하지 않고 테스트 안에서 직접 원하는 값(10, 2 등)으로 생성해서 쓰기 때문에 이 변경과 무관하다.
 - WASM 하네스로 직접 재확인: block 개수/`GC_Exec_Threshold`를 "GC 시연" 프리셋 그대로 두고 재생만 해봐도(block 16개, `Stop_Time` 만 조금 늘려서) 더 이상 멈추지 않고 GC 가 실제로 여러 번 발동한다.
 
 이 변경만으로는 "GC 시연" 프리셋의 데드락은 해결되지만, 여전히 기존 `Stop_Time` 안에서는 GC 가 발동하기엔 시간이 부족하다 — 이건 원본 코드 튜닝이 아니라 이 프로젝트 자체 프리셋 설정(`Stop_Time`, 재생 속도 배율)의 문제라 이 문서 대신 [개발 계획](/ftl-visual-simulator/plan/)에서 다룬다.

@@ -241,4 +241,4 @@ for (auto it = range.first; it != range.second; ) {
 - 원본 디버깅 로그( 조사 중 시도했다가 기각한 가설들 포함 ) : `engine/WASM_PARITY_DEBUG_LOG.md` ( ftl-visual-simulator 저장소 )
 - [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/)
 - [MQSim](/ftl-visual-simulator/reference/mqsim/)
-- [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator)
+- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app)

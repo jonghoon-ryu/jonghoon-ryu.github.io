@@ -33,7 +33,7 @@ pre {
 
 # 쓰기 전에 읽으면 페이지가 소비되는 이유
 
-**결함은 아니다.** MQSim 이 의도한 대로 동작하는 것이고, 고쳐도 upstream 과 달라지지 않으니 [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)에는 안 들어간다. 원본 C++ 코드도 건드리지 않았으니 [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/)에도 안 들어간다. 대신 MQSim 내부 동작 자체를 이해해야 왜 이런 선택을 했는지 설명되는 사례라 이 문서에 남긴다.
+**결함은 아니다.** MQSim 이 의도한 대로 동작하는 것이고, 고쳐도 upstream 과 달라지지 않으니 [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)에는 안 들어간다. 원본의 이 동작 자체를 고친 것도 아니라서 [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/)에도 안 들어간다. (다만 이 프로젝트의 앱은 나중에 이 동작을 끄는 옵트인 설정을 추가했다 — 아래 "이 프로젝트의 대응".) 대신 MQSim 내부 동작 자체를 이해해야 왜 이런 선택을 했는지 설명되는 사례라 이 문서에 남긴다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -149,17 +149,25 @@ void SSD_Device::Perform_preconditioning(std::vector<Utils::Workload_Statistics 
 
 <div style="margin-top: 60px;"></div>
 
-## 왜 UI 에서 없앴나
+## 이 프로젝트의 대응 — 없앴다가 되살렸다
 
-실제 벤치마크 규모(수천 개 block, 수백만 요청)에서는 이런 첫 접근 Read 몇 개는 통계에 묻혀 눈에 띄지 않는다. 하지만 이 프로젝트는 정반대로 - block 8개짜리 기기에서 이벤트 하나하나를 화면에 보여준다. 그 규모에서는 "Read" 라고 적힌 로그 한 줄이 실제로는 페이지 하나를 화면에 새로 초록색으로 칠하는 걸 보게 되는데, 이건 GC/마모 평준화 시연이 원래 보여주려는 것과 무관한 곳에서 혼란만 준다.
+### 1차 (9/20): 읽기 비율 슬라이더를 없앴다
 
-그래서 Read 비율 슬라이더 자체를 없애고, `Read_Percentage` 를 항상 `0`으로 고정했다 (`src/data/mqsimConfigs.ts`). 이 값은 애초에 모든 프리셋에서 기본값이 `0`이었으므로, GC/WL 시연 결과에는 아무 영향이 없다.
+실제 벤치마크 규모(수천 개 block, 수백만 요청)에서는 첫 접근 Read 몇 개가 통계에 묻혀 눈에 띄지 않는다. 하지만 이 프로젝트는 정반대로 — block 몇 개짜리 기기에서 이벤트 하나하나를 화면에 보여 준다. 그 규모에서는 "Read" 라고 적힌 로그 한 줄이 실제로는 페이지 하나를 화면에 새로 초록색으로 칠하는 걸 보게 된다. 그래서 읽기 비율 슬라이더를 없애고 `Read_Percentage` 를 `0` 으로 고정했다. (또 Read 비율을 99~100% 로 두면 시뮬레이션이 멈추는 문제도 있었다.)
+
+### 2차 (9/24): 원본에 설정을 하나 추가해서 되살렸다
+
+읽기가 없으면 "GC 가 읽기를 얼마나 느리게 만드는가" 같은 중요한 개념을 보여 줄 수 없다. 그래서 **쓴 적 없는 LPA 를 읽으면 flash 를 거치지 않고 곧바로 끝나게(실제 SSD 가 0 을 돌려주듯)** 하는 옵트인 설정 `Unmapped_Reads_Return_Zeros` 를 추가했다. 이 설정이 켜져 있으면 `translate_lpa_to_ppa()` 의 READ 분기가 `online_create_entry_for_reads()` 를 부르지 않으므로 **페이지가 예약되지 않는다.** 기본값은 꺼짐이라 원본 동작은 그대로이고, 이 프로젝트의 앱만 켠다([원본 대비 변경 사항]({R}/code-change/upstream-diff/)의 B. 의도적 동작 변경).
+
+그 결과 지금은 **읽기 비율 슬라이더가 돌아와 있다**(0~50%, 설정 · 통계 탭의 workload). 읽기를 50% 로 제한한 이유는 GC 시연이 여전히 쓰기로 기기를 채워야 하기 때문이다. 이 위에 "GC 가 읽기를 느리게 만든다" 읽기 지연 차트와 명령 일시정지(suspend) 선택을 만들었다.
+
+> 이 문서의 위쪽 설명(예약, 실측 검증)은 **원본 MQSim 의 동작**이다. 이 프로젝트의 앱에서는 위 설정이 켜져 있어서 쓴 적 없는 LPA 읽기가 페이지를 소비하지 않는다.
 
 <div style="margin-top: 60px;"></div>
 
 ## 참고
 
-- [MQSim](/ftl-visual-simulator/reference/mqsim/) — 상위 문서
+- [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim-code-analysis/) — 상위 문서
 - [MQSim](/ftl-visual-simulator/reference/mqsim/)
 - [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) — 진짜 결함을 모아두는 자매 문서
 - [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/) — 원본 C++ 코드에 손댄 경우를 모아두는 자매 문서

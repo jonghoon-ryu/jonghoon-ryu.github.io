@@ -176,6 +176,6 @@ return plane_record->Blocks[max_erased_block].Erase_count - plane_record->Blocks
 
 - 관련 문서 : [MQSim 버그 헌트](/ftl-visual-simulator/reference/code-change/bug-list/mqsim-bug-hunt/) — 이식성 버그 4개(성격이 다름, 1절 참고)
 - [개발 계획](/ftl-visual-simulator/plan/) — Session 6
-- [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) — 실제 코드
-- [PR #5](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/5) — 이 문서에서 다루는 버그 수정 (hook 과 분리된 순수 버그 수정 커밋)
-- [PR #7](https://github.com/jonghoon-ryu/ftl-visual-simulator/pull/7) — 이 버그 수정을 베이스로 한 static WL hook 추가
+- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드
+- [PR #5](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/5) — 이 문서에서 다루는 버그 수정 (hook 과 분리된 순수 버그 수정 커밋)
+- [PR #7](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/7) — 이 버그 수정을 베이스로 한 static WL hook 추가

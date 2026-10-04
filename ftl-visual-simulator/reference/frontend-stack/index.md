@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 프론트엔드 스택 입문 (Vite · React · TS)
 
-[개발 계획](/ftl-visual-simulator/plan/) 에 "Vite", "React", "TS(TypeScript)", "scaffold" 같은 말이 아무 설명 없이 등장한다. 이 문서는 **이 세 가지가 각각 뭔지, 그리고 이 프로젝트에 왜 필요한지**를 프론트엔드를 전혀 몰라도 이해할 수 있게 정리한 것이다. [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) 이 "엔진(MQSim)을 브라우저로 들여오는 방법"에 대한 문서라면, 이 문서는 "그 엔진을 사람이 볼 수 있는 화면으로 보여주는 방법"에 대한 문서다.
+[개발 계획](/ftl-visual-simulator/plan/) 에 "Vite", "React", "TS(TypeScript)", "scaffold" 같은 말이 설명 없이 나온다. 이 문서는 **이 세 가지가 각각 뭔지, 그리고 이 프로젝트에 왜 필요한지**를 프론트엔드를 전혀 몰라도 이해할 수 있게 정리한 것이다. [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) 이 "엔진(MQSim)을 브라우저로 들여오는 방법"에 대한 문서라면, 이 문서는 "그 엔진을 사람이 볼 수 있는 화면으로 보여주는 방법"에 대한 문서다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -137,6 +137,22 @@ WASM 으로 컴파일한 MQSim 은 **화면이 없다.** 함수를 호출하면 
 
 <div style="margin-top: 60px;"></div>
 
+## 실제로 쓴 구성
+
+이 프로젝트의 앱 저장소([ftl-visual-simulator-app](https://github.com/jonghoon-ryu/ftl-visual-simulator-app))는 지금 이렇게 구성돼 있다.
+
+| 구분 | 내용 |
+|---|---|
+| 화면 | React 19 + TypeScript 6 + Vite 8 |
+| 폴더 | `src/components`(화면 조각 21개) · `src/hooks`(엔진 이벤트를 화면 상태로 바꾸는 훅 9개) · `src/workers`(WASM 을 돌리는 Web Worker 2개) · `src/data`(프리셋 · 설정 XML 생성 · 용어집) · `src/lib` |
+| 엔진 | `engine/mqsim`(원본 C++ 를 가져온 것) → `engine/build-wasm.sh`(Emscripten) → `src/wasm-build/` |
+| 린트 · 테스트 | oxlint, 엔진 테스트(골든 · GMock · TRIM), Playwright 브라우저 테스트 |
+| 배포 | `main` 에 push 하면 GitHub Actions 가 WASM 을 빌드하고 앱을 빌드해서 GitHub Pages 에 올린다 |
+
+위의 "Vite → 브라우저" 흐름도에서 WASM 쪽 화살표는 실제로는 **Web Worker 를 거친다** — 화면(메인 스레드)과 엔진이 서로 메시지를 주고받는 구조라서, 시뮬레이션이 길어도 화면이 멈추지 않는다([WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/#실제로-만들어진-api)).
+
+<div style="margin-top: 60px;"></div>
+
 ## 6. 용어 정리
 
 <div style="overflow-x:auto;">
@@ -157,4 +173,4 @@ WASM 으로 컴파일한 MQSim 은 **화면이 없다.** 함수를 호출하면 
 
 - 관련 문서 : [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) — 이 문서가 다루는 "화면 쪽" 스택과 짝을 이루는 "엔진 쪽" 스택 설명
 - [개발 계획](/ftl-visual-simulator/plan/) — 이 스택으로 실제로 무엇을 만들었는지
-- [ftl-visual-simulator 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator) — 실제 코드
+- [ftl-visual-simulator-app 저장소](https://github.com/jonghoon-ryu/ftl-visual-simulator-app) — 실제 코드
