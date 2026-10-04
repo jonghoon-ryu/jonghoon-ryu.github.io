@@ -39,7 +39,7 @@ MQSim 원본으로 FTL 을 공부하거나 논문 수치를 낼 때 **믿으면 
 
 ## 3. 읽다가 놀라기 쉬운 동작
 
-- **쓴 적 없는 LPA 를 읽으면 물리 page 가 소비된다.** 원본은 그 자리에서 page 를 예약한다([설명](/ftl-visual-simulator/reference/mqsim/read-before-write/)).
+- **쓴 적 없는 LPA 를 읽으면 물리 page 가 소비된다.** 원본은 그 자리에서 page 를 예약한다([설명](/ftl-visual-simulator/reference/mqsim-code-analysis/read-before-write/)).
 - **`FTL` 클래스는 껍데기다.** 이름만 보고 FTL 로직을 찾으면 빈 함수만 나온다. 일은 `Address_Mapping_Unit` · `Flash_Block_Manager` · `GC_and_WL_Unit` · `TSU` 가 한다.
 - **GC 는 매 쓰기마다 검사하지 않는다.** write frontier 가 가득 차 새 block 을 받을 때만 검사한다.
 - **객체의 `Start_simulation()` 호출 순서가 정해져 있지 않다.** 엔진이 `unordered_map` 을 돈다.

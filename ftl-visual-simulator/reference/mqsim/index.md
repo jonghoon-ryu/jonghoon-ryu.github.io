@@ -129,12 +129,6 @@ FTL 을 시뮬레이션하는 오픈소스 도구는 MQSim 말고도 여럿 있�
 
 <div style="margin-top: 60px;"></div>
 
-## 하위 문서
-
-- [쓰기 전에 읽으면 페이지가 소비되는 이유](/ftl-visual-simulator/reference/mqsim/read-before-write/) — 매핑 없는 주소를 읽으면 MQSim 이 그 자리에서 페이지를 예약하는 이유와, 이 프로젝트가 Read 비율 UI 를 없앤 이유
-
-<div style="margin-top: 60px;"></div>
-
 ## 참고
 
 - GitHub : [github.com/CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim)

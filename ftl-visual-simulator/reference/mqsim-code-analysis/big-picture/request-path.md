@@ -40,7 +40,7 @@ table { font-size:0.88rem; }
 - **쓰기와 달리 데이터를 DMA 로 가져오는 단계가 없다.** 명령을 받자마자 transaction 으로 쪼갠다.
 - **캐시 적중이면 FTL 을 건드리지 않는다.** DRAM 읽기 시간만 모델링한다.
 - **CMT 미스는 flash 읽기를 한 번 더 만든다.** 매핑 테이블 자체가 flash 에 저장돼 있어서, 매핑을 얻으려고 translation page 를 읽어야 한다. 그래서 같은 읽기가 CMT 에 따라 flash 접근 1번 또는 2번이 된다.
-- **한 번도 쓴 적 없는 LPA 를 읽으면** 원본 MQSim 은 그 자리에서 물리 page 를 예약한다([쓰기 전에 읽으면 페이지가 소비되는 이유](/ftl-visual-simulator/reference/mqsim/read-before-write/)).
+- **한 번도 쓴 적 없는 LPA 를 읽으면** 원본 MQSim 은 그 자리에서 물리 page 를 예약한다([쓰기 전에 읽으면 페이지가 소비되는 이유](/ftl-visual-simulator/reference/mqsim-code-analysis/read-before-write/)).
 
 
 <div style="margin-top: 60px;"></div>

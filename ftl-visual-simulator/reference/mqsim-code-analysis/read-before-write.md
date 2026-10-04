@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 쓰기 전에 읽으면 페이지가 소비되는 이유
-permalink: /ftl-visual-simulator/reference/mqsim/read-before-write/
+permalink: /ftl-visual-simulator/reference/mqsim-code-analysis/read-before-write/
 ---
 <style>
 table.plan-calendar {

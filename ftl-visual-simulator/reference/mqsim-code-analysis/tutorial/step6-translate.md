@@ -75,7 +75,7 @@ if (transaction->Type == Transaction_Type::READ) {
 
 읽기는 **매핑이 알려 준 PPA 를 물리 좌표로 바꾸기만** 하면 끝이다. `Read_transaction_issued()` 는 그 block 에 "읽기가 진행 중" 이라고 장부에 적어, 그 block 이 지금 GC 로 지워지지 않게 한다. 쓰기는 같은 함수의 `else` 쪽으로 가서 새 page 를 정한다.
 
-> 쓴 적 없는 LPA 를 읽을 때 `online_create_entry_for_reads` 가 물리 page 를 예약하는 이유와 이 프로젝트의 대응은 [쓰기 전에 읽으면 페이지가 소비되는 이유](/ftl-visual-simulator/reference/mqsim/read-before-write/)에 있다.
+> 쓴 적 없는 LPA 를 읽을 때 `online_create_entry_for_reads` 가 물리 page 를 예약하는 이유와 이 프로젝트의 대응은 [쓰기 전에 읽으면 페이지가 소비되는 이유](/ftl-visual-simulator/reference/mqsim-code-analysis/read-before-write/)에 있다.
 
 ## 확인해 보기
 
