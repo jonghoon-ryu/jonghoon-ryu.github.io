@@ -12,6 +12,7 @@ FTL 을 시뮬레이터가 아니라 **실제 하드웨어(평가 보드)** 에�
 ## 하위 문서
 
 - [평가 보드 추천과 부트로더 역할 분담](/ftl-visual-simulator/reference/evaluation-board/board-recommendation/) — 2026-10-04 논의. 후보 보드 비교, 구하기 어려운 점, 부트로더/HAL/FTL 역할 분담, 권장 진행 순서
+- [라즈베리파이로 FTL 테스트하기](/ftl-visual-simulator/reference/evaluation-board/raspberry-pi/) — 2026-10-04 조사와 의견. Pi 로 할 수 있는 것과 없는 것, SPI NAND 구성, Dhara 로 시작하는 순서, Pi 없이 먼저 할 수 있는 것
 
 <div style="margin-top: 60px;"></div>
 
