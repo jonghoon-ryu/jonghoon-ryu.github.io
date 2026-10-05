@@ -16,7 +16,7 @@ Code Review Agent 는 현업 과제로, 여러 옵션이 있었음.
 
 ### 첫번째 앱 : 앱을 만드는 앱
 
-( FTL 과는 직접적인 관계는 없음 )
+( FTL 과는 직접적인 관계는 없음 ) — [GitHub : ai-gui-builder-app](https://github.com/jonghoon-ryu/ai-gui-builder-app)
 
 - 많은 사람들이 앱을 만들지만, 대부분 텍스트 위주 혹은 bat, py 위주의 앱
 - 관리가 어렵고 직관적이지 않음
@@ -31,6 +31,7 @@ Code Review Agent 는 현업 과제로, 여러 옵션이 있었음.
 ### 두번째 앱 : FTL Visual Simulator
 
 - open source FTL 앱을 visual simulator 로 변환하는 것
+- [GitHub : ftl-visual-simulator-app](https://github.com/jonghoon-ryu/ftl-visual-simulator-app)
 
 <div style="margin-top: 60px;"></div>
 
@@ -44,6 +45,16 @@ Code Review Agent 는 현업 과제로, 여러 옵션이 있었음.
 3. 웹에서 해당 open source 를 눈으로 볼 수 있도록 visual simulator 를 만듦 ( 거의 대부분 Claude 가 함 )
 4. 동작시켜 보고 Claude 에게 수정하도록 하는 일을 반복하여 기본 기능 완성
 5. 원래 코드에 없던 내용 추가 ( [원본 대비 변경 사항](/ftl-visual-simulator/reference/code-change/upstream-diff/), [Code Change](/ftl-visual-simulator/reference/code-change/) )
+    - 새 기능 : Cost-Benefit GC 정책, TRIM, 한 번도 안 쓴 LPA 읽기 옵션 ( `Unmapped_Reads_Return_Zeros` ) — [6절](/ftl-visual-simulator/reference/code-change/upstream-diff/)
+    - 시뮬레이터를 위한 변경 — [7절](/ftl-visual-simulator/reference/code-change/upstream-diff/)
+        - 라이브러리화 : 원본 `main.cpp` 를 `Load_workload` / `Run_step` / `Run_to_completion` 등으로 쪼갬
+        - 한 단계씩 실행 ( 재생 ▶ / 1 step 버튼 )
+        - 이벤트 hook : 매핑 갱신, GC, 마모평준화, TRIM 시점에 콜백 ( "왜 이 block?" 설명용 )
+        - 매핑 테이블, block/page 상태 스냅샷 조회
+        - WASM 바인딩 : `init` / `configure` / `step` / `run` / `getState` 등을 JavaScript 로 노출
+    - 화면에 다 보이도록 block 수를 줄인 데모 규모 튜닝 — [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/)
+    - 원본에는 없던 테스트 : 골든 회귀, 유닛, 브라우저 테스트
+    - 이 과정에서 원본의 버그 28개도 발견해서 수정 — [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)
 
 <div style="margin-top: 60px;"></div>
 
