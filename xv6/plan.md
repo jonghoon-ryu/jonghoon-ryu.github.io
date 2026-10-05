@@ -73,7 +73,7 @@ table.plan-calendar th {
 </style>
 # 계획
 
-**2026년 10월 10일 (토) 시작 · 토요일 2시간 + 일요일 2시간 · 36회 (18주) · 2027년 2월 7일 (일) 마무리 예정**
+**2026년 11월 7일 (토) 시작 · 토요일 2시간 + 일요일 2시간 · 36회 (18주) · 2027년 3월 7일 (일) 마무리 예정**
 
 주말 시간 배분 : **토요일 = [계산 이론 & Gödel](/learning-cs/computation-theory/study-plan/) 2시간 + xv6 2시간**, **일요일 = xv6 2시간**.
 
@@ -132,7 +132,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="1" markdown="1">
 
-### Step 1 · 2026.10.10 (토) — 스켈레톤 둘러보기
+### Step 1 · 2026.11.7 (토) — 스켈레톤 둘러보기
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="1"> 완료</label>
 
@@ -143,7 +143,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="2" markdown="1">
 
-### Step 2 · 2026.10.11 (일) — uart.cpp, string.cpp
+### Step 2 · 2026.11.8 (일) — uart.cpp, string.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="2"> 완료</label>
 
@@ -154,7 +154,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="3" markdown="1">
 
-### Step 3 · 2026.10.17 (토) — printk.cpp, console.cpp (출력)
+### Step 3 · 2026.11.14 (토) — printk.cpp, console.cpp (출력)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="3"> 완료</label>
 
@@ -165,7 +165,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="4" markdown="1">
 
-### Step 4 · 2026.10.18 (일) — fbcons.cpp, font.h
+### Step 4 · 2026.11.15 (일) — fbcons.cpp, font.h
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="4"> 완료</label>
 
@@ -183,7 +183,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="5" markdown="1">
 
-### Step 5 · 2026.10.24 (토) — spinlock.cpp
+### Step 5 · 2026.11.21 (토) — spinlock.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="5"> 완료</label>
 
@@ -194,7 +194,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="6" markdown="1">
 
-### Step 6 · 2026.10.25 (일) — kalloc.cpp
+### Step 6 · 2026.11.22 (일) — kalloc.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="6"> 완료</label>
 
@@ -205,7 +205,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="7" markdown="1">
 
-### Step 7 · 2026.10.31 (토) — vm.cpp ①
+### Step 7 · 2026.11.28 (토) — vm.cpp ①
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="7"> 완료</label>
 
@@ -216,7 +216,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="8" markdown="1">
 
-### Step 8 · 2026.11.1 (일) — vm.cpp ②
+### Step 8 · 2026.11.29 (일) — vm.cpp ②
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="8"> 완료</label>
 
@@ -234,7 +234,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="9" markdown="1">
 
-### Step 9 · 2026.11.7 (토) — acpi.cpp
+### Step 9 · 2026.12.5 (토) — acpi.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="9"> 완료</label>
 
@@ -245,7 +245,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="10" markdown="1">
 
-### Step 10 · 2026.11.8 (일) — trap.cpp ①, kernelvec.S
+### Step 10 · 2026.12.6 (일) — trap.cpp ①, kernelvec.S
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="10"> 완료</label>
 
@@ -256,7 +256,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="11" markdown="1">
 
-### Step 11 · 2026.11.14 (토) — lapic.cpp
+### Step 11 · 2026.12.12 (토) — lapic.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="11"> 완료</label>
 
@@ -268,7 +268,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="12" markdown="1">
 
-### Step 12 · 2026.11.15 (일) — ioapic.cpp, console.cpp (입력)
+### Step 12 · 2026.12.13 (일) — ioapic.cpp, console.cpp (입력)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="12"> 완료</label>
 
@@ -279,7 +279,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="13" markdown="1">
 
-### Step 13 · 2026.11.21 (토) — kbd.cpp
+### Step 13 · 2026.12.19 (토) — kbd.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="13"> 완료</label>
 
@@ -297,7 +297,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="14" markdown="1">
 
-### Step 14 · 2026.11.22 (일) — proc.cpp ①
+### Step 14 · 2026.12.20 (일) — proc.cpp ①
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="14"> 완료</label>
 
@@ -308,7 +308,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="15" markdown="1">
 
-### Step 15 · 2026.11.28 (토) — swtch.S, scheduler
+### Step 15 · 2026.12.26 (토) — swtch.S, scheduler
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="15"> 완료</label>
 
@@ -319,7 +319,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="16" markdown="1">
 
-### Step 16 · 2026.11.29 (일) — sleep / wakeup, sleeplock.cpp
+### Step 16 · 2026.12.27 (일) — sleep / wakeup, sleeplock.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="16"> 완료</label>
 
@@ -330,7 +330,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="17" markdown="1">
 
-### Step 17 · 2026.12.5 (토) — trampoline.S, 사용자 모드
+### Step 17 · 2027.1.2 (토) — trampoline.S, 사용자 모드
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="17"> 완료</label>
 
@@ -341,7 +341,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="18" markdown="1">
 
-### Step 18 · 2026.12.6 (일) — syscall.cpp, sysproc.cpp
+### Step 18 · 2027.1.3 (일) — syscall.cpp, sysproc.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="18"> 완료</label>
 
@@ -353,7 +353,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="19" markdown="1">
 
-### Step 19 · 2026.12.12 (토) — entryother.S, 다중 CPU
+### Step 19 · 2027.1.9 (토) — entryother.S, 다중 CPU
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="19"> 완료</label>
 
@@ -364,7 +364,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="20" markdown="1">
 
-### Step 20 · 2026.12.13 (일) — 여유
+### Step 20 · 2027.1.10 (일) — 여유
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="20"> 완료</label>
 
@@ -381,7 +381,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="21" markdown="1">
 
-### Step 21 · 2026.12.19 (토) — mkfs (호스트 C++17), ramdisk.cpp
+### Step 21 · 2027.1.16 (토) — mkfs (호스트 C++17), ramdisk.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="21"> 완료</label>
 
@@ -392,7 +392,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="22" markdown="1">
 
-### Step 22 · 2026.12.20 (일) — bio.cpp
+### Step 22 · 2027.1.17 (일) — bio.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="22"> 완료</label>
 
@@ -403,7 +403,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="23" markdown="1">
 
-### Step 23 · 2026.12.26 (토) — log.cpp
+### Step 23 · 2027.1.23 (토) — log.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="23"> 완료</label>
 
@@ -414,7 +414,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="24" markdown="1">
 
-### Step 24 · 2026.12.27 (일) — fs.cpp ①
+### Step 24 · 2027.1.24 (일) — fs.cpp ①
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="24"> 완료</label>
 
@@ -425,7 +425,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="25" markdown="1">
 
-### Step 25 · 2027.1.2 (토) — fs.cpp ②
+### Step 25 · 2027.1.30 (토) — fs.cpp ②
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="25"> 완료</label>
 
@@ -436,7 +436,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="26" markdown="1">
 
-### Step 26 · 2027.1.3 (일) — file.cpp, pipe.cpp
+### Step 26 · 2027.1.31 (일) — file.cpp, pipe.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="26"> 완료</label>
 
@@ -447,7 +447,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="27" markdown="1">
 
-### Step 27 · 2027.1.9 (토) — sysfile.cpp, exec.cpp
+### Step 27 · 2027.2.6 (토) — sysfile.cpp, exec.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="27"> 완료</label>
 
@@ -465,7 +465,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="28" markdown="1">
 
-### Step 28 · 2027.1.10 (일) — 사용자 라이브러리, init, sh
+### Step 28 · 2027.2.7 (일) — 사용자 라이브러리, init, sh
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="28"> 완료</label>
 
@@ -477,7 +477,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="29" markdown="1">
 
-### Step 29 · 2027.1.16 (토) — 사용자 프로그램 ①
+### Step 29 · 2027.2.13 (토) — 사용자 프로그램 ①
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="29"> 완료</label>
 
@@ -488,7 +488,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="30" markdown="1">
 
-### Step 30 · 2027.1.17 (일) — 사용자 프로그램 ②
+### Step 30 · 2027.2.14 (일) — 사용자 프로그램 ②
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="30"> 완료</label>
 
@@ -498,7 +498,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="31" markdown="1">
 
-### Step 31 · 2027.1.23 (토) — usertests ①
+### Step 31 · 2027.2.20 (토) — usertests ①
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="31"> 완료</label>
 
@@ -509,7 +509,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="32" markdown="1">
 
-### Step 32 · 2027.1.24 (일) — usertests ②, grind
+### Step 32 · 2027.2.21 (일) — usertests ②, grind
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="32"> 완료</label>
 
@@ -521,7 +521,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="33" markdown="1">
 
-### Step 33 · 2027.1.30 (토) — 여유
+### Step 33 · 2027.2.27 (토) — 여유
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="33"> 완료</label>
 
@@ -538,7 +538,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="34" markdown="1">
 
-### Step 34 · 2027.1.31 (일) — C++ 정리
+### Step 34 · 2027.2.28 (일) — C++ 정리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="34"> 완료</label>
 
@@ -549,7 +549,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="35" markdown="1">
 
-### Step 35 · 2027.2.6 (토) — 실제 PC
+### Step 35 · 2027.3.6 (토) — 실제 PC
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="35"> 완료</label>
 
@@ -560,7 +560,7 @@ table.plan-calendar th {
 
 <div class="session" data-session="36" markdown="1">
 
-### Step 36 · 2027.2.7 (일) — v1.0-cpp, 회고
+### Step 36 · 2027.3.7 (일) — v1.0-cpp, 회고
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="36"> 완료</label>
 
