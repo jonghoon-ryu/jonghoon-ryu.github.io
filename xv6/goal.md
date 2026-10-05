@@ -87,9 +87,9 @@ v0.1 ──(+ 화면 콘솔, 키보드)──▶ v0.2 ──(C++ 로 한 단계�
    - 매 단계마다 빌드하고 QEMU · VirtualBox 에서 부팅되는 것을 확인한다
    - C 버전 (`main` 브랜치, 태그 `v0.2-x86_64-c`) 이 그대로 남아 있어서 언제든 나란히 비교할 수 있다
 
-지금 상태 — C++ 커널이 VirtualBox 화면에 그린 글자 :
+지금 상태 (Step 5, 태그 `step-05`) — VirtualBox 에서 C++ 커널이 부팅 정보와 메모리 맵을 화면에 찍고, 키보드로 친 글자를 보여 준다 :
 
-![C++ 스켈레톤이 그린 xv6](/assets/image/xv6-cpp-skeleton.png)
+![C++ 커널 Step 5 : 화면 콘솔과 키보드 입력](/assets/image/xv6-cpp-step05.png)
 
 <div style="margin-top: 100px;"></div>
 
