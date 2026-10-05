@@ -19,5 +19,5 @@ MIT 의 교육용 OS **xv6-riscv** 를 x86-64 PC 로 옮기고, 그 코드를 **
 ## 저장소
 
 - [github.com/jonghoon-ryu/xv6-x86_64](https://github.com/jonghoon-ryu/xv6-x86_64)
-  - `main` 브랜치 (태그 `v0.1-x86_64-c`) : x86-64 로 포팅된 C 버전, 완성
+  - `main` 브랜치 : x86-64 로 포팅된 C 버전, 완성. 태그 `v0.1-x86_64-c` (시리얼만), `v0.2-x86_64-c` (+ 화면 콘솔, 키보드. C++ 변환의 비교 기준)
   - `cpp` 브랜치 : C++ 변환 작업 중
