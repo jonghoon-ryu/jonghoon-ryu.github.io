@@ -34,9 +34,16 @@ Code Review Agent 는 현업 과제로, 여러 옵션이 있었음.
 
 <div style="margin-top: 60px;"></div>
 
-## 계획과 실제
+## FTL Visual Simulator : 계획과 실제
 
-(작성 예정)
+1. GitHub 에 있는 다양한 open source 중에서 MQSim 선정 ( [선정 이유](/ftl-visual-simulator/reference/mqsim/#결론--왜-mqsim-인가) )
+2. 지난 번 app 으로 만들었을 때의 문제점
+    - 사람들이 앱 설치를 귀찮아 함
+    - 앱을 믿지 않음 ( 보안 등 )
+    - 그러나 웹에서 실행하도록 하면 안전함 ( sandbox )
+3. 웹에서 해당 open source 를 눈으로 볼 수 있도록 visual simulator 를 만듦 ( 거의 대부분 Claude 가 함 )
+4. 동작시켜 보고 Claude 에게 수정하도록 하는 일을 반복하여 기본 기능 완성
+5. 원래 코드에 없던 내용 추가 ( [원본 대비 변경 사항](/ftl-visual-simulator/reference/code-change/upstream-diff/), [Code Change](/ftl-visual-simulator/reference/code-change/) )
 
 <div style="margin-top: 60px;"></div>
 
