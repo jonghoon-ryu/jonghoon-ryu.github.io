@@ -1,0 +1,23 @@
+---
+layout: default
+title: xv6
+permalink: /xv6/
+---
+# xv6 를 C++ 로 다시 쓰기
+
+MIT 의 교육용 OS **xv6-riscv** 를 x86-64 PC 로 옮기고, 그 코드를 **C 에서 C++ 로** 한 조각씩 다시 쓴다.
+
+<div style="margin-top: 100px;"></div>
+
+## 페이지
+
+- [목표](/xv6/goal/) — 지금까지 한 일, 앞으로 할 일, 최종 목표
+- [계획](/xv6/plan/) — 토요일·일요일 각 2시간씩, 단계별 일정
+
+<div style="margin-top: 100px;"></div>
+
+## 저장소
+
+- [github.com/jonghoon-ryu/xv6-x86_64](https://github.com/jonghoon-ryu/xv6-x86_64)
+  - `main` 브랜치 (태그 `v0.1-x86_64-c`) : x86-64 로 포팅된 C 버전, 완성
+  - `cpp` 브랜치 : C++ 변환 작업 중

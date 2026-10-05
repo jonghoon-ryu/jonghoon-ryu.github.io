@@ -22,14 +22,7 @@
             <details class="nav-group"{% if page.url contains '/learning-cs/' %} open{% endif %}>
               <summary><a href="{{ '/learning-cs/' | relative_url }}">Learning CS</a></summary>
               <ul class="nav-subitems">
-                <li>
-                  <details class="nav-group"{% if page.url contains '/learning-cs/os/' %} open{% endif %}>
-                    <summary><a href="{{ '/learning-cs/os/' | relative_url }}">OS</a></summary>
-                    <ul class="nav-subitems">
-                      <li><a href="{{ '/learning-cs/os/study-plan/' | relative_url }}">xv6 x86-64 + C++ Plan</a></li>
-                    </ul>
-                  </details>
-                </li>
+                <li><a href="{{ '/learning-cs/os/' | relative_url }}">OS</a></li>
                 <li>
                   <details class="nav-group"{% if page.url contains '/learning-cs/computation-theory/' %} open{% endif %}>
                     <summary><a href="{{ '/learning-cs/computation-theory/' | relative_url }}">Computation Theory</a></summary>
@@ -53,6 +46,15 @@
                     </ul>
                   </details>
                 </li>
+              </ul>
+            </details>
+          </li>
+          <li>
+            <details class="nav-group"{% if page.url contains '/xv6/' %} open{% endif %}>
+              <summary><a href="{{ '/xv6/' | relative_url }}">xv6</a></summary>
+              <ul class="nav-subitems">
+                <li><a href="{{ '/xv6/goal/' | relative_url }}">목표</a></li>
+                <li><a href="{{ '/xv6/plan/' | relative_url }}">계획</a></li>
               </ul>
             </details>
           </li>
