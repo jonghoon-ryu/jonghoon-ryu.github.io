@@ -13,7 +13,6 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 
 - [개발 동기/목표](/ftl-visual-simulator/motivation-goals/) — 왜 이 프로젝트를 시작했는지, 목표 7가지, 진행/작업 방식
 - [개발 계획](/ftl-visual-simulator/plan/) — 계획 대비 실제 진행, 타임라인, 계획에 없던 일, 원래 계획(9/4)
-- [9/4 - 10/5 동안 뭘 했을까... 그리고 어땠을까](/ftl-visual-simulator/retrospective/) — 왜 시작했는지, 계획과 실제, 소회
 - [참고 자료](/ftl-visual-simulator/reference/) — 시뮬레이터를 만들고 쓰는 데 필요한 배경 지식
   - [MQSim](/ftl-visual-simulator/reference/mqsim/) — 엔진으로 쓰는 MQSim 이 무엇이고 왜 골랐는가
   - [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim-code-analysis/) — [큰 그림](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/)(그림 위주 구조 설명)과 [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/)(`./MQSim` 실행부터 FTL 까지 함수 호출을 따라가기)
@@ -21,3 +20,4 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
   - [Evaluation Board](/ftl-visual-simulator/reference/evaluation-board/) — 실제 하드웨어에서 FTL 을 돌려 보기 위한 평가 보드 논의
   - [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) · [프론트엔드 스택 입문](/ftl-visual-simulator/reference/frontend-stack/)
 - [시뮬레이터 실행](/ftl-visual-simulator/run-simulator/) — 지금 배포된 시뮬레이터를 브라우저에서 바로 열어보기
+- [9/4 - 10/5 동안 뭘 했을까... 그리고 어땠을까](/ftl-visual-simulator/retrospective/) — 왜 시작했는지, 계획과 실제, 소회
