@@ -47,17 +47,19 @@ Code Review Agent 는 현업 과제로, 여러 옵션이 있었음.
 5. 원래 코드에 없던 내용 추가 ( [원본 대비 변경 사항](/ftl-visual-simulator/reference/code-change/upstream-diff/), [Code Change](/ftl-visual-simulator/reference/code-change/) )
     - 새 기능 : Cost-Benefit GC 정책, TRIM, 한 번도 안 쓴 LPA 읽기 옵션 ( `Unmapped_Reads_Return_Zeros` ) — [6절](/ftl-visual-simulator/reference/code-change/upstream-diff/)
     - 시뮬레이터를 위한 변경 — [7절](/ftl-visual-simulator/reference/code-change/upstream-diff/)
-        - 라이브러리화 : 원본 `main.cpp` 를 `Load_workload` / `Run_step` / `Run_to_completion` 등으로 쪼갬
-        - 한 단계씩 실행 ( 재생 ▶ / 1 step 버튼 )
-        - 이벤트 hook : 매핑 갱신, GC, 마모평준화, TRIM 시점에 콜백 ( "왜 이 block?" 설명용 )
-        - 매핑 테이블, block/page 상태 스냅샷 조회
-        - WASM 바인딩 : `init` / `configure` / `step` / `run` / `getState` 등을 JavaScript 로 노출
     - 화면에 다 보이도록 block 수를 줄인 데모 규모 튜닝 — [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/)
-    - 원본에는 없던 테스트 : 골든 회귀, 유닛, 브라우저 테스트
     - 이 과정에서 원본의 버그 28개도 발견해서 수정 — [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)
 
 <div style="margin-top: 60px;"></div>
 
 ## 소회
 
-(작성 예정)
+처음에는 코드 분석과 구현을 동시에 진행하려고 했었다. 그러나 하다 보니 구현을 먼저 하게 되었다.
+
+구현을 먼저 한 이유 중 하나는 Claude 가 처음에 좀 자신 없는 듯한 말투로 "어떤 어떤 위험이 있다" 라고 해서, 일단 되는지부터 해 본 것이다.
+
+구현하면서, 그리고 동작시키면서 문제점을 수정해 나가다 보니 코드는 수박 겉핥기로만 알고, 실제로 나는 Claude 가 구현한 것을 동작시켜 보는 오퍼레이터가 되어 있었다.
+
+MQSim 이라는 원본 코드가 FTL 의 일부만을 구현한 코드다 보니, 원본을 변환한 Visual Simulator 또한 한계가 있다.
+
+어디까지를 Claude 에게 맡겨야 하고, 어디까지를 직접 검수해야 할 것인가가 중요하다.
