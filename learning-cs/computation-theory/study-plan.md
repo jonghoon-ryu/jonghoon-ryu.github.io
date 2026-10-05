@@ -74,9 +74,9 @@ table.plan-calendar th {
 
 # 계산 이론 & Gödel 불완전성 정리 — 1년 학습 계획
 
-**2026년 11월 7일 (토) 시작 · 52주 · 매주 토요일 3시간**
+**2026년 11월 7일 (토) 시작 · 52주 · 매주 토요일 2시간**
 
-주말 6시간을 반씩 나눈다: **토요일 3시간 = 이 계획**, **일요일 3시간 = [xv6 C++ 변환](/xv6/plan/)**.
+주말 시간 배분: **토요일 2시간 = 이 계획**, **토요일 2시간 + 일요일 2시간 = [xv6 C++ 변환](/xv6/plan/)**.
 
 목표: 취미로, 하지만 제대로.
 Sipser 강의로 계산 이론을 공부하고, 그 위에서 Gödel 의 불완전성 정리를 **증명 구조까지** 이해한다.
@@ -85,11 +85,14 @@ Sipser 강의로 계산 이론을 공부하고, 그 위에서 Gödel 의 불완�
 
 ## 1년 안에 가능한가?
 
-- **시간 예산:** 3h × 52주 ≈ 156시간. 휴가·명절·바쁜 주말을 빼면 현실적으로 **약 130시간**.
+- **시간 예산:** 2h × 52주 ≈ 104시간. 휴가·명절·바쁜 주말을 빼면 현실적으로 **약 90시간**. (처음 3h 로 세웠다가 2026.10 에 2h 로 줄임)
 - **Sipser 강의:** 약 80분 × 25편 ≈ 33시간. 읽기·연습문제까지 보통 영상의 3배 → **약 100시간**.
 - **논리 복습 + 불완전성 정리:** 제2 정리까지 "증명 흐름을 이해하는" 수준으로 **약 60–70시간**.
 
-**결론: 핵심(Phase 0–3)은 가능하다. 시간이 빠듯하므로 연습문제는 "많이"보다 "제대로" 푼다.** Phase 4 (복잡도) 는 밀리면 줄이는 구간이다.
+**결론: 주 2시간으로는 52주 안에 전부 하기 어렵다.** 필요한 시간 (약 160시간) 이 예산 (약 90시간) 보다 크다. 그래서:
+- 연습문제는 주마다 **1–2개만**, "많이" 보다 "제대로" 푼다
+- Phase 4 (복잡도) 는 **P, NP, NP-완전성** 까지만, 또는 통째로 뺀다
+- 그래도 밀리면 주차 날짜는 그대로 두고 **1년을 넘겨서** 이어 간다 (약 16개월 예상)
 
 - ✅ 계산 가능성 (Sipser 수준, 제대로)
 - ✅ Gödel 제1·제2 불완전성 정리 (증명 구조와 핵심 보조정리)
@@ -119,10 +122,10 @@ Sipser 강의로 계산 이론을 공부하고, 그 위에서 Gödel 의 불완�
 
 ## 주간 리듬
 
-토요일 3시간 한 번에:
+토요일 2시간 한 번에:
 
-- **📖 앞 1.5시간:** 강의 1편 시청 또는 교재 1절 읽기 + 노트
-- **✏️ 뒤 1.5시간:** 연습문제 (각 주에 적힌 것 중 2–3개면 충분). **절대 건너뛰지 않는다.** 강의만 보면 이해한 느낌만 든다. 실제 이해는 문제를 풀 때 생긴다
+- **📖 앞 1시간:** 강의 1편 시청 또는 교재 1절 읽기 + 노트 (80분 강의는 두 번에 나눠 봐도 된다)
+- **✏️ 뒤 1시간:** 연습문제 (각 주에 적힌 것 중 1–2개면 충분). **절대 건너뛰지 않는다.** 강의만 보면 이해한 느낌만 든다. 실제 이해는 문제를 풀 때 생긴다
 - 토요일 하나를 통째로 놓치면 **두 주 분량을 한 주에 몰아서 하지 않는다.** 그냥 한 주 밀고, 여유 주간(Week 7, 18, 26, 44, 49–51)에서 흡수한다
 
 ### Claude 를 스터디 파트너로 쓰기
@@ -154,7 +157,7 @@ Sipser 강의로 계산 이론을 공부하고, 그 위에서 Gödel 의 불완�
 정지 문제와 대각선 논법은 불완전성 정리로 들어가는 가장 쉬운 입구다. 그래서 계산 가능성을 먼저 한다.
 Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지므로, 기억이 생생할 때 논리 → 불완전성으로 간다.
 복잡도는 Gödel 과의 연결이 가장 약하고, 시간이 모자랄 때 줄이기 가장 쉬워서 마지막에 둔다.
-(주 3시간이라 빠듯하다. 밀리면 Phase 4 는 **P, NP, NP-완전성** 까지만 해도 충분하다.)
+(주 2시간이라 빠듯하다. 밀리면 Phase 4 는 **P, NP, NP-완전성** 까지만 해도 충분하다.)
 
 <div style="margin-top: 100px;"></div>
 
@@ -177,8 +180,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="1"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Sipser **Ch.0.1–0.2** (수학적 개념과 용어). 이 페이지 전체를 한 번 훑고 교재 PDF 준비
-- **✏️ 연습문제 (~1.5h):** Ch.0 연습문제 0.1–0.6 중 3–4개
+- **📖 강의·읽기 (~1h):** Sipser **Ch.0.1–0.2** (수학적 개념과 용어). 이 페이지 전체를 한 번 훑고 교재 PDF 준비
+- **✏️ 연습문제 (~1h):** Ch.0 연습문제 0.1–0.6 중 3–4개
 - 💡 가볍게: Nagel & Newman *Gödel's Proof* 1–2장 (출퇴근용)
 
 </div>
@@ -189,8 +192,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="2"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Sipser **Ch.0.3–0.4** (정의, 정리, 증명 / 증명의 종류)
-- **✏️ 연습문제 (~1.5h):** 귀납법 증명 2개, 귀류법 증명 2개를 직접 써 보기 (예: √2 무리수, 소수 무한)
+- **📖 강의·읽기 (~1h):** Sipser **Ch.0.3–0.4** (정의, 정리, 증명 / 증명의 종류)
+- **✏️ 연습문제 (~1h):** 귀납법 증명 2개, 귀류법 증명 2개를 직접 써 보기 (예: √2 무리수, 소수 무한)
 
 </div>
 
@@ -200,8 +203,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="3"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Sipser **Ch.4.2 앞부분** "The Diagonalization Method" 만 먼저 읽기 (N, Q 가산 / R 비가산)
-- **✏️ 연습문제 (~1.5h):** 노트 없이 R 비가산 증명 재현. 유리수가 가산인 이유도 설명해 보기
+- **📖 강의·읽기 (~1h):** Sipser **Ch.4.2 앞부분** "The Diagonalization Method" 만 먼저 읽기 (N, Q 가산 / R 비가산)
+- **✏️ 연습문제 (~1h):** 노트 없이 R 비가산 증명 재현. 유리수가 가산인 이유도 설명해 보기
 - 🎯 **마일스톤:** 대각선 논법을 백지에 재현할 수 있다. 앞으로 1년 내내 이 논법이 반복된다
 
 </div>
@@ -218,8 +221,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="4"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L1** Introduction, Finite Automata, Regular Expressions · Sipser **Ch.1.1**
-- **✏️ 연습문제 (~1.5h):** Ch.1 연습문제: DFA 상태도 그리기 3–4개
+- **📖 강의·읽기 (~1h):** 강의 **L1** Introduction, Finite Automata, Regular Expressions · Sipser **Ch.1.1**
+- **✏️ 연습문제 (~1h):** Ch.1 연습문제: DFA 상태도 그리기 3–4개
 
 </div>
 
@@ -229,8 +232,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="5"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L2** Nondeterminism, Closure Properties, Regular Expressions → Finite Automata · Sipser **Ch.1.2–1.3**
-- **✏️ 연습문제 (~1.5h):** NFA → DFA 부분집합 구성(subset construction) 손으로 1회, 정규식 → NFA 1회
+- **📖 강의·읽기 (~1h):** 강의 **L2** Nondeterminism, Closure Properties, Regular Expressions → Finite Automata · Sipser **Ch.1.2–1.3**
+- **✏️ 연습문제 (~1h):** NFA → DFA 부분집합 구성(subset construction) 손으로 1회, 정규식 → NFA 1회
 
 </div>
 
@@ -240,8 +243,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="6"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L3** Regular Pumping Lemma, Finite Automata → Regular Expressions, CFGs (앞부분) · Sipser **Ch.1.4**
-- **✏️ 연습문제 (~1.5h):** {0ⁿ1ⁿ} 이 정규 언어가 아님을 펌핑 보조정리로 증명 + 비슷한 문제 2개
+- **📖 강의·읽기 (~1h):** 강의 **L3** Regular Pumping Lemma, Finite Automata → Regular Expressions, CFGs (앞부분) · Sipser **Ch.1.4**
+- **✏️ 연습문제 (~1h):** {0ⁿ1ⁿ} 이 정규 언어가 아님을 펌핑 보조정리로 증명 + 비슷한 문제 2개
 
 </div>
 
@@ -251,8 +254,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="7"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Ch.1 노트 정리, 헷갈린 문제 다시 풀기
-- **✏️ 연습문제 (~1.5h):** 🛠 Python 으로 DFA/NFA 시뮬레이터 작성 (NFA 는 상태 집합으로 시뮬레이션)
+- **📖 강의·읽기 (~1h):** Ch.1 노트 정리, 헷갈린 문제 다시 풀기
+- **✏️ 연습문제 (~1h):** 🛠 Python 으로 DFA/NFA 시뮬레이터 작성 (NFA 는 상태 집합으로 시뮬레이션)
 - 💡 이번 주는 여유 주간을 겸함. 밀렸으면 따라잡기에 쓴다
 
 </div>
@@ -263,8 +266,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="8"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L3 뒷부분 + L4** Pushdown Automata, CFG ↔ PDA · Sipser **Ch.2.1–2.2**
-- **✏️ 연습문제 (~1.5h):** 문법 설계 2개 (예: 괄호 짝 맞추기), PDA 설계 1개
+- **📖 강의·읽기 (~1h):** 강의 **L3 뒷부분 + L4** Pushdown Automata, CFG ↔ PDA · Sipser **Ch.2.1–2.2**
+- **✏️ 연습문제 (~1h):** 문법 설계 2개 (예: 괄호 짝 맞추기), PDA 설계 1개
 
 </div>
 
@@ -274,8 +277,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="9"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L5** CF Pumping Lemma, Turing Machines · Sipser **Ch.2.3**
-- **✏️ 연습문제 (~1.5h):** {aⁿbⁿcⁿ} 이 CFL 이 아님을 증명. Ch.2.4 (DCFL) 는 건너뛰어도 됨
+- **📖 강의·읽기 (~1h):** 강의 **L5** CF Pumping Lemma, Turing Machines · Sipser **Ch.2.3**
+- **✏️ 연습문제 (~1h):** {aⁿbⁿcⁿ} 이 CFL 이 아님을 증명. Ch.2.4 (DCFL) 는 건너뛰어도 됨
 
 </div>
 
@@ -285,8 +288,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="10"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L6** TM Variants, Church-Turing Thesis · Sipser **Ch.3.1–3.2**
-- **✏️ 연습문제 (~1.5h):** TM 상태도 1개 직접 설계, 다중 테이프 TM ≡ 단일 테이프 TM 논증 따라가기
+- **📖 강의·읽기 (~1h):** 강의 **L6** TM Variants, Church-Turing Thesis · Sipser **Ch.3.1–3.2**
+- **✏️ 연습문제 (~1h):** TM 상태도 1개 직접 설계, 다중 테이프 TM ≡ 단일 테이프 TM 논증 따라가기
 
 </div>
 
@@ -296,8 +299,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="11"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Sipser **Ch.3.3** (알고리즘의 정의, Hilbert 10번 문제)
-- **✏️ 연습문제 (~1.5h):** 🛠 Python 으로 튜링 기계 시뮬레이터 작성, {0^(2ⁿ)} 인식 TM 돌려 보기
+- **📖 강의·읽기 (~1h):** Sipser **Ch.3.3** (알고리즘의 정의, Hilbert 10번 문제)
+- **✏️ 연습문제 (~1h):** 🛠 Python 으로 튜링 기계 시뮬레이터 작성, {0^(2ⁿ)} 인식 TM 돌려 보기
 
 </div>
 
@@ -307,8 +310,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="12"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L7** Decision Problems for Automata and Grammars · Sipser **Ch.4.1**
-- **✏️ 연습문제 (~1.5h):** A_DFA, E_DFA, EQ_DFA 가 결정 가능한 이유를 각각 한 문단으로 설명
+- **📖 강의·읽기 (~1h):** 강의 **L7** Decision Problems for Automata and Grammars · Sipser **Ch.4.1**
+- **✏️ 연습문제 (~1h):** A_DFA, E_DFA, EQ_DFA 가 결정 가능한 이유를 각각 한 문단으로 설명
 
 </div>
 
@@ -318,8 +321,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="13"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L8** Undecidability · Sipser **Ch.4.2** (나머지)
-- **✏️ 연습문제 (~1.5h):** A_TM 결정 불가능 증명을 노트 없이 재현
+- **📖 강의·읽기 (~1h):** 강의 **L8** Undecidability · Sipser **Ch.4.2** (나머지)
+- **✏️ 연습문제 (~1h):** A_TM 결정 불가능 증명을 노트 없이 재현
 - 🎯 **마일스톤:** "A_TM 이 결정 불가능하다"를 대각선 논법으로 설명할 수 있다
 
 </div>
@@ -330,8 +333,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="14"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L9** Reducibility · Sipser **Ch.5.1 (앞부분), 5.3**
-- **✏️ 연습문제 (~1.5h):** HALT_TM, E_TM 결정 불가능성을 A_TM 에서 환원으로 증명. 사상 환원(≤m) 문제 2개
+- **📖 강의·읽기 (~1h):** 강의 **L9** Reducibility · Sipser **Ch.5.1 (앞부분), 5.3**
+- **✏️ 연습문제 (~1h):** HALT_TM, E_TM 결정 불가능성을 A_TM 에서 환원으로 증명. 사상 환원(≤m) 문제 2개
 
 </div>
 
@@ -341,8 +344,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="15"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L10** Computation History Method · Sipser **Ch.5.1 (LBA 부분), 5.2**
-- **✏️ 연습문제 (~1.5h):** PCP 예제 손으로 풀기, 계산 이력 아이디어를 자기 말로 정리
+- **📖 강의·읽기 (~1h):** 강의 **L10** Computation History Method · Sipser **Ch.5.1 (LBA 부분), 5.2**
+- **✏️ 연습문제 (~1h):** PCP 예제 손으로 풀기, 계산 이력 아이디어를 자기 말로 정리
 
 </div>
 
@@ -352,8 +355,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="16"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L11** Recursion Theorem and Logic (앞부분) · Sipser **Ch.6.1**
-- **✏️ 연습문제 (~1.5h):** 🛠 C 또는 Python 으로 quine 작성 → 재귀 정리 증명 구조(A, B 부분)와 대응시키기
+- **📖 강의·읽기 (~1h):** 강의 **L11** Recursion Theorem and Logic (앞부분) · Sipser **Ch.6.1**
+- **✏️ 연습문제 (~1h):** 🛠 C 또는 Python 으로 quine 작성 → 재귀 정리 증명 구조(A, B 부분)와 대응시키기
 
 </div>
 
@@ -363,8 +366,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="17"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L11** (뒷부분) · Sipser **Ch.6.2** (Th(ℕ,+) 결정 가능, Th(ℕ,+,×) 결정 불가능, 증명 불가능한 참인 문장)
-- **✏️ 연습문제 (~1.5h):** Ch.6.2 의 "Turing-unprovable statement" 증명을 재귀 정리로 설명해 보기
+- **📖 강의·읽기 (~1h):** 강의 **L11** (뒷부분) · Sipser **Ch.6.2** (Th(ℕ,+) 결정 가능, Th(ℕ,+,×) 결정 불가능, 증명 불가능한 참인 문장)
+- **✏️ 연습문제 (~1h):** Ch.6.2 의 "Turing-unprovable statement" 증명을 재귀 정리로 설명해 보기
 - 💡 연결: [Busy Beaver Problem](/learning-cs/open-problems/busy-beaver/) 페이지. BB(n) 이 계산 불가능한 이유 = 정지 문제
 
 </div>
@@ -375,8 +378,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="18"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Ch.3–6 노트 다시 보기, 이해 안 된 강의 부분 재시청
-- **✏️ 연습문제 (~1.5h):** 밀린 연습문제, 또는 Claude 와 증명 검토 세션
+- **📖 강의·읽기 (~1h):** Ch.3–6 노트 다시 보기, 이해 안 된 강의 부분 재시청
+- **✏️ 연습문제 (~1h):** 밀린 연습문제, 또는 Claude 와 증명 검토 세션
 - 🎯 **Phase 1 완료 점검:** TM · 결정 가능성 · 환원 · 재귀 정리를 설명할 수 있는가?
 
 </div>
@@ -393,8 +396,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="19"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** L&K **§1.1–1.5** (Naïvely, Languages, Terms and Formulas, Induction, Sentences)
-- **✏️ 연습문제 (~1.5h):** 자유 변수 / 속박 변수 구분 연습, 구조적 귀납법 증명 1개
+- **📖 강의·읽기 (~1h):** L&K **§1.1–1.5** (Naïvely, Languages, Terms and Formulas, Induction, Sentences)
+- **✏️ 연습문제 (~1h):** 자유 변수 / 속박 변수 구분 연습, 구조적 귀납법 증명 1개
 
 </div>
 
@@ -404,8 +407,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="20"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** L&K **§1.6–1.7** Structures, Truth in a Structure
-- **✏️ 연습문제 (~1.5h):** 주어진 구조에서 문장의 참·거짓 판정 연습 3–4개
+- **📖 강의·읽기 (~1h):** L&K **§1.6–1.7** Structures, Truth in a Structure
+- **✏️ 연습문제 (~1h):** 주어진 구조에서 문장의 참·거짓 판정 연습 3–4개
 - 💡 핵심: ⊨ 은 "의미"의 세계다
 
 </div>
@@ -416,8 +419,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="21"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** L&K **§1.8–1.10** Substitutions and Substitutability, Logical Implication
-- **✏️ 연습문제 (~1.5h):** 치환 가능성(substitutable) 연습문제, Σ ⊨ φ 판정 연습
+- **📖 강의·읽기 (~1h):** L&K **§1.8–1.10** Substitutions and Substitutability, Logical Implication
+- **✏️ 연습문제 (~1h):** 치환 가능성(substitutable) 연습문제, Σ ⊨ φ 판정 연습
 
 </div>
 
@@ -427,8 +430,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="22"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** L&K **§2.1–2.4** Deductions, Logical Axioms, Rules of Inference
-- **✏️ 연습문제 (~1.5h):** 짧은 형식 연역 2개를 직접 작성
+- **📖 강의·읽기 (~1h):** L&K **§2.1–2.4** Deductions, Logical Axioms, Rules of Inference
+- **✏️ 연습문제 (~1h):** 짧은 형식 연역 2개를 직접 작성
 - 💡 핵심: ⊢ 은 "기호 조작"의 세계다. 컴퓨터가 검사할 수 있다
 
 </div>
@@ -439,8 +442,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="23"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** L&K **§2.5–2.9** Soundness … Nonlogical Axioms (산술 공리 N 등장)
-- **✏️ 연습문제 (~1.5h):** 건전성 정리 증명 흐름 요약, 공리 N 으로 간단한 사실 연역
+- **📖 강의·읽기 (~1h):** L&K **§2.5–2.9** Soundness … Nonlogical Axioms (산술 공리 N 등장)
+- **✏️ 연습문제 (~1h):** 건전성 정리 증명 흐름 요약, 공리 N 으로 간단한 사실 연역
 
 </div>
 
@@ -450,8 +453,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="24"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** L&K **Ch.3** 앞부분: 완전성 정리의 진술 + Henkin 구성 개요 (세부 증명은 훑기만)
-- **✏️ 연습문제 (~1.5h):** "완전성 정리(1929) vs 불완전성 정리(1931)" 차이를 한 문단으로 정리
+- **📖 강의·읽기 (~1h):** L&K **Ch.3** 앞부분: 완전성 정리의 진술 + Henkin 구성 개요 (세부 증명은 훑기만)
+- **✏️ 연습문제 (~1h):** "완전성 정리(1929) vs 불완전성 정리(1931)" 차이를 한 문단으로 정리
 
 </div>
 
@@ -461,8 +464,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="25"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** L&K **Ch.3** 뒷부분: 컴팩트성 정리와 응용
-- **✏️ 연습문제 (~1.5h):** 컴팩트성으로 비표준 자연수 모형이 존재함을 논증해 보기
+- **📖 강의·읽기 (~1h):** L&K **Ch.3** 뒷부분: 컴팩트성 정리와 응용
+- **✏️ 연습문제 (~1h):** 컴팩트성으로 비표준 자연수 모형이 존재함을 논증해 보기
 
 </div>
 
@@ -472,8 +475,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="26"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Ch.1–3 노트 정리
-- **✏️ 연습문제 (~1.5h):** 밀린 문제, 또는 Claude 와 ⊢ / ⊨ 문답
+- **📖 강의·읽기 (~1h):** Ch.1–3 노트 정리
+- **✏️ 연습문제 (~1h):** 밀린 문제, 또는 Claude 와 ⊢ / ⊨ 문답
 - 🎯 **마일스톤:** "증명 가능(⊢)"과 "참(⊨)"의 차이를 명확히 설명할 수 있다. 불완전성 이야기는 전부 이 차이 위에 있다
 
 </div>
@@ -490,8 +493,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="27"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.1–3** (Gödel 소개, Incompleteness the very idea, The First Theorem two versions)
-- **✏️ 연습문제 (~1.5h):** "완전하다", "효과적으로 공리화되었다" 의 정의를 자기 말로 정리
+- **📖 강의·읽기 (~1h):** GWT **Ch.1–3** (Gödel 소개, Incompleteness the very idea, The First Theorem two versions)
+- **✏️ 연습문제 (~1h):** "완전하다", "효과적으로 공리화되었다" 의 정의를 자기 말로 정리
 - 💡 가볍게: Nagel & Newman *Gödel's Proof* 나머지
 
 </div>
@@ -502,8 +505,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="28"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.4–5** Outlining a Gödelian proof, Undecidability and incompleteness
-- **✏️ 연습문제 (~1.5h):** Ch.5 의 논증을 Sipser 의 정지 문제와 연결해 정리
+- **📖 강의·읽기 (~1h):** GWT **Ch.4–5** Outlining a Gödelian proof, Undecidability and incompleteness
+- **✏️ 연습문제 (~1h):** Ch.5 의 논증을 Sipser 의 정지 문제와 연결해 정리
 
 </div>
 
@@ -513,8 +516,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="29"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.6** Two weak arithmetics
-- **✏️ 연습문제 (~1.5h):** Q 의 공리 목록 외우기, Q 에서 2+2=4 연역 따라가기
+- **📖 강의·읽기 (~1h):** GWT **Ch.6** Two weak arithmetics
+- **✏️ 연습문제 (~1h):** Q 의 공리 목록 외우기, Q 에서 2+2=4 연역 따라가기
 
 </div>
 
@@ -524,8 +527,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="30"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.7–8** First-order Peano Arithmetic, Quantifier complexity (+ Interlude)
-- **✏️ 연습문제 (~1.5h):** Δ₀ / Σ₁ / Π₁ 문장 분류 연습. Gödel 문장이 Π₁ 이라는 점 기억하기
+- **📖 강의·읽기 (~1h):** GWT **Ch.7–8** First-order Peano Arithmetic, Quantifier complexity (+ Interlude)
+- **✏️ 연습문제 (~1h):** Δ₀ / Σ₁ / Π₁ 문장 분류 연습. Gödel 문장이 Π₁ 이라는 점 기억하기
 
 </div>
 
@@ -535,8 +538,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="31"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.9** Primitive recursive functions
-- **✏️ 연습문제 (~1.5h):** 덧셈 → 곱셈 → 거듭제곱 → 소수 판정이 원시 재귀임을 보이기
+- **📖 강의·읽기 (~1h):** GWT **Ch.9** Primitive recursive functions
+- **✏️ 연습문제 (~1h):** 덧셈 → 곱셈 → 거듭제곱 → 소수 판정이 원시 재귀임을 보이기
 - 🛠 Python 으로 원시 재귀 연산자(합성, 원시 재귀) 구현해 보기
 
 </div>
@@ -547,8 +550,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="32"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.10** Expressing and capturing the primitive recursive functions
-- **✏️ 연습문제 (~1.5h):** "표현(express)"과 "포착(capture)"의 차이 정리 (다시 ⊨ vs ⊢)
+- **📖 강의·읽기 (~1h):** GWT **Ch.10** Expressing and capturing the primitive recursive functions
+- **✏️ 연습문제 (~1h):** "표현(express)"과 "포착(capture)"의 차이 정리 (다시 ⊨ vs ⊢)
 
 </div>
 
@@ -558,8 +561,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="33"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.11** The arithmetization of syntax
-- **✏️ 연습문제 (~1.5h):** 🛠 Python 으로 논리식 ↔ Gödel 번호 인코더/디코더 작성
+- **📖 강의·읽기 (~1h):** GWT **Ch.11** The arithmetization of syntax
+- **✏️ 연습문제 (~1h):** 🛠 Python 으로 논리식 ↔ Gödel 번호 인코더/디코더 작성
 - 💡 "Prf(m, n): m 은 n 번 논리식의 증명이다"가 원시 재귀인 이유 = 증명 검사는 기계적이다
 
 </div>
@@ -570,8 +573,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="34"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.12–13** First Incompleteness Theorem, semantic / syntactic version (+ Interlude)
-- **✏️ 연습문제 (~1.5h):** 두 버전의 가정 차이 정리 (건전성 vs ω-무모순성)
+- **📖 강의·읽기 (~1h):** GWT **Ch.12–13** First Incompleteness Theorem, semantic / syntactic version (+ Interlude)
+- **✏️ 연습문제 (~1h):** 두 버전의 가정 차이 정리 (건전성 vs ω-무모순성)
 
 </div>
 
@@ -581,8 +584,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="35"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.14** The Diagonalization Lemma
-- **✏️ 연습문제 (~1.5h):** 대각화 보조정리 증명을 재현하고, Week 16 의 quine 과 비교
+- **📖 강의·읽기 (~1h):** GWT **Ch.14** The Diagonalization Lemma
+- **✏️ 연습문제 (~1h):** 대각화 보조정리 증명을 재현하고, Week 16 의 quine 과 비교
 - 💡 quine ≈ 대각화 보조정리 ≈ 재귀 정리. 모두 같은 아이디어
 
 </div>
@@ -593,8 +596,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="36"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.15–16** Rosser's Theorem, Tarski's Theorem
-- **✏️ 연습문제 (~1.5h):** Rosser 문장이 왜 ω-무모순성 가정을 없애는지, 산술적 참이 정의 불가능한 이유 정리
+- **📖 강의·읽기 (~1h):** GWT **Ch.15–16** Rosser's Theorem, Tarski's Theorem
+- **✏️ 연습문제 (~1h):** Rosser 문장이 왜 ω-무모순성 가정을 없애는지, 산술적 참이 정의 불가능한 이유 정리
 
 </div>
 
@@ -604,8 +607,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="37"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.17–18** Recursive functions, Decidability and the Halting Problem
-- **✏️ 연습문제 (~1.5h):** Sipser 의 TM 관점과 GWT 의 재귀 함수 관점이 같은 개념임을 정리
+- **📖 강의·읽기 (~1h):** GWT **Ch.17–18** Recursive functions, Decidability and the Halting Problem
+- **✏️ 연습문제 (~1h):** Sipser 의 TM 관점과 GWT 의 재귀 함수 관점이 같은 개념임을 정리
 
 </div>
 
@@ -615,8 +618,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="38"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.19–20** The Second Theorem and Hilbert's Programme, Proving the Second Incompleteness Theorem
-- **✏️ 연습문제 (~1.5h):** 유도 가능성 조건(derivability conditions) 세 개 정리, Con(PA) → G 의 흐름 따라가기
+- **📖 강의·읽기 (~1h):** GWT **Ch.19–20** The Second Theorem and Hilbert's Programme, Proving the Second Incompleteness Theorem
+- **✏️ 연습문제 (~1h):** 유도 가능성 조건(derivability conditions) 세 개 정리, Con(PA) → G 의 흐름 따라가기
 
 </div>
 
@@ -626,8 +629,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="39"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** GWT **Ch.21** Complications + Appendix (Kripke on diagonalization)
-- **✏️ 연습문제 (~1.5h):** 두 정리의 증명 스케치를 2–3 페이지로 직접 작성 → Claude 에게 검토 요청
+- **📖 강의·읽기 (~1h):** GWT **Ch.21** Complications + Appendix (Kripke on diagonalization)
+- **✏️ 연습문제 (~1h):** 두 정리의 증명 스케치를 2–3 페이지로 직접 작성 → Claude 에게 검토 요청
 - 🎯 **마일스톤:** 제1·제2 불완전성 정리를 증명 구조까지 설명할 수 있다
 - 💡 더 깊이: Goodstein 정리, Paris–Harrington 정리 (PA 에서 증명 불가능한 "자연스러운" 참)
 
@@ -645,8 +648,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="40"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L12** Time Complexity · Sipser **Ch.7.1**
-- **✏️ 연습문제 (~1.5h):** big-O 연습, 다중 테이프 TM 을 단일 테이프로 바꿀 때의 시간 증가 분석
+- **📖 강의·읽기 (~1h):** 강의 **L12** Time Complexity · Sipser **Ch.7.1**
+- **✏️ 연습문제 (~1h):** big-O 연습, 다중 테이프 TM 을 단일 테이프로 바꿀 때의 시간 증가 분석
 
 </div>
 
@@ -656,8 +659,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="41"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L14** P and NP, SAT, Poly-Time Reducibility · Sipser **Ch.7.2–7.3**
-- **✏️ 연습문제 (~1.5h):** 문제 3개가 NP 에 속함을 검증자(verifier)로 보이기
+- **📖 강의·읽기 (~1h):** 강의 **L14** P and NP, SAT, Poly-Time Reducibility · Sipser **Ch.7.2–7.3**
+- **✏️ 연습문제 (~1h):** 문제 3개가 NP 에 속함을 검증자(verifier)로 보이기
 
 </div>
 
@@ -667,8 +670,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="42"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L15** NP-Completeness · Sipser **Ch.7.4** 앞부분
-- **✏️ 연습문제 (~1.5h):** 3SAT ≤p CLIQUE 환원 재현
+- **📖 강의·읽기 (~1h):** 강의 **L15** NP-Completeness · Sipser **Ch.7.4** 앞부분
+- **✏️ 연습문제 (~1h):** 3SAT ≤p CLIQUE 환원 재현
 
 </div>
 
@@ -678,8 +681,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="43"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L16** Cook-Levin Theorem · Sipser **Ch.7.4** (Cook–Levin 증명)
-- **✏️ 연습문제 (~1.5h):** tableau 구성의 각 부분 (φ_cell, φ_start, φ_move, φ_accept) 설명해 보기
+- **📖 강의·읽기 (~1h):** 강의 **L16** Cook-Levin Theorem · Sipser **Ch.7.4** (Cook–Levin 증명)
+- **✏️ 연습문제 (~1h):** tableau 구성의 각 부분 (φ_cell, φ_start, φ_move, φ_accept) 설명해 보기
 - 🎯 **마일스톤:** SAT 가 NP-완전인 이유를 설명할 수 있다
 
 </div>
@@ -690,8 +693,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="44"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Sipser **Ch.7.5** (VERTEX-COVER, HAMPATH, SUBSET-SUM)
-- **✏️ 연습문제 (~1.5h):** 환원 1개를 처음부터 스스로 설계해 보기
+- **📖 강의·읽기 (~1h):** Sipser **Ch.7.5** (VERTEX-COVER, HAMPATH, SUBSET-SUM)
+- **✏️ 연습문제 (~1h):** 환원 1개를 처음부터 스스로 설계해 보기
 - 💡 이번 주는 여유 주간을 겸함
 
 </div>
@@ -702,8 +705,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="45"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L17** Space Complexity, PSPACE, Savitch's Theorem · Sipser **Ch.8.1–8.2**
-- **✏️ 연습문제 (~1.5h):** Savitch 정리 증명의 재귀 구조 정리
+- **📖 강의·읽기 (~1h):** 강의 **L17** Space Complexity, PSPACE, Savitch's Theorem · Sipser **Ch.8.1–8.2**
+- **✏️ 연습문제 (~1h):** Savitch 정리 증명의 재귀 구조 정리
 
 </div>
 
@@ -713,8 +716,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="46"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L18–L19** PSPACE-Completeness / Games, Generalized Geography · Sipser **Ch.8.3**
-- **✏️ 연습문제 (~1.5h):** TQBF 가 PSPACE-완전인 이유 요약, 일반화 지리 게임 예제 풀기
+- **📖 강의·읽기 (~1h):** 강의 **L18–L19** PSPACE-Completeness / Games, Generalized Geography · Sipser **Ch.8.3**
+- **✏️ 연습문제 (~1h):** TQBF 가 PSPACE-완전인 이유 요약, 일반화 지리 게임 예제 풀기
 
 </div>
 
@@ -724,8 +727,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="47"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L20** L and NL, NL = coNL · Sipser **Ch.8.4–8.6**
-- **✏️ 연습문제 (~1.5h):** PATH ∈ NL 설명, NL = coNL 증명 흐름 요약
+- **📖 강의·읽기 (~1h):** 강의 **L20** L and NL, NL = coNL · Sipser **Ch.8.4–8.6**
+- **✏️ 연습문제 (~1h):** PATH ∈ NL 설명, NL = coNL 증명 흐름 요약
 
 </div>
 
@@ -735,8 +738,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="48"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 강의 **L21–L22** Hierarchy Theorems / Provably Intractable Problems, Oracles · Sipser **Ch.9.1–9.2**
-- **✏️ 연습문제 (~1.5h):** 계층 정리에 다시 등장하는 대각선 논법 확인, 상대화가 P vs NP 에 주는 의미 정리
+- **📖 강의·읽기 (~1h):** 강의 **L21–L22** Hierarchy Theorems / Provably Intractable Problems, Oracles · Sipser **Ch.9.1–9.2**
+- **✏️ 연습문제 (~1h):** 계층 정리에 다시 등장하는 대각선 논법 확인, 상대화가 P vs NP 에 주는 의미 정리
 - 🎯 **Phase 4 완료:** P, NP, PSPACE, L, NL 의 관계도를 그릴 수 있다
 
 </div>
@@ -753,8 +756,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="49"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** 밀린 주차 따라잡기
-- **✏️ 연습문제 (~1.5h):** 밀린 주차 따라잡기
+- **📖 강의·읽기 (~1h):** 밀린 주차 따라잡기
+- **✏️ 연습문제 (~1h):** 밀린 주차 따라잡기
 
 </div>
 
@@ -764,8 +767,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="50"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** (선택) 강의 **L23–L24** Probabilistic Computation, BPP · Sipser **Ch.10.2**
-- **✏️ 연습문제 (~1.5h):** 밀린 주차 따라잡기 또는 BPP 연습문제
+- **📖 강의·읽기 (~1h):** (선택) 강의 **L23–L24** Probabilistic Computation, BPP · Sipser **Ch.10.2**
+- **✏️ 연습문제 (~1h):** 밀린 주차 따라잡기 또는 BPP 연습문제
 
 </div>
 
@@ -775,8 +778,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="51"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** (선택) 강의 **L25–L26** Interactive Proof Systems, IP / coNP ⊆ IP · Sipser **Ch.10.4**
-- **✏️ 연습문제 (~1.5h):** 밀린 주차 따라잡기
+- **📖 강의·읽기 (~1h):** (선택) 강의 **L25–L26** Interactive Proof Systems, IP / coNP ⊆ IP · Sipser **Ch.10.4**
+- **✏️ 연습문제 (~1h):** 밀린 주차 따라잡기
 
 </div>
 
@@ -786,8 +789,8 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="52"> 완료</label>
 
-- **📖 강의·읽기 (~1.5h):** Week 1 노트와 지금 노트 비교
-- **✏️ 연습문제 (~1.5h):** 회고 글 작성: 가장 어려웠던 것, 가장 놀라웠던 것, 2년차에 할 것
+- **📖 강의·읽기 (~1h):** Week 1 노트와 지금 노트 비교
+- **✏️ 연습문제 (~1h):** 회고 글 작성: 가장 어려웠던 것, 가장 놀라웠던 것, 2년차에 할 것
 - 🎯 **최종:** 이 블로그에 회고 페이지 게시
 
 </div>

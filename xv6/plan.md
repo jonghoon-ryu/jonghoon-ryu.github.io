@@ -75,6 +75,8 @@ table.plan-calendar th {
 
 **2026년 10월 10일 (토) 시작 · 토요일 2시간 + 일요일 2시간 · 36회 (18주) · 2027년 2월 7일 (일) 마무리 예정**
 
+주말 시간 배분 : **토요일 = [계산 이론 & Gödel](/learning-cs/computation-theory/study-plan/) 2시간 + xv6 2시간**, **일요일 = xv6 2시간**.
+
 [목표](/xv6/goal/) 의 2단계 : 부팅 스켈레톤에서 출발해서, C 버전의 한 부분씩을 C++ 로 옮겨 되살린다.
 
 <div style="margin-top: 100px;"></div>
