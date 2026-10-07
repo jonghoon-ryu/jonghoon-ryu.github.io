@@ -185,7 +185,17 @@ usb: port 7: high speed, id 627:1, class 0, a keyboard (typing comes in step 9)
 **코드와 대조해 볼 것**
 
 - 장치 디스크립터 18바이트를 찍어서 위 그림과 비교
-- 문자열 디스크립터 (type 3, 번호는 `dd[15]`) 를 읽어 제품 이름 `QEMU USB Keyboard` 찍기 (영어 튜토리얼 step08 연습 2)
+- 제품 이름 찍기 : 18바이트 `GET_DESCRIPTOR` 뒤에 아래를 넣으면 `product: QEMU USB Keyboard` (문자열 디스크립터는 type 3, UTF-16. 영어 글자는 아래 바이트만 찍어도 된다)
+
+  ```cpp
+  uchar s[64];
+  if (dd[15] && hc.control(*d, 0x80, GET_DESCRIPTOR, (3 << 8) | dd[15], 0x0409, sizeof(s), s)) {
+    printk("product: ");
+    for (int i = 2; i + 1 < s[0]; i += 2)
+      printk("%c", s[i]);
+    printk("\n");
+  }
+  ```
 - 모르는 vendor 요청 (`0xC0, 0x42`) 을 보내면 STALL (완료 코드 6). `resetep()` 를 빼면 다음 요청이 `timed out`
 </div>
 

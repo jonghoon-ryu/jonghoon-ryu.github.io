@@ -61,6 +61,5 @@ git checkout cpp                       # 돌아오기
 </div>
 
 - 페이지의 코드 조각 위 링크 (예 : [`kernel/main.cpp:12–30`]) 는 **그 태그의 그 줄** 로 간다. 체크아웃한 코드의 줄 번호와 같다
-- 저장소에는 단계마다 영어 튜토리얼 (`docs/tutorial/stepNN.md`, 연습 문제 포함) 과 한국어 변환 기록 (`docs/cpp-conversion.md`) 도 있다.
-  이 페이지들은 그것과 달리 **"앞 태그 → 이 태그" 의 차이** 에 집중한다
+- 문서는 이 블로그에만 둔다. (예전 태그 `step-01` … `step-10` 안에는 그때 쓴 영어 튜토리얼 `docs/tutorial/stepNN.md` 와 변환 기록 `docs/cpp-conversion.md` 가 남아 있다 : `git show step-06:docs/tutorial/step06.md`)
 - 일정은 [진행 현황](/xv6/plan/), 최종 목표는 [목표](/xv6/goal/)

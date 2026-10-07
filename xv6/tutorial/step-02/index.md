@@ -180,7 +180,7 @@ nothing else yet; halting
 
 - `nm kernel/kernel | grep -E " T (mem|_Z.*str)"` : `memset` 등은 맨 이름, `strlen` 등은 `_Z…` 이름
 - `git diff v0.2-x86_64-c:kernel/uart.c step-02:kernel/uart.cpp` : 빠진 함수들 (`uartputc`, `uartwrite`, `uartintr`) 과 더해진 `0xFF` 검사
-- 영어 튜토리얼 `docs/tutorial/step02.md` 의 연습 2 : 구조체 대입 `b = a;` 하나가 `memcpy` 호출이 되는 것
+- `string.cpp` 와 `defs.h` 에서 `memcpy` 를 지우고, `main()` 에 큰 구조체 대입 (`struct Big { char x[256]; } a{}, b; b = a;`) 을 넣어 빌드 : 링크 오류 ``undefined reference to `memcpy'``. 코드에 `memcpy` 를 쓴 적이 없는데 g++ 가 대입을 `memcpy` 호출로 만들었다
 </div>
 
 <div class="step-nav"><span>← <a href="/xv6/tutorial/step-01/">step-01</a></span><span><a href="/xv6/tutorial/step-03/">step-03</a> →</span></div>

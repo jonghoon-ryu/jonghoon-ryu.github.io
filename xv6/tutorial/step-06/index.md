@@ -41,7 +41,6 @@ git checkout step-06 && make clean && make qemu USB=1     # USB=1 : QEMU 에 xHC
 |---|---|---:|---:|
 | `Makefile` | 바뀜 | 16 | 4 |
 | `README` | 바뀜 | 2 | 0 |
-| `TODO.md` | 새 파일 | 51 | 0 |
 | `kernel/defs.h` | 바뀜 | 8 | 0 |
 | `kernel/earlytrap.cpp` | 새 파일 | 61 | 0 |
 | `kernel/earlyvec.S` | 새 파일 | 38 | 0 |
@@ -49,7 +48,7 @@ git checkout step-06 && make clean && make qemu USB=1     # USB=1 : QEMU 에 xHC
 | `kernel/main.cpp` | 바뀜 | 41 | 1 |
 | `kernel/pci.cpp` | 새 파일 | 61 | 0 |
 | `kernel/x86.h` | 바뀜 | 15 | 0 |
-| **합계** (10 파일) | | **301** | **8** |
+| **합계** (9 파일) | | **250** | **8** |
 
 ### 2.1 `pci.cpp` : PCI 설정 공간
 
@@ -163,7 +162,7 @@ earlytrap(uint64 *f)
 **코드와 대조해 볼 것**
 
 - Linux 에서 `lspci -nn` : 같은 `[vendor:device]` 번호
-- `main()` 에 `volatile int zero = 0; printk("%d", 1 / zero);` : 예외가 **안 난다**. `100 / zero` 는 난다. 왜? (영어 튜토리얼 step06 연습 3 : GCC 가 `1 / x` 를 나눗셈 없이 계산)
+- `main()` 에 `volatile int zero = 0; printk("%d", 1 / zero);` : 예외가 **안 난다**. `100 / zero` 는 난다. 왜? `1 / x` 는 1, −1, 0 중 하나라서 GCC 가 나눗셈 없이 비교로 계산한다 (`objdump -d kernel/main.o` 에 `lea 0x1(%rax)`, `cmp $0x2`, `cmovbe`). 0 으로 나누기는 정의되지 않은 동작이라 예외를 낼 의무가 없다
 - `earlyvec.S` 의 `.if` 줄의 벡터 번호를 Intel SDM 3A 표 6-1 의 "Error Code" 열과 비교
 </div>
 

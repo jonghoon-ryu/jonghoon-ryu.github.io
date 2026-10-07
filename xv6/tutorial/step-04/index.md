@@ -142,7 +142,7 @@ VirtualBox (2560 × 1440, 32×64 글꼴) :
 
 - `fbcons.cpp` 의 `FbCons` 멤버 함수 4개가 C 판의 어느 `static` 함수였는지 짝짓기
 - `namespace {` 를 지우면 무엇이 달라지나 : `nm kernel/kernel | grep cons` 로 심볼 이름 비교
-- `BIGSCREEN` 을 1024 로 바꾸고 `make qemu` 창 띄우기 (`docs/cpp-conversion.md` 0.2 의 창 명령) : 큰 글꼴
+- `BIGSCREEN` 을 1024 로 바꾸고 QEMU 를 창으로 띄우기 : 큰 글꼴. 창 명령 : `qemu-system-x86_64 -machine q35 -m 512M -serial stdio -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd -drive if=pflash,format=raw,file=ovmf_vars.fd -drive format=raw,file=usb.img`
 </div>
 
 <div class="step-nav"><span>← <a href="/xv6/tutorial/step-03/">step-03</a></span><span><a href="/xv6/tutorial/step-05/">step-05</a> →</span></div>

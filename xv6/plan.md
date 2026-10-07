@@ -173,7 +173,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
   <colgroup><col style="width:20%"><col style="width:80%"></colgroup>
   <thead><tr><th>누가</th><th>할 일</th></tr></thead>
   <tbody>
-    <tr><td>🤖 Claude<br>(세션 전)</td><td>그 회차 부분을 C 버전 (<code>main</code> 브랜치) 에서 가져와 C++ 로 변환 · 빌드 · QEMU 와 VirtualBox 에서 부팅 확인 · 로컬 커밋<br>변환 기록 <a href="https://github.com/jonghoon-ryu/xv6-x86_64/blob/cpp/docs/cpp-conversion.md"><code>docs/cpp-conversion.md</code></a> (+ PDF) 에 그 단계의 장 추가 : C ↔ C++ 대응, 바뀐 이유, 플랫폼별 차이, 시험 결과<br>단계가 끝나면 태그 <code>step-NN</code> (그 단계의 코드로 돌아가기 : <code>git checkout step-NN</code>)</td></tr>
+    <tr><td>🤖 Claude<br>(세션 전)</td><td>그 회차 부분을 C 버전 (<code>main</code> 브랜치) 에서 가져와 C++ 로 변환 · 빌드 · QEMU 와 VirtualBox 에서 부팅 확인 · 로컬 커밋<br>이 블로그의 <a href="/xv6/tutorial/">튜토리얼</a> 에 그 태그의 페이지 추가 : 이전 상태, 바꾼 것 (실제 코드와 그림), 바뀐 뒤 (화면, 실제 PC 결과). 저장소에는 문서를 두지 않는다<br>단계가 끝나면 태그 <code>step-NN</code> (그 단계의 코드로 돌아가기 : <code>git checkout step-NN</code>)</td></tr>
     <tr><td>👤 Ryu<br>(토·일 2h)</td><td>① 리뷰 노트를 보며 C 판과 C++ 판을 나란히 읽기 (~1h)<br>② 직접 띄워 보기, 같은 내용의 xv6 책 읽기 (~1h)<br>③ 그 단계의 <code>usb.img</code> 를 실제 PC 에서 부팅<br>④ 질문 · 수정 요청 → 승인하면 GitHub 에 push</td></tr>
   </tbody>
 </table>
@@ -299,7 +299,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="6"> 완료</label>
 
-- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-06</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-06) · 튜토리얼 [<code>docs/tutorial/step06.md</code>](https://github.com/jonghoon-ryu/xv6-x86_64/blob/cpp/docs/tutorial/step06.md) · 이 회차는 리뷰
+- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-06</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-06) · 튜토리얼 [<code>/xv6/tutorial/step-06/</code>](/xv6/tutorial/step-06/) · 이 회차는 리뷰
 
 - **🤖 Claude :** <code>pci.cpp</code> : PCI 설정 공간 (포트 <code>0xCF8</code>/<code>0xCFC</code>), 종류별로 장치 찾기, PCI 장치 목록 · <code>earlytrap.cpp</code> : CPU 예외를 화면에 (실제 PC 에서 조용히 재부팅하지 않게) · PS/2 루프를 16바이트로 제한 (실제 PC 의 없는 컨트롤러가 <code>0x55</code> 로 읽힘)
 - **👤 Ryu (2h) :** <code>make qemu USB=1</code> 의 PCI 목록을 <code>lspci -nn</code> 과 비교 · 일부러 0 으로 나눠 보기 (<code>1 / zero</code> 는 왜 예외가 안 날까)
@@ -312,7 +312,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="7"> 완료</label>
 
-- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-07</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-07) · 튜토리얼 [<code>docs/tutorial/step07.md</code>](https://github.com/jonghoon-ryu/xv6-x86_64/blob/cpp/docs/tutorial/step07.md) · 이 회차는 리뷰
+- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-07</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-07) · 튜토리얼 [<code>/xv6/tutorial/step-07/</code>](/xv6/tutorial/step-07/) · 이 회차는 리뷰
 
 - **🤖 Claude :** <code>xhci.cpp</code> : 펌웨어에게서 넘겨받기, 리셋, 명령·이벤트 링 (cycle 비트), scratchpad, 포트 리셋 · <code>#if</code> 가 아니라 실행 중에 PCI 에서 찾는다
 - **👤 Ryu (2h) :** 링과 doorbell 그림 따라가기 · 실제 PC 에서 찾은 끝없는 반복 버그를 직접 되살려 보기 (튜토리얼 연습 3) · xHCI 명세 4.2, 4.9
@@ -325,7 +325,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="8"> 완료</label>
 
-- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-08</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-08) · 튜토리얼 [<code>docs/tutorial/step08.md</code>](https://github.com/jonghoon-ryu/xv6-x86_64/blob/cpp/docs/tutorial/step08.md) · 이 회차는 리뷰
+- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-08</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-08) · 튜토리얼 [<code>/xv6/tutorial/step-08/</code>](/xv6/tutorial/step-08/) · 이 회차는 리뷰
 
 - **🤖 Claude :** <code>usb.cpp</code> : slot, Address Device, 입력·장치 컨텍스트, 제어 전송 (setup / data / status), STALL 복구, 디스크립터 → <code>id 627:1, a keyboard</code>
 - **👤 Ryu (2h) :** 장치 디스크립터를 바이트 단위로 읽기 · 제품 이름 문자열 찍기 · <code>lsusb</code> 와 비교 · USB 2.0 명세 9장
@@ -338,7 +338,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="9"> 완료</label>
 
-- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-09</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-09) · 튜토리얼 [<code>docs/tutorial/step09.md</code>](https://github.com/jonghoon-ryu/xv6-x86_64/blob/cpp/docs/tutorial/step09.md) · 이 회차는 리뷰
+- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-09</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-09) · 튜토리얼 [<code>/xv6/tutorial/step-09/</code>](/xv6/tutorial/step-09/) · 이 회차는 리뷰
 
 - **🤖 Claude :** Configure Endpoint (interrupt IN), <code>SET_PROTOCOL</code> (boot), 8바이트 리포트 → 글자 → <code>consoleintr()</code>
 - **👤 Ryu (2h) :** 날 리포트 보기 · PS/2 경로와 표로 비교 · 키를 꾹 눌러도 한 번만 나오는 이유 (타이머가 없다)
@@ -351,7 +351,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="10"> 완료</label>
 
-- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-10</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-10) · 튜토리얼 [<code>docs/tutorial/step10.md</code>](https://github.com/jonghoon-ryu/xv6-x86_64/blob/cpp/docs/tutorial/step10.md) · 이 회차는 리뷰
+- ✅ **코드 완료 (2026.10.7)** · 태그 [<code>step-10</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-10) · 튜토리얼 [<code>/xv6/tutorial/step-10/</code>](/xv6/tutorial/step-10/) · 이 회차는 리뷰
 
 - **🤖 Claude :** 허브 (hub descriptor, 포트 전원·리셋), route string, Transaction Translator · Intel 7/8/9 시리즈 소켓 연결
 - **👤 Ryu (2h) :** 실제 PC 화면을 한 줄씩 읽기 · (선택) 앞면 소켓의 키보드로 TT 경로 시험

@@ -250,7 +250,7 @@ xhci0: port 5: a USB 2 device, high speed
 
 - `porthandled` 검사 두 줄을 주석 처리하고 `make qemu USB=1` : 0.1초마다 같은 줄이 영원히 (실제 PC 의 버그 그대로)
 - No Op 을 300번 보내고 `cmdring.idx`, `cmdring.cycle` 찍기 : `idx 45 cycle 0` (255 개 뒤 Link 에서 뒤집힘)
-- `resetport()` 앞뒤의 `portsc(port)` : `0xee1` → `0xe03`. 비트를 풀어 보기 (영어 튜토리얼 step07 연습 4 에 표)
+- `resetport()` 앞뒤의 `portsc(port)` : `0xee1` → `0xe03`. 비트를 풀어 보기 : 비트 0 연결 (CCS), 1 사용 가능 (PED), 8:5 링크 상태 (7 Polling → 0 U0), 9 전원, 13:10 속도 (3 = high). 리셋이 PED 를 켜고 링크를 올렸다
 </div>
 
 <div class="step-nav"><span>← <a href="/xv6/tutorial/step-06/">step-06</a></span><span><a href="/xv6/tutorial/step-08/">step-08</a> →</span></div>
