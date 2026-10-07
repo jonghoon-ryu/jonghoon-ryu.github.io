@@ -87,7 +87,12 @@ v0.1 ──(+ 화면 콘솔, 키보드)──▶ v0.2 ──(C++ 로 한 단계�
    - 매 단계마다 빌드하고 QEMU · VirtualBox 에서 부팅되는 것을 확인한다
    - C 버전 (`main` 브랜치, 태그 `v0.2-x86_64-c`) 이 그대로 남아 있어서 언제든 나란히 비교할 수 있다
 
-지금 상태 (Step 5, 태그 `step-05`) — VirtualBox 에서 C++ 커널이 부팅 정보와 메모리 맵을 화면에 찍고, 키보드로 친 글자를 보여 준다 :
+지금 상태 (Step 10, 태그 `step-10`, 2026.10.7) — **실제 PC (베어본) 에서** C++ 커널이 부팅하고, 자기 USB 드라이버 (xHCI) 로 USB 키보드 입력을 받는다.
+그 PC 에는 PS/2 컨트롤러가 없어서, 원래 계획에 없던 USB 키보드 드라이버를 Step 6–10 으로 넣었다 :
+
+![C++ 커널 Step 10 : 실제 PC 에서 USB 키보드로 입력](/assets/image/xv6-realpc-usb-keyboard.jpg)
+
+VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 ![C++ 커널 Step 5 : 화면 콘솔과 키보드 입력](/assets/image/xv6-cpp-step05.png)
 
@@ -98,7 +103,7 @@ v0.1 ──(+ 화면 콘솔, 키보드)──▶ v0.2 ──(C++ 로 한 단계�
 **C 코드를 C++ 로 완전히 번역한다.** 커널과 사용자 프로그램 모두.
 
 - 다시 셸 (`$`) 이 뜨고 `usertests` 가 전부 통과해야 끝
-- QEMU, VirtualBox, 그리고 실제 PC 에서도 부팅
+- QEMU, VirtualBox, 그리고 **실제 PC 에서도** 부팅하고 동작 (실제 PC 에서 안 되면 끝난 것이 아니다)
 
 <div style="margin-top: 100px;"></div>
 
