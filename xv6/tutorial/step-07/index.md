@@ -15,7 +15,7 @@ table { font-size:0.88rem; }
 | | |
 |---|---|
 | **앞 태그** | `step-06` |
-| **이 태그** | `step-07` (`6e7408c`) |
+| **이 태그** | `step-07` (커밋 `695f83e`) |
 | **한 줄** | `xhci.h`, `xhci.cpp` : PCI 에서 찾은 USB 3 컨트롤러 (xHCI) 를 펌웨어에게서 넘겨받아 리셋하고, 메모리에 링을 만들어 시작한다. 연결된 포트를 리셋하고 속도를 찍는다 |
 | **비교할 것** | [xHCI 명세 1.2](https://www.intel.com/content/www/us/en/products/docs/io/universal-serial-bus/extensible-host-controler-interface-usb-xhci.html) 4.2 (시작), 4.9 (링), 5 (레지스터). 코드 주석의 `(xHCI 4.9.2)` 같은 절 번호 |
 

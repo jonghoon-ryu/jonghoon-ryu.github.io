@@ -15,7 +15,7 @@ table { font-size:0.88rem; }
 | | |
 |---|---|
 | **앞 태그** | `step-05` |
-| **이 태그** | `step-06` (`6a1c981`) |
+| **이 태그** | `step-06` (커밋 `41faacb`) |
 | **한 줄** | USB 키보드 드라이버 (Step 6–10) 의 첫 단계. PCI 버스를 읽고 (`pci.cpp`), CPU 예외를 화면에 찍는 임시 IDT (`earlytrap.cpp`) 를 넣었다 |
 | **비교할 C 코드** | 없다. C 판에 PCI, USB 가 없다. 명세와 비교 : [OSDev "PCI"](https://wiki.osdev.org/PCI), Intel SDM 3A 6장 |
 
