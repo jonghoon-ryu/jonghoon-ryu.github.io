@@ -93,9 +93,7 @@ table.plan-calendar th {
 - ✅ 실제 PC 1차 : 메인보드의 MSI 장치 (`db0:76`) 를 끝없이 다시 설정 → 고침 (Step 7 의 `porthandled`)
 - ✅ 실제 PC 2차 : **입력됨** ("Hi, claude / It looks like it works!")
 
-<ul class="todo">
-  <li><label><input type="checkbox" class="todo-check" data-id="diag-delete2"> <span class="who ryu">Ryu</span> 로컬 브랜치 지우기 : <code>git branch -D diag-realpc</code> (임시 진단용, push 안 함). <code>cpp</code> 에 Step 6–10 이 들어간 뒤 초안 브랜치 <code>usb-keyboard</code>, <code>cpp-usb</code> 도</label></li>
-</ul>
+- ✅ 임시 브랜치 정리 (<code>diag-realpc</code>, 초안 <code>usb-keyboard</code>, <code>cpp-usb</code>, <code>cpp-steps</code>) : 2026.10.7
 
 <div style="margin-top: 60px;"></div>
 
