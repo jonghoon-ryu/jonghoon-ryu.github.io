@@ -107,7 +107,7 @@ C 버전에는 태그가 두 개 있다. 이름의 `x86_64-c` 는 "x86-64 판, C
   <thead><tr><th>태그</th><th>내용</th></tr></thead>
   <tbody>
     <tr><td><a href="https://github.com/jonghoon-ryu/xv6-x86_64/tree/v0.1-x86_64-c"><code>v0.1-x86_64-c</code></a><br>2026.9.27</td><td><b>첫 C 판.</b> UEFI 부팅, CPU 1–4개, 셸까지 뜨고 <code>usertests</code> 전체 통과.<br>입출력은 <b>시리얼 포트만</b> : QEMU 는 터미널로 쓰면 되지만, VirtualBox 는 창이 비어 있고 <code>socat</code> 으로 시리얼에 붙어야 셸을 쓸 수 있다</td></tr>
-    <tr><td><a href="https://github.com/jonghoon-ryu/xv6-x86_64/tree/v0.2-x86_64-c"><code>v0.2-x86_64-c</code></a><br>현재 <code>main</code></td><td><b>v0.1 + 화면 콘솔 + PS/2 키보드</b> (<code>fbcons.c</code>, <code>font.h</code>, <code>kbd.c</code>). VirtualBox 창에 글자가 나오고 바로 쳐서 셸을 쓸 수 있다.<br><b>C++ 변환의 각 단계는 이 판과 비교한다</b> (Step 4–5 에서 옮기는 화면·키보드 코드가 여기에만 있다). 이 판을 둘러보는 <a href="https://github.com/jonghoon-ryu/xv6-x86_64/blob/main/docs/tutorial/step00.md">Step 0 튜토리얼</a> 포함</td></tr>
+    <tr><td><a href="https://github.com/jonghoon-ryu/xv6-x86_64/tree/v0.2-x86_64-c"><code>v0.2-x86_64-c</code></a><br>현재 <code>main</code></td><td><b>v0.1 + 화면 콘솔 + PS/2 키보드</b> (<code>fbcons.c</code>, <code>font.h</code>, <code>kbd.c</code>). VirtualBox 창에 글자가 나오고 바로 쳐서 셸을 쓸 수 있다.<br><b>C++ 변환의 각 단계는 이 판과 비교한다</b> (Step 4–5 에서 옮기는 화면·키보드 코드가 여기에만 있다). 이 판에서 바뀐 것 : <a href="/xv6/tutorial/v0.2-x86_64-c/">튜토리얼</a></td></tr>
   </tbody>
 </table>
 </div>
@@ -116,7 +116,7 @@ C 버전에는 태그가 두 개 있다. 이름의 `x86_64-c` 는 "x86-64 판, C
 v0.1 ──(+ 화면 콘솔, 키보드)──▶ v0.2 ──(C++ 로 한 단계씩)──▶ step-01 … step-10 … v1.0-cpp
 ```
 
-모든 태그 설명 : [docs/tags.md](https://github.com/jonghoon-ryu/xv6-x86_64/blob/main/docs/tags.md)
+태그마다 무엇이 바뀌었는지 : [튜토리얼](/xv6/tutorial/)
 
 바뀐 곳은 기계에 의존하는 부분이다.
 
