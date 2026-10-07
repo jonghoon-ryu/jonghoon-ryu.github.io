@@ -15,7 +15,7 @@ table { font-size:0.88rem; }
 | | |
 |---|---|
 | **앞 태그** | `step-02` |
-| **이 태그** | `step-03` (커밋 `716ea4b`) |
+| **이 태그** | `step-03` (커밋 `63c1be0`) |
 | **한 줄** | 형식 있는 출력 `printk("%d %x %p %s")` 와 `panic()`, 그 아래의 `consputc()` (출력 쪽 `console.c`) 를 옮겼다 |
 | **비교할 C 코드** | `git show v0.2-x86_64-c:kernel/printk.c`, `git show v0.2-x86_64-c:kernel/console.c` |
 

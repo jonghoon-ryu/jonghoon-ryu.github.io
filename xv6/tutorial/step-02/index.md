@@ -15,7 +15,7 @@ table { font-size:0.88rem; }
 | | |
 |---|---|
 | **앞 태그** | `step-01` |
-| **이 태그** | `step-02` (커밋 `f150975`) |
+| **이 태그** | `step-02` (커밋 `ff6ad7a`) |
 | **한 줄** | C 판의 `uart.c` (출력과 폴링 입력 부분) 와 `string.c` 를 C++ 로 옮겼다. `main.cpp` 의 임시 시리얼 코드가 빠졌다 |
 | **비교할 C 코드** | `git show v0.2-x86_64-c:kernel/uart.c`, `git show v0.2-x86_64-c:kernel/string.c` |
 

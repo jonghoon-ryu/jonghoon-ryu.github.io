@@ -15,7 +15,7 @@ table { font-size:0.88rem; }
 | | |
 |---|---|
 | **앞 태그** | `step-04` |
-| **이 태그** | `step-05` (커밋 `8e85e3c`) |
+| **이 태그** | `step-05` (커밋 `42a80d2`) |
 | **한 줄** | PS/2 키보드 `kbd.cpp`, 콘솔 입력 `consoleintr()`, 시리얼 입력 `uartintr()` 를 옮겼다. 인터럽트가 아직 없으므로 `main()` 의 루프가 계속 물어본다 (폴링) |
 | **비교할 C 코드** | `git show v0.2-x86_64-c:kernel/kbd.c`, `kbd.h`, `console.c` 의 `consoleintr` |
 

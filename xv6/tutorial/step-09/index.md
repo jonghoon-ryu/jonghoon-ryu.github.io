@@ -15,7 +15,7 @@ table { font-size:0.88rem; }
 | | |
 |---|---|
 | **앞 태그** | `step-08` |
-| **이 태그** | `step-09` (커밋 `98dc3c2`) |
+| **이 태그** | `step-09` (커밋 `64d9588`) |
 | **한 줄** | 키보드의 interrupt IN 엔드포인트를 설정하고, boot protocol 의 8바이트 리포트를 글자로 바꿔 `consoleintr()` 로 보낸다. **USB 키보드로 입력이 된다** |
 | **비교할 것** | USB HID 1.11 의 7.2 (`SET_IDLE`, `SET_PROTOCOL`), 부록 B (boot 리포트). HID Usage Tables 10장 (키 번호) |
 
