@@ -74,7 +74,7 @@ FTL 개념( 매핑, GC, 마모 평준화 )을 보여주는 화면만 필요하�
 이건 전형적인 "배치(batch) 프로그램" 구조다 — 명령어 한 줄 실행하면, 중간에 아무것도 보여주지 않다가, 끝나야 결과 파일 하나가 뚝 떨어진다. `em++` 로 컴파일해도 이 구조는 그대로 남는다 — "한 번 실행되고 끝나는 프로그램"을 "브라우저에서 한 번 실행되고 끝나는 프로그램"으로 옮겨온 것 뿐이다.
 
 <div style="overflow-x:auto;">
-<svg viewBox="0 0 900 420" style="width:100%;max-width:760px;height:auto;display:block;margin:1.5rem auto;" font-family="'Maru Buri','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+<svg viewBox="0 0 900 420" style="width:100%;max-width:760px;height:auto;display:block;margin:1.5rem auto;" font-family="'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
   <defs>
     <marker id="arrow-wp1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/>
