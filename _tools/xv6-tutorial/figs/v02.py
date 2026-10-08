@@ -57,7 +57,7 @@ def glyph():
             on = bits & (0x8000 >> i)
             d.p.append(f'<rect x="{x0 + i * cs}" y="{y0 + j * cs}" width="{cs}" height="{cs}" fill="{"#2c3e50" if on else "#ffffff"}" stroke="#d5dbdb" stroke-width="0.5"/>')
         d.text(x0 + 16 * cs + 8, y0 + j * cs + 10, f"0x{bits:04x}", 9.5, anchor="start", mono=True, color="#566573" if bits else "#bfc9ca")
-    d.text(x0 + 8 * cs, y0 + 32 * cs + 22, "one row = one ushort; leftmost pixel = highest bit (0x8000)", 10.5)
+    d.text(20, y0 + 32 * cs + 22, "one row = one ushort; leftmost pixel = highest bit (0x8000)", 10.5, False, "start")
     d.box(420, 60, 560, 150, "drawchar(col, row, c)", ["for j in 0..31:  bits = font16x32[c][j]", "  p = fb + (row*32 + j) * stride + col*16",
                                                        "  for i in 0..15:  p[i] = (bits & (0x8000 >> i)) ? FG : BG", "", "FG 0xD0D0D0 (light gray), BG 0 (black)"], "new", size=12.5, mono=True)
     d.box(420, 240, 560, 120, "On screens 2560 pixels wide or more", ["font32x64 (32 × 64 pixels, one uint per row)", "VirtualBox 2560 × 1440 → 80 columns × 22 rows",

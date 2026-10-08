@@ -201,7 +201,7 @@
         </ul>
       </nav>
 
-      <div id="main_content_wrap" class="outer">
+      <div id="main_content_wrap" class="outer{% if page.url contains '/xv6/tutorial/' %} wide{% endif %}">
         <section id="main_content" class="inner">
           {{ content }}
         </section>

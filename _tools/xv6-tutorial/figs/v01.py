@@ -71,13 +71,13 @@ def trap():
     d.arrow(885, 130, 885, 168)
     d.box(540, 170, 200, 90, "usertrap() (trap.c)", ["lidt(kidt): kernel IDT", "trapno == 64 → syscall()", "rip already after the int"], "chg")
     d.arrow(790, 215, 742, 215)
-    d.text(160, 182, "TRAPFRAME page (p->trapframe)", 12, True, "middle", "#2c3e50")
+    d.text(190, 182, "TRAPFRAME page (p->trapframe)", 12, True, "middle", "#2c3e50")
     y = 192
     for lab, h, k in [("kernel_cr3, kernel_sp, kernel_trap, kernel_hartid", 30, "gray"), ("r15 … rax  (pushed by uservec)", 34, "chg"),
                       ("trapno, err  (pushed by the vector stub)", 26, "new"), ("rip, cs, rflags, rsp, ss  (pushed by the CPU)", 34, "hw")]:
-        d.box(30, y, 260, h, "", [lab], k, size=11.5, rx=0)
+        d.box(30, y, 320, h, "", [lab], k, size=12, rx=0)
         y += h
-    d.text(296, y + 4, "← TSS.rsp0 = end of TRAPFRAME", 10.5, False, "start", "#566573")
+    d.text(356, y + 4, "← TSS.rsp0 = end of TRAPFRAME", 10.5, False, "start", "#566573")
     d.text(30, y + 30, "addresses grow downward here; pushes fill it from the bottom up", 10.5, False, "start")
     d.box(20, 360, 960, 70, "Compared with RISC-V", [
         "RISC-V: ecall → uservec (from stvec) finds TRAPFRAME through sscratch and stores each register (the CPU saves only sepc)",

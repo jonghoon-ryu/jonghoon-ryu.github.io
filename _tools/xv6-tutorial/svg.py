@@ -23,6 +23,11 @@ class D:
             self.text(w / 2, 22, title, 14, True, color="#2c3e50")
 
     def text(self, x, y, s, size=11.5, bold=False, anchor="middle", color="#4d5656", mono=False):
+        size = max(size, 11.5)  # readable when the page shows the diagram smaller than 1000px
+        est = sum((0.62 if mono else (0.58 if c.isupper() or c in "mwMW" else 0.5)) * size for c in str(s))
+        left = x - est / 2 if anchor == "middle" else x - est if anchor == "end" else x
+        if left < 0 or left + est > self.w:  # caption runs off the diagram
+            import sys; print(f"OFFCANVAS {str(s)[:60]!r} ({left:.0f}..{left + est:.0f} of {self.w})", file=sys.stderr)
         fam = f' font-family="{MONO}" style="font-variant-ligatures:none"' if mono else ""
         self.p.append(f'<text x="{x:.1f}" y="{y:.1f}" font-size="{size}"{" font-weight=\"700\"" if bold else ""}'
                       f' fill="{color}" text-anchor="{anchor}"{fam}>{escape(str(s))}</text>')
@@ -36,6 +41,13 @@ class D:
         d = ' stroke-dasharray="6 4"' if dash else ""
         self.p.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{rx}" fill="{f}" stroke="{st}" stroke-width="2"{d}/>')
         n = (1 if title else 0) + len(lines)
+        for i, t in enumerate(([title] if title else []) + list(lines)):  # warn when text will not fit
+            sz = max(size if (title and i == 0) else size - 1.5, 11.5)
+            est = sum((0.62 if mono else (0.58 if c.isupper() or c in "mwMW" else 0.5)) * sz for c in t)
+            if est > w - 8:
+                import sys; print(f"OVERFLOW {w}px box: {t[:60]!r} (~{est:.0f}px)", file=sys.stderr)
+        if n > 1 and n * 16 + 8 > h:
+            import sys; print(f"OVERFLOW {h}px tall box: {n} lines", file=sys.stderr)
         lh = 16
         y0 = y + h / 2 - (n - 1) * lh / 2 + 4
         if title:

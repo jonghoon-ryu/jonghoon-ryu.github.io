@@ -76,7 +76,7 @@ def lifecycle():
     d = D(1000, 200, "The life of one device (slot states)")
     x = 15
     for i, (s, cmd, k) in enumerate([("connected", "port reset done", "hw"), ("Enabled", "Enable Slot", "base"), ("Addressed", "Address Device", "chg"),
-                                     ("Configured", "Configure Endpoint (step-09)", "new"), ("Disabled", "Disable Slot (ignored / unplugged)", "del")]):
+                                     ("Configured", "Configure Endpoint (step-09)", "new"), ("Disabled", "Disable Slot", "del")]):
         d.box(x, 60, 180, 60, s, [cmd], k, size=12)
         if i:
             d.arrow(x - 15, 90, x - 1, 90)

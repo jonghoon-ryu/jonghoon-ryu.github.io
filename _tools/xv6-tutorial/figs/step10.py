@@ -4,7 +4,7 @@ from svg import D
 def tree():
     d = D(1000, 470, "The real PC's (barebone's) USB tree, from the 2026-10-07 screen")
     d.box(380, 45, 240, 50, "xHCI 8086:7a60", ["25 ports, PCI 0:20.0"], "hw", size=12)
-    for i, (p, idv, what, k) in enumerate([("port 2", "db0:76", "MSI built-in: ignored", "gray"), ("port 3", "5e3:610", "hub (high)", "chg"),
+    for i, (p, idv, what, k) in enumerate([("port 2", "db0:76", "MSI: ignored", "gray"), ("port 3", "5e3:610", "hub (high)", "chg"),
                                            ("port 5", "46d:c092", "mouse: ignored", "gray"), ("port 6", "4d9:a0f8", "keyboard ← types", "new"),
                                            ("port 7", "480:900", "storage: ignored", "gray"), ("port 8", "4e8:4001", "storage: ignored", "gray"), ("port 11", "5e3:608", "hub (high)", "chg")]):
         x = 15 + i * 140

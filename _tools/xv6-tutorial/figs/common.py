@@ -18,7 +18,7 @@ def numstat(prev, tag):
     return rows
 
 
-def changemap(prev, tag, maxrows=26, note=None):
+def changemap(prev, tag, maxrows=1000, note=None):
     rows = numstat(prev, tag)
     order = {"A": 0, "M": 1, "D": 2}
     rows.sort(key=lambda r: (order.get(r[1], 1), -(r[2] + r[3])))

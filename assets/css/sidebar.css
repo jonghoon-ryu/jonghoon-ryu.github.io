@@ -126,6 +126,18 @@ body {
   padding: 40px 40px;
 }
 
+/* wide pages (the xv6 tutorial): diagrams, code and tables get up to 1060px
+   so that 1000px-wide diagrams show at full size; prose stays at the
+   comfortable 800px reading width. */
+#main_content_wrap.outer.wide .inner {
+  max-width: 1060px;
+}
+#main_content_wrap.wide #main_content > p,
+#main_content_wrap.wide #main_content > ul,
+#main_content_wrap.wide #main_content > ol {
+  max-width: 800px;
+}
+
 #main_content p,
 #main_content ul,
 #main_content ol {

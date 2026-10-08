@@ -16,7 +16,7 @@ def rings():
     d.box(440, 180, 230, 60, "CPU: poll()", ["reads TRBs whose cycle bit matches,", "writes ERDP: how far it has read"], "base", size=11.5)
     d.box(740, 80, 240, 160, "xHCI controller", ["on a doorbell, reads", "and runs the command ring", "", "writes results, port changes,", "transfer completions to the event ring"], "hw", size=12)
     d.arrow(670, 110, 738, 110, "doorbell"); d.arrow(738, 210, 672, 210, "events")
-    d.box(20, 270, 960, 45, "", ["TRB = 16 bytes: param (64) · status (32) · control (32; bit 0 = cycle, bits 15:10 = type).  Command/transfer ring = one page = 255 TRBs + a Link TRB.  Event ring = one page = 256 TRBs (no Link)"], "white", size=11.5)
+    d.box(20, 268, 960, 52, "", ["TRB = 16 bytes: param (64) · status (32) · control (32; bit 0 = cycle, bits 15:10 = type)", "command/transfer ring = one page = 255 TRBs + a Link TRB.  event ring = one page = 256 TRBs (no Link)"], "white", size=12)
     return d.svg("command and event rings")
 
 

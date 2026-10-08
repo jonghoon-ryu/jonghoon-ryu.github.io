@@ -52,7 +52,7 @@ def system():
     d.box(720, 290, 260, 170, "hardware", ["PS/2 controller (QEMU, VBox)", "COM1 16550 UART", "PCI bus", "xHCI → hub → USB keyboard", "(the only path on the real PC)"], "hw", size=11.5)
     d.box(20, 490, 450, 50, "earlytrap.cpp + earlyvec.S (step-06)", ["CPU exception → printed on screen, then stop (no silent reboot)"], "new", size=11.5)
     d.box(500, 490, 480, 50, "Not there yet (from Step 11)", ["locks, memory allocation, page tables, interrupts, processes, file system, shell"], "gray", size=11.5)
-    d.legend(680, 278, (("chg", "from the C version"), ("new", "new (not in the C version)")))
+    d.legend(600, 278, (("chg", "from the C version"), ("new", "new (not in C)")))
     return d.svg("structure of the whole kernel")
 
 

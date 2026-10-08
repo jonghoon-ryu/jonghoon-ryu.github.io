@@ -21,8 +21,8 @@ def uart():
 
 def cxx():
     d = D(1000, 300, "C → C++: the same machine code, more checking")
-    rows = [("#define LSR 5", "constexpr ushort LSR = 5;", "has a type; visible in the debugger"),
-            ("#define ReadReg(reg) (inb(COM1 + (reg)))", "static inline uchar ReadReg(ushort reg)", "argument types checked; no parenthesis traps"),
+    rows = [("#define LSR 5", "constexpr ushort LSR = 5;", "typed; seen by the debugger"),
+            ("#define ReadReg(reg) (inb(COM1 + (reg)))", "static inline uchar ReadReg(ushort reg)", "types checked; no macro traps"),
             ("(char *)dst", "static_cast<char *>(dst)", "the kind of cast is visible"),
             ("void *memset(void *, int, uint)", "extern \"C\" void *memset(..., uint64)", "g++ calls it itself: C name")]
     d.text(250, 52, "C version", 12.5, True); d.text(620, 52, "C++ version", 12.5, True)
@@ -39,7 +39,7 @@ def cxx():
 def uartinit():
     d = D(1000, 300, "What uartinit() writes, in order (I/O port COM1 = 0x3F8)")
     w = [("IER ← 0x00", "interrupts off"), ("LCR ← 0x80", "baud-rate mode (DLAB)"), ("+0 ← 0x03", "divisor, low byte"), ("+1 ← 0x00", "divisor, high byte"),
-         ("LCR ← 0x03", "8 bits, no parity (DLAB off)"), ("FCR ← 0x07", "enable and clear FIFOs")]
+         ("LCR ← 0x03", "8 bits, no parity"), ("FCR ← 0x07", "enable and clear FIFOs")]
     x = 15
     for i, (op, why) in enumerate(w):
         d.box(x, 60, 152, 70, op, [why], "hw" if i in (2, 3) else "base", size=12)
