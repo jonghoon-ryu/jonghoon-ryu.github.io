@@ -27,18 +27,18 @@ def changemap(prev, tag, maxrows=26, note=None):
     scale = lambda n: 0 if n == 0 else 6 + 230 * math.sqrt(n / big)
     rh = 22
     h = 70 + rh * (len(shown) + (1 if rest else 0)) + 40
-    d = D(1000, h, f"변경 지도 : {prev} → {tag}  (파일마다 더한 줄 / 지운 줄, 막대 길이는 √줄 수)")
+    d = D(1000, h, f"Change map: {prev} → {tag}  (lines added / removed per file; bar length ∝ √lines)")
     kind = {"A": "new", "M": "chg", "D": "del"}
-    label = {"A": "새 파일", "M": "바뀜", "D": "지움"}
+    label = {"A": "new", "M": "changed", "D": "deleted"}
     y = 50
-    d.text(300, y, "지운 줄 ←", 11, True, "end", "#c0392b"); d.text(320, y, "파일", 11, True, "start", "#2c3e50")
-    d.text(620, y, "→ 더한 줄", 11, True, "start", "#1e8449")
+    d.text(300, y, "removed ←", 11, True, "end", "#c0392b"); d.text(320, y, "file", 11, True, "start", "#2c3e50")
+    d.text(620, y, "→ added", 11, True, "start", "#1e8449")
     y += 10
     for f, s, a, dl in shown:
         k = kind.get(s, "chg")
         d.rect(305, y + 3, 10, rh - 6, k, rx=2)
         d.text(320, y + 15, f, 11, False, "start", mono=True)
-        d.text(570, y + 15, label.get(s, "바뀜"), 10, False, "end", "#7f8c8d")
+        d.text(570, y + 15, label.get(s, "changed"), 10, False, "end", "#7f8c8d")
         if dl:
             w = scale(dl); d.rect(295 - w, y + 4, w, rh - 8, "del"); d.text(290 - w, y + 15, f"−{dl}", 10, False, "end", "#c0392b", True)
         if a:
@@ -48,10 +48,10 @@ def changemap(prev, tag, maxrows=26, note=None):
         ra, rd = sum(r[2] for r in rest), sum(r[3] for r in rest)
         kinds = {}
         for r in rest:
-            kinds[label.get(r[1], "바뀜")] = kinds.get(label.get(r[1], "바뀜"), 0) + 1
+            kinds[label.get(r[1], "changed")] = kinds.get(label.get(r[1], "changed"), 0) + 1
         what = ", ".join(f"{k} {v}" for k, v in kinds.items())
-        d.text(320, y + 15, f"… 그 밖에 {len(rest)} 파일 ({what}) : +{ra} −{rd}", 11, False, "start", "#566573")
+        d.text(320, y + 15, f"… {len(rest)} more files ({what}): +{ra} −{rd}", 11, False, "start", "#566573")
         y += rh
     ta, td = sum(r[2] for r in rows), sum(r[3] for r in rows)
-    d.text(500, y + 26, note or f"합계 {len(rows)} 파일, +{ta} −{td} 줄 (docs, PDF 제외)", 11.5, True, color="#2c3e50")
-    return d.svg(f"{prev} 에서 {tag} 로 바뀐 파일")
+    d.text(500, y + 26, note or f"Total: {len(rows)} files, +{ta} −{td} lines (docs and PDFs not counted)", 11.5, True, color="#2c3e50")
+    return d.svg(f"files changed from {prev} to {tag}")
