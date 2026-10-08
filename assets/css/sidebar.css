@@ -186,3 +186,9 @@ body {
     flex-basis: auto;
   }
 }
+
+/* the page being read, in a nested list (e.g. xv6 tutorial tags) */
+.nav-subitems a.current {
+  font-weight: 700;
+  color: #fff;
+}

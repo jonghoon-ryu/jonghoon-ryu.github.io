@@ -10,9 +10,11 @@
 body, h1, h2, h3, h4, h5, h6, th, .sidebar {
   font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
     'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+  font-variant-ligatures: none; /* keep "0x3F8" and "1280x800" as typed: Pretendard ligatures turn x between digits into × */
 }
 pre, code, kbd, tt, samp {
   font-family: 'JetBrains Mono', 'Pretendard Variable', Pretendard, ui-monospace, Menlo, Consolas, monospace;
+  font-variant-ligatures: none; /* show != -> <= |= as typed, like the source code */
 }
 </style>
 <!-- the theme's default head-custom.html includes Google Analytics; keep it -->
