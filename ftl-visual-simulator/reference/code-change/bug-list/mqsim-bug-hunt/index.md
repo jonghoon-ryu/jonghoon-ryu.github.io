@@ -153,7 +153,7 @@ for (auto it = range.first; it != range.second; ) {
 <div style="margin-top: 40px;"></div>
 
 <div style="overflow-x:auto;">
-<svg viewBox="0 0 900 260" style="width:100%;max-width:760px;height:auto;display:block;margin:1.5rem auto;" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+<svg viewBox="0 0 900 260" style="width:100%;max-width:760px;height:auto;display:block;margin:1.5rem auto;" font-family="'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
   <defs>
     <marker id="arrow-bh1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/>
