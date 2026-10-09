@@ -10,7 +10,7 @@ The tutorial (/xv6/tutorial/) is written in **English**. The rest of the blog is
   - `@@STAT prev tag@@`                table of changed files
   - `@@FIG module name@@`              diagram `figs/<module>.py: name()`
   - `@@IMG file caption@@`             image already in assets/image/
-- `svg.py`        — the SVG helper (boxes, arrows, memory maps, bit fields). Fonts: Pretendard / JetBrains Mono, no ligatures
+- `svg.py`        — the SVG helper (boxes, arrows, memory maps, bit fields). Fonts: IBM Plex Sans KR / IBM Plex Mono (same as the site), no ligatures
 - `figs/*.py`     — diagrams per page; `figs/common.py` + `figs/maps.py` make the change map of each tag from `git diff`
 - `preview.sh MODULE FUNC...` — render diagrams to `.preview/xv6-preview.png` (git-ignored) to check them by eye
 

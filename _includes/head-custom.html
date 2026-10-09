@@ -1,21 +1,9 @@
-<!-- fonts: Pretendard (Korean + Latin) for text, JetBrains Mono for code.
-     the Slate theme's own fonts (Myriad Pro, Calibri, Monaco, ...) have no
-     Korean, so Korean used to fall back to whatever the reader's system had. -->
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<!-- fonts (2026-10-09): IBM Plex Sans KR for text (Latin + Hangul), IBM Plex Mono for code,
+     Source Serif 4 for headings on English pages (the xv6 tutorial). Same family as the
+     C++ Course Library page. Layout and colours: assets/css/library.css (loaded last). -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
-<style>
-body, h1, h2, h3, h4, h5, h6, th, .sidebar {
-  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
-    'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
-  font-variant-ligatures: none; /* keep "0x3F8" and "1280x800" as typed: Pretendard ligatures turn x between digits into × */
-}
-pre, code, kbd, tt, samp {
-  font-family: 'JetBrains Mono', 'Pretendard Variable', Pretendard, ui-monospace, Menlo, Consolas, monospace;
-  font-variant-ligatures: none; /* show != -> <= |= as typed, like the source code */
-}
-</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,650&display=swap">
+<link rel="stylesheet" href="{{ '/assets/css/library.css?v=' | append: site.github.build_revision | relative_url }}">
 <!-- the theme's default head-custom.html includes Google Analytics; keep it -->
 {% include head-custom-google-analytics.html %}

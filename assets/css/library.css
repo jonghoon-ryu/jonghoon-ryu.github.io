@@ -1,0 +1,54 @@
+/* Site style (2026-10-09): the look of the C++ Course Library page, with Korean-capable fonts.
+   Body/headings: IBM Plex Sans KR (Latin + Hangul); English pages (.lang-en): Source Serif 4 headings.
+   Code: IBM Plex Mono with Plex Sans KR for Hangul in comments. One muted teal accent. */
+:root{--bg:#f6f7f4;--surface:#ffffff;--ink:#1c2321;--muted:#5d6763;--rule:#dfe3dd;--accent:#1f6f5c;--accent-soft:#e3efe9;--code-bg:#eef2ee;--quote-bg:#f0f3ef;
+--sans:"IBM Plex Sans KR","IBM Plex Sans",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+--serif:"Source Serif 4",Georgia,serif;--mono:"IBM Plex Mono","IBM Plex Sans KR",ui-monospace,Menlo,Consolas,monospace}
+html,body{background:var(--bg)!important}
+body,h1,h2,h3,h4,h5,h6,th,.sidebar,p,li,td{font-family:var(--sans)!important;color:var(--ink)}
+body{font-size:16px;line-height:1.75;font-variant-ligatures:none;-webkit-font-smoothing:antialiased}
+pre,code,kbd,tt,samp{font-family:var(--mono)!important;font-variant-ligatures:none}
+/* sidebar: light panel instead of the black one */
+.sidebar{background:var(--surface)!important;color:var(--ink)!important;border-right:1px solid var(--rule)}
+.sidebar-title a{color:var(--ink)!important;font-weight:650}
+.sidebar-tagline{color:var(--muted)!important}
+.sidebar-nav a,.sidebar a{color:#3d4743!important}
+.sidebar-nav a:hover,.sidebar a:hover{color:var(--accent)!important;text-decoration:none!important}
+.sidebar summary{color:var(--ink)!important}
+.sidebar .active>a,.sidebar a[aria-current]{color:var(--accent)!important;font-weight:600}
+/* reading column */
+#main_content_wrap{background:var(--bg)!important;border:0!important}
+#main_content.inner{max-width:800px;padding:44px 32px 72px!important}
+#main_content h1,#main_content h2,#main_content h3,#main_content h4{color:var(--ink)!important;line-height:1.3;letter-spacing:-.01em;text-wrap:balance}
+#main_content h1{font-size:34px;font-weight:650;margin:0 0 20px;padding-bottom:14px;border-bottom:2px solid var(--accent)!important}
+#main_content h2{font-size:24px;font-weight:620;margin:46px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--rule)!important;background:none!important}
+#main_content h3{font-size:19px;font-weight:620;margin:32px 0 10px}
+#main_content h4{font-size:16px;font-weight:620}
+.lang-en #main_content h1,.lang-en #main_content h2,.lang-en #main_content h3{font-family:var(--serif)!important}
+#main_content p,#main_content li{max-width:74ch}
+#main_content a{color:var(--accent)!important;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+#main_content strong{font-weight:600}
+#main_content hr{border:0;border-top:1px solid var(--rule);height:0;background:none}
+/* code */
+#main_content :not(pre)>code{font-size:.88em;background:var(--code-bg)!important;border:1px solid var(--rule)!important;border-radius:4px;padding:.05em .32em;color:var(--ink)!important}
+#main_content pre,#main_content .highlight{background:var(--code-bg)!important;border:1px solid var(--rule)!important;border-left:3px solid var(--accent)!important;border-radius:6px;color:var(--ink)!important;box-shadow:none!important}
+#main_content pre{font-size:13.5px;line-height:1.6;padding:12px 14px}
+#main_content pre code{background:none!important;border:0!important;color:inherit!important}
+/* tables */
+#main_content table{border-collapse:collapse;font-size:14.5px;line-height:1.55;background:var(--surface);border:1px solid var(--rule);border-radius:8px;overflow:hidden;display:table}
+#main_content th{background:var(--accent-soft)!important;color:var(--ink)!important;font-weight:600;text-align:left;border:0!important;border-bottom:1px solid var(--rule)!important}
+#main_content td{border:0!important;border-bottom:1px solid var(--rule)!important;background:none!important}
+#main_content th,#main_content td{padding:8px 11px!important;vertical-align:top}
+/* quotes / callouts */
+#main_content blockquote{background:var(--quote-bg);border-left:3px solid #b9c7bf!important;border-radius:0 6px 6px 0;padding:10px 16px;margin:16px 0;color:var(--ink)!important;font-style:normal}
+/* diagrams keep their own fonts; give them a clean frame */
+#main_content svg{background:var(--surface);border-radius:8px}
+#footer_wrap{background:var(--bg)!important;border-top:1px solid var(--rule)}
+#footer_wrap,#footer_wrap a,#footer_wrap p{color:var(--muted)!important}
+
+#main_content{font-size:18px!important}
+#main_content p,#main_content li{font-size:18px;line-height:1.8}
+#main_content table{font-size:15px}
+
+/* the page being read in the sidebar */
+.sidebar .nav-subitems a.current{color:var(--accent)!important;font-weight:700}

@@ -85,7 +85,7 @@ WASM 으로 컴파일한 MQSim 은 **화면이 없다.** 함수를 호출하면 
 ## 5. 넷이 실제로 어떻게 맞물리나요?
 
 <div style="overflow-x:auto;">
-<svg viewBox="0 0 900 260" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1.5rem auto;" font-family="'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+<svg viewBox="0 0 900 260" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1.5rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif">
   <defs>
     <marker id="arrow-fe1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/>

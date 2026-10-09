@@ -12,8 +12,8 @@ KINDS = {  # fill, stroke
     "gray": ("#f4f6f7", "#7f8c8d"),
     "white": ("#ffffff", "#566573"),
 }
-FONT = "'Pretendard Variable','Pretendard','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR','Noto Sans CJK KR','NanumGothic',sans-serif"
-MONO = "'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace"
+FONT = "'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+MONO = "'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace"
 
 
 class D:

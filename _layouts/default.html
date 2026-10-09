@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: "en-US" }}">
+<html lang="{% if page.url contains '/xv6/tutorial/' %}en{% else %}ko{% endif %}"{% if page.url contains '/xv6/tutorial/' %} class="lang-en"{% endif %}>
 
   <head>
     <meta charset='utf-8'>
