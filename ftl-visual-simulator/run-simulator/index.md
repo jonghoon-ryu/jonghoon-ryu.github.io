@@ -4,20 +4,21 @@ title: 시뮬레이터 실행
 permalink: /ftl-visual-simulator/run-simulator/
 ---
 <style>
-.run-sim-cta {
+#main_content a.run-sim-cta {
   display: block;
   margin: 1.5rem 0;
   padding: 1.1rem 1.4rem;
   border-radius: 10px;
-  background: #2f6fd6;
+  background: #1f6f5c;
   color: #fff !important;
-  text-decoration: none;
+  text-decoration: none !important;
   font-weight: 700;
   font-size: 1.05rem;
   text-align: center;
+  max-width: none;
 }
-.run-sim-cta:hover {
-  background: #24589f;
+#main_content a.run-sim-cta:hover {
+  background: #18584a;
 }
 </style>
 
