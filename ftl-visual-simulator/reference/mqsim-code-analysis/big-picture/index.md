@@ -62,6 +62,7 @@ MQSim 코드 약 1만 9천 줄(헤더 포함 19,309줄, `.cpp` 61개)을 읽기 
 | [FTL 의 부품들과 자료구조](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/ftl-parts/) | 매핑 테이블, block 상태, write frontier 는 어떤 모양인가? |
 | [매핑 테이블은 어디에 저장되나 — translation page](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/translation-pages/) | 매핑 테이블 자체는 flash 어디에 어떻게 저장되나? |
 | [데이터 캐시 깊이 보기](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/data-cache/) | DRAM 데이터 캐시는 요청을 어떻게 흡수하나? |
+| [GC 알고리즘 — victim 을 고르는 7가지 방법](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/gc-algorithms/) | GC 는 어느 block 을 지우고, 알고리즘마다 무엇이 다른가? |
 | [GC 와 사용자 I/O 의 경쟁 방지](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/concurrency-control/) | GC 와 사용자 I/O 가 같은 데이터를 건드리면? |
 | [TSU 스케줄러 정책](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/tsu-policies/) | 스케줄러는 큐를 어떤 순서로 비우나? |
 | [Preconditioning — 오래 쓴 SSD 로 시작하기](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/preconditioning/) | "오래 쓴 SSD" 로 시작하려면? |
