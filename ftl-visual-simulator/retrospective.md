@@ -87,4 +87,4 @@ MQSim 은 시계를 1 ns 씩 똑딱이며 돌리지 않는다. **알람 목록**
 - 구현을 먼저 한 이유 중 하나는 Claude 가 처음에 좀 자신 없는 듯한 말투로 "어떤 어떤 위험이 있다" 라고 해서, 일단 되는지부터 해 본 것이다.
 - 구현하면서, 그리고 동작시키면서 문제점을 수정해 나가다 보니 코드는 수박 겉핥기로만 알고, 실제로 나는 Claude 가 구현한 것을 동작시켜 보는 오퍼레이터가 되어 있었다.
 - MQSim 이라는 원본 코드가 FTL 의 일부만을 구현한 코드다 보니, 원본을 변환한 Visual Simulator 또한 한계가 있다.
-- <https://drive.google.com/file/d/19rY4idXdBoFyqqzu0ImZe45C31ETb7rC/view>
+- [AI 시대 나의 전문성을 재설계하는 법](https://drive.google.com/file/d/19rY4idXdBoFyqqzu0ImZe45C31ETb7rC/view)
