@@ -23,7 +23,7 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 1. FTL 이 실제로 어떻게 동작하는지 제대로 이해하기 ( 주소 매핑, GC, 마모 평준화, bad block 관리 등 )
    - **달성(bad block 제외)** — 매핑 · GC · 마모평준화는 시뮬레이터와 [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/)로 다뤘다. bad block 관리는 MQSim 에 없어서 다루지 못했다.
 2. MQSim 엔진(WASM 컴파일)을 그대로 사용하는 웹 기반 시각화 시뮬레이터 제작
-   - **달성** — 원본 C++ 를 그대로 WASM 으로 컴파일해 쓴다. 대신 원본 버그 29개를 고쳤다([Code Change](/ftl-visual-simulator/reference/code-change/)).
+   - **달성** — 원본 C++ 를 그대로 WASM 으로 컴파일해 쓴다. 대신 원본 버그 30개를 고쳤다([Code Change](/ftl-visual-simulator/reference/code-change/)).
 3. 사용자가 파라미터( 페이지 크기, 블록 수, Over-provisioning 비율, 매핑 방식, GC 정책 등 )를 직접 조절해 볼 수 있게 만들기
    - **달성** — 단, 매핑 방식은 Page-level 만 고를 수 있다(Hybrid 는 구현되지 않음).
 4. **초심자도 FTL 개념을 쉽게 익힐 수 있는 학습 환경 만들기** — 나만 이해하는 도구가 아니라, MQSim 의 raw 통계/설정을 잘 모르는 사람도 화면만 보고 "아, 이게 GC 구나" 하고 감을 잡을 수 있어야 함

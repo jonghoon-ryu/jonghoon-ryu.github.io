@@ -60,7 +60,7 @@ pre {
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>종류</th><th>개수</th><th>시뮬레이션 결과에 영향</th><th>주로 바뀐 파일</th></tr>
-<tr><td>A. 원본의 버그 수정</td><td>29개(버그 목록표) + 표에 따로 없는 수정 4건</td><td>대부분 골든 불변. 작은 규모·특정 설정에서만 결과가 달라짐(원래는 크래시/멈춤/잘못된 값)</td><td><code>GC_and_WL_Unit_*</code>, <code>Address_Mapping_Unit_Page_Level</code>, <code>Flash_Block_Manager*</code>, <code>TSU_*</code>, <code>NVM_PHY_ONFI_NVDDR2</code>, <code>utils/</code></td></tr>
+<tr><td>A. 원본의 버그 수정</td><td>30개(버그 목록표) + 표에 따로 없는 수정 4건</td><td>대부분 골든 불변. 작은 규모·특정 설정에서만 결과가 달라짐(원래는 크래시/멈춤/잘못된 값)</td><td><code>GC_and_WL_Unit_*</code>, <code>Address_Mapping_Unit_Page_Level</code>, <code>Flash_Block_Manager*</code>, <code>TSU_*</code>, <code>NVM_PHY_ONFI_NVDDR2</code>, <code>utils/</code></td></tr>
 <tr><td>B. 의도적으로 upstream 과 다르게 바꾼 동작</td><td>4건</td><td>있음 — 데모 규모에서 원본 동작이 의미가 없거나 멈추는 경우만</td><td><code>GC_and_WL_Unit_Base</code>, <code>Flash_Block_Manager_Base</code>, <code>Address_Mapping_Unit_Page_Level</code></td></tr>
 <tr><td>C. 데모 규모 튜닝</td><td>1건</td><td>있음(의도)</td><td><code>SSD_Device.cpp</code></td></tr>
 <tr><td>D. 새 기능 (upstream 에 없음)</td><td>3건(Cost-Benefit GC, <code>Unmapped_Reads_Return_Zeros</code>, TRIM) + 통계/조회 추가</td><td>없음(기본값 꺼짐) — 앱이 켤 때만</td><td><code>GC_and_WL_Unit_Page_Level</code>, <code>Device_Parameter_Set</code>, <code>Address_Mapping_Unit_Page_Level</code></td></tr>
@@ -150,6 +150,7 @@ flash 의 program(쓰기)·erase(지우기)는 read 보다 수십~수백 배 오
 - **#22 대기했다 재개된 GC/WL 이 erase 를 제출하지 않음** (`GC_and_WL_Unit_Base.cpp`) — 진행 중인 요청 때문에 기다렸다 재개하는 경로만 erase 트랜잭션을 만들고 스케줄러에 **넣지 않았다**. block 이 영원히 "GC 중"으로 남아 평면이 block 을 잃음. `Submit_transaction` 한 줄 추가.
 - **#23 평면 대기열에서 풀려난 write 가 LPA barrier 를 무시** — 빈 page 가 없어 기다리던 write 를 풀어줄 때만 barrier 확인이 빠져, 옮기는 중인 LPA 가 다시 매핑돼 크래시. 다른 경로처럼 barrier 뒤로 보내도록 수정.
 - **#24 GC 재검사할 계기가 없음** — GC 검사는 frontier 교체나 erase 완료 때만 실행된다. 검사가 아무것도 못 했는데(예: RGA 의 무작위 표본이 청소할 block 을 전부 빗나감) 그 평면의 쓰기가 전부 대기 중이면, 다시 검사를 부를 사건이 영영 없다. 첫 쓰기가 대기열에 들어갈 때 검사를 요청하고, 회수할 block 이 있는 한 짧은 간격으로 재시도(최대 1000번, 넘으면 경고 출력 — 무한 루프 대신 멈춤이 되도록).
+- **#30 굶은 사용자 쓰기가 끝나도 GC 를 다시 확인하지 않음** (`GC_and_WL_Unit_Base.cpp`) — #24 의 재시도가 놓친 틈. 빈 block 이 urgent 수준 아래면 TSU 는 GC erase 가 큐에 하나라도 있는 동안 **사용자 쓰기를 전혀 내보내지 않는다**. 그래서 사용자 쓰기가 오래(측정: 약 0.47초) 굶으며 자기 block 의 `Ongoing_user_program_count` 를 붙잡고, 그 block 은 GC 대상이 될 수 없다(`is_safe_gc_wl_candidate`). 마지막 erase 직후의 GC 확인이 바로 이 순간에 일어나면 쓰레기로 가득한 block 이 모두 "프로그램 진행 중" 이라 안전한 victim 이 없고, #24 의 재시도 조건도 거짓이 된다. 몇 ms 뒤 굶은 쓰기가 끝나 그 block 들이 안전해져도 사용자 쓰기 완료는 GC 확인을 부르지 않아, 빈 공간을 기다리던 쓰기가 전부 invalid 인 block 넷 옆에서 영원히 멈췄다(GC 시연, OP 0%, GC 임계값 50%: 쓰기 16개). 사용자 쓰기가 끝날 때 그 평면에 공간을 기다리는 쓰기가 있으면 GC 확인을 요청하도록 수정. 3 프리셋 × GC 정책 7 × OP 3 × 임계값 4 × 캐시 2 = 504회 스윕에서 멈춤 6회 → 0회, 기본 설정 결과와 골든 3/3 은 그대로.
 
 <div style="margin-top: 40px;"></div>
 
@@ -215,7 +216,7 @@ flash 의 program(쓰기)·erase(지우기)는 read 보다 수십~수백 배 오
 
 ## 9. 정리
 
-- 원본 MQSim 은 **큰 SSD 를 한 번 끝까지 돌리는** 연구용 도구로서는 대부분 문제없이 동작한다 — 이 프로젝트가 찾은 버그 29개 중 상당수는 (a) 이식성(다른 컴파일러/표준 라이브러리), (b) 한 프로세스에서 반복 실행·중간 정지, (c) 수십 개 block 수준의 작은 규모, (d) 한 번도 켜본 적 없는 기능(suspend, 정적 WL 설정) 중 하나를 건드려야 드러났다.
+- 원본 MQSim 은 **큰 SSD 를 한 번 끝까지 돌리는** 연구용 도구로서는 대부분 문제없이 동작한다 — 이 프로젝트가 찾은 버그 30개 중 상당수는 (a) 이식성(다른 컴파일러/표준 라이브러리), (b) 한 프로세스에서 반복 실행·중간 정지, (c) 수십 개 block 수준의 작은 규모, (d) 한 번도 켜본 적 없는 기능(suspend, 정적 WL 설정) 중 하나를 건드려야 드러났다.
 - 그래도 "결과가 조용히 틀리는" 버그도 있었다 — 정적 WL 이 실제 마모와 무관하게 발동하거나(#6) 평생 한 번만 발동한 것(#18), suspend 가 한 번도 동작하지 않은 것(#14~17), WL 통계가 GC 로 섞인 것(#19~20). 이런 것들은 원본으로 논문 수치를 낸 경우에도 영향이 있을 수 있는 종류다.
 - 이 프로젝트의 변경은 대부분 upstream 샘플 결과를 바꾸지 않는다(골든 불변). 바꾸는 것은 B·C·D 의 의도적 변경뿐이고, 모두 코드 주석과 이 문서에 이유를 적었다.
 

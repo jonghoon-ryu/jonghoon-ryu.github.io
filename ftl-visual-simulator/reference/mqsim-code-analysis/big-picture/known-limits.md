@@ -52,7 +52,7 @@ MQSim 원본으로 FTL 을 공부하거나 논문 수치를 낼 때 **믿으면 
 
 ## 4. 실제 버그
 
-이 프로젝트가 원본을 컴파일해 작은 규모와 반복 실행으로 돌리면서 **29개의 버그**를 찾아 고쳤다 — 이식성 문제, use-after-free, 초기화되지 않은 필드, 전달되지 않는 설정, 스케줄러의 서스펜드 교착, 조용히 멈추는 시뮬레이션, GC victim 선정 오류 등. 대부분은 큰 SSD 를 한 번 끝까지 돌리는 원래 용도에서는 드러나지 않는다.
+이 프로젝트가 원본을 컴파일해 작은 규모와 반복 실행으로 돌리면서 **30개의 버그**를 찾아 고쳤다 — 이식성 문제, use-after-free, 초기화되지 않은 필드, 전달되지 않는 설정, 스케줄러의 서스펜드 교착, 조용히 멈추는 시뮬레이션, GC victim 선정 오류 등. 대부분은 큰 SSD 를 한 번 끝까지 돌리는 원래 용도에서는 드러나지 않는다.
 
 - [버그 목록표](/ftl-visual-simulator/reference/code-change/bug-list/table/) — 전체 요약
 - [원본 MQSim 대비 변경 사항](/ftl-visual-simulator/reference/code-change/upstream-diff/) — 코드 차이 전체
