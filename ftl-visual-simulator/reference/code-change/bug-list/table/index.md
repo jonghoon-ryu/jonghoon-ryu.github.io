@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 버그 목록표
 
-[버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **28개** — 전부 수정해서 유지 중이다.
+[버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **29개** — 전부 수정해서 유지 중이다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -277,6 +277,14 @@ table.plan-calendar th {
   <td>"명령 일시정지" 선택을 넣으려고 모드별 읽기 지연을 비교하다가 (AddressSanitizer 로 위치 확인)</td>
   <td>예</td>
 </tr>
+<tr>
+  <td>29</td>
+  <td>빈 공간을 기다리는 쓰기 목록이 포인터 순서 <code>std::set</code> 이라, 먼저 풀려나는 쓰기가 힙 주소로 정해짐 — 같은 프로세스에서 같은 설정을 다시 돌리면 결과가 달라짐 (GC 554 → 570 → 584)</td>
+  <td><code>ssd/Address_Mapping_Unit_Page_Level.h/.cpp</code> (<code>Write_transactions_for_overfull_planes</code>)</td>
+  <td>로직(포인터 순서에 의존하는 비결정성)</td>
+  <td>DRAM 캐시를 256 MB 에서 32 page 로 줄이자 같은 설정의 결과가 실행마다 달라져서 (2026-10-11)</td>
+  <td>예 (프로세스 하나에서 여러 번 실행할 때)</td>
+</tr>
 </table>
 </div>
 
@@ -298,6 +306,7 @@ table.plan-calendar th {
 <tr><td>로직(switch fallthrough/인자 순서/카운터 언더플로)</td><td>4개(#14-17)</td><td>서로 겹겹이 가려져 있던 결함 — #14가 서스펜드 자체를 막고 있어서 #15-17은 몇 년째 실행될 기회조차 없던 코드였음</td></tr>
 <tr><td>로직(static WL 후보 선정) + 통계 집계</td><td>3개(#18-20)</td><td>GC 와 WL 이 코드 경로를 공유하면서 WL 쪽 처리를 빠뜨림 — #18 때문에 "WL 은 한 번만 뜬다"를 오랫동안 다른 이유로 잘못 설명해왔음</td></tr>
 <tr><td>로직(조용한 정지/크래시 사슬)</td><td>8개(#21-28)</td><td>#14-17 처럼 하나를 고쳐야 다음이 드러나는 사슬 — #22-27은 실제 SSD 규모의 block 수에선 거의 안 드러나고, 이 프로젝트의 작은 데모 규모에서만 확률적으로 나타남</td></tr>
+<tr><td>로직(비결정성)</td><td>1개(#29)</td><td>원본 CLI 는 프로세스당 한 번만 실행해서 힙 배치가 늘 같았음 — 한 프로세스에서 반복 실행하는 이 프로젝트의 비교 실험실·재시작이 처음 노출시킴. 쓰기가 빈 공간을 기다려야(캐시가 실제로 내보내야) 드러남</td></tr>
 </table>
 </div>
 
@@ -319,6 +328,7 @@ table.plan-calendar th {
 - **#18-24**: 같은 작업의 두 번째 라운드 — threshold 가 안 올라가는 진짜 이유(#18)를 찾고, 2-flow 워크로드로 규모를 키워 29가지 구성을 돌리며 멈춤/크래시를 하나씩 추적 (#21 이 #14-17 문서에 "남은 문제"로 적어뒀던 정지)
 - **#25-26**: 같은 날 세 프리셋 전부와 GC 정책 6종으로 스윕 범위를 넓혀서 발견 — 그 과정에서 #24 수정이 FIFO 와 만나 무한 루프가 되는 이 프로젝트 자신의 회귀도 함께 잡음
 - **#27**: #25 를 고치면서 의심한 것을 4배 길이 실행에서 큐 길이를 직접 찍어 확인
+- **#29**: Ryu 가 "flash 변화가 몰아서 온다" 고 지적해서 DRAM 캐시를 현실적인 크기(32 page)로 줄였더니, 같은 설정을 한 WASM 모듈에서 다시 돌릴 때마다 GC 횟수가 달라짐 — 새 모듈에서는 항상 같아서 힙 상태 의존을 의심, 포인터 키 컨테이너를 찾아 확인. 고친 뒤 3번 반복 + 새 모듈 2번이 모두 같음(<code>engine/tests/cache/determinism.mts</code>)
 
 <div style="margin-top: 60px;"></div>
 

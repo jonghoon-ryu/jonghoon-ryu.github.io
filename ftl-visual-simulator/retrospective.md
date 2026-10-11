@@ -48,7 +48,7 @@ Code Review Agent 는 현업 과제로, 여러 옵션이 있었음.
     - 새 기능 : Cost-Benefit GC, TRIM, `Unmapped_Reads_Return_Zeros` — [6절](/ftl-visual-simulator/reference/code-change/upstream-diff/)
     - 시뮬레이터를 위한 변경 — [7절](/ftl-visual-simulator/reference/code-change/upstream-diff/)
     - 화면에 다 보이도록 block 수를 줄인 데모 규모 튜닝 — [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/)
-    - 이 과정에서 원본의 버그 28개도 발견해서 수정 — [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)
+    - 이 과정에서 원본의 버그 29개도 발견해서 수정 — [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)
 
 <div style="margin-top: 60px;"></div>
 
