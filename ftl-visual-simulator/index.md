@@ -20,4 +20,5 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
   - [Evaluation Board](/ftl-visual-simulator/reference/evaluation-board/) — 실제 하드웨어에서 FTL 을 돌려 보기 위한 평가 보드 논의
   - [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) · [프론트엔드 스택 입문](/ftl-visual-simulator/reference/frontend-stack/)
 - [시뮬레이터 실행](/ftl-visual-simulator/run-simulator/) — 지금 배포된 시뮬레이터를 브라우저에서 바로 열어보기
+- [헌 SSD 로 하는 실험](/ftl-visual-simulator/old-ssd-experiments/) — 버릴 SSD 로 write cliff, OP, WAF, SLC 캐시, retention 을 직접 재 보기 (2026.10.16~)
 - [9/4 - 10/11 동안 뭘 했을까 ?](/ftl-visual-simulator/retrospective/) — 왜 시작했는지, MQSim 은 어떤 프로그램인가, 계획과 실제, 소회
