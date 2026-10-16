@@ -647,6 +647,34 @@ What is left is a **bare-metal "superloop" program**, the same shape as the firm
 
 In that sense **UEFI is already a small OS**: it has drivers, a memory allocator, a file system and a console. xv6 calls `ExitBootServices()` on purpose, because an OS has to **own** the hardware: its own interrupts, page tables, scheduling and drivers, which the firmware's services can't provide and would get in the way of. Leaving the firmware has a price, and steps 1–10 are mostly that bill: re-doing the screen, the keyboard and USB, which the firmware had been doing for us.
 
+### Should some of this code be removed, to learn OS from scratch?
+
+**No: keep it.**
+
+**None of it is OS, so it doesn't spoil anything.** Learning OS "from scratch" means building the things that share the machine: locks, memory allocation, page tables, traps, processes, scheduling, system calls, files. None of those exist at step-10. Each one arrives in steps 11–42 into a clean space.
+
+**Removing code would cost, not teach:**
+
+- **remove USB:** the real PC has no PS/2 controller, so there would be no typing on the test machine. Real-PC testing would only come back once the driver was rewritten
+- **remove the early exception screen:** a mistake on the real PC turns back into a silent reboot, just when bugs get harder (page tables, traps)
+- **remove the screen console:** blind on the real PC, which has no serial port
+- **remove the loader:** nothing boots
+
+These are tools, like a lab bench. Rebuilding them teaches hardware plumbing, not OS ideas.
+
+**What to do instead:**
+
+1. **Treat USB as a black box.** `xhci.cpp` and `usb.cpp` never need reading to follow the OS steps. Their only contact with the rest of the kernel is `usbinit()`, `usbintr()` and the `consoleintr(c)` call.
+2. **Know the few functions everything uses:** `main()`, `printk()` / `panic()`, `consputc()` / `consoleintr()`, `memset` / `memmove`. That is the part of steps 1–10 worth knowing well.
+3. **Watch later steps change this code where the OS needs it:**
+   - step 11: locks go into `console.cpp` and `printk.cpp`
+   - steps 13–14: the kernel's page tables must also map the screen and the USB registers (the debt above)
+   - steps 18–19: interrupts replace the polling loop
+
+   The "no OS" code turning into "OS" code, one step at a time, is a good way to see what an OS actually adds.
+
+To still get a taste of building from scratch, a cheap way is an optional exercise: rewrite `uart.cpp` or `printk.cpp` yourself from the step-02 and step-03 pages, then compare. Same lesson, without losing the working machine.
+
 ## 13. What comes next
 
 <!-- fig:notyet -->
