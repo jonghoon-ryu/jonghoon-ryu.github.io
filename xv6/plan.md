@@ -291,7 +291,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 *책에 없음 · xHCI 1.2, USB 2.0, USB HID 1.11 명세 · 실제 PC 에 PS/2 컨트롤러가 없어서 새로 넣은 부분 (2026.10.7)*
 
-![실제 PC 에서 USB 키보드로 친 글 : "Hi, claude / It looks like it works!"](/assets/image/xv6-realpc-usb-keyboard.jpg)
+![실제 PC 에서 USB 키보드로 친 시험 문장이 화면에 나온다](/assets/image/xv6-realpc-usb-keyboard.jpg)
 
 <div class="session" data-session="6" markdown="1">
 
