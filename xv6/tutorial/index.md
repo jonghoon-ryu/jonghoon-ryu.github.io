@@ -55,6 +55,8 @@ Colors in the diagrams: <span style="background:#eafaf1;border:1px solid #1e8449
 | [`step-09`](/xv6/tutorial/step-09/) | `step-08` | typing on a USB keyboard |
 | [`step-10`](/xv6/tutorial/step-10/) | `step-09` | USB hubs; the code verified on the real PC |
 
+**[Code explanation up to step 10](/xv6/tutorial/code-explanation-step-10/)**: the whole program at `step-10` in one page (boot, output, input, the USB keyboard), with diagrams: the starting point before step 11.
+
 ## How to read
 
 <div class="tip" markdown="1">
