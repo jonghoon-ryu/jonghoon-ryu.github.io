@@ -364,3 +364,44 @@ def notyet():
     for i, (t, k) in enumerate(nxt):
         d.box(300, 62 + i * 38, 620, 32, t, [], k, size=12, rx=4)
     return d.svg("what is not here yet")
+
+
+def threemachines():
+    d = D(1000, 470, "One usb.img, three machines: the same bytes boot on all of them")
+    d.box(370, 45, 260, 60, "usb.img", ["BOOTX64.EFI + kernel + fs.img"], "mem", size=12.5)
+    cols = [("QEMU (make qemu)", "hw", ["firmware: OVMF (UEFI)", "screen: 1280×800 → 16×32 font", "serial: COM1 → your terminal",
+                                       "PS/2: emulated", "xHCI: only with USB=1", "RAM: 512 MB"]),
+            ("VirtualBox (make vbox)", "hw", ["firmware: VirtualBox EFI", "screen: 2560×1440 → 32×64 font", "serial: COM1 → vbox/serial.log",
+                                              "PS/2: emulated (the window)", "xHCI: none (needs ext. pack)", "RAM: 512 MB, 2 CPUs (1 used)"]),
+            ("real PC (barebone)", "new", ["firmware: the board's UEFI", "screen: the monitor's mode", "serial: none (reads 0xFF)",
+                                          "PS/2: none (reads junk)", "xHCI: Intel 8086:7a60, 25 ports", "RAM: 32 GB"])]
+    for i, (t, k, ls) in enumerate(cols):
+        x = 15 + i * 330
+        d.path(f"M500,105 L500,125 L{x + 152},125 L{x + 152},143")
+        d.box(x, 145, 305, 190, t, ls, k, size=12.5)
+    d.box(15, 360, 970, 90, "how the same code copes", ["the UEFI standard hides the firmware differences from the loader; the loader writes what it found into bootinfo",
+                                                         "the kernel then asks the hardware at run time (no #ifdef): screen size from bootinfo, devices from PCI, missing ports read 0xFF"], "white", size=12)
+    return d.svg("three machines")
+
+
+def runtime():
+    d = D(1000, 520, "Compile time vs run time: where the kernel decides, and what it looks at")
+    rows = [("which screen, how big?", "bootinfo.fb_base / fb_width (from UEFI GOP)", "fb_base = 0 → serial only; width ≥ 2560 → big font", "fbcons.cpp"),
+            ("how much RAM, where?", "bootinfo memory map (from UEFI)", "dmapage() uses whatever regions are free", "xhci.cpp"),
+            ("is there a serial port?", "inb(0x3F8 + 5): 0xFF means nothing there", "output thrown away, input ignored", "uart.cpp"),
+            ("is there a PS/2 keyboard?", "inb(0x64): 0xFF or junk", "≤ 16 bytes per call; status 0xFF → none", "kbd.cpp"),
+            ("is there a USB controller?", "PCI scan for class 0x0C0330", "none found → \"usb: no xHCI controller\"", "pci.cpp"),
+            ("where are its registers?", "PCI BAR0, then capability registers", "QEMU 0xC0_0000_0000, real PC 0x60_0110_0000", "xhci.cpp"),
+            ("how many ports, scratchpad?", "HCSPARAMS1/2 registers", "QEMU 8 ports / 0 pages; real PC 25 / 34", "xhci.cpp"),
+            ("does the firmware still own it?", "USB Legacy Support capability", "BIOS-owned bit set → ask it to let go", "xhci.cpp"),
+            ("Intel 7/8/9 series chipset?", "PCI vendor/device ID", "route sockets to xHCI, else skip", "xhci.cpp")]
+    d.text(160, 52, "question", 12, True, color="#2c3e50"); d.text(450, 52, "what the code reads", 12, True, color="#2c3e50")
+    d.text(760, 52, "what happens", 12, True, color="#2c3e50")
+    for i, (q, how, what, f) in enumerate(rows):
+        y = 62 + i * 46
+        d.box(15, y, 290, 38, q, [], "base", size=11.5, rx=4)
+        d.text(320, y + 17, how, 11.5, anchor="start")
+        d.text(320, y + 33, f, 11.5, anchor="start", mono=True, color="#7f8c8d")
+        d.text(985, y + 24, what, 11.5, anchor="end", color="#1e8449")
+    d.text(500, 500, "the binary is identical everywhere; only the answers differ. No #ifdef QEMU anywhere in the kernel", 12, True, color="#2c3e50")
+    return d.svg("runtime detection")
