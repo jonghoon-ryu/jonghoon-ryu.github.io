@@ -48,6 +48,7 @@ Colors in the diagrams: <span style="background:#eafaf1;border:1px solid #1e8449
 | [`step-08`](/xv6/tutorial/step-08/) | `step-07` | `usb.cpp`: identifying USB devices |
 | [`step-09`](/xv6/tutorial/step-09/) | `step-08` | typing on a USB keyboard |
 | [`step-10`](/xv6/tutorial/step-10/) | `step-09` | USB hubs; the code verified on the real PC |
+| [`step-11`](/xv6/tutorial/step-11/) | `step-10` | `spinlock.cpp`: the first piece of the OS. Locks, the smallest `struct cpu`, `LockGuard`, `printk()`'s lock |
 
 **[Code explanation up to step 10](/xv6/tutorial/code-explanation-step-10/)**: the whole program at `step-10` in one page (boot, output, input, the USB keyboard), with diagrams: the starting point before step 11.
 

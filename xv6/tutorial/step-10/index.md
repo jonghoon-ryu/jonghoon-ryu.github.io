@@ -206,4 +206,4 @@ QEMU (`make qemu USB=1`: the keyboard behind a hub, typed with PS/2 switched off
 - (real PC, optional) plug the keyboard into a front socket: if it shows as `port 3.N` and types, the TT path works on real hardware
 </div>
 
-<div class="step-nav"><span>← <a href="/xv6/tutorial/step-09/">step-09</a></span><span><a href="/xv6/tutorial/">Tutorial</a> →</span></div>
+<div class="step-nav"><span>← <a href="/xv6/tutorial/step-09/">step-09</a></span><span><a href="/xv6/tutorial/step-11/">step-11</a> →</span></div>
