@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 헌 SSD 로 하는 실험
-permalink: /ftl-visual-simulator/old-ssd-experiments/
+permalink: /old-ssd-experiments/
 ---
 <style>
 .warn { background:#fdf2f0; border-left:4px solid #c0392b; padding:10px 14px; margin:1.2rem 0; }
