@@ -305,7 +305,35 @@ The same kernel on the screen, in QEMU and on the real PC (2026-10-07):
 
 @@IMG xv6-tut-step-10-step10-realpc.jpg step-10 on the real PC: the USB keyboard is on a root port, two hubs and other devices are ignored, typing works@@
 
-## 12. What comes next
+## 12. A good starting point, with almost zero OS?
+
+Yes, with some caveats.
+
+**Why it is a good starting point**
+
+- **You can see what's happening on every machine you'll use.** `printk` goes to the screen and the serial port, `panic` stops on errors, and a CPU exception prints a message instead of rebooting. Every later step will lean on that, especially on the real PC.
+- **It already runs on the hardware that matters.** The hardest "works in QEMU but not on the real PC" problems are solved: UEFI boot from a USB stick, a screen without a serial port, and a USB-only keyboard. From step 11 on, failures should be about OS logic, not about getting a machine to boot.
+- **The OS part really is close to zero.** Nothing manages anything: one CPU, no interrupts, no memory allocator, no address spaces, no processes, no system calls, no files. Each concept from step 11 onward arrives into a clean space.
+
+**Where "zero OS" isn't quite true**
+
+- **It runs on the firmware's setup, not its own.** UEFI chose 64-bit mode, paging and the page tables, and it also left the GDT (segment table) the kernel runs with. So the kernel never does the classic boot work of switching CPU modes and turning paging on, which old x86 xv6 did in `bootasm.S` and `entry.S`. You won't learn that from this code; in this design it is the firmware's job.
+- **There are a few small OS-like pieces already.** `consoleintr()` is a real line editor, `dmapage()` is a tiny page allocator, and the polling loop is a crude driver scheduler. They're simple, but they're there.
+- **The USB driver isn't OS, but it is the most complex code in the kernel.** It is hardware plumbing. You don't need to understand it to follow steps 11–42; treat it as a black box that calls `consoleintr(c)`.
+
+<div class="check" markdown="1">
+**One thing to watch later: the firmware's page tables.** Some of step-10 only works because the firmware's page tables map every address to itself. In steps 13–14, when the kernel builds its own page tables, they must also map:
+
+- the frame buffer,
+- the xHCI registers, wherever they are (`0xC0_0000_0000` in QEMU),
+- the `dmapage()` memory above `PHYSTOP`.
+
+Otherwise the screen and the USB keyboard stop working the moment the new page tables are switched on. On the real PC, that is exactly the kind of failure that looks like a silent hang. It is the main debt this starting point carries.
+</div>
+
+So: a working, debuggable machine with no OS on top. That is a good place for step 11 (spinlock) to begin.
+
+## 13. What comes next
 
 @@FIG code10 notyet@@
 

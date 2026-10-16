@@ -599,7 +599,35 @@ The same kernel on the screen, in QEMU and on the real PC (2026-10-07):
 
 ![step-10 on the real PC: the USB keyboard is on a root port, two hubs and other devices are ignored, typing works](/assets/image/xv6-tut-step-10-step10-realpc.jpg)
 
-## 12. What comes next
+## 12. A good starting point, with almost zero OS?
+
+Yes, with some caveats.
+
+**Why it is a good starting point**
+
+- **You can see what's happening on every machine you'll use.** `printk` goes to the screen and the serial port, `panic` stops on errors, and a CPU exception prints a message instead of rebooting. Every later step will lean on that, especially on the real PC.
+- **It already runs on the hardware that matters.** The hardest "works in QEMU but not on the real PC" problems are solved: UEFI boot from a USB stick, a screen without a serial port, and a USB-only keyboard. From step 11 on, failures should be about OS logic, not about getting a machine to boot.
+- **The OS part really is close to zero.** Nothing manages anything: one CPU, no interrupts, no memory allocator, no address spaces, no processes, no system calls, no files. Each concept from step 11 onward arrives into a clean space.
+
+**Where "zero OS" isn't quite true**
+
+- **It runs on the firmware's setup, not its own.** UEFI chose 64-bit mode, paging and the page tables, and it also left the GDT (segment table) the kernel runs with. So the kernel never does the classic boot work of switching CPU modes and turning paging on, which old x86 xv6 did in `bootasm.S` and `entry.S`. You won't learn that from this code; in this design it is the firmware's job.
+- **There are a few small OS-like pieces already.** `consoleintr()` is a real line editor, `dmapage()` is a tiny page allocator, and the polling loop is a crude driver scheduler. They're simple, but they're there.
+- **The USB driver isn't OS, but it is the most complex code in the kernel.** It is hardware plumbing. You don't need to understand it to follow steps 11–42; treat it as a black box that calls `consoleintr(c)`.
+
+<div class="check" markdown="1">
+**One thing to watch later: the firmware's page tables.** Some of step-10 only works because the firmware's page tables map every address to itself. In steps 13–14, when the kernel builds its own page tables, they must also map:
+
+- the frame buffer,
+- the xHCI registers, wherever they are (`0xC0_0000_0000` in QEMU),
+- the `dmapage()` memory above `PHYSTOP`.
+
+Otherwise the screen and the USB keyboard stop working the moment the new page tables are switched on. On the real PC, that is exactly the kind of failure that looks like a silent hang. It is the main debt this starting point carries.
+</div>
+
+So: a working, debuggable machine with no OS on top. That is a good place for step 11 (spinlock) to begin.
+
+## 13. What comes next
 
 <!-- fig:notyet -->
 <svg viewBox="0 0 1000 300" style="font-variant-ligatures:none;width:100%;max-width:1000px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="what is not here yet"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="500.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">What step-10 has, and what the next 32 steps add</text><text x="130.0" y="50.0" font-size="12.5" font-weight="700" fill="#1e8449" text-anchor="middle">at step-10</text><rect x="30" y="62" width="200" height="42" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="130.0" y="87.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">boot</text><rect x="30" y="114" width="200" height="42" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="130.0" y="139.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">console out</text><rect x="30" y="166" width="200" height="42" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="130.0" y="191.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">PS/2 + serial in</text><rect x="30" y="218" width="200" height="42" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="130.0" y="243.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">USB keyboard</text><text x="610.0" y="50.0" font-size="12.5" font-weight="700" fill="#566573" text-anchor="middle">to come (from the progress page)</text><rect x="300" y="62" width="620" height="32" rx="4" fill="#f4f6f7" stroke="#7f8c8d" stroke-width="2"/><text x="610.0" y="82.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">11-14 memory: spinlock, kalloc, page tables (vm)</text><rect x="300" y="100" width="620" height="32" rx="4" fill="#f4f6f7" stroke="#7f8c8d" stroke-width="2"/><text x="610.0" y="120.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">15-19 traps, interrupts: ACPI, IDT, LAPIC, IOAPIC</text><rect x="300" y="138" width="620" height="32" rx="4" fill="#f4f6f7" stroke="#7f8c8d" stroke-width="2"/><text x="610.0" y="158.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">20-26 processes, scheduler, system calls, several CPUs</text><rect x="300" y="176" width="620" height="32" rx="4" fill="#f4f6f7" stroke="#7f8c8d" stroke-width="2"/><text x="610.0" y="196.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">27-33 file system (fs.img as a RAM disk)</text><rect x="300" y="214" width="620" height="32" rx="4" fill="#f4f6f7" stroke="#7f8c8d" stroke-width="2"/><text x="610.0" y="234.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">34-39 user programs, shell, usertests</text><rect x="300" y="252" width="620" height="32" rx="4" fill="#f4f6f7" stroke="#7f8c8d" stroke-width="2"/><text x="610.0" y="272.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">40-42 C++ cleanup, real PC, v1.0-cpp</text></svg>
