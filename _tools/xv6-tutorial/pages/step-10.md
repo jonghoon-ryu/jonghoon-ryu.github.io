@@ -74,7 +74,7 @@ QEMU (`make qemu USB=1`: the keyboard behind a hub, typed with PS/2 switched off
 
 ### The real PC (barebone), 2026-10-07
 
-@@IMG xv6-tut-step-10-step10-realpc.jpg the real PC: "Hi, claude / It looks like it works!" typed on the USB keyboard@@
+@@IMG xv6-tut-step-10-step10-realpc.jpg the real PC: a test message typed on the USB keyboard appears on the screen@@
 
 @@FIG step10 tree@@
 

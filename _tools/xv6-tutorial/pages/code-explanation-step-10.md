@@ -263,46 +263,111 @@ A keyboard in **boot protocol** sends a fixed 8-byte report whenever the set of 
 
 ## 11. One program, three machines
 
-Everything above runs, unchanged, on **three** machines: QEMU, VirtualBox and the real PC (the barebone). It is not three builds. `make` produces one `usb.img`. `make qemu` and `make vbox` boot that file, and the same file written to a USB stick boots the real PC. It is the same bytes everywhere.
+This section answers one question: **how can a single file, `usb.img`, run correctly on three machines that are clearly different?**
+
+### 11.1 There is only one program
+
+You might expect three versions: a QEMU build, a VirtualBox build and a real-PC build. There aren't. `make` produces **one** file, and all three machines boot that same file:
+
+```
+             make
+              │
+           usb.img      (one file, the same bytes)
+       ┌──────┼──────────────┐
+     QEMU   VirtualBox    USB stick → real PC
+```
 
 @@FIG code10 threemachines@@
+
+The three machines really are different:
 
 | | QEMU (`make qemu`) | VirtualBox (`make vbox`) | Real PC (barebone) |
 |---|---|---|---|
 | What it is | an emulator: a program that pretends to be a PC (q35 chipset) | a virtual machine program, with its own emulated PC | the actual hardware |
 | UEFI firmware | OVMF (Ubuntu's `ovmf` package) | VirtualBox's own EFI | the motherboard's |
-| Screen | 1280×800 → 16×32 font | 2560×1440 (set by `vbox.sh`) → 32×64 font | the monitor's mode; it got the 16×32 font |
+| Screen | 1280×800 → 16×32 font | 2560×1440 (set by `vbox.sh`) → 32×64 font | the monitor's mode (1920×1080) → 16×32 font |
 | Serial port (COM1) | yes: your terminal | yes: `vbox/serial.log` | **none**: its ports read `0xFF` |
 | PS/2 keyboard | yes: typing into the QEMU window | yes: typing into the VirtualBox window | **none** (its status port read `0x55`) |
 | USB controller (xHCI) | only with `make qemu USB=1` (vendor `1b36`) | none (VirtualBox's needs its extension pack) | Intel `8086:7a60`, 25 ports, 34 scratchpad pages |
 | RAM | 512 MB | 512 MB | 32 GB |
 | Used for | daily development: fast, scriptable, `USB=1` to test the USB path | a second opinion with a different firmware; the big-screen font | **the bar**: a step is done only when it works here |
 
-### How can one program run on all three, with no `#ifdef`?
+### 11.2 The program looks before it acts
 
-A natural guess is that there are `#ifdef QEMU` blocks, or three builds. There aren't: the only `#if` in the kernel is `#ifndef __ASSEMBLER__` in `x86.h`, which lets assembly files include that header, and has nothing to do with platforms. Three things make one binary work everywhere.
+The program never assumes which machine it is on. It **checks what is there while it runs**, and adapts. Think of a traveller with one suitcase: they don't pack a different suitcase for each hotel. When they arrive, they look around. Is there a hair dryer? If not, they don't use one.
 
-**1. All three are "a PC" to the code.** They run the same x86-64 instructions, and QEMU and VirtualBox emulate the same standard devices a real PC has (or had): the 16550 UART at I/O port `0x3F8`, the PS/2 controller at `0x60`/`0x64`, PCI configuration at `0xCF8`/`0xCFC`. Code written for the real chips works on the emulated ones, which is the whole point of emulating them.
+Here is the screen code (`fbconsinit()` in `fbcons.cpp`), shortened:
 
-**2. UEFI is a standard interface.** The loader never talks to the firmware's internals. It calls services that every UEFI firmware must provide, in the same way: open a file, allocate pages, get the memory map, find the Graphics Output Protocol (the screen). OVMF, VirtualBox's EFI and the board's firmware are three different programs behind the same interface, the way three printers all speak the same printing protocol. The loader writes the **answers** into `struct bootinfo`.
+```cpp
+if (bootinfo.fb_base == 0)            // is there a screen at all?
+  return;                             //   no: don't draw
+if (bootinfo.fb_width >= BIGSCREEN) { // how wide is it? (BIGSCREEN = 2560)
+  cons.charw = 32; ...                //   very wide: big font
+} else {
+  cons.charw = 16; ...                //   otherwise: normal font
+}
+```
 
-**3. The kernel decides at run time, by asking, not at compile time, by assuming.** Wherever the machines differ, the code looks at the hardware (or at `bootinfo`) and follows what it finds:
+The same lines run on all three machines, but the answers differ:
+
+| | QEMU | VirtualBox | Real PC |
+|---|---|---|---|
+| `bootinfo.fb_width` | 1280 | 2560 | 1920 |
+| font | 16×32 | **32×64** | 16×32 |
+
+No code changed. Only the **answer to the question** changed. Where does `bootinfo` come from? The UEFI loader fills it in (section 4). UEFI is a standard: every UEFI firmware must offer the same services (open a file, allocate pages, give the memory map, find the screen) in the same way. OVMF, VirtualBox's EFI and the motherboard's firmware are three different programs behind one interface, the way three printers all understand the same printing protocol. The loader asks, and writes the **answers** into `struct bootinfo`.
 
 @@FIG code10 runtime@@
 
-Some examples from the code:
-- **The screen.** `fbconsinit()` returns at once if `bootinfo.fb_base` is 0, and picks the font from `bootinfo.fb_width` (≥ 2560 → 32×64). The same line of code gives VirtualBox the big font and QEMU the small one.
-- **A missing device.** On the real PC there is no UART, and reading any of its ports returns `0xFF`. `uartputc_sync()` waits for bit 5 of the status register, which is set in `0xFF`, so output goes nowhere instead of hanging. `uartgetc()` treats a status of `0xFF` as "nothing there". The PS/2 code works the same way, with the extra rule of at most 16 bytes per call, because the real PC's missing controller read `0x55`, not `0xFF`.
-- **A device that may or may not exist.** `usbinit()` scans the PCI bus for an xHCI controller. In QEMU without `USB=1` and in VirtualBox it finds none, prints `usb: no xHCI controller`, and the polling loop's `usbintr()` does nothing. On the real PC it finds the Intel one, at whatever address the firmware gave it.
-- **The same device, different details.** The controller's register address comes from PCI (`0xC0_0000_0000` in QEMU, `0x60_0110_0000` on the real PC), and the number of ports and scratchpad pages from its own capability registers (8 and 0 in QEMU, 25 and 34 on the real PC). Nothing about them is written into the code.
+### 11.3 Missing hardware: asking works there too
 
-This is the same thing a full OS like Linux does, at a much larger scale: one kernel image boots on thousands of different PCs because it **discovers** the machine (ACPI tables, PCI, CPUID) instead of being compiled for one.
+The real PC has **no serial port** and **no PS/2 keyboard**. QEMU and VirtualBox have both, because they copy the standard devices of a PC (the 16550 UART at I/O port `0x3F8`, the PS/2 controller at `0x60`/`0x64`, PCI configuration at `0xCF8`/`0xCFC`). Reading a port where nothing is connected returns `0xFF`, so the code asks "did I read `0xFF`?" and, if so, treats the device as absent:
 
-### What the `[platform: …]` comments are
+- **Serial port.** In QEMU it exists and is used. On the real PC it reads `0xFF`. `uartputc_sync()` waits for bit 5 of the status register, which is set in `0xFF`, so output goes nowhere instead of hanging. `uartgetc()` treats a status of `0xFF` as "nothing there".
+- **PS/2 keyboard.** The same idea, plus one extra rule: at most 16 bytes per call. The real PC's missing controller read `0x55`, not `0xFF`, and this rule stops that garbage from flooding the input.
+- **USB controller.** `usbinit()` searches the PCI bus for an xHCI controller. In VirtualBox (and in QEMU without `USB=1`) it finds none, prints `usb: no xHCI controller` and moves on. On the real PC it finds the Intel one.
+- **Same device, different details.** The controller's register address comes from PCI (`0xC0_0000_0000` in QEMU, `0x60_0110_0000` on the real PC). The number of ports and scratchpad pages comes from its own registers (8 and 0 in QEMU, 25 and 34 on the real PC). None of these numbers is written in the code.
 
-The code has 35 comment lines like `// [platform: real PC] most PCs have no COM1 …`. They are **only comments**, not conditional code. They mark lines that exist *because of* one platform, so that the reason isn't forgotten. Every line is compiled and runs on all three. On the other two machines that line simply finds nothing to do: the `0xFF` check never triggers in QEMU, which has a UART.
+### 11.4 Why "no `#ifdef`" matters
 
-The few real differences are outside the kernel, in how each machine is **started**: the `Makefile`'s `qemu` target (QEMU's command line, OVMF, `USB=1`), `vbox.sh` (creating the VirtualBox VM and its 2560×1440 setting), and writing `usb.img` to a stick with `dd` for the real PC.
+The other way to support three machines would be:
+
+```cpp
+#ifdef REAL_PC
+  // ...skip the serial port...
+#else
+  // ...use the serial port...
+#endif
+```
+
+That gives you three different programs. You could test the QEMU build and still ship a broken real-PC build. Because there is **one** program, what you test in QEMU is exactly what runs on the barebone. (The only `#if` in the kernel is `#ifndef __ASSEMBLER__` in `x86.h`, which lets assembly files include that header. It has nothing to do with platforms.)
+
+Linux does the same at a much larger scale: one kernel image boots on thousands of different PCs because it **discovers** the machine (ACPI tables, PCI, CPUID) instead of being compiled for one.
+
+### 11.5 The `[platform: …]` comments are only notes
+
+The kernel and the loader have 30 comment lines like `// [platform: real PC] most PCs have no COM1 …` (and the `Makefile` and `vbox.sh` 5 more). They don't switch anything on or off. They explain **why** a line exists: "this `0xFF` check is here because the real PC has no COM1". Every such line is compiled and runs on all three machines. On QEMU, which has a UART, the `0xFF` check simply never triggers.
+
+### 11.6 Question: so it runs on all three without changing anything?
+
+**Q.** *Are you saying this program runs on three different platforms without any changes?*
+
+**A.** Yes, with one clarification about what "without changes" covers.
+
+**What stays exactly the same: the program.** `make` builds one `usb.img`. QEMU boots that file directly, VirtualBox boots a copy converted to its disk format (`VBoxManage convertfromraw`: same contents, different container), and the real PC boots it from a USB stick. No recompiling, no settings file, no `#ifdef`. Steps 10 and 11 were each checked this way: one build, booted in QEMU, VirtualBox and on the barebone.
+
+**What differs: how each machine is started**, outside the program:
+- **QEMU:** the `Makefile`'s `qemu` target gives QEMU its options: the firmware (OVMF), 512 MB of memory, and with `USB=1` an added USB controller, hub and keyboard. These change the *virtual machine*, not `usb.img`.
+- **VirtualBox:** `vbox.sh` creates the VM, turns on EFI, and sets the screen to 2560×1440.
+- **Real PC:** write the file to a stick with `dd` and boot from it.
+
+It is like one movie file played on three TVs: the file doesn't change, but each TV is switched on in its own way.
+
+**What is *not* claimed:**
+- **"It runs on any PC."** It has been tested on exactly these three machines. Another PC could hit a case the code doesn't handle yet. For example, the only real USB controller it has met is Intel's, and a PC with an AMD chipset might behave differently. The "ask, don't assume" design makes that likely to work, but it is not proven.
+- **"It behaves identically everywhere."** The same code gives different results on different machines: a different font size, serial output or none, PS/2 keyboard or USB keyboard. That is on purpose: **same code, different findings.**
+
+**In one sentence:** one unchanged program has been booted and tested on QEMU, VirtualBox and the real PC, and it adapts to each one while it runs, because all three look like "a PC", all three speak UEFI, and wherever they differ the program asks the hardware instead of being built for one machine.
 
 <div class="check" markdown="1">
 **Why test on all three?** Each one hides different bugs. QEMU is forgiving and fast. VirtualBox has another firmware, so it catches assumptions about one firmware's behaviour. The real PC catches everything an emulator gets "too right": the missing serial port and PS/2 controller, the firmware still owning the USB controller, memory the firmware didn't map. Steps 6–10 exist only because the real PC was the bar, and passing on QEMU wasn't enough.
