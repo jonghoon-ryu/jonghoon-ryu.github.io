@@ -57,5 +57,5 @@ MQSim 엔진을 WASM 으로 그대로 컴파일해서, 웹 기반으로 동작�
 ## 참고
 
 - MQSim ( GitHub ): [github.com/CMU-SAFARI/MQSim](https://github.com/CMU-SAFARI/MQSim)
-- 관련 배경 지식 : [OS 공부](/learning-cs/os/) 에서 다루는 페이지 매핑, 캐싱, 스케줄링 개념이 FTL 을 이해하는 데도 많이 겹침
+- 관련 배경 지식 : [OS 공부 (xv6 목표)](/xv6/goal/) 에서 다루는 페이지 매핑, 캐싱, 스케줄링 개념이 FTL 을 이해하는 데도 많이 겹침
 - 관련 문서 : [FTL Visual Simulator](/ftl-visual-simulator/) · [개발 계획](/ftl-visual-simulator/plan/) · [MQSim 코드 분석](/ftl-visual-simulator/reference/mqsim-code-analysis/)

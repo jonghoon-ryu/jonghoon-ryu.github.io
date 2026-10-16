@@ -53,6 +53,36 @@ MIT 의 xv6 는 QEMU 의 가상 기계에서만 돈다. 이 프로젝트는 그�
 
 <div style="margin-top: 100px;"></div>
 
+## 시작 : 왜 OS 를, 왜 xv6 로
+
+이 프로젝트는 원래 **OS 공부** 로 시작했다 (예전 Learning CS → OS 페이지의 내용을 여기로 옮겼다).
+
+### 왜 OS 부터 시작했나
+
+- 한 번도 끝까지 해 보지 못했다 (그때그때 필요한 부분만 공부)
+- FTL 에 도움이 된다고 들었다 : 비슷한 개념이 많다 (페이지 매핑, 캐싱, 스케줄링)
+- 좋은 자료가 많다
+- Better late than never !
+
+### 교재 : OSTEP
+
+- *Operating Systems: Three Easy Pieces* (OSTEP), 평이 좋다
+- 무료 전자책이 있다 (그래도 종이책을 샀다. 불만은 글자가 너무 작다는 것)
+- 숙제에 xv6 를 쓴다. xv6 자체도 평이 좋다
+
+### Claude 로 숙제가 되는지 미리 해 보기
+
+- Claude 에게 숙제를 시키고, 동영상까지 만들어 보라고 했다
+- 제대로 된 것인지는 공부하면서 확인해야 한다
+
+<video controls width="100%">
+  <source src="{{ '/assets/video/xv6-demo.mp4' | relative_url }}" type="video/mp4">
+</video>
+
+xv6 를 들여다볼수록, 숙제를 푸는 것보다 **xv6 자체를 실제 PC 로 옮기고 C++ 로 다시 쓰는 것** 이 더 깊이 배우는 길로 보였다. 그 결과가 위의 최종 목표다. 왜 그것이 그냥 되지 않는지가 바로 다음 절이다.
+
+<div style="margin-top: 100px;"></div>
+
 ## 출발점 : xv6 는 왜 RISC-V 로 갔고, 왜 QEMU 에서만 도나
 
 ### xv6 의 역사
@@ -142,3 +172,13 @@ xv6-riscv 의 `kernel/memlayout.h`, `Makefile` (`QEMUOPTS = -machine virt -bios 
   - `acquire`/`release` → RAII `LockGuard`
   - 멤버 함수는 자연스러운 곳에만
 - **어셈블리 (`.S`) 는 그대로** 둔다
+
+<div style="margin-top: 100px;"></div>
+
+## 참고 자료
+
+- OSTEP : [pages.cs.wisc.edu/~remzi/OSTEP](https://pages.cs.wisc.edu/~remzi/OSTEP/)
+  - 무료 PDF 와 숙제
+  - 저자 직강 : [youtu.be/NKSdWvrvovw](https://youtu.be/NKSdWvrvovw?si=u8nTCZLe9AjEpvYD) (첫 강의는 음량이 고르지 않지만, 있는 것만도 고맙다)
+- xv6 (MIT 6.1810) : [pdos.csail.mit.edu/6.1810/2024/xv6.html](https://pdos.csail.mit.edu/6.1810/2024/xv6.html)
+- xv6 강의 (꽤 자세하다) : [youtu.be/xieHeMeu1HQ](https://youtu.be/xieHeMeu1HQ?si=tyNzh3_0uSzrCJ9J)
