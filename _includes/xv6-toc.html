@@ -1,0 +1,52 @@
+<!-- Table of contents for every /xv6/ page (2026-10-16): built in the browser from the
+     page's h2/h3 headings and placed just before the first h2, so new step pages get one
+     with no per-page markup. Label: "Contents" on the English tutorial, "목차" elsewhere. -->
+<style>
+#main_content .page-toc{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:6px;padding:10px 18px 12px;margin:24px 0 8px;max-width:74ch}
+#main_content .page-toc summary{cursor:pointer;font-weight:600;color:var(--ink)}
+#main_content .page-toc ol{list-style:none;margin:8px 0 0;padding:0}
+#main_content .page-toc ol ol{margin:2px 0 4px;padding-left:1.4em}
+#main_content .page-toc li{font-size:16px;line-height:1.6;margin:1px 0}
+#main_content .page-toc ol ol li{font-size:15px}
+#main_content .page-toc a{text-decoration:none}
+#main_content .page-toc a:hover{text-decoration:underline}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var main = document.getElementById('main_content');
+  if (!main) return;
+  var heads = Array.prototype.filter.call(main.querySelectorAll('h2, h3'), function (h) {
+    return !h.closest('details, svg, .page-toc');
+  });
+  if (heads.filter(function (h) { return h.tagName === 'H2'; }).length < 2) return;
+
+  var en = document.documentElement.classList.contains('lang-en');
+  var box = document.createElement('details');
+  box.className = 'page-toc';
+  box.open = true;
+  var sum = document.createElement('summary');
+  sum.textContent = en ? 'Contents' : '목차';
+  box.appendChild(sum);
+
+  var top = document.createElement('ol'), sub = null, n = 0;
+  top.className = 'toc-list';
+  box.appendChild(top);
+  heads.forEach(function (h) {
+    if (!h.id) h.id = 'sec-' + (++n);
+    var li = document.createElement('li'), a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    li.appendChild(a);
+    if (h.tagName === 'H2' || !top.lastElementChild) {
+      top.appendChild(li);
+      sub = null;
+    } else {
+      if (!sub) { sub = document.createElement('ol'); top.lastElementChild.appendChild(sub); }
+      sub.appendChild(li);
+    }
+  });
+
+  var first = heads[0];
+  first.parentNode.insertBefore(box, first);
+});
+</script>

@@ -11,6 +11,7 @@
 {% seo %}
 {% feed_meta %}
     {% include head-custom.html %}
+    {% if page.url contains '/xv6/' %}{% include xv6-toc.html %}{% endif %}
   </head>
 
   <body>
