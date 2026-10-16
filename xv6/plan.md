@@ -197,7 +197,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
   <tbody>
     <tr><td>코드</td><td><a href="https://github.com/jonghoon-ryu/xv6-x86_64">github.com/jonghoon-ryu/xv6-x86_64</a> · <code>main</code> = C 버전, <code>cpp</code> = C++ 작업 중</td></tr>
     <tr><td>원본</td><td><a href="https://github.com/mit-pdos/xv6-riscv">mit-pdos/xv6-riscv</a></td></tr>
-    <tr><td>책</td><td><a href="https://pdos.csail.mit.edu/6.1810/2025/xv6/book-riscv-rev5.pdf"><em>xv6: a simple, Unix-like teaching operating system</em>, RISC-V rev5</a> (무료 PDF)</td></tr>
+    <tr><td>책</td><td><a href="https://pdos.csail.mit.edu/6.1810/2025/xv6/book-riscv-rev5.pdf"><em>xv6: a simple, Unix-like teaching operating system</em>, RISC-V rev5</a> (무료 PDF) · 이 페이지의 장·절 번호는 rev5 기준 (예전 판보다 5장 이후가 하나씩 밀림: 5장 Page faults 가 새로 생김)</td></tr>
     <tr><td>x86-64 참고</td><td><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel SDM</a> Vol.3 · <a href="https://wiki.osdev.org/">OSDev Wiki</a></td></tr>
   </tbody>
 </table>
@@ -363,7 +363,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 ## Part 3 · 메모리
 
-*책 Ch.3 · 커널이 자기 페이지 테이블을 갖기까지*
+*책 Ch.7 (락), Ch.3 · 커널이 자기 페이지 테이블을 갖기까지*
 
 <div class="session" data-session="11" markdown="1">
 
@@ -372,7 +372,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="11"> 완료</label>
 
 - **🤖 Claude :** 최소한의 <code>struct cpu</code>, <code>push_off</code> / <code>pop_off</code>, RAII <code>LockGuard</code>
-- **👤 Ryu (2h) :** <code>acquire</code>/<code>release</code> 짝이 <code>LockGuard</code> 로 바뀌는 것 보기 · 책 <b>Ch.6</b> 앞부분
+- **👤 Ryu (2h) :** <code>acquire</code>/<code>release</code> 짝이 <code>LockGuard</code> 로 바뀌는 것 보기 · 책 <b>Ch.7</b> 7.1–7.5 · 8.5 (mycpu)
 
 </div>
 
@@ -414,7 +414,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 ## Part 4 · 트랩과 인터럽트
 
-*책 Ch.4–5 · 처음으로 화면이 "움직이기" 까지*
+*책 Ch.4, 6 · 처음으로 화면이 "움직이기" 까지*
 
 <div class="session" data-session="15" markdown="1">
 
@@ -445,7 +445,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="17"> 완료</label>
 
 - **🤖 Claude :** LAPIC 타이머 인터럽트, <code>ticks</code> · 화면에 초 단위 카운터
-- **👤 Ryu (2h) :** <code>hlt</code> 가 이제는 타이머가 깨울 때까지만 잔다 · 책 <b>Ch.5</b> 5.4
+- **👤 Ryu (2h) :** <code>hlt</code> 가 이제는 타이머가 깨울 때까지만 잔다 · 책 <b>Ch.6</b> 6.4
 - 🎯 **이정표 : 화면이 움직인다 (타이머)**
 
 </div>
@@ -457,7 +457,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="18"> 완료</label>
 
 - **🤖 Claude :** IOAPIC, UART 인터럽트 · Step 5 의 폴링 대신 인터럽트가 <code>uartintr()</code> 를 부른다
-- **👤 Ryu (2h) :** 책 <b>Ch.5</b> 5.1–5.3 (콘솔 입력)
+- **👤 Ryu (2h) :** 책 <b>Ch.6</b> 6.1–6.3 (콘솔 입력)
 
 </div>
 
@@ -468,7 +468,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="19"> 완료</label>
 
 - **🤖 Claude :** 키보드 인터럽트 (IRQ1) 가 <code>kbdintr()</code> 를 부른다 · USB 키보드는 xHCI 인터럽트 (MSI) 로 · 폴링 루프를 지우고 다시 <code>hlt</code> (CPU 100% → 0%)
-- **👤 Ryu (2h) :** 책 <b>Ch.5</b> 끝
+- **👤 Ryu (2h) :** 책 <b>Ch.6</b> 끝
 - 🎯 **이정표 : 인터럽트로 키보드 입력**
 
 </div>
@@ -477,7 +477,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 ## Part 5 · 프로세스
 
-*책 Ch.4, 7 · 첫 사용자 프로그램과 시스템 콜*
+*책 Ch.4, 7–9 · 첫 사용자 프로그램과 시스템 콜*
 
 <div class="session" data-session="20" markdown="1">
 
@@ -486,7 +486,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="20"> 완료</label>
 
 - **🤖 Claude :** <code>struct proc</code>, 프로세스 표, 커널 스택
-- **👤 Ryu (2h) :** 책 <b>Ch.7</b> 앞부분
+- **👤 Ryu (2h) :** 책 <b>Ch.8</b> 8.1–8.2
 
 </div>
 
@@ -497,7 +497,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="21"> 완료</label>
 
 - **🤖 Claude :** 문맥 교환 · 커널 스레드 두 개가 번갈아 출력
-- **👤 Ryu (2h) :** <code>swtch</code> 에서 저장하는 레지스터 (RISC-V ↔ x86-64) · 책 <b>Ch.7</b> 7.1–7.4
+- **👤 Ryu (2h) :** <code>swtch</code> 에서 저장하는 레지스터 (RISC-V ↔ x86-64) · 책 <b>Ch.8</b> 8.3–8.5
 
 </div>
 
@@ -508,7 +508,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="22"> 완료</label>
 
 - **🤖 Claude :** 잠들기와 깨우기, sleep lock
-- **👤 Ryu (2h) :** 책 <b>Ch.7</b> 7.5–7.9
+- **👤 Ryu (2h) :** 책 <b>Ch.9</b> 9.1–9.2, 9.4–9.5 · 7.7 (sleep lock)
 
 </div>
 
@@ -542,7 +542,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="25"> 완료</label>
 
 - **🤖 Claude :** <code>startothers</code> 로 나머지 CPU 깨우기 · <code>CPUS=4</code>
-- **👤 Ryu (2h) :** AP 부팅 (16비트 → 64비트) 과정 · 책 <b>Ch.6</b> 6.1–6.3
+- **👤 Ryu (2h) :** AP 부팅 (16비트 → 64비트) 과정 · 책 <b>Ch.7</b> 7.1–7.3
 
 </div>
 
@@ -561,7 +561,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 
 ## Part 6 · 파일 시스템
 
-*책 Ch.8 · /init 이 실행되기까지*
+*책 Ch.10 · /init 이 실행되기까지*
 
 <div class="session" data-session="27" markdown="1">
 
@@ -570,7 +570,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="27"> 완료</label>
 
 - **🤖 Claude :** 진짜 <code>fs.img</code> 만들기 · 램디스크에서 슈퍼블록 읽어 출력
-- **👤 Ryu (2h) :** 책 <b>Ch.8</b> 8.1–8.2 (디스크 구조)
+- **👤 Ryu (2h) :** 책 <b>Ch.10</b> 10.1–10.2 (디스크 구조)
 
 </div>
 
@@ -581,7 +581,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="28"> 완료</label>
 
 - **🤖 Claude :** 버퍼 캐시
-- **👤 Ryu (2h) :** 책 <b>Ch.8</b> 8.3
+- **👤 Ryu (2h) :** 책 <b>Ch.10</b> 10.3
 
 </div>
 
@@ -592,7 +592,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="29"> 완료</label>
 
 - **🤖 Claude :** 로그 (crash 복구)
-- **👤 Ryu (2h) :** 책 <b>Ch.8</b> 8.4–8.6
+- **👤 Ryu (2h) :** 책 <b>Ch.10</b> 10.4–10.6
 
 </div>
 
@@ -603,7 +603,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="30"> 완료</label>
 
 - **🤖 Claude :** 블록 할당, inode
-- **👤 Ryu (2h) :** 책 <b>Ch.8</b> 8.7–8.10
+- **👤 Ryu (2h) :** 책 <b>Ch.10</b> 10.7–10.10
 
 </div>
 
@@ -614,7 +614,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="31"> 완료</label>
 
 - **🤖 Claude :** 디렉터리, 경로 찾기
-- **👤 Ryu (2h) :** 책 <b>Ch.8</b> 8.11–8.12
+- **👤 Ryu (2h) :** 책 <b>Ch.10</b> 10.11–10.12
 
 </div>
 
@@ -625,7 +625,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="32"> 완료</label>
 
 - **🤖 Claude :** 파일 표, 파이프
-- **👤 Ryu (2h) :** 책 <b>Ch.8</b> 8.13 · <b>Ch.1</b> 파이프 다시 보기
+- **👤 Ryu (2h) :** 책 <b>Ch.10</b> 10.13 · <b>Ch.9</b> 9.3 (파이프) · <b>Ch.1</b> 파이프 다시 보기
 
 </div>
 
@@ -636,7 +636,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="33"> 완료</label>
 
 - **🤖 Claude :** 파일 시스템 콜, ELF 로딩 · <code>/init</code> 실행
-- **👤 Ryu (2h) :** 책 <b>Ch.3</b> 3.8 (exec)
+- **👤 Ryu (2h) :** 책 <b>Ch.3</b> 3.7 (exec)
 - 🎯 **이정표 : /init 실행**
 
 </div>
@@ -698,7 +698,7 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="38"> 완료</label>
 
 - **🤖 Claude :** 나머지 변환 · <code>usertests</code> 전체 통과 · <code>grind</code>
-- **👤 Ryu (2h) :** 책 <b>Ch.9</b> (동시성 다시 보기)
+- **👤 Ryu (2h) :** 책 <b>Ch.11</b> (동시성 다시 보기)
 - 🎯 **이정표 : usertests 전체 통과**
 
 </div>
