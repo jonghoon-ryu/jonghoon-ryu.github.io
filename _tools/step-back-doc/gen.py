@@ -106,15 +106,15 @@ def fig_two_options():
             s.text(x + (dx - 6) / 2, y + 26, str(i + 1) if i < 16 else '…', 10, None, SUB)
     # A: arrow from 0 replay to 15
     s.path(f'M{x0 + 16 * dx - 20},{60 + 4} L{x0 + 16 * dx - 20},{48} L{x0 + 4},{48} L{x0 + 4},{64}')
-    s.text(x0 + 8 * dx, 42, '⏪ = init() 후 1 ~ 15 줄을 다시 실행 → 늦게 누를수록 오래 걸리고, 화면 상태도 전부 다시 쌓아야 함', 10.5, None, '#566573')
-    s.text(490, 120, '줄 16 을 보고 있을 때 ⏪ 를 누르면 → 줄 15 까지의 상태가 필요하다', 11, '700', INK)
+    s.text(x0 + 8 * dx, 42, '< 1 step = init() 후 1 ~ 15 줄을 다시 실행 → 늦게 누를수록 오래 걸리고, 화면 상태도 전부 다시 쌓아야 함', 10.5, None, '#566573')
+    s.text(490, 120, '줄 16 을 보고 있을 때 < 1 step 을 누르면 → 줄 15 까지의 상태가 필요하다', 11, '700', INK)
     # B: snapshots under each box
     for i in range(16):
         x = x0 + i * dx
         s.add(f'<rect x="{x + 6}" y="{214}" width="{dx - 18}" height="16" rx="3" fill="#f4ecf7" stroke="#7d3c98" stroke-width="1"/>')
     s.text(x0 - 10, 226, '스냅샷', 10, None, '#7d3c98', anchor='end')
     s.path(f'M{x0 + 15 * dx + 12},{230} L{x0 + 15 * dx + 12},{250} L{x0 + 14 * dx + 12},{250} L{x0 + 14 * dx + 12},{232}', color='#7d3c98')
-    s.text(x0 + 11 * dx, 268, '⏪ = 줄 16 직전에 찍어 둔 사본 하나를 되돌려 씀 → 언제 누르든 약 1 ms', 10.5, None, '#566573')
+    s.text(x0 + 11 * dx, 268, '< 1 step = 줄 16 직전에 찍어 둔 사본 하나를 되돌려 씀 → 언제 누르든 약 1 ms', 10.5, None, '#566573')
     s.text(490, 292, '이 시뮬레이터는 B 를 골랐다 (각 줄을 진행하기 직전에 사본을 하나씩 만든다)', 11, None, '#566573', italic=True)
     return s.render()
 
@@ -172,9 +172,9 @@ def fig_stack_idle():
 
 def fig_flow():
     s = Svg(980, 400, '한 줄 진행과 되돌리기의 흐름', 'asbflow')
-    s.text(490, 20, '"1 step" 과 "⏪ 1 step" 이 하는 일', 13, '700', INK)
+    s.text(490, 20, '"1 step >" 과 "< 1 step" 이 하는 일', 13, '700', INK)
     # forward
-    s.text(20, 55, '1 step', 12.5, '700', '#1e8449', anchor='start')
+    s.text(20, 55, '1 step >', 12.5, '700', '#1e8449', anchor='start')
     fw = [
         ('green', '① 엔진 사본', ['worker 가 메모리 복사', '→ 엔진 스택에 push']),
         ('green', '② 화면 사본', ['각 hook 의 snapshot()', '→ 화면 스택에 push']),
@@ -201,7 +201,7 @@ def fig_flow():
     s.text(135, 208, '① push', 10.5, '700', '#1e8449', anchor='start')
     s.text(375, 162, '② push', 10.5, '700', '#1e8449', anchor='start')
     # back
-    s.text(20, 300, '⏪ 1 step', 12.5, '700', '#7d3c98', anchor='start')
+    s.text(20, 300, '< 1 step', 12.5, '700', '#7d3c98', anchor='start')
     bw = [
         ('purple', '① 엔진 사본 pop', ['메모리에 그대로', '되돌려 씀 (≈1 ms)']),
         ('purple', '② getState()', ['되돌린 엔진에서', '격자·통계를 다시 읽음']),
