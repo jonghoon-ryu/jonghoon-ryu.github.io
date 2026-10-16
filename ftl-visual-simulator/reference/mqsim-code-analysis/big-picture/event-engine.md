@@ -234,7 +234,7 @@ program 이 도는 750 µs 동안 이 die 에 대해 **아무 이벤트도 실�
 <text x="680" y="106" font-size="10.5" fill="#c0392b" font-weight="700">■ GC/WL 단계 (시작 · page 이동 · erase 끝)</text>
 <path d="M40,112 L74,112" stroke="#34495e" stroke-width="3"/><text x="40" y="128" font-size="10.5" font-weight="700" fill="#34495e">step()</text>
 <path d="M40,150 L150,150" stroke="#2874a6" stroke-width="3"/><path d="M154,150 L568,150" stroke="#2874a6" stroke-width="3" stroke-dasharray="7 4"/><text x="40" y="166" font-size="10.5" font-weight="700" fill="#2874a6">step_io() — ■ 파랑까지 (그 사이 GC 단계는 한꺼번에 지나감)</text>
-<path d="M40,190 L150,190" stroke="#7d3c98" stroke-width="3"/><path d="M154,190 L302,190" stroke="#7d3c98" stroke-width="3" stroke-dasharray="7 4"/><path d="M306,190 L416,190" stroke="#7d3c98" stroke-width="3"/><text x="40" y="206" font-size="10.5" font-weight="700" fill="#7d3c98">step_event() — 로그가 한 줄 생기는 그룹까지, 종류 무관 (→ "로그 1줄" 버튼)</text>
+<path d="M40,190 L150,190" stroke="#7d3c98" stroke-width="3"/><path d="M154,190 L302,190" stroke="#7d3c98" stroke-width="3" stroke-dasharray="7 4"/><path d="M306,190 L416,190" stroke="#7d3c98" stroke-width="3"/><text x="40" y="206" font-size="10.5" font-weight="700" fill="#7d3c98">step_event() — 로그가 한 줄 생기는 그룹까지, 종류 무관 (→ "1 step" 버튼)</text>
 <rect x="15" y="226" width="950" height="44" rx="8" fill="#ffffff" stroke="#566573" stroke-width="1.5"/><text x="490" y="244" font-size="10.5" fill="#2c3e50" text-anchor="middle">run(n) = step() n 번 · ▶ 는 프레임마다 run(n) 또는 step_event() 여러 번 — 보이는 이벤트가 드문 프리셋에서 run(n) 만 쓰면</text><text x="490" y="260" font-size="10.5" fill="#2c3e50" text-anchor="middle">DRAM 캐시가 쓰기를 흡수하는 동안 화면이 멈춘 것처럼 보이기 때문 (bindings.cpp 의 주석)</text>
 </svg>
 
@@ -243,7 +243,7 @@ program 이 도는 750 µs 동안 이 die 에 대해 **아무 이벤트도 실�
 | `step()` | 그룹 1개 | 디버깅용 최소 단위 |
 | `run(n)` | 그룹 n 개 또는 트리가 빌 때 | 한꺼번에 진행 |
 | `step_io()` | 플래시 읽기/쓰기 하나가 확정될 때 (`Mapping_Updated_Event`) | "I/O 하나씩" 진행 |
-| `step_event()` | 로그 한 줄이 될 이벤트 하나 (읽기/쓰기 확정, GC/WL 의 시작·page 이동·erase 끝) | **로그 1줄** 버튼, 일부 프리셋의 ▶ |
+| `step_event()` | 로그 한 줄이 될 이벤트 하나 (읽기/쓰기 확정, GC/WL 의 시작·page 이동·erase 끝) | **1 step** 버튼, 일부 프리셋의 ▶ |
 
 세 함수 모두 안에서는 `Run_next_event_group()` 을 부를 뿐이다. 조건은 이벤트 콜백(`Simulation_Events`)이 세우는 플래그로 판단한다. 그래서 **어떤 보폭으로 돌려도 이벤트가 실행되는 순서와 시각은 똑같다** — 달라지는 것은 화면을 다시 그리는 지점뿐이다. 그룹과 그룹 사이에서는 SSD 전체가 멈춘 스냅숏이라, 각 걸음 뒤에 `getState()` 로 읽은 격자·통계는 항상 일관된 상태다.
 

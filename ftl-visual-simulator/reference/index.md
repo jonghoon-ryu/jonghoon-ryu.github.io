@@ -23,6 +23,7 @@ permalink: /ftl-visual-simulator/reference/
 - [Evaluation Board](/ftl-visual-simulator/reference/evaluation-board/) — 실제 평가 보드에서 FTL 을 돌려 보는 방법 논의
 - [WASM · em++ 입문](/ftl-visual-simulator/reference/wasm-primer/) — WASM 이 뭔지, em++ 가 뭔지, 왜 필요한지
 - [프론트엔드 스택 입문 (Vite · React · TS)](/ftl-visual-simulator/reference/frontend-stack/) — 화면 쪽 구현 도구 설명
+- [한 줄 되돌리기(⏪)는 어떻게 동작하나](/ftl-visual-simulator/reference/step-back/) — WASM 메모리 스냅샷으로 엔진과 화면을 한 step 전으로 되돌리는 방법
 
 <div style="margin-top: 60px;"></div>
 

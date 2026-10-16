@@ -184,7 +184,7 @@ FTL 개념( 매핑, GC, 마모 평준화 )을 보여주는 화면만 필요하�
 |---|---|
 | `init(ssdConfigXml, workloadXml)` / `configure(…)` | 설정 XML 문자열(MEMFS)로 시뮬레이션을 처음부터 다시 만든다 — 파라미터를 바꿀 때 쓴다 |
 | `step()` / `run(n)` | 이벤트 묶음 하나 / n 개를 실행한다 |
-| `stepIo()` / `stepEvent()` / `runEvents(n)` | 읽기·쓰기 하나 / 로그 한 줄 / n 줄이 생길 때까지 실행한다 — 재생 컨트롤의 "로그 1줄" 이 이것이다 |
+| `stepIo()` / `stepEvent()` / `runEvents(n)` | 읽기·쓰기 하나 / 로그 한 줄 / n 줄이 생길 때까지 실행한다 — 재생 컨트롤의 "1 step" 이 이것이다 |
 | `getState()` | 매핑 테이블, 모든 block 의 page 상태, 통계(빈 block 수, GC · WL 횟수, 읽기 지연 …)를 돌려준다 |
 | `setEventCallback(fn)` | 매핑 갱신 · GC · WL · TRIM 같은 사건을 일어나는 즉시 JS 로 통지받는다 (hook) |
 | `trimRange(start, count)` / `totalLogicalPages()` | TRIM — 원본 MQSim 에 없어서 이 프로젝트가 추가했다 |
