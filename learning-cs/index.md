@@ -2,6 +2,7 @@
 layout: default
 title: Learning CS
 permalink: /learning-cs/
+published: false
 ---
 # 독학으로 컴퓨터 공학 공부하기
 
