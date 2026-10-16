@@ -333,6 +333,26 @@ Otherwise the screen and the USB keyboard stop working the moment the new page t
 
 So: a working, debuggable machine with no OS on top. That is a good place for step 11 (spinlock) to begin.
 
+### What if there were no OS at all?
+
+There are two ways to read "remove the OS".
+
+**1. Remove the three OS-like pieces, keep the rest.**
+
+| Remove | What happens |
+|---|---|
+| `consoleintr()` line editing (echo the raw character instead) | typing still shows letters, but Backspace no longer erases, and Enter sends `'\r'`, which only moves the cursor to the start of the line, so the next line overwrites the old one. It looks broken, but nothing crashes |
+| `dmapage()` (use fixed arrays in `.bss` instead) | works just as well: the kernel sits at 1 MB, well below 4 GB, so the controller can reach those arrays. You lose only freeing and reusing pages when a device is unplugged, so the number of devices is fixed |
+| the polling loop | nothing reads the keyboards any more. With interrupts off, `main()` returning lands in `entry.S`'s `hlt`, and the CPU stops for good. The boot messages stay on the screen; typing does nothing |
+
+The line editor and the allocator are conveniences, but the loop is essential: without interrupts, something has to keep asking the devices.
+
+What is left is a **bare-metal "superloop" program**, the same shape as the firmware in a microwave or inside a keyboard: initialize the hardware, then loop forever. That is really what step-10 already is. An OS starts when the machine is **shared**: several programs, isolated from each other, taking turns on the CPU and memory. Nothing in step-10 does that, with or without those three pieces.
+
+**2. No OS at all: don't leave the firmware.** The loader could skip `ExitBootServices()` and never jump to the kernel. It would stay a UEFI application and use the firmware's own services: `ConOut->OutputString()` to print (on the screen, and maybe the serial port) and `ConIn->ReadKeyStroke()` to read keys, with the firmware's own USB keyboard driver. About 30 lines of C would do what steps 2–10 do, including typing on the real PC's USB keyboard.
+
+In that sense **UEFI is already a small OS**: it has drivers, a memory allocator, a file system and a console. xv6 calls `ExitBootServices()` on purpose, because an OS has to **own** the hardware: its own interrupts, page tables, scheduling and drivers, which the firmware's services can't provide and would get in the way of. Leaving the firmware has a price, and steps 1–10 are mostly that bill: re-doing the screen, the keyboard and USB, which the firmware had been doing for us.
+
 ## 13. What comes next
 
 @@FIG code10 notyet@@
