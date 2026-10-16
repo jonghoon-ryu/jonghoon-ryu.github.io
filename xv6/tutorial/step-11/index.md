@@ -414,7 +414,13 @@ Nothing changes on the screen except the banner, and that is expected: no one co
 | QEMU, PS/2 keyboard (`make qemu`) | ✅ boots, "hello" typed |
 | QEMU, USB keyboard behind a hub (`make qemu USB=1`) | ✅ boots, "hello" typed |
 | VirtualBox, 2 CPUs (`make vbox`) | ✅ boots, "hello" typed |
-| **real PC (barebone)** | ⏳ **for you to test**: boot `usb.img` and type. The step counts as done only when this works |
+| **real PC (barebone)** | ✅ boots, USB keyboard types (2026-10-16, photo below) |
+
+### The real PC (barebone), 2026-10-16
+
+![step-11 on the real PC: "ok, step 11 seems to be working !!" typed on the USB keyboard](/assets/image/xv6-tut-step-11-step11-realpc.jpg)
+
+Same machine and same USB tree as in [step 10](/xv6/tutorial/step-10/#the-real-pc-barebone-2026-10-07). The keyboard on port 6 types, so `printk()` taking `pr.lock` works on real hardware too. **Step 11 is done.**
 
 ## 7. Deliberately left out
 

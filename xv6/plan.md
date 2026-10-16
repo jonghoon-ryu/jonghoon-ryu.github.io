@@ -81,7 +81,7 @@ table.plan-calendar th {
 
 <div style="margin-top: 100px;"></div>
 
-## 지금까지 (2026.10.7)
+## 지금까지 (2026.10.16)
 
 [목표](/xv6/goal/) 에 견주어 지금 어디까지 왔나. 태그마다 코드가 어떻게 바뀌었는지는 [튜토리얼](/xv6/tutorial/) 에 있다.
 
@@ -89,7 +89,7 @@ table.plan-calendar th {
 |---|---|---|---|
 | xv6-riscv (MIT 원본) | ✅ `-machine virt` 에서만 | ✗ (RISC-V 가 아님) | ✗ (공식 지원 없음) |
 | xv6-x86_64 C 판 (`v0.2-x86_64-c`) | ✅ 셸, `usertests` 통과 | ✅ 셸, `usertests` 통과 | 시험 안 함. 키보드가 PS/2 뿐이라 베어본에서는 입력 불가 |
-| xv6-x86_64 C++ 판, 지금 (`step-10`) | ✅ 부팅, 화면, 키보드 | ✅ 부팅, 화면, 키보드 | ✅ **부팅, 화면, USB 키보드** (2026.10.7) |
+| xv6-x86_64 C++ 판, 지금 (`step-11`) | ✅ 부팅, 화면, 키보드 | ✅ 부팅, 화면, 키보드 | ✅ **부팅, 화면, USB 키보드** (2026.10.16) |
 | **최종 목표 (`v1.0-cpp`)** | 셸, `usertests` 통과 | 셸, `usertests` 통과 | **셸, `usertests` 통과** |
 
 ### 1단계 : RISC-V → x86-64 포팅, C (완료)
@@ -370,6 +370,8 @@ VirtualBox 에서의 Step 5 (화면 콘솔과 PS/2 키보드) :
 ### Step 11 · 2026.12.12 (토) — spinlock.cpp
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="11"> 완료</label>
+
+- ✅ **코드 완료 (2026.10.16)** · 태그 [<code>step-11</code>](https://github.com/jonghoon-ryu/xv6-x86_64/tree/step-11) · 튜토리얼 [<code>/xv6/tutorial/step-11/</code>](/xv6/tutorial/step-11/) · 실제 PC 확인 (2026.10.16) · 이 회차는 리뷰
 
 - **🤖 Claude :** 최소한의 <code>struct cpu</code>, <code>push_off</code> / <code>pop_off</code>, RAII <code>LockGuard</code>
 - **👤 Ryu (2h) :** <code>acquire</code>/<code>release</code> 짝이 <code>LockGuard</code> 로 바뀌는 것 보기 · 책 <b>Ch.7</b> 7.1–7.5 · 8.5 (mycpu)
