@@ -46,7 +46,7 @@ NAND 셀은 전하 (전자) 를 가두어 데이터를 기억한다. TLC 는 셀
 840 EVO 는 2014년, 오래된 데이터의 읽기 속도가 새 데이터의 몇 분의 일로 떨어지는 문제로 널리 알려졌다. 원인은 이 전압 이동과 그에 맞지 않은 읽기 방식으로 설명되었고, Samsung 은 펌웨어로 대응했다 ([0. 준비](/old-ssd-experiments/0-setup/) 의 펌웨어 설명 참고).
 
 <div class="check" markdown="1">
-**이미 보이는 단서.** 이 드라이브를 오늘 아침 꽂은 뒤 커널 통계 (`/proc/diskstats`) 에 따르면, 2.8 GB 를 읽는 동안 디스크가 **40분** 바빴다 : 약 1.2 MB/s. 누가 읽었는지 (파일 관리자, 색인 프로그램) 와 어떤 데이터였는지 모르니 측정은 아니다. 그래도 가설과 같은 쪽을 가리킨다.
+**이미 보이는 단서.** 이 드라이브를 2026.10.17 아침 USB 로 꽂은 뒤 커널 통계 (`/proc/diskstats`) 에 따르면, 2.8 GB 를 읽는 동안 디스크가 **40분** 바빴다 : 약 1.2 MB/s. 누가 읽었는지 (파일 관리자, 색인 프로그램) 와 어떤 데이터였는지 모르니 측정은 아니다. 그래도 가설과 같은 쪽을 가리킨다.
 </div>
 
 ## 가설과 예상
@@ -75,6 +75,8 @@ NAND 셀은 전하 (전자) 를 가두어 데이터를 기억한다. TLC 는 셀
 - '쓴 날' = NTFS **생성 시각** 과 **수정 시각** 중 늦은 쪽. 설치 프로그램은 파일의 수정 시각을 원본 날짜로 남기는 일이 많아서, 이 디스크에 실제로 쓴 날은 생성 시각이 더 정확하다.
 - 해마다 25개씩 (16 MiB 이상인 파일 중에서 무작위, 같은 seed), 파일마다 앞 16 MiB 만 읽는다. 순서도 섞는다 : 측정 중 드라이브 상태가 변해도 특정 해에만 몰리지 않게.
 - 읽기 전에 `posix_fadvise(DONTNEED)` 로 그 파일의 페이지 캐시를 버린다. 그래야 RAM 이 아니라 드라이브를 잰다.
+- **빼는 파일** : 할당된 크기가 길이보다 작은 파일 (sparse, NTFS · WOF 압축). 구멍은 NAND 를 읽지 않고 0 이 나오고, 압축 파일은 CPU 속도를 잰다. 읽다가 실패한 파일은 CSV 에 넣지 않고 `fileage-errors.csv` 에 따로 적는다 (0 MB/s 로 넣으면 아주 느린 오래된 파일처럼 보인다). 여기에 `Input/output error` 가 있으면 ECC 로도 못 고친 읽기다 : 그 자체가 결과다.
+- 파일은 `ntfs-3g` (FUSE) 를 거쳐 읽으므로 속도의 상한이 SATA (약 540 MB/s) 보다 낮을 수 있다. 그래서 A 는 **파일끼리의 비교** 로 보고, 드라이브 자체의 속도는 B 로 본다.
 
 **B. 드라이브 전체 (`readscan.py`)** : 256 MiB 구간마다 앞 8 MiB 를 `O_DIRECT` 로 읽는다. 파일 시스템을 거치지 않으므로 EFI · 복구 파티션과 빈 공간 (TRIM 되었으면 0) 까지 다 보인다. 결과 = 위치별 속도 지도.
 
@@ -84,7 +86,8 @@ NAND 셀은 전하 (전자) 를 가두어 데이터를 기억한다. TLC 는 셀
 # 0. 준비 페이지의 1–5단계를 마친 상태 : 도구, check, 읽기 전용 마운트 (/mnt/old840)
 $ cd ~/Ryu/jonghoon-ryu.github.io/old-ssd-experiments/scripts
 
-# 1. 파일별 측정 (sudo 필요 없음). 해마다 몇 개의 파일이 있는지 먼저 출력한다
+# 1. 파일별 측정 (sudo 필요 없음). 먼저 파일 목록을 만들고 (출력 없이 몇 분 걸릴 수 있다),
+#    해마다 몇 개의 파일이 있는지 출력한 뒤 읽기 시작한다
 $ ./lab.sh oldfiles /mnt/old840
 
 # 2. 드라이브 전체 지도 : 256 MiB 마다 8 MiB (전체의 1/32), 읽기만
@@ -107,6 +110,7 @@ $ sudo ./lab.sh scan old 8
 <th>내용</th>
 </tr></thead><tbody>
 <tr><td><code>…-oldfiles/fileage.csv</code></td><td>파일마다 : written, age_days, mib, mbps, max_ms, path</td></tr>
+<tr><td><code>…-oldfiles/fileage-errors.csv</code></td><td>읽다가 실패한 파일 : written, mib_read, error, path (보통 비어 있다)</td></tr>
 <tr><td><code>…-scan-old/scan.csv</code></td><td>구간마다 : offset_gib, mib, mbps, mean_ms, max_ms, zero_frac</td></tr>
 <tr><td><code>…-scan-old/smart-before/after.*</code></td><td>측정 앞뒤 SMART (195 ECC 같은 값이 읽는 동안 늘었는지)</td></tr>
 </tbody></table></div>

@@ -16,6 +16,10 @@ drive, the first --per-file-mib of the file are read in 1 MiB requests, and one 
   max_ms       slowest 1 MiB read
   path         file path (relative to ROOT)
 
+Files whose allocated size is clearly below their length (sparse, or NTFS/WOF-compressed) are skipped:
+holes read as zeros without touching NAND, and compressed reads measure the CPU. Files that fail to
+read are not put in the CSV (a 0 MB/s row would look like a very old file); they go to OUT-errors.csv.
+
 Mount the volume read-only first (see the setup page), so not even access times are written.
 """
 import argparse, collections, datetime, os, random, struct, sys, time
@@ -47,6 +51,8 @@ def main():
     a = ap.parse_args()
 
     files = []
+    skipped = 0
+    print(f"listing files under {a.root} (reads only metadata; can take minutes on a slow drive)", file=sys.stderr)
     for d, dirs, names in os.walk(a.root):
         for n in names:
             p = os.path.join(d, n)
@@ -56,7 +62,11 @@ def main():
                 continue
             if not os.path.isfile(p) or os.path.islink(p) or st.st_size < a.min_mib * MIB:
                 continue
+            if st.st_blocks * 512 < 0.9 * st.st_size:   # sparse or compressed
+                skipped += 1
+                continue
             files.append((written_time(p, st), p, st.st_size))
+    print(f"{len(files)} files >= {a.min_mib} MiB ({skipped} sparse/compressed skipped)", file=sys.stderr)
     by_year = collections.defaultdict(list)
     for f in files:
         by_year[f[0].year].append(f)
@@ -71,18 +81,24 @@ def main():
 
     now = datetime.datetime.now()
     buf = bytearray(MIB)
-    with open(a.out, "w") as out:
+    errpath = os.path.splitext(a.out)[0] + "-errors.csv"
+    nerr = 0
+    with open(a.out, "w") as out, open(errpath, "w") as errs:
         out.write("written,age_days,mib,mbps,max_ms,path\n")
+        errs.write("written,mib_read,error,path\n")
         for i, (wt, p, size) in enumerate(pick):
             try:
                 fd = os.open(p, os.O_RDONLY)
             except OSError as e:
                 print(f"\nskip {p}: {e}", file=sys.stderr)
+                errs.write(f'{wt:%Y-%m-%d},0,{e.strerror},"{os.path.relpath(p, a.root)}"\n')
+                nerr += 1
                 continue
             os.posix_fadvise(fd, 0, 0, os.POSIX_FADV_DONTNEED)
             want = min(size, a.per_file_mib * MIB)
             got = 0
             worst = 0.0
+            err = None
             t0 = time.monotonic()
             try:
                 while got < want:
@@ -93,16 +109,22 @@ def main():
                         break
                     got += n
             except OSError as e:
+                err = e
                 print(f"\nread error {p}: {e}", file=sys.stderr)
             secs = time.monotonic() - t0
             os.posix_fadvise(fd, 0, 0, os.POSIX_FADV_DONTNEED)
             os.close(fd)
             mbps = got / secs / 1e6 if secs > 0 else 0
             rel = os.path.relpath(p, a.root).replace('"', "'")
+            if err is not None:            # EIO here = an uncorrectable read: a result in itself
+                errs.write(f'{wt:%Y-%m-%d},{got / MIB:.1f},{err.strerror},"{rel}"\n')
+                errs.flush()
+                nerr += 1
+                continue
             out.write(f'{wt:%Y-%m-%d},{(now - wt).days},{got / MIB:.0f},{mbps:.1f},{worst * 1e3:.1f},"{rel}"\n')
             out.flush()
             print(f"\r{i + 1}/{len(pick)}  {wt:%Y-%m-%d}  {mbps:7.1f} MB/s  ", end="", file=sys.stderr, flush=True)
-    print(f"\n-> {a.out}", file=sys.stderr)
+    print(f"\n-> {a.out}" + (f"   ({nerr} files failed -> {errpath})" if nerr else ""), file=sys.stderr)
 
 
 if __name__ == "__main__":

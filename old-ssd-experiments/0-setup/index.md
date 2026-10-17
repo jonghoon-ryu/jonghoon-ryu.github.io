@@ -61,10 +61,13 @@ table.t code { font-size:0.82rem; }
 ## 2단계 : 도구 설치
 
 ```
-$ sudo apt install smartmontools fio sysstat
+$ sudo apt install --no-install-recommends smartmontools fio sysstat
 $ fio --version            # fio-3.36 이 나와야 한다
 $ smartctl --version | head -1
 ```
+
+`--no-install-recommends` 를 붙이는 이유 : `smartmontools` 는 메일 알림용으로 `postfix` (메일 서버) 를 추천 패키지로 끌고 오고, 그러면 설치 도중 메일 설정 화면이 뜬다. 실험에는 필요 없다.
+`hdparm` 과 `ntfs-3g` 는 이 컴퓨터에 이미 있다 (2026.10.17 확인).
 
 ## 3단계 : 스크립트 받기
 
@@ -120,6 +123,9 @@ $ sudo mkdir -p /mnt/old840
 $ sudo mount -t ntfs-3g -o ro /dev/disk/by-id/ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K-part3 /mnt/old840
 $ findmnt /mnt/old840          # OPTIONS 에 ro
 ```
+
+**그 전까지 이 파티션을 파일 관리자로 열지 않는다.** 썸네일 · 미리 보기를 만드느라 오래된 데이터를 읽어 버린다 (읽힌 데이터는 펌웨어가 새로 쓸 수 있다 : 실험 1 의 주의 참고).
+`umount` 가 `target is busy` 라고 하면 그 폴더를 연 창이나 터미널을 닫고 다시 한다.
 
 `ntfs-3g` 로 붙여야 `fileage.py` 가 NTFS 생성 시각 (`system.ntfs_crtime`) 을 읽을 수 있다.
 Windows 가 최대 절전 상태 (hiberfil.sys) 로 꺼져 있어서 `ntfs-3g` 가 마운트를 거절하면, 읽기 전용 (`-o ro`) 이므로 그대로 진행해도 된다는 안내가 나온다.
