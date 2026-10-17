@@ -24,7 +24,7 @@ table.t code { font-size:0.82rem; }
 <b>목표</b><span>TurboWrite 버퍼의 크기, 버퍼를 넘긴 뒤 TLC 에 바로 쓰는 속도, 버퍼가 다시 비는 데 걸리는 시간을 잰다</span>
 <b>보는 FTL 개념</b><span>SLC 캐시 (pseudo-SLC), 쉬는 동안의 데이터 옮기기 (folding / migration)</span>
 <b>지우나?</b><span>예. 드라이브 전체를 TRIM 하고 처음부터 끝까지 쓴다</span>
-<b>연결</b><span>SATA (TRIM 이 필요하고, USB 는 속도 상한이 낮다)</span>
+<b>연결</b><span>SATA (TRIM 이 필요하다)</span>
 <b>시간</b><span>전체 쓰기 15–20분 + 회복 측정 30분</span>
 <b>명령</b><span><code>sudo ./lab.sh slc</code>, <code>sudo ./lab.sh slc-idle 0 1 5 15</code>, <code>sudo ./lab.sh scan fresh 8</code></span>
 </div>
@@ -59,13 +59,13 @@ TLC 는 셀 하나에 3비트를 담느라 전압을 8단계로 정밀하게 맞
 ## 절차
 
 ```
-# 3. SATA 에 연결된 상태 (0. 준비 6단계). check 를 다시 해서 DISC-MAX 가 0B 가 아닌지
+# 0. check 를 다시 해서 DISC-MAX 가 0B 가 아닌지
 $ sudo ./lab.sh check
 
-# 3. 전체 TRIM → 2분 쉼 → 1 MiB 순차 쓰기 QD8 로 처음부터 끝까지, 1초마다 속도 기록
+# 1. 전체 TRIM → 2분 쉼 → 1 MiB 순차 쓰기 QD8 로 처음부터 끝까지, 1초마다 속도 기록
 $ sudo ./lab.sh slc
 
-# 3. 버퍼 회복 : 8 GiB 로 버퍼를 채운 뒤, 0 / 1 / 5 / 15 분 쉬고 다시 8 GiB 씩
+# 2. 버퍼 회복 : 8 GiB 로 버퍼를 채운 뒤, 0 / 1 / 5 / 15 분 쉬고 다시 8 GiB 씩
 $ sudo ./lab.sh slc-idle 0 1 5 15
 
 # 3. 실험 1 의 비교 기준 : 방금 쓴 '새 데이터' 의 위치별 읽기 속도

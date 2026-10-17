@@ -37,8 +37,8 @@ def cmd_layers():
         ("응용 프로그램", "cp, 브라우저, fio …", "white", "ps, iotop"),
         ("파일 시스템", "ext4, NTFS, vfat : 파일 이름 → 위치", "base", "df, findmnt, mount"),
         ("페이지 캐시 (RAM)", "읽은 것 · 쓸 것을 잠시 담아 둔다", "mem", "free, dd oflag=direct"),
-        ("블록 장치", "/dev/sdg, /dev/sdg3 : 512 B 섹터의 줄", "chg", "lsblk, blockdev, /dev/disk/by-id"),
-        ("드라이버 · 연결", "SATA (ahci) 또는 USB (uas) · NVMe", "hw", "lsusb -t, /sys/block, journalctl -k"),
+        ("블록 장치", "/dev/sda, /dev/sda3 : 512 B 섹터의 줄", "chg", "lsblk, blockdev, /dev/disk/by-id"),
+        ("드라이버 · 연결", "SATA (ahci) · NVMe", "hw", "/sys/block, journalctl -k"),
         ("SSD 컨트롤러 (FTL)", "LBA → NAND 위치, GC, 마모 평준화", "teal", "smartctl, hdparm -I, nvme"),
         ("NAND 플래시", "실제로 데이터가 사는 곳", "tlc", "(직접은 못 본다 : 실험으로 추측)"),
     ]
@@ -52,9 +52,9 @@ def cmd_layers():
 
 def cmd_names():
     d = D(760, 300, "장치 이름 읽는 법")
-    d.box(20, 50, 180, 60, "/dev/sdg", ["디스크 하나 (SATA · USB)"], "chg", mono=True)
-    parts = [("sdg1", "100 MB vfat", "EFI 부트"), ("sdg2", "16 MB", "MSR (예약)"),
-             ("sdg3", "111 GB ntfs", "Windows C:"), ("sdg4", "532 MB ntfs", "복구")]
+    d.box(20, 50, 180, 60, "/dev/sda", ["디스크 하나"], "chg", mono=True)
+    parts = [("sda1", "100 MB vfat", "EFI 부트"), ("sda2", "16 MB", "MSR (예약)"),
+             ("sda3", "111 GB ntfs", "Windows C:"), ("sda4", "532 MB ntfs", "복구")]
     for i, (n, s, u) in enumerate(parts):
         y = 30 + i * 45
         d.box(260, y, 230, 38, "", [f"{n}   {s}"], "base", mono=True, size=13)
@@ -64,7 +64,7 @@ def cmd_names():
     d.box(260, 225, 230, 55, "", ["nvme0n1p1, nvme0n1p2", "(파티션 앞에 p 가 붙는다)"], "base", mono=True, size=13)
     d.arrow(200, 252, 258, 252)
     d.text(625, 232, "sd = SCSI disk : SATA · USB 디스크 이름", 11.5)
-    d.text(625, 249, "a, b, … g 는 연결 순서로 붙어 바뀔 수 있다", 11.5)
+    d.text(625, 249, "a, b, c … 는 찾은 순서로 붙어 바뀔 수 있다", 11.5)
     d.text(625, 272, "→ 실험에서는 시리얼로 찾는다", 11.5, True, color=R)
     return d.svg("장치 이름")
 
@@ -98,28 +98,10 @@ def cmd_cache():
 
 
 # ------------------------------------------------------------------ setup
-def setup_sata():
-    d = D(760, 300, "SATA 포트 4개가 모두 차 있다 : 실험 동안 840 EVO 500GB 와 자리를 바꿨다")
-    ports = [("SATA (ata5)", "sda", "840 EVO 120GB (실험용)", "new"), ("SATA (ata6)", "sdb", "750 EVO 500GB", "base"),
-             ("SATA (ata7)", "sdc", "WD 1TB HDD", "base"), ("SATA (ata8)", "sdd", "Seagate 2TB HDD", "base")]
-    d.box(20, 45, 170, 230, "메인보드", ["MAG B760M", "MORTAR II", "", "Intel B760", "SATA 컨트롤러"], "hw", size=13)
-    for i, (p, n, m, k) in enumerate(ports):
-        y = 50 + i * 57
-        d.box(230, y, 120, 44, "", [p], "white", size=13)
-        d.line(190, y + 22, 230, y + 22, "#7d3c98", 2)
-        d.box(380, y, 170, 44, n, [m], k, size=13)
-        d.line(350, y + 22, 380, y + 22, "#7f8c8d", 2)
-    d.box(590, 120, 155, 60, "sde", ["840 EVO 500GB", "USB 어댑터로"], "warn", size=13)
-    d.path("M552,72 C575,72 575,135 590,135", color=R)
-    d.text(668, 206, "120GB 는 USB 의 sdg 였다", 12, color=R)
-    d.text(668, 223, "끝나면 500GB 를 ata5 로", 12, color=R)
-    return d.svg("SATA 포트")
-
-
 def setup_safety():
     d = D(760, 210, "lab.sh 가 지우기 전에 하는 확인")
     steps = [("시리얼로 찾기", "S1D6NSAFB40389K", "base"), ("시스템 디스크?", "/ 가 있으면 중단", "warn"),
-             ("마운트됨?", "있으면 중단", "warn"), ("TRIM 되나?", "USB 면 중단", "chg"), ("시리얼 끝 5자리", "직접 입력", "gold")]
+             ("마운트됨?", "있으면 중단", "warn"), ("TRIM 되나?", "안 되면 중단", "chg"), ("시리얼 끝 5자리", "직접 입력", "gold")]
     for i, (t, s, k) in enumerate(steps):
         x = 10 + i * 150
         d.box(x, 50, 135, 60, t, [s], k, size=12.5)
@@ -309,7 +291,7 @@ def trim_expect():
     ch.curve(p2, B, 2.5)
     ch.note(45, 0.95, "매핑 없음 (TRIM 된 절반)", T, bold=True)
     ch.note(125, 0.66, "매핑 있음 (쓴 절반) : NAND 읽기", B, bold=True)
-    d.text(400, 320, "위치와 폭은 예시 : USB 로는 어댑터 지연이 둘 다에 더해지므로 SATA 에서 잰다", 11.5, color="#566573")
+    d.text(400, 320, "위치와 폭은 예시일 뿐이다 : 실제 값은 이 실험이 잰다", 11.5, color="#566573")
     return d.svg("TRIM 예상")
 
 

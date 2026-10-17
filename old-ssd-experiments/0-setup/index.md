@@ -23,7 +23,7 @@ table.t code { font-size:0.82rem; }
 <div class="glance">
 <b>목표</b><span>실험할 드라이브를 확실히 알아보고, 도구를 깔고, 실험 전 SMART 값 (기준값) 을 남긴다</span>
 <b>지우나?</b><span>아니오. 읽기만 한다</span>
-<b>연결</b><span>SATA (2026.10.17 에 옮김 : 6단계)</span>
+<b>연결</b><span>메인보드 SATA</span>
 <b>시간</b><span>30분</span>
 <b>명령</b><span><code>sudo ./lab.sh check</code></span>
 </div>
@@ -38,7 +38,7 @@ table.t code { font-size:0.82rem; }
 </tr></thead><tbody>
 <tr><td>모델</td><td>Samsung SSD 840 EVO 120GB</td><td><code>lsblk</code></td></tr>
 <tr><td>시리얼</td><td><code>S1D6NSAFB40389K</code></td><td><code>lsblk</code>, <code>/dev/disk/by-id</code></td></tr>
-<tr><td>펌웨어</td><td><code>EXT0CB6Q</code></td><td><code>lsblk -o REV</code> (같은 컴퓨터의 840 EVO 500GB 는 <code>EXT0BB6Q</code>)</td></tr>
+<tr><td>펌웨어</td><td><code>EXT0CB6Q</code></td><td><code>lsblk -o REV</code></td></tr>
 <tr><td>용량</td><td>120,034,123,776 B (234,441,648 섹터)</td><td>커널 로그</td></tr>
 <tr><td>NAND</td><td>TLC, 128 GiB 로 알려짐</td><td>리뷰 · 자료 (확인 필요)</td></tr>
 <tr><td>SLC 버퍼 (TurboWrite)</td><td>120GB 모델은 약 3 GB 로 알려짐</td><td>Samsung 자료 (확인 필요)</td></tr>
@@ -46,7 +46,7 @@ table.t code { font-size:0.82rem; }
 <tr><td>지금 내용</td><td>옛 Windows 디스크 : EFI · MSR · NTFS 111 GB (91% 참) · 복구</td><td><code>lsblk -f</code>, <code>df</code></td></tr>
 <tr><td>파일 날짜</td><td>2018 – 2024.12 (hiberfil.sys 마지막 수정 2024.12.08)</td><td><code>ls -la</code></td></tr>
 <tr><td>지난 이력</td><td>2024.12 쯤 마지막으로 쓴 뒤 <strong>1년 넘게 전원 없이</strong> 보관. 2026.10.17 에 다시 연결해 Ryu 가 파일 몇 개를 읽고 몇 개를 새로 씀 (약 17.6 MB)</td><td>Ryu, <code>/proc/diskstats</code></td></tr>
-<tr><td>지금 연결</td><td>메인보드 SATA <code>ata5</code> (<code>/dev/sda</code>), TRIM 됨 (<code>DISC-GRAN 512B</code>, <code>DISC-MAX 2G</code>). 처음에는 USB 3.0 어댑터 (ASMedia 19da:1125, <code>uas</code>) 로 <code>/dev/sdg</code> 였고 TRIM 이 안 됐다</td><td><code>lsblk -o NAME,TRAN,DISC-MAX</code>, <code>/sys/block/sda</code></td></tr>
+<tr><td>연결</td><td>메인보드 SATA <code>ata5</code> (<code>/dev/sda</code>), SATA 3 (6.0 Gbps), TRIM 됨 (<code>DISC-GRAN 512B</code>, <code>DISC-MAX 2G</code>)</td><td><code>lsblk -o NAME,TRAN,DISC-MAX</code>, <code>journalctl -k</code></td></tr>
 </tbody></table></div>
 
 <div class="check" markdown="1">
@@ -83,7 +83,7 @@ $ ./lab.sh                 # 사용법이 나온다
 
 `lab.sh` 의 안전장치 :
 
-<svg viewBox="0 0 760 210" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="안전 확인"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">lab.sh 가 지우기 전에 하는 확인</text><rect x="10" y="50" width="135" height="60" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="77.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">시리얼로 찾기</text><text x="77.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">S1D6NSAFB40389K</text><rect x="160" y="50" width="135" height="60" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="227.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">시스템 디스크?</text><text x="227.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">/ 가 있으면 중단</text><line x1="147" y1="80" x2="158" y2="80" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="310" y="50" width="135" height="60" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="377.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">마운트됨?</text><text x="377.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">있으면 중단</text><line x1="297" y1="80" x2="308" y2="80" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="460" y="50" width="135" height="60" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="527.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">TRIM 되나?</text><text x="527.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">USB 면 중단</text><line x1="447" y1="80" x2="458" y2="80" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="610" y="50" width="135" height="60" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="677.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">시리얼 끝 5자리</text><text x="677.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">직접 입력</text><line x1="597" y1="80" x2="608" y2="80" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="250" y="140" width="260" height="50" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="380.0" y="161.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">실행 → 결과 폴더</text><text x="380.0" y="177.0" font-size="11.5" fill="#4d5656" text-anchor="middle">~/Ryu/old_ssd_results/날짜-실험/</text><line x1="680" y1="110" x2="512" y2="160" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/></svg>
+<svg viewBox="0 0 760 210" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="안전 확인"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">lab.sh 가 지우기 전에 하는 확인</text><rect x="10" y="50" width="135" height="60" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="77.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">시리얼로 찾기</text><text x="77.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">S1D6NSAFB40389K</text><rect x="160" y="50" width="135" height="60" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="227.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">시스템 디스크?</text><text x="227.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">/ 가 있으면 중단</text><line x1="147" y1="80" x2="158" y2="80" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="310" y="50" width="135" height="60" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="377.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">마운트됨?</text><text x="377.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">있으면 중단</text><line x1="297" y1="80" x2="308" y2="80" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="460" y="50" width="135" height="60" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="527.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">TRIM 되나?</text><text x="527.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">안 되면 중단</text><line x1="447" y1="80" x2="458" y2="80" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="610" y="50" width="135" height="60" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="677.5" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">시리얼 끝 5자리</text><text x="677.5" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">직접 입력</text><line x1="597" y1="80" x2="608" y2="80" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="250" y="140" width="260" height="50" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="380.0" y="161.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">실행 → 결과 폴더</text><text x="380.0" y="177.0" font-size="11.5" fill="#4d5656" text-anchor="middle">~/Ryu/old_ssd_results/날짜-실험/</text><line x1="680" y1="110" x2="512" y2="160" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/></svg>
 
 - 대상 시리얼은 스크립트 안에 고정되어 있다 (`readonly SERIAL=S1D6NSAFB40389K`). 환경 변수로 바꿀 수 없다.
 - 시리얼이 정확히 하나의 장치에 맞고, 그 장치가 같은 시리얼을 보고할 때만 진행한다.
@@ -97,8 +97,8 @@ $ sudo ./lab.sh check
 
 하는 일 (아무것도 쓰지 않는다) :
 1. 시리얼로 장치를 찾고, 연결 방식과 TRIM 가능 여부를 보여 준다
-2. `hdparm -I` 로 펌웨어 · TRIM 지원 줄을 보여 준다 (USB 어댑터가 막으면 비어 있을 수 있다)
-3. `smartctl -x` (USB 면 `-d sat`) 를 텍스트와 JSON 으로 저장하고, 실험에 쓰는 속성만 골라 보여 준다
+2. `hdparm -I` 로 펌웨어 · TRIM 지원 줄을 보여 준다
+3. `smartctl -x` 를 텍스트와 JSON 으로 저장하고, 실험에 쓰는 속성만 골라 보여 준다
 
 `check` 가 끝나면 Claude 에게 알린다. 결과 폴더를 직접 읽어서 다음을 확인한다 :
 
@@ -118,11 +118,9 @@ $ sudo ./lab.sh check
 
 ## 5단계 : 읽기 전용으로 다시 마운트
 
-10.17 에는 NTFS 파티션이 파일 관리자를 통해 읽고 쓰기 (`rw`) 로 붙어 있었다 (`/media/ryuj/C8922986922979D8`). 그때 Ryu 가 파일을 읽고 쓴 기록 (쓴 시각, 접근 시각) 이 실험 1 에서 파일을 세 무리로 나누는 근거가 된다.
-2026.10.18 아침에는 붙어 있지 않다 (`lsblk` 에 마운트 지점 없음). 실험 1 동안 접근 시각 같은 작은 쓰기도 없도록 **읽기 전용** 으로 붙인다.
+2026.10.17 에 Ryu 가 파일을 읽고 쓴 기록 (쓴 시각, 접근 시각) 이 실험 1 에서 파일을 세 무리로 나누는 근거가 된다. 실험 1 동안 접근 시각 같은 작은 쓰기도 없도록 NTFS 파티션을 **읽기 전용** 으로 붙인다. 이미 다른 곳에 붙어 있으면 먼저 뗀다 (`findmnt` 로 확인, `sudo umount 그곳`).
 
 ```
-$ findmnt /media/ryuj/C8922986922979D8 && sudo umount /media/ryuj/C8922986922979D8   # 붙어 있을 때만
 $ sudo mkdir -p /mnt/old840
 $ sudo mount -t ntfs-3g -o ro /dev/disk/by-id/ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K-part3 /mnt/old840
 $ findmnt /mnt/old840          # OPTIONS 에 ro
@@ -135,42 +133,57 @@ $ findmnt /mnt/old840          # OPTIONS 에 ro
 `ntfs-3g` 로 붙여야 `fileage.py` 가 NTFS 생성 시각 (`system.ntfs_crtime`) 을 읽을 수 있다.
 Windows 가 최대 절전 상태 (hiberfil.sys) 로 꺼져 있어서 `ntfs-3g` 가 마운트를 거절하면, 읽기 전용 (`-o ro`) 이므로 그대로 진행해도 된다는 안내가 나온다.
 
-## 6단계 : SATA 로 옮기기 (2026.10.17 완료)
-
-처음 계획은 실험 1 을 USB 로 한 뒤 `sdc` (WD 1TB HDD) 자리에 꽂는 것이었다. 실제로는 **실험 1 전에** 옮겼고, 자리도 달랐다 :
-840 EVO 120GB 가 `ata5` 에 있던 **840 EVO 500GB 와 자리를 바꿨다**. 500GB 는 대신 USB 어댑터로 간다.
-
-<svg viewBox="0 0 760 300" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="SATA 포트"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">SATA 포트 4개가 모두 차 있다 : 실험 동안 840 EVO 500GB 와 자리를 바꿨다</text><rect x="20" y="45" width="170" height="230" rx="8" fill="#f4ecf7" stroke="#7d3c98" stroke-width="2"/><text x="105.0" y="124.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">메인보드</text><text x="105.0" y="140.0" font-size="11.5" fill="#4d5656" text-anchor="middle">MAG B760M</text><text x="105.0" y="156.0" font-size="11.5" fill="#4d5656" text-anchor="middle">MORTAR II</text><text x="105.0" y="172.0" font-size="11.5" fill="#4d5656" text-anchor="middle"></text><text x="105.0" y="188.0" font-size="11.5" fill="#4d5656" text-anchor="middle">Intel B760</text><text x="105.0" y="204.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA 컨트롤러</text><rect x="230" y="50" width="120" height="44" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="290.0" y="76.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA (ata5)</text><line x1="190" y1="72" x2="230" y2="72" stroke="#7d3c98" stroke-width="2"/><rect x="380" y="50" width="170" height="44" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="465.0" y="68.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">sda</text><text x="465.0" y="84.0" font-size="11.5" fill="#4d5656" text-anchor="middle">840 EVO 120GB (실험용)</text><line x1="350" y1="72" x2="380" y2="72" stroke="#7f8c8d" stroke-width="2"/><rect x="230" y="107" width="120" height="44" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="290.0" y="133.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA (ata6)</text><line x1="190" y1="129" x2="230" y2="129" stroke="#7d3c98" stroke-width="2"/><rect x="380" y="107" width="170" height="44" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="465.0" y="125.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">sdb</text><text x="465.0" y="141.0" font-size="11.5" fill="#4d5656" text-anchor="middle">750 EVO 500GB</text><line x1="350" y1="129" x2="380" y2="129" stroke="#7f8c8d" stroke-width="2"/><rect x="230" y="164" width="120" height="44" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="290.0" y="190.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA (ata7)</text><line x1="190" y1="186" x2="230" y2="186" stroke="#7d3c98" stroke-width="2"/><rect x="380" y="164" width="170" height="44" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="465.0" y="182.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">sdc</text><text x="465.0" y="198.0" font-size="11.5" fill="#4d5656" text-anchor="middle">WD 1TB HDD</text><line x1="350" y1="186" x2="380" y2="186" stroke="#7f8c8d" stroke-width="2"/><rect x="230" y="221" width="120" height="44" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="290.0" y="247.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA (ata8)</text><line x1="190" y1="243" x2="230" y2="243" stroke="#7d3c98" stroke-width="2"/><rect x="380" y="221" width="170" height="44" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="465.0" y="239.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">sdd</text><text x="465.0" y="255.0" font-size="11.5" fill="#4d5656" text-anchor="middle">Seagate 2TB HDD</text><line x1="350" y1="243" x2="380" y2="243" stroke="#7f8c8d" stroke-width="2"/><rect x="590" y="120" width="155" height="60" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="667.5" y="138.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">sde</text><text x="667.5" y="154.0" font-size="11.5" fill="#4d5656" text-anchor="middle">840 EVO 500GB</text><text x="667.5" y="170.0" font-size="11.5" fill="#4d5656" text-anchor="middle">USB 어댑터로</text><path d="M552,72 C575,72 575,135 590,135" fill="none" stroke="#c0392b" stroke-width="2" marker-end="url(#ae)"/><text x="668.0" y="206.0" font-size="12" fill="#c0392b" text-anchor="middle">120GB 는 USB 의 sdg 였다</text><text x="668.0" y="223.0" font-size="12" fill="#c0392b" text-anchor="middle">끝나면 500GB 를 ata5 로</text></svg>
-
-<div style="overflow-x:auto;"><table class="t">
-<thead><tr>
-<th>디스크</th>
-<th>전</th>
-<th>지금 (2026.10.17 16:44 부팅 뒤)</th>
-</tr></thead><tbody>
-<tr><td>840 EVO 120GB (실험용, <code>…40389K</code>)</td><td><code>sdg</code>, USB, TRIM 안 됨</td><td><strong><code>sda</code>, SATA <code>ata5</code>, TRIM 됨</strong></td></tr>
-<tr><td>840 EVO 500GB (<code>…85299B</code>)</td><td><code>sda</code>, SATA <code>ata5</code></td><td><code>sde</code>, USB (<code>/etc/fstab</code> 에 <code>nofail</code> 이라 부팅에 문제 없음)</td></tr>
-<tr><td>750 EVO · WD 1TB · Seagate 2TB</td><td><code>sdb</code> · <code>sdc</code> · <code>sdd</code> (<code>ata6</code>–<code>ata8</code>)</td><td>그대로</td></tr>
-</tbody></table></div>
-
-<div class="check" markdown="1">
-**글자가 바뀌었다.** 전에 `sda` 는 500GB 였고, 지금 `sda` 는 실험용 120GB 다. 옛 메모의 `/dev/sdX` 를 그대로 쓰면 다른 디스크를 지운다.
-`lab.sh` 는 장치를 이름이 아니라 **시리얼** 로 찾으므로 그대로 쓰면 된다.
-2026.10.18 아침의 `lsblk` 에서는 USB 쪽 디스크 구성이 또 달랐다 (실험용 120GB 는 그대로 `sda`). 글자는 부팅 · 연결마다 바뀔 수 있다.
-</div>
-
-**실험 1 에는 오히려 좋다.** 실험 1 (오래된 데이터) 과 실험 3 의 `scan fresh` (새 데이터) 를 같은 SATA 연결에서 재므로, 두 곡선의 차이는 '데이터의 나이' 뿐이다. USB 로 다시 옮겨 한 번 더 재는 단계는 필요 없어졌다.
-
-확인 : `sudo ./lab.sh check` 를 SATA 에서 실행하면 SMART 와 `hdparm -I` (TRIM 지원 줄) 이 모두 나와야 한다 (USB 와 달리 `-d sat` 없이).
-
-<div class="tip" markdown="1">
-**실험이 다 끝나면** 500GB 를 `ata5` 로 되돌린다. 다른 방법 : PCIe SATA 카드 (ASM1166 · JMB585 칩) 를 쓰면 포트를 바꿀 필요가 없다.
-</div>
-
 ## 결과
 
 <div class="result" markdown="1">
-아직 실행 전. `sudo ./lab.sh check` 결과가 나오면 여기에 SMART 표와 해석을 붙인다.
+**2026.10.18 08:49, `sudo ./lab.sh check`** (결과 폴더 `20261018-084956-check`). 연결 : SATA 3.1, 6.0 Gb/s. SMART 판정 `PASSED`.
+
+**SMART 속성** (raw 값)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>ID</th>
+<th>이름</th>
+<th>값</th>
+<th>읽는 법</th>
+</tr></thead><tbody>
+<tr><td>9</td><td>Power_On_Hours</td><td>10,373 시간</td><td>켜져 있던 시간을 다 합해 약 432일</td></tr>
+<tr><td>12</td><td>Power_Cycle_Count</td><td>4,600 번</td><td>한 번 켜면 평균 2.3시간 : 매일 켰다 끈 데스크톱 · 노트북 디스크의 모습</td></tr>
+<tr><td>235</td><td>POR_Recovery_Count</td><td>1,036 번</td><td><strong>정상적으로 끄지 않고 전원이 끊긴 횟수</strong> (Samsung 의 뜻). 켠 횟수의 약 22%</td></tr>
+<tr><td>177</td><td>Wear_Leveling_Count</td><td>117 (정규화 90)</td><td>블록 평균 117번 지워졌다. 정규화 값이 100 → 90 으로 10 내려갔으니, 펌웨어는 대략 <strong>1,170번</strong> 을 수명으로 보는 셈이다</td></tr>
+<tr><td>241</td><td>Total_LBAs_Written</td><td>22,481,189,514</td><td>× 512 B = 호스트가 쓴 양 <strong>11.5 TB</strong></td></tr>
+<tr><td>5 · 179 · 181 · 182 · 183</td><td>재할당 · 예비 블록 · 쓰기 실패 · 지우기 실패 · 불량 블록</td><td>모두 0</td><td>아직 고장 난 블록이 없다</td></tr>
+<tr><td>187 · 195</td><td>고치지 못한 오류 · ECC 오류율</td><td>0 · 0</td><td>읽기 오류도 없었다 (아직)</td></tr>
+<tr><td>199</td><td>CRC_Error_Count</td><td>0</td><td>SATA 케이블 · 링크 문제 없음</td></tr>
+<tr><td>190</td><td>온도</td><td>31 °C</td><td>켠 뒤 40분 동안 28 → 31 °C</td></tr>
+</tbody></table></div>
+
+**지금까지의 WAF (평생)** : NAND 에 쓴 양 ≈ 177 × 128 GiB ≈ 16.1 TB, 호스트가 쓴 양 11.5 TB → **WAF ≈ 1.4**. 보통 PC 의 쓰기 (대부분 순차, 빈 공간 넉넉, TRIM) 에서 기대하는 값이다. 실험 8 의 랜덤 쓰기 (모델 예측 7.8) 와 비교할 기준이 된다. (177 의 눈금이 크고, NAND 128 GiB 는 알려진 값이라 ±10% 쯤의 어림이다.)
+
+**남은 수명** : 1,170 − 117 ≈ 1,050번 더 지울 수 있다 (펌웨어의 기준으로). 실험 18 에서 이 기준을 실제로 넘겨 본다.
+
+**'믿을 수 없게 됨' 은 SMART 에 보이지 않는다.** 오류 · 불량 블록 카운터가 모두 0 이고, 오류 로그 (`No Errors Logged`) 도 자가 진단 기록도 비어 있다. 문제가 있다면 오래된 데이터의 읽기 속도 쪽일 것이다 : 실험 1 이 확인한다.
+
+**ATA 기능** (`hdparm -I`)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>보이는 것</th>
+<th>뜻</th>
+<th>어느 실험</th>
+</tr></thead><tbody>
+<tr><td><code>Data Set Management TRIM supported (limit 8 blocks)</code></td><td>TRIM 지원</td><td>4</td></tr>
+<tr><td><code>Deterministic read ZEROs after TRIM</code> <strong>줄이 없다</strong></td><td>드라이브는 '0 으로 읽힌다' 를 약속하지 않는다. 그런데 커널은 이 모델에 <code>zeroaftertrim</code> 예외를 적용한다 (<a href="/old-ssd-experiments/linux-commands/">Linux 명령 4절</a>). 누가 맞는지 실험 4 가 잰다</td><td>4</td></tr>
+<tr><td><code>Device encrypts all user data</code></td><td><strong>항상 암호화하는 드라이브</strong> : Secure Erase 가 키 교체일 가능성이 크다</td><td>14</td></tr>
+<tr><td>Security : <code>supported</code>, <code>not enabled</code>, <strong><code>frozen</code></strong>, <code>enhanced erase</code>, <code>2min … 8min</code></td><td>BIOS 가 보안 명령을 잠갔다. 실험 14 전에 절전 → 깨우기로 푼다. 드라이브가 말하는 지우기 시간 : 보통 2분, enhanced 8분</td><td>14</td></tr>
+<tr><td><code>Write cache</code> (켜짐), <code>WRITE_DMA_FUA_EXT</code> 지원</td><td>드라이브는 FUA 를 지원하지만 커널은 쓰지 않는다 (<code>doesn't support DPO or FUA</code> 는 커널의 기본 설정). 데이터를 지키는 방법은 FLUSH 뿐</td><td>7, 17</td></tr>
+<tr><td><code>Host Protected Area feature set</code> (켜짐), <code>max sectors</code> 같음</td><td>HPA 를 쓸 수 있고, 지금 숨긴 영역은 없다</td><td>10</td></tr>
+<tr><td><code>Queue depth: 32</code>, Gen3 (6.0 Gb/s)</td><td>NCQ 32, SATA 3</td><td>5</td></tr>
+<tr><td>Extended self-test : <strong>70분</strong> (SMART 가 권하는 시간)</td><td>실험 2 에서 실제 시간과 비교</td><td>2</td></tr>
+<tr><td>Device Statistics log : 지원하지 않음</td><td>실험 2 의 <code>devstat</code> 는 비어 있을 것이다</td><td>2</td></tr>
+</tbody></table></div>
+
+같은 명령을 08:44 에도 한 번 했다 (`20261018-084416-check`) : 켜진 시간이 1시간 늘어난 것 말고는 같다.
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/fio/' | relative_url }}">← fio 사용법</a><a href="{{ '/old-ssd-experiments/1-old-data/' | relative_url }}">1. 오래된 데이터 읽기 →</a></div>

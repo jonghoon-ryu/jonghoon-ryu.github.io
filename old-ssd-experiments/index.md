@@ -41,7 +41,7 @@ table.t code { font-size:0.82rem; }
 <tr><td>NAND</td><td>TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 값)</td></tr>
 <tr><td>지금 상태</td><td>옛 Windows 디스크, 91% 차 있음, 파일 날짜 2018–2024</td></tr>
 <tr><td>지난 이력</td><td>2024.12 쯤 마지막으로 쓴 뒤 <strong>1년 넘게 전원 없이</strong> 보관. 2026.10.17 다시 연결 : Ryu 가 파일 몇 개를 읽고, 몇 개를 새로 씀</td></tr>
-<tr><td>지금 연결</td><td>메인보드 SATA (<code>ata5</code>, 2026.10.17 부터) : TRIM 됨 (<code>DISC-MAX 2G</code>). 그 전에는 USB 어댑터라 TRIM 이 통과하지 않았다</td></tr>
+<tr><td>연결</td><td>메인보드 SATA (<code>ata5</code>, SATA 3) : TRIM 됨 (<code>DISC-MAX 2G</code>)</td></tr>
 </tbody></table></div>
 
 1년 넘게 전원 없이 있었다는 것이 실험 1 을 특별하게 만든다 : 켜져 있어야만 할 수 있는 펌웨어의 '오래된 데이터 다시 쓰기' 가 그동안 한 번도 없었다. 그래서 **실험 1 은 가장 먼저, 되도록 빨리** 한다.
@@ -116,8 +116,8 @@ table.t code { font-size:0.82rem; }
 <th>실험</th>
 <th>상태</th>
 </tr></thead><tbody>
-<tr><td>0 준비</td><td>SMART 출력 기다리는 중 (<code>sudo apt install --no-install-recommends smartmontools fio sysstat</code> 다음 <code>sudo ./lab.sh check</code>)</td></tr>
-<tr><td>1 오래된 데이터</td><td>준비 다음 바로 (드라이브가 켜져 있는 시간이 길수록 '1년 넘게 둔 데이터' 가 줄어들 수 있다)</td></tr>
+<tr><td>0 준비</td><td><strong>끝</strong> (2026.10.18) : SMART 오류 0, 평생 WAF ≈ 1.4, 177 = 117 (수명의 약 10%), Security frozen. <a href="/old-ssd-experiments/0-setup/">결과</a></td></tr>
+<tr><td>1 오래된 데이터</td><td>다음 : 바로 한다 (<code>/mnt/old840</code> 읽기 전용 마운트 됨)</td></tr>
 <tr><td>2 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 

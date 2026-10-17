@@ -25,7 +25,7 @@ permalink: /old-ssd-experiments/
 NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 값)
 지금 상태 | 옛 Windows 디스크, 91% 차 있음, 파일 날짜 2018–2024
 지난 이력 | 2024.12 쯤 마지막으로 쓴 뒤 **1년 넘게 전원 없이** 보관. 2026.10.17 다시 연결 : Ryu 가 파일 몇 개를 읽고, 몇 개를 새로 씀
-지금 연결 | 메인보드 SATA (`ata5`, 2026.10.17 부터) : TRIM 됨 (`DISC-MAX 2G`). 그 전에는 USB 어댑터라 TRIM 이 통과하지 않았다
+연결 | 메인보드 SATA (`ata5`, SATA 3) : TRIM 됨 (`DISC-MAX 2G`)
 ```
 
 1년 넘게 전원 없이 있었다는 것이 실험 1 을 특별하게 만든다 : 켜져 있어야만 할 수 있는 펌웨어의 '오래된 데이터 다시 쓰기' 가 그동안 한 번도 없었다. 그래서 **실험 1 은 가장 먼저, 되도록 빨리** 한다.
@@ -88,8 +88,8 @@ NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 �
 
 ```table
 실험 | 상태
-0 준비 | SMART 출력 기다리는 중 (`sudo apt install --no-install-recommends smartmontools fio sysstat` 다음 `sudo ./lab.sh check`)
-1 오래된 데이터 | 준비 다음 바로 (드라이브가 켜져 있는 시간이 길수록 '1년 넘게 둔 데이터' 가 줄어들 수 있다)
+0 준비 | **끝** (2026.10.18) : SMART 오류 0, 평생 WAF ≈ 1.4, 177 = 117 (수명의 약 10%), Security frozen. [결과](/old-ssd-experiments/0-setup/)
+1 오래된 데이터 | 다음 : 바로 한다 (`/mnt/old840` 읽기 전용 마운트 됨)
 2 – 19 | 아직
 ```
 

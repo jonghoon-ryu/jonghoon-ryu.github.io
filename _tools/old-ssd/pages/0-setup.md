@@ -10,7 +10,7 @@ permalink: /old-ssd-experiments/0-setup/
 <div class="glance">
 <b>목표</b><span>실험할 드라이브를 확실히 알아보고, 도구를 깔고, 실험 전 SMART 값 (기준값) 을 남긴다</span>
 <b>지우나?</b><span>아니오. 읽기만 한다</span>
-<b>연결</b><span>SATA (2026.10.17 에 옮김 : 6단계)</span>
+<b>연결</b><span>메인보드 SATA</span>
 <b>시간</b><span>30분</span>
 <b>명령</b><span><code>sudo ./lab.sh check</code></span>
 </div>
@@ -21,7 +21,7 @@ permalink: /old-ssd-experiments/0-setup/
 항목 | 값 | 출처
 모델 | Samsung SSD 840 EVO 120GB | `lsblk`
 시리얼 | `S1D6NSAFB40389K` | `lsblk`, `/dev/disk/by-id`
-펌웨어 | `EXT0CB6Q` | `lsblk -o REV` (같은 컴퓨터의 840 EVO 500GB 는 `EXT0BB6Q`)
+펌웨어 | `EXT0CB6Q` | `lsblk -o REV`
 용량 | 120,034,123,776 B (234,441,648 섹터) | 커널 로그
 NAND | TLC, 128 GiB 로 알려짐 | 리뷰 · 자료 (확인 필요)
 SLC 버퍼 (TurboWrite) | 120GB 모델은 약 3 GB 로 알려짐 | Samsung 자료 (확인 필요)
@@ -29,7 +29,7 @@ SLC 버퍼 (TurboWrite) | 120GB 모델은 약 3 GB 로 알려짐 | Samsung 자�
 지금 내용 | 옛 Windows 디스크 : EFI · MSR · NTFS 111 GB (91% 참) · 복구 | `lsblk -f`, `df`
 파일 날짜 | 2018 – 2024.12 (hiberfil.sys 마지막 수정 2024.12.08) | `ls -la`
 지난 이력 | 2024.12 쯤 마지막으로 쓴 뒤 **1년 넘게 전원 없이** 보관. 2026.10.17 에 다시 연결해 Ryu 가 파일 몇 개를 읽고 몇 개를 새로 씀 (약 17.6 MB) | Ryu, `/proc/diskstats`
-지금 연결 | 메인보드 SATA `ata5` (`/dev/sda`), TRIM 됨 (`DISC-GRAN 512B`, `DISC-MAX 2G`). 처음에는 USB 3.0 어댑터 (ASMedia 19da:1125, `uas`) 로 `/dev/sdg` 였고 TRIM 이 안 됐다 | `lsblk -o NAME,TRAN,DISC-MAX`, `/sys/block/sda`
+연결 | 메인보드 SATA `ata5` (`/dev/sda`), SATA 3 (6.0 Gbps), TRIM 됨 (`DISC-GRAN 512B`, `DISC-MAX 2G`) | `lsblk -o NAME,TRAN,DISC-MAX`, `journalctl -k`
 ```
 
 <div class="check" markdown="1">
@@ -80,8 +80,8 @@ $ sudo ./lab.sh check
 
 하는 일 (아무것도 쓰지 않는다) :
 1. 시리얼로 장치를 찾고, 연결 방식과 TRIM 가능 여부를 보여 준다
-2. `hdparm -I` 로 펌웨어 · TRIM 지원 줄을 보여 준다 (USB 어댑터가 막으면 비어 있을 수 있다)
-3. `smartctl -x` (USB 면 `-d sat`) 를 텍스트와 JSON 으로 저장하고, 실험에 쓰는 속성만 골라 보여 준다
+2. `hdparm -I` 로 펌웨어 · TRIM 지원 줄을 보여 준다
+3. `smartctl -x` 를 텍스트와 JSON 으로 저장하고, 실험에 쓰는 속성만 골라 보여 준다
 
 `check` 가 끝나면 Claude 에게 알린다. 결과 폴더를 직접 읽어서 다음을 확인한다 :
 
@@ -98,11 +98,9 @@ $ sudo ./lab.sh check
 
 ## 5단계 : 읽기 전용으로 다시 마운트
 
-10.17 에는 NTFS 파티션이 파일 관리자를 통해 읽고 쓰기 (`rw`) 로 붙어 있었다 (`/media/ryuj/C8922986922979D8`). 그때 Ryu 가 파일을 읽고 쓴 기록 (쓴 시각, 접근 시각) 이 실험 1 에서 파일을 세 무리로 나누는 근거가 된다.
-2026.10.18 아침에는 붙어 있지 않다 (`lsblk` 에 마운트 지점 없음). 실험 1 동안 접근 시각 같은 작은 쓰기도 없도록 **읽기 전용** 으로 붙인다.
+2026.10.17 에 Ryu 가 파일을 읽고 쓴 기록 (쓴 시각, 접근 시각) 이 실험 1 에서 파일을 세 무리로 나누는 근거가 된다. 실험 1 동안 접근 시각 같은 작은 쓰기도 없도록 NTFS 파티션을 **읽기 전용** 으로 붙인다. 이미 다른 곳에 붙어 있으면 먼저 뗀다 (`findmnt` 로 확인, `sudo umount 그곳`).
 
 ```
-$ findmnt /media/ryuj/C8922986922979D8 && sudo umount /media/ryuj/C8922986922979D8   # 붙어 있을 때만
 $ sudo mkdir -p /mnt/old840
 $ sudo mount -t ntfs-3g -o ro /dev/disk/by-id/ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K-part3 /mnt/old840
 $ findmnt /mnt/old840          # OPTIONS 에 ro
@@ -115,38 +113,48 @@ $ findmnt /mnt/old840          # OPTIONS 에 ro
 `ntfs-3g` 로 붙여야 `fileage.py` 가 NTFS 생성 시각 (`system.ntfs_crtime`) 을 읽을 수 있다.
 Windows 가 최대 절전 상태 (hiberfil.sys) 로 꺼져 있어서 `ntfs-3g` 가 마운트를 거절하면, 읽기 전용 (`-o ro`) 이므로 그대로 진행해도 된다는 안내가 나온다.
 
-## 6단계 : SATA 로 옮기기 (2026.10.17 완료)
-
-처음 계획은 실험 1 을 USB 로 한 뒤 `sdc` (WD 1TB HDD) 자리에 꽂는 것이었다. 실제로는 **실험 1 전에** 옮겼고, 자리도 달랐다 :
-840 EVO 120GB 가 `ata5` 에 있던 **840 EVO 500GB 와 자리를 바꿨다**. 500GB 는 대신 USB 어댑터로 간다.
-
-@@FIG setup_sata@@
-
-```table
-디스크 | 전 | 지금 (2026.10.17 16:44 부팅 뒤)
-840 EVO 120GB (실험용, `…40389K`) | `sdg`, USB, TRIM 안 됨 | **`sda`, SATA `ata5`, TRIM 됨**
-840 EVO 500GB (`…85299B`) | `sda`, SATA `ata5` | `sde`, USB (`/etc/fstab` 에 `nofail` 이라 부팅에 문제 없음)
-750 EVO · WD 1TB · Seagate 2TB | `sdb` · `sdc` · `sdd` (`ata6`–`ata8`) | 그대로
-```
-
-<div class="check" markdown="1">
-**글자가 바뀌었다.** 전에 `sda` 는 500GB 였고, 지금 `sda` 는 실험용 120GB 다. 옛 메모의 `/dev/sdX` 를 그대로 쓰면 다른 디스크를 지운다.
-`lab.sh` 는 장치를 이름이 아니라 **시리얼** 로 찾으므로 그대로 쓰면 된다.
-2026.10.18 아침의 `lsblk` 에서는 USB 쪽 디스크 구성이 또 달랐다 (실험용 120GB 는 그대로 `sda`). 글자는 부팅 · 연결마다 바뀔 수 있다.
-</div>
-
-**실험 1 에는 오히려 좋다.** 실험 1 (오래된 데이터) 과 실험 3 의 `scan fresh` (새 데이터) 를 같은 SATA 연결에서 재므로, 두 곡선의 차이는 '데이터의 나이' 뿐이다. USB 로 다시 옮겨 한 번 더 재는 단계는 필요 없어졌다.
-
-확인 : `sudo ./lab.sh check` 를 SATA 에서 실행하면 SMART 와 `hdparm -I` (TRIM 지원 줄) 이 모두 나와야 한다 (USB 와 달리 `-d sat` 없이).
-
-<div class="tip" markdown="1">
-**실험이 다 끝나면** 500GB 를 `ata5` 로 되돌린다. 다른 방법 : PCIe SATA 카드 (ASM1166 · JMB585 칩) 를 쓰면 포트를 바꿀 필요가 없다.
-</div>
-
 ## 결과
 
 <div class="result" markdown="1">
-아직 실행 전. `sudo ./lab.sh check` 결과가 나오면 여기에 SMART 표와 해석을 붙인다.
+**2026.10.18 08:49, `sudo ./lab.sh check`** (결과 폴더 `20261018-084956-check`). 연결 : SATA 3.1, 6.0 Gb/s. SMART 판정 `PASSED`.
+
+**SMART 속성** (raw 값)
+
+```table
+ID | 이름 | 값 | 읽는 법
+9 | Power_On_Hours | 10,373 시간 | 켜져 있던 시간을 다 합해 약 432일
+12 | Power_Cycle_Count | 4,600 번 | 한 번 켜면 평균 2.3시간 : 매일 켰다 끈 데스크톱 · 노트북 디스크의 모습
+235 | POR_Recovery_Count | 1,036 번 | **정상적으로 끄지 않고 전원이 끊긴 횟수** (Samsung 의 뜻). 켠 횟수의 약 22%
+177 | Wear_Leveling_Count | 117 (정규화 90) | 블록 평균 117번 지워졌다. 정규화 값이 100 → 90 으로 10 내려갔으니, 펌웨어는 대략 **1,170번** 을 수명으로 보는 셈이다
+241 | Total_LBAs_Written | 22,481,189,514 | × 512 B = 호스트가 쓴 양 **11.5 TB**
+5 · 179 · 181 · 182 · 183 | 재할당 · 예비 블록 · 쓰기 실패 · 지우기 실패 · 불량 블록 | 모두 0 | 아직 고장 난 블록이 없다
+187 · 195 | 고치지 못한 오류 · ECC 오류율 | 0 · 0 | 읽기 오류도 없었다 (아직)
+199 | CRC_Error_Count | 0 | SATA 케이블 · 링크 문제 없음
+190 | 온도 | 31 °C | 켠 뒤 40분 동안 28 → 31 °C
+```
+
+**지금까지의 WAF (평생)** : NAND 에 쓴 양 ≈ 177 × 128 GiB ≈ 16.1 TB, 호스트가 쓴 양 11.5 TB → **WAF ≈ 1.4**. 보통 PC 의 쓰기 (대부분 순차, 빈 공간 넉넉, TRIM) 에서 기대하는 값이다. 실험 8 의 랜덤 쓰기 (모델 예측 7.8) 와 비교할 기준이 된다. (177 의 눈금이 크고, NAND 128 GiB 는 알려진 값이라 ±10% 쯤의 어림이다.)
+
+**남은 수명** : 1,170 − 117 ≈ 1,050번 더 지울 수 있다 (펌웨어의 기준으로). 실험 18 에서 이 기준을 실제로 넘겨 본다.
+
+**'믿을 수 없게 됨' 은 SMART 에 보이지 않는다.** 오류 · 불량 블록 카운터가 모두 0 이고, 오류 로그 (`No Errors Logged`) 도 자가 진단 기록도 비어 있다. 문제가 있다면 오래된 데이터의 읽기 속도 쪽일 것이다 : 실험 1 이 확인한다.
+
+**ATA 기능** (`hdparm -I`)
+
+```table
+보이는 것 | 뜻 | 어느 실험
+`Data Set Management TRIM supported (limit 8 blocks)` | TRIM 지원 | 4
+`Deterministic read ZEROs after TRIM` **줄이 없다** | 드라이브는 '0 으로 읽힌다' 를 약속하지 않는다. 그런데 커널은 이 모델에 `zeroaftertrim` 예외를 적용한다 ([Linux 명령 4절](/old-ssd-experiments/linux-commands/)). 누가 맞는지 실험 4 가 잰다 | 4
+`Device encrypts all user data` | **항상 암호화하는 드라이브** : Secure Erase 가 키 교체일 가능성이 크다 | 14
+Security : `supported`, `not enabled`, **`frozen`**, `enhanced erase`, `2min … 8min` | BIOS 가 보안 명령을 잠갔다. 실험 14 전에 절전 → 깨우기로 푼다. 드라이브가 말하는 지우기 시간 : 보통 2분, enhanced 8분 | 14
+`Write cache` (켜짐), `WRITE_DMA_FUA_EXT` 지원 | 드라이브는 FUA 를 지원하지만 커널은 쓰지 않는다 (`doesn't support DPO or FUA` 는 커널의 기본 설정). 데이터를 지키는 방법은 FLUSH 뿐 | 7, 17
+`Host Protected Area feature set` (켜짐), `max sectors` 같음 | HPA 를 쓸 수 있고, 지금 숨긴 영역은 없다 | 10
+`Queue depth: 32`, Gen3 (6.0 Gb/s) | NCQ 32, SATA 3 | 5
+Extended self-test : **70분** (SMART 가 권하는 시간) | 실험 2 에서 실제 시간과 비교 | 2
+Device Statistics log : 지원하지 않음 | 실험 2 의 `devstat` 는 비어 있을 것이다 | 2
+```
+
+같은 명령을 08:44 에도 한 번 했다 (`20261018-084416-check`) : 켜진 시간이 1시간 늘어난 것 말고는 같다.
 </div>
 
 @@NAV@@

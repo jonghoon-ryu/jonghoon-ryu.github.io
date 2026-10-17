@@ -21,12 +21,10 @@ table.t code { font-size:0.82rem; }
 # SSD 를 다루는 Linux 명령
 
 **처음 보는 사람을 위한 안내.** 디스크를 찾고, 상태를 보고, 속도를 재고, (조심해서) 지우는 명령을 차례로 익힌다.
-여기 나오는 출력은 모두 **이 컴퓨터 (MSI B760M, Ubuntu 24.04) 에서 실제로 나온 것** 이다 (2026.10.17). `sudo` 가 필요한 명령은 출력을 아직 받지 못해서 명령과 읽는 법만 적었다.
-
-**주의 : 아래 출력은 840 EVO 120GB 가 USB 어댑터에 있던 때 (`sdg`) 의 것이다.** 같은 날 오후 SATA 로 옮긴 뒤로는 `sda` 이고 (`TRAN sata`, `ROTA 0`, `DISC-MAX 2G`), 출력에서 `sda` 로 나오는 840 EVO 500GB 는 지금 USB 의 `sde` 다 ([0. 준비 6단계](/old-ssd-experiments/0-setup/)).
+여기 나오는 출력은 모두 **이 컴퓨터 (MSI B760M, Ubuntu 24.04) 에서 실제로 나온 것** 이다 (2026.10.18). 실험할 840 EVO 120GB 는 메인보드 SATA 에 붙은 `sda` 다. `sudo` 가 필요한 명령은 출력을 아직 받지 못해서 명령과 읽는 법만 적었다.
 
 <div class="glance">
-<b>읽는 순서</b><span>1 층 그림 → 2 디스크 찾기 → 3 마운트 → 4 연결 → 5 SMART → 6 TRIM → 7 속도 재기 → 8 지켜보기 → 9 위험한 명령 → 10 요약표</span>
+<b>읽는 순서</b><span>1 층 그림 → 2 디스크 찾기 → 3 마운트 → 4 연결 → 5 SMART → 6 TRIM → 7 속도 재기 → 8 지켜보기 → 9 위험한 명령 → 10 요약표. fio 는 <a href="/old-ssd-experiments/fio/">따로 한 페이지</a></span>
 <b>준비</b><span><code>sudo apt install smartmontools fio sysstat</code> (smartctl, fio, iostat)</span>
 <b>약속</b><span><code>$</code> 로 시작하는 줄 = 입력하는 명령, 나머지 = 출력. <code>…</code> = 줄임</span>
 </div>
@@ -35,7 +33,7 @@ table.t code { font-size:0.82rem; }
 
 파일 하나를 쓰면 여러 층을 거쳐 NAND 에 닿는다. 명령마다 **어느 층을 보는지** 가 다르다. 헷갈릴 때는 이 그림으로 돌아온다.
 
-<svg viewBox="0 0 760 470" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="디스크 층과 명령"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">디스크가 보이는 층과, 각 층을 보는 명령</text><rect x="20" y="40" width="400" height="50" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="220.0" y="61.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">응용 프로그램</text><text x="220.0" y="77.0" font-size="11.5" fill="#4d5656" text-anchor="middle">cp, 브라우저, fio …</text><rect x="450" y="46" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="69.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">ps, iotop</text><line x1="420" y1="65" x2="448" y2="65" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="100" width="400" height="50" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="220.0" y="121.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">파일 시스템</text><text x="220.0" y="137.0" font-size="11.5" fill="#4d5656" text-anchor="middle">ext4, NTFS, vfat : 파일 이름 → 위치</text><rect x="450" y="106" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="129.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">df, findmnt, mount</text><line x1="420" y1="125" x2="448" y2="125" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="160" width="400" height="50" rx="8" fill="#ebf5fb" stroke="#2874a6" stroke-width="2"/><text x="220.0" y="181.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">페이지 캐시 (RAM)</text><text x="220.0" y="197.0" font-size="11.5" fill="#4d5656" text-anchor="middle">읽은 것 · 쓸 것을 잠시 담아 둔다</text><rect x="450" y="166" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="189.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">free, dd oflag=direct</text><line x1="420" y1="185" x2="448" y2="185" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="220" width="400" height="50" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="220.0" y="241.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">블록 장치</text><text x="220.0" y="257.0" font-size="11.5" fill="#4d5656" text-anchor="middle">/dev/sdg, /dev/sdg3 : 512 B 섹터의 줄</text><rect x="450" y="226" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="249.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">lsblk, blockdev, /dev/disk/by-id</text><line x1="420" y1="245" x2="448" y2="245" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="280" width="400" height="50" rx="8" fill="#f4ecf7" stroke="#7d3c98" stroke-width="2"/><text x="220.0" y="301.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">드라이버 · 연결</text><text x="220.0" y="317.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA (ahci) 또는 USB (uas) · NVMe</text><rect x="450" y="286" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="309.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">lsusb -t, /sys/block, journalctl -k</text><line x1="420" y1="305" x2="448" y2="305" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="340" width="400" height="50" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="220.0" y="361.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">SSD 컨트롤러 (FTL)</text><text x="220.0" y="377.0" font-size="11.5" fill="#4d5656" text-anchor="middle">LBA → NAND 위치, GC, 마모 평준화</text><rect x="450" y="346" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="369.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">smartctl, hdparm -I, nvme</text><line x1="420" y1="365" x2="448" y2="365" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="400" width="400" height="50" rx="8" fill="#ebf5fb" stroke="#2874a6" stroke-width="2"/><text x="220.0" y="421.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">NAND 플래시</text><text x="220.0" y="437.0" font-size="11.5" fill="#4d5656" text-anchor="middle">실제로 데이터가 사는 곳</text><rect x="450" y="406" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="429.0" font-size="11.5" fill="#4d5656" text-anchor="middle">(직접은 못 본다 : 실험으로 추측)</text><line x1="420" y1="425" x2="448" y2="425" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/></svg>
+<svg viewBox="0 0 760 470" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="디스크 층과 명령"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">디스크가 보이는 층과, 각 층을 보는 명령</text><rect x="20" y="40" width="400" height="50" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="220.0" y="61.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">응용 프로그램</text><text x="220.0" y="77.0" font-size="11.5" fill="#4d5656" text-anchor="middle">cp, 브라우저, fio …</text><rect x="450" y="46" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="69.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">ps, iotop</text><line x1="420" y1="65" x2="448" y2="65" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="100" width="400" height="50" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="220.0" y="121.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">파일 시스템</text><text x="220.0" y="137.0" font-size="11.5" fill="#4d5656" text-anchor="middle">ext4, NTFS, vfat : 파일 이름 → 위치</text><rect x="450" y="106" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="129.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">df, findmnt, mount</text><line x1="420" y1="125" x2="448" y2="125" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="160" width="400" height="50" rx="8" fill="#ebf5fb" stroke="#2874a6" stroke-width="2"/><text x="220.0" y="181.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">페이지 캐시 (RAM)</text><text x="220.0" y="197.0" font-size="11.5" fill="#4d5656" text-anchor="middle">읽은 것 · 쓸 것을 잠시 담아 둔다</text><rect x="450" y="166" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="189.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">free, dd oflag=direct</text><line x1="420" y1="185" x2="448" y2="185" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="220" width="400" height="50" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="220.0" y="241.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">블록 장치</text><text x="220.0" y="257.0" font-size="11.5" fill="#4d5656" text-anchor="middle">/dev/sda, /dev/sda3 : 512 B 섹터의 줄</text><rect x="450" y="226" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="249.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">lsblk, blockdev, /dev/disk/by-id</text><line x1="420" y1="245" x2="448" y2="245" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="280" width="400" height="50" rx="8" fill="#f4ecf7" stroke="#7d3c98" stroke-width="2"/><text x="220.0" y="301.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">드라이버 · 연결</text><text x="220.0" y="317.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA (ahci) · NVMe</text><rect x="450" y="286" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="309.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">/sys/block, journalctl -k</text><line x1="420" y1="305" x2="448" y2="305" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="340" width="400" height="50" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="220.0" y="361.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">SSD 컨트롤러 (FTL)</text><text x="220.0" y="377.0" font-size="11.5" fill="#4d5656" text-anchor="middle">LBA → NAND 위치, GC, 마모 평준화</text><rect x="450" y="346" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="369.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">smartctl, hdparm -I, nvme</text><line x1="420" y1="365" x2="448" y2="365" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="400" width="400" height="50" rx="8" fill="#ebf5fb" stroke="#2874a6" stroke-width="2"/><text x="220.0" y="421.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">NAND 플래시</text><text x="220.0" y="437.0" font-size="11.5" fill="#4d5656" text-anchor="middle">실제로 데이터가 사는 곳</text><rect x="450" y="406" width="290" height="38" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="595.0" y="429.0" font-size="11.5" fill="#4d5656" text-anchor="middle">(직접은 못 본다 : 실험으로 추측)</text><line x1="420" y1="425" x2="448" y2="425" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/></svg>
 
 ## 2. 어떤 디스크가 있나
 
@@ -46,16 +44,14 @@ table.t code { font-size:0.82rem; }
 ```
 $ lsblk -e7
 NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
-sda           8:0    0 465.8G  0 disk
-└─sda1        8:1    0 465.8G  0 part /mnt/ffdee1b5-2710-0000-903c-000ec6d61e71
+sda           8:0    0 111.8G  0 disk
+├─sda1        8:1    0   100M  0 part
+├─sda2        8:2    0    16M  0 part
+├─sda3        8:3    0 111.2G  0 part /mnt/old840
+└─sda4        8:4    0   532M  0 part
 sdb           8:16   0 465.8G  0 disk
 └─sdb1        8:17   0 465.8G  0 part /mnt/c4305fe5-2710-0000-9b3d-7085c278815e
 …
-sdg           8:96   0 111.8G  0 disk
-├─sdg1        8:97   0   100M  0 part
-├─sdg2        8:98   0    16M  0 part
-├─sdg3        8:99   0 111.2G  0 part /media/ryuj/C8922986922979D8
-└─sdg4        8:100  0   532M  0 part
 nvme0n1     259:0    0   1.8T  0 disk
 ├─nvme0n1p1 259:1    0   512M  0 part /boot/efi
 └─nvme0n1p2 259:2    0   1.8T  0 part /
@@ -75,44 +71,46 @@ nvme0n1     259:0    0   1.8T  0 disk
 
 이름 읽는 법 :
 
-<svg viewBox="0 0 760 300" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="장치 이름"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">장치 이름 읽는 법</text><rect x="20" y="50" width="180" height="60" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="110.0" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">/dev/sdg</text><text x="110.0" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">디스크 하나 (SATA · USB)</text><rect x="260" y="30" width="230" height="38" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="53.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">sdg1   100 MB vfat</text><text x="505.0" y="54.0" font-size="12" fill="#4d5656" text-anchor="start">EFI 부트</text><path d="M200,80 C230,80 230,49 258,49" fill="none" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="260" y="75" width="230" height="38" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="98.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">sdg2   16 MB</text><text x="505.0" y="99.0" font-size="12" fill="#4d5656" text-anchor="start">MSR (예약)</text><path d="M200,80 C230,80 230,94 258,94" fill="none" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="260" y="120" width="230" height="38" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="143.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">sdg3   111 GB ntfs</text><text x="505.0" y="144.0" font-size="12" fill="#4d5656" text-anchor="start">Windows C:</text><path d="M200,80 C230,80 230,139 258,139" fill="none" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="260" y="165" width="230" height="38" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="188.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">sdg4   532 MB ntfs</text><text x="505.0" y="189.0" font-size="12" fill="#4d5656" text-anchor="start">복구</text><path d="M200,80 C230,80 230,184 258,184" fill="none" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="225" width="180" height="55" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="110.0" y="248.5" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">/dev/nvme0n1</text><text x="110.0" y="264.5" font-size="11.5" fill="#4d5656" text-anchor="middle">NVMe 디스크</text><rect x="260" y="225" width="230" height="55" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="248.5" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">nvme0n1p1, nvme0n1p2</text><text x="375.0" y="264.5" font-size="11.5" fill="#4d5656" text-anchor="middle">(파티션 앞에 p 가 붙는다)</text><line x1="200" y1="252" x2="258" y2="252" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><text x="625.0" y="232.0" font-size="11.5" fill="#4d5656" text-anchor="middle">sd = SCSI disk : SATA · USB 디스크 이름</text><text x="625.0" y="249.0" font-size="11.5" fill="#4d5656" text-anchor="middle">a, b, … g 는 연결 순서로 붙어 바뀔 수 있다</text><text x="625.0" y="272.0" font-size="11.5" font-weight="700" fill="#c0392b" text-anchor="middle">→ 실험에서는 시리얼로 찾는다</text></svg>
+<svg viewBox="0 0 760 300" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="장치 이름"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">장치 이름 읽는 법</text><rect x="20" y="50" width="180" height="60" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="110.0" y="76.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">/dev/sda</text><text x="110.0" y="92.0" font-size="11.5" fill="#4d5656" text-anchor="middle">디스크 하나</text><rect x="260" y="30" width="230" height="38" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="53.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">sda1   100 MB vfat</text><text x="505.0" y="54.0" font-size="12" fill="#4d5656" text-anchor="start">EFI 부트</text><path d="M200,80 C230,80 230,49 258,49" fill="none" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="260" y="75" width="230" height="38" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="98.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">sda2   16 MB</text><text x="505.0" y="99.0" font-size="12" fill="#4d5656" text-anchor="start">MSR (예약)</text><path d="M200,80 C230,80 230,94 258,94" fill="none" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="260" y="120" width="230" height="38" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="143.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">sda3   111 GB ntfs</text><text x="505.0" y="144.0" font-size="12" fill="#4d5656" text-anchor="start">Windows C:</text><path d="M200,80 C230,80 230,139 258,139" fill="none" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="260" y="165" width="230" height="38" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="188.0" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">sda4   532 MB ntfs</text><text x="505.0" y="189.0" font-size="12" fill="#4d5656" text-anchor="start">복구</text><path d="M200,80 C230,80 230,184 258,184" fill="none" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="20" y="225" width="180" height="55" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="110.0" y="248.5" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">/dev/nvme0n1</text><text x="110.0" y="264.5" font-size="11.5" fill="#4d5656" text-anchor="middle">NVMe 디스크</text><rect x="260" y="225" width="230" height="55" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="375.0" y="248.5" font-size="11.5" fill="#4d5656" text-anchor="middle" font-family="'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,Menlo,Consolas,monospace" style="font-variant-ligatures:none">nvme0n1p1, nvme0n1p2</text><text x="375.0" y="264.5" font-size="11.5" fill="#4d5656" text-anchor="middle">(파티션 앞에 p 가 붙는다)</text><line x1="200" y1="252" x2="258" y2="252" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><text x="625.0" y="232.0" font-size="11.5" fill="#4d5656" text-anchor="middle">sd = SCSI disk : SATA · USB 디스크 이름</text><text x="625.0" y="249.0" font-size="11.5" fill="#4d5656" text-anchor="middle">a, b, c … 는 찾은 순서로 붙어 바뀔 수 있다</text><text x="625.0" y="272.0" font-size="11.5" font-weight="700" fill="#c0392b" text-anchor="middle">→ 실험에서는 시리얼로 찾는다</text></svg>
 
 ### 열을 골라서 보기 : `-o`
 
 `-o` 로 보고 싶은 열만 고른다. 실험에 필요한 것은 모델, 시리얼, 연결 방식 (`TRAN`), 회전 여부 (`ROTA`) 다.
 
 ```
-$ lsblk -e7 -o NAME,MODEL,SERIAL,SIZE,TRAN,ROTA,TYPE
+$ lsblk -e7 -d -o NAME,MODEL,SERIAL,SIZE,TRAN,ROTA,TYPE
 NAME        MODEL                     SERIAL            SIZE TRAN   ROTA TYPE
-sda         Samsung SSD 840 EVO 500GB S1DHNSAF685299B 465.8G sata      0 disk
+sda         Samsung SSD 840 EVO 120GB S1D6NSAFB40389K 111.8G sata      0 disk
 sdb         Samsung SSD 750 EVO 500GB S36TNWAH617826R 465.8G sata      0 disk
 sdc         WDC WD10EZEX-00BN5A0      WD-WCC3F3YSLLZ4 931.5G sata      1 disk
 sdd         ST2000DM008-2UB102        WK30NGZQ          1.8T sata      1 disk
-sde         PSSD T7                   S5SYNJ0R103097F 931.5G usb       0 disk
-sdf         TOSHIBA MQ04UBD200        78S4T02VT         1.8T usb       1 disk
-sdg         Samsung SSD 840 EVO 120GB S1D6NSAFB40389K 111.8G usb       1 disk
+sde         Samsung SSD 870 EVO 500GB S6R0NX0TC15146K 465.8G usb       1 disk
+sdf         PSSD T7                   S5SYNJ0R103097F 931.5G usb       0 disk
+sdg         TOSHIBA MQ04UBD200        78S4T02VT         1.8T usb       1 disk
 nvme0n1     Samsung SSD 990 EVO 2TB   S7GDNS0X212722L   1.8T nvme      0 disk
 ```
 
+(`-d` 는 파티션 줄을 빼고 디스크만 보인다.)
+
 <div class="tip" markdown="1">
-**`ROTA` 를 보라.** `sdg` 는 SSD 인데 `1` (회전하는 디스크) 이다. USB 어댑터가 커널에게 그렇게 알려 주기 때문이다. 같은 모델의 `sda` (SATA 직접 연결) 는 `0`.
-USB 를 거치면 드라이브에 대한 정보가 이렇게 바뀌거나 사라진다. 지우는 실험들 (3–18) 을 SATA 에서 하는 이유다.
+**`ROTA` 를 보라.** `ROTA` 는 '회전하는 디스크인가' 다. 하드디스크 (`sdc`, `sdd`, `sdg`) 는 `1`, SSD 는 `0` 이어야 한다. 그런데 `sde` 는 SSD (870 EVO) 인데 `1` 이다 : USB 어댑터가 커널에게 그렇게 알려 주기 때문이다.
+USB 를 거치면 드라이브에 대한 정보가 이렇게 바뀌거나 사라진다 (TRIM, SMART 도). 그래서 실험은 SATA 에 직접 붙여서 한다.
 </div>
 
 `lsblk` 의 열 목록은 `lsblk --help` 맨 아래에 있다. 이 페이지에서 쓰는 것은 `FSTYPE` (파일 시스템), `DISC-GRAN` · `DISC-MAX` (TRIM, 6절), `REV` (펌웨어) 정도다.
 
 ### `/dev/disk/by-id/` : 바뀌지 않는 이름
 
-`sdg` 의 `g` 는 연결된 순서로 붙는다. USB 를 뽑았다 꽂거나 SATA 로 옮기면 다른 글자가 된다. **지우는 명령에 `/dev/sdX` 를 직접 쓰는 것이 위험한 이유다.**
+`sda` 의 `a` 는 커널이 디스크를 찾은 순서로 붙는다. 디스크를 더하거나 빼거나, 포트를 바꾸면 다른 글자가 될 수 있다. **지우는 명령에 `/dev/sdX` 를 직접 쓰는 것이 위험한 이유다.**
 `/dev/disk/by-id/` 에는 모델과 시리얼로 만든, 바뀌지 않는 이름이 있다 (실제 장치로 가는 바로가기).
 
 ```
 $ ls -l /dev/disk/by-id/ | grep 840_EVO_120
-lrwxrwxrwx 1 root root  9 Oct 17 07:45 ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K -> ../../sdg
-lrwxrwxrwx 1 root root 10 Oct 17 07:45 ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K-part1 -> ../../sdg1
+lrwxrwxrwx 1 root root  9 Oct 18 08:05 ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K -> ../../sda
+lrwxrwxrwx 1 root root 10 Oct 18 08:05 ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K-part1 -> ../../sda1
 …
 $ readlink -f /dev/disk/by-id/ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K
-/dev/sdg
+/dev/sda
 ```
 
 `lab.sh` 는 이 방법으로 시리얼에서 장치를 찾는다. 사람도 똑같이 할 수 있다 : `DEV=$(readlink -f /dev/disk/by-id/ata-…_S1D6NSAFB40389K)`.
@@ -125,97 +123,107 @@ $ readlink -f /dev/disk/by-id/ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K
 
 ```
 $ findmnt -t ext4,fuseblk,vfat
-TARGET                         SOURCE         FSTYPE  OPTIONS
-/                              /dev/nvme0n1p2 ext4    rw,relatime,errors=remount-ro
-├─/boot/efi                    /dev/nvme0n1p1 vfat    rw,relatime,fmask=0077,…
-├─/mnt/ffdee1b5-…              /dev/sda1      ext4    rw,nosuid,nodev,relatime
+TARGET                                       SOURCE         FSTYPE  OPTIONS
+/                                            /dev/nvme0n1p2 ext4    rw,relatime,errors=remount-ro
+├─/boot/efi                                  /dev/nvme0n1p1 vfat    rw,relatime,fmask=0077,…
+├─/mnt/a43c4a49-0587-46c6-b310-ebae2da0429c  /dev/sdc1      ext4    rw,nosuid,nodev,relatime
 …
-├─/media/ryuj/C8922986922979D8 /dev/sdg3      fuseblk rw,nosuid,nodev,relatime,…,allow_other,blksize=4096
+├─/mnt/old840                                /dev/sda3      fuseblk ro,relatime,user_id=0,group_id=0,allow_other,blksize=4096
 …
 
 $ df -hT -x tmpfs -x squashfs
-Filesystem     Type     Size  Used Avail Use% Mounted on
-/dev/nvme0n1p2 ext4     1.8T  1.7T   54G  97% /
-/dev/sdg3      fuseblk  112G  101G   11G  91% /media/ryuj/C8922986922979D8
+Filesystem     Type      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p2 ext4      1.8T  1.7T   61G  97% /
 …
+/dev/sda3      fuseblk   112G  101G   11G  91% /mnt/old840
 ```
 
-- `OPTIONS` 의 `rw` = 읽고 쓰기, `ro` = 읽기만.
+- `OPTIONS` 의 `rw` = 읽고 쓰기, `ro` = 읽기만. 실험할 디스크의 `/mnt/old840` 은 `ro` 다 ([0. 준비](/old-ssd-experiments/0-setup/) 5단계).
 - `fuseblk` = NTFS 를 사용자 공간 프로그램 (`ntfs-3g`) 이 다루고 있다는 뜻. 커널 안의 `ntfs3` 드라이버로 마운트할 수도 있다.
 - `df` 의 `Use%` 는 **파일 시스템** 이 보는 사용량이다. SSD 안의 FTL 은 이것을 모른다 (6절 TRIM 이 그 틈을 메운다).
 
 ### `mount`, `umount` : 붙이고 떼기
 
 ```
-$ sudo umount /media/ryuj/C8922986922979D8                 # 떼기 (파일을 열어 둔 프로그램이 있으면 실패한다)
 $ sudo mkdir -p /mnt/old840
-$ sudo mount -t ntfs-3g -o ro /dev/sdg3 /mnt/old840       # 읽기 전용으로 다시 붙이기
+$ sudo mount -t ntfs-3g -o ro /dev/disk/by-id/ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K-part3 /mnt/old840   # 읽기 전용으로 붙이기
 $ findmnt /mnt/old840                                       # OPTIONS 에 ro 가 있는지 확인
+$ sudo umount /mnt/old840                                   # 떼기 (실험 3 부터는 떼어 둔다)
 ```
 
-`umount` 가 `target is busy` 로 실패하면, 그 폴더를 연 터미널이나 파일 관리자 창을 닫는다. 누가 쓰는지는 `sudo fuser -vm /media/ryuj/C8922986922979D8` 로 본다.
+`umount` 가 `target is busy` 로 실패하면, 그 폴더를 연 터미널이나 파일 관리자 창을 닫는다. 누가 쓰는지는 `sudo fuser -vm /mnt/old840` 로 본다.
 
 ## 4. 어떻게 연결되어 있나
 
-같은 SSD 라도 SATA 로 붙었는지 USB 로 붙었는지에 따라 쓸 수 있는 기능이 다르다 (TRIM, SMART, 속도).
+연결 방식 (SATA, USB, NVMe) 에 따라 쓸 수 있는 기능이 다르다 (TRIM, SMART, 속도).
 
 ### `/sys/block/` : 커널이 아는 모든 것
 
 `/sys` 는 커널이 자기 정보를 파일처럼 보여 주는 곳이다. 읽기만 하면 sudo 가 필요 없다.
 
 ```
-$ readlink -f /sys/block/sdg
-/sys/devices/pci0000:00/0000:00:14.0/usb2/2-8/2-8:1.0/host10/target10:0:0/10:0:0:0/block/sdg
 $ readlink -f /sys/block/sda
 /sys/devices/pci0000:00/0000:00:17.0/ata5/host4/target4:0:0/4:0:0:0/block/sda
 ```
 
-경로를 읽으면 연결이 보인다 : `sdg` 는 **USB 컨트롤러 (00:14.0) → usb2 포트 8**, `sda` 는 **SATA 컨트롤러 (00:17.0) → ata5**. 디스크 하나의 설정은 `queue/` 아래에 있다 :
+경로를 읽으면 연결이 보인다 : **SATA 컨트롤러 (PCI 00:17.0) → `ata5` 포트 → 디스크 `sda`**. 디스크 하나의 설정은 `queue/` 아래에 있다 :
 
 ```
-$ for f in rotational logical_block_size discard_max_bytes max_sectors_kb; do echo "$f = $(cat /sys/block/sdg/queue/$f)"; done
-rotational = 1
+$ for f in rotational logical_block_size discard_max_bytes max_sectors_kb; do echo "$f = $(cat /sys/block/sda/queue/$f)"; done
+rotational = 0
 logical_block_size = 512
-discard_max_bytes = 0
-max_sectors_kb = 512
-$ cat /sys/block/sda/queue/discard_max_bytes
-2147450880
+discard_max_bytes = 2147450880
+max_sectors_kb = 1280
 ```
 
-`discard_max_bytes = 0` 은 **이 연결로는 TRIM 을 보낼 수 없다** 는 뜻이다. SATA 에 직접 붙은 `sda` 는 한 번에 약 2 GB 까지 보낼 수 있다.
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>파일</th>
+<th>값</th>
+<th>뜻</th>
+</tr></thead><tbody>
+<tr><td><code>rotational</code></td><td>0</td><td>SSD (회전하지 않음)</td></tr>
+<tr><td><code>logical_block_size</code></td><td>512</td><td>호스트가 보는 섹터 크기 (실험 6)</td></tr>
+<tr><td><code>discard_max_bytes</code></td><td>2147450880</td><td>TRIM 명령 하나로 약 2 GB 까지 보낼 수 있다. 0 이면 TRIM 을 못 보낸다</td></tr>
+<tr><td><code>max_sectors_kb</code></td><td>1280</td><td>커널이 요청 하나를 이 크기 (KiB) 보다 크게 만들지 않는다</td></tr>
+</tbody></table></div>
 
-### `lsusb -t` : USB 드라이버
+### `journalctl -k` : 부팅할 때 커널이 한 말
 
-```
-$ lsusb -t
-/:  Bus 002.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/9p, 20000M/x2
-    |__ Port 002: Dev 002, If 0, Class=Hub, Driver=hub/4p, 10000M
-    |__ Port 008: Dev 005, If 0, Class=Mass Storage, Driver=uas, 5000M
-…
-```
-
-`Driver=uas` (USB Attached SCSI) 는 빠른 쪽이다. 옛 방식은 `usb-storage`. `5000M` = USB 3.0 (5 Gb/s) 으로 붙었다.
-
-### `journalctl -k` : 꽂았을 때 커널이 한 말
-
-디스크를 꽂으면 커널이 기록을 남긴다. `dmesg` 로도 같은 것을 본다 (Ubuntu 에서는 `sudo dmesg`).
+디스크를 찾으면 커널이 기록을 남긴다. `dmesg` 로도 같은 것을 본다 (Ubuntu 에서는 `sudo dmesg`).
 
 ```
-$ journalctl -k --since "2026-10-17 07:44" --until "2026-10-17 07:46"
-usb 2-8: new SuperSpeed USB device number 5 using xhci_hcd
-usb 2-8: New USB device found, idVendor=19da, idProduct=1125, bcdDevice= 1.00
-usb 2-8: Product: ZT-0ASMT-10510
-scsi host10: uas
-sd 10:0:0:0: [sdg] Spinning up disk...
-sd 10:0:0:0: [sdg] 234441648 512-byte logical blocks: (120 GB/112 GiB)
-sd 10:0:0:0: [sdg] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
- sdg: sdg1 sdg2 sdg3 sdg4
-sd 10:0:0:0: [sdg] Attached SCSI disk
+$ journalctl -k -b | grep -E "ata5|\[sda\]| sda"
+ata5: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+ata5.00: Model 'Samsung SSD 840 EVO 120GB', rev 'EXT0CB6Q', applying quirks: noncqtrim zeroaftertrim nodmalog
+ata5.00: ATA-9: Samsung SSD 840 EVO 120GB, EXT0CB6Q, max UDMA/133
+ata5.00: 234441648 sectors, multi 1: LBA48 NCQ (depth 32), AA
+ata5.00: Features: Trust
+ata5.00: configured for UDMA/133
+sd 4:0:0:0: [sda] 234441648 512-byte logical blocks: (120 GB/112 GiB)
+sd 4:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+ sda: sda1 sda2 sda3 sda4
+sd 4:0:0:0: [sda] supports TCG Opal
+sd 4:0:0:0: [sda] Attached SCSI disk
 ```
 
-- `Spinning up disk...` : 어댑터가 하드디스크처럼 행동한다 (SSD 는 돌지 않는다).
-- `234441648 512-byte logical blocks` : 정확한 용량. 234,441,648 × 512 = 120,034,123,776 바이트.
-- 새 디스크가 안 보일 때는 **이 로그에 아무것도 없는지** 부터 본다. 없으면 전원 · 케이블 · 포트 문제다.
+(앞의 날짜 · 호스트 이름은 줄였다.) 실험에 쓸 정보가 많다 :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>줄</th>
+<th>뜻</th>
+<th>어느 실험</th>
+</tr></thead><tbody>
+<tr><td><code>SATA link up 6.0 Gbps</code></td><td>SATA 3 로 붙었다 : 상한 약 550 MB/s</td><td>5</td></tr>
+<tr><td><code>applying quirks: noncqtrim zeroaftertrim …</code></td><td>커널이 이 모델에 맞춰 바꾸는 동작 : TRIM 은 NCQ 없이 보내고 (<code>noncqtrim</code>), TRIM 한 곳은 0 으로 읽힌다고 믿는다 (<code>zeroaftertrim</code>)</td><td>4</td></tr>
+<tr><td><code>NCQ (depth 32)</code></td><td>명령을 32개까지 한꺼번에 받는다</td><td>5</td></tr>
+<tr><td><code>234441648 512-byte logical blocks</code></td><td>정확한 용량. 234,441,648 × 512 = 120,034,123,776 바이트</td><td>0</td></tr>
+<tr><td><code>Write cache: enabled … doesn't support DPO or FUA</code></td><td>쓰기 캐시가 켜져 있고, '이 쓰기만 바로 NAND 에' (FUA) 는 지원하지 않는다 : 데이터를 지키려면 FLUSH 뿐</td><td>7, 17</td></tr>
+<tr><td><code>supports TCG Opal</code></td><td>자체 암호화 드라이브 (SED) 의 표준을 지원한다</td><td>14</td></tr>
+</tbody></table></div>
+
+새 디스크가 안 보일 때는 **이 로그에 아무것도 없는지** 부터 본다. 없으면 전원 · 케이블 · 포트 문제다.
 
 ## 5. SMART : 드라이브가 스스로 센 숫자
 
@@ -224,11 +232,10 @@ SMART 는 드라이브 안의 펌웨어가 세는 카운터들이다 : 전원 �
 ### `smartctl` (smartmontools)
 
 ```
-$ sudo smartctl -i /dev/sdg            # 정보 : 모델, 펌웨어, SATA 속도
-$ sudo smartctl -H /dev/sdg            # 한 줄 판정 : PASSED / FAILED
-$ sudo smartctl -A /dev/sdg            # 속성 표 (아래)
-$ sudo smartctl -x /dev/sdg            # 전부 (로그, 온도 기록 포함)
-$ sudo smartctl -d sat -a /dev/sdg     # USB 어댑터 너머로 물을 때 : SAT (SCSI→ATA 번역) 를 명시
+$ sudo smartctl -i /dev/sda            # 정보 : 모델, 펌웨어, SATA 속도
+$ sudo smartctl -H /dev/sda            # 한 줄 판정 : PASSED / FAILED
+$ sudo smartctl -A /dev/sda            # 속성 표 (아래)
+$ sudo smartctl -x /dev/sda            # 전부 (로그, 온도 기록 포함)
 ```
 
 `-A` 의 속성 표는 이렇게 생겼다 (열 이름만, 실제 값은 실험 0 에서 받는다) :
@@ -270,10 +277,10 @@ NVMe 드라이브라면 `sudo nvme smart-log /dev/nvme0` (nvme-cli) 가 같은 �
 ### `hdparm -I` : ATA 기능 목록
 
 ```
-$ sudo hdparm -I /dev/sdg | grep -iE "model|firmware|trim"
+$ sudo hdparm -I /dev/sda | grep -iE "model|firmware|trim"
 ```
 
-SATA 로 연결하면 `Data Set Management TRIM supported` 같은 줄이 나온다. **`Deterministic read ZEROs after TRIM`** 이 있으면 TRIM 한 LBA 를 읽을 때 반드시 0 이 나온다는 약속이다 (실험 4).
+`Data Set Management TRIM supported` 같은 줄이 나온다. **`Deterministic read ZEROs after TRIM`** 이 있으면 TRIM 한 LBA 를 읽을 때 반드시 0 이 나온다는 약속이다 (실험 4).
 
 ## 6. TRIM : SSD 에게 '이제 안 쓴다' 고 알리기
 
@@ -282,14 +289,13 @@ SATA 로 연결하면 `Data Set Management TRIM supported` 같은 줄이 나온�
 ### `lsblk` 로 TRIM 이 되는지 보기
 
 ```
-$ lsblk -d -o NAME,DISC-GRAN,DISC-MAX,DISC-ZERO /dev/sda /dev/sdg /dev/nvme0n1
+$ lsblk -d -o NAME,DISC-GRAN,DISC-MAX,DISC-ZERO /dev/sda /dev/nvme0n1
 NAME    DISC-GRAN DISC-MAX DISC-ZERO
 sda          512B       2G         0
-sdg            0B       0B         0
 nvme0n1      512B       2T         0
 ```
 
-`DISC-MAX` 가 `0B` 이면 TRIM 을 못 보낸다. `sdg` (USB) 가 그렇다.
+`DISC-GRAN` = TRIM 의 최소 단위, `DISC-MAX` = 명령 하나의 최대 크기 (4절의 `discard_max_bytes`). `DISC-MAX` 가 `0B` 이면 TRIM 을 못 보낸다 (USB 어댑터 중에 그런 것이 많다).
 
 ### `fstrim` : 파일 시스템의 빈 곳을 한꺼번에
 
@@ -383,8 +389,8 @@ Disk stats (read/write):
 커널은 디스크마다 '몇 번 읽었나, 얼마나 걸렸나' 를 센다. 원본은 `/proc/diskstats`, 보기 좋게 바꿔 주는 것이 `iostat` (sysstat 패키지).
 
 ```
-$ grep " sdg " /proc/diskstats
-   8      96 sdg 68714 4 5541756 52093190 2947 1347 34324 866606 0 2428290 52959797 0 0 0 0 0 0
+$ grep " sda " /proc/diskstats
+   8       0 sda 1179 0 58267 4053 4 0 4 0 0 1952 4053 0 0 0 0 0 0
 ```
 
 <div style="overflow-x:auto;"><table class="t">
@@ -393,17 +399,17 @@ $ grep " sdg " /proc/diskstats
 <th>값</th>
 <th>뜻</th>
 </tr></thead><tbody>
-<tr><td>4번째</td><td>68714</td><td>끝난 읽기 요청 수</td></tr>
-<tr><td>6번째</td><td>5541756</td><td>읽은 섹터 수 (× 512 B = 2.8 GB)</td></tr>
-<tr><td>7번째</td><td>52093190</td><td>읽기에 쓴 시간의 합 (ms, 요청마다 더함)</td></tr>
-<tr><td>13번째</td><td>2428290</td><td>디스크가 바빴던 시간 (ms) = 40분</td></tr>
+<tr><td>4번째</td><td>1179</td><td>끝난 읽기 요청 수</td></tr>
+<tr><td>6번째</td><td>58267</td><td>읽은 섹터 수 (× 512 B = 29.8 MB)</td></tr>
+<tr><td>7번째</td><td>4053</td><td>읽기에 쓴 시간의 합 (ms, 요청마다 더함)</td></tr>
+<tr><td>8번째</td><td>4</td><td>끝난 쓰기 요청 수</td></tr>
+<tr><td>13번째</td><td>1952</td><td>디스크가 바빴던 시간 (ms)</td></tr>
 </tbody></table></div>
 
-이 숫자는 그 자체로 단서다 : 2026.10.17 아침 꽂은 뒤 `sdg` 에서 **2.8 GB 를 읽는 데 디스크가 40분 동안 바빴다**. 1초에 약 1.2 MB 다. USB 3.0 이라도 SSD 라면 수백 MB/s 가 정상이다.
-이 드라이브는 1년 넘게 전원 없이 있다가 이날 다시 연결되었고, Ryu 가 파일 몇 개를 열어 보고 몇 개를 새로 썼다 (쓰기 쪽 : 요청 2,947개, 34,324 섹터 = 약 17.6 MB). 2.8 GB 의 읽기는 그 파일들과 파일 관리자 · 썸네일 · 색인이 읽은 것이다. **오래 전원 없이 둔 데이터는 읽기가 느리다** 는 실험 1 의 가설과 맞는 모습이다 (아직 측정은 아니다).
+숫자는 부팅한 뒤부터 센다. 읽은 양 ÷ 바빴던 시간이 대략의 읽기 속도다 : 위의 경우 29.8 MB ÷ 1.95 s ≈ 15 MB/s (작은 읽기가 대부분이라 낮다). [실험 1](/old-ssd-experiments/1-old-data/) 의 '이미 보이는 단서' 가 이 계산이다.
 
 ```
-$ iostat -x 1 sdg        # 1초마다 : r/s, rMB/s, r_await (읽기 하나의 평균 대기 ms), %util
+$ iostat -x 1 sda        # 1초마다 : r/s, rMB/s, r_await (읽기 하나의 평균 대기 ms), %util
 ```
 
 `r_await` 가 수십–수백 ms 로 올라가면 드라이브가 읽기 하나에 오래 걸리고 있다는 뜻이다.
@@ -447,9 +453,8 @@ $ iostat -x 1 sdg        # 1초마다 : r/s, rMB/s, r_await (읽기 하나의 �
 <tr><td>무엇이 어디에 마운트</td><td><code>findmnt</code>, <code>df -hT</code></td><td>아니오</td></tr>
 <tr><td>떼기 · 읽기 전용으로 붙이기</td><td><code>umount</code>, <code>mount -o ro</code></td><td>예</td></tr>
 <tr><td>연결 경로 · 설정</td><td><code>readlink -f /sys/block/sdX</code>, <code>cat /sys/block/sdX/queue/…</code></td><td>아니오</td></tr>
-<tr><td>USB 드라이버</td><td><code>lsusb -t</code></td><td>아니오</td></tr>
-<tr><td>꽂았을 때 로그</td><td><code>journalctl -k</code></td><td>아니오 (Ubuntu 는 <code>dmesg</code> 에 sudo)</td></tr>
-<tr><td>SMART</td><td><code>smartctl -a</code> (USB 면 <code>-d sat</code>), NVMe 는 <code>nvme smart-log</code></td><td>예</td></tr>
+<tr><td>부팅 · 연결 로그</td><td><code>journalctl -k</code></td><td>아니오 (Ubuntu 는 <code>dmesg</code> 에 sudo)</td></tr>
+<tr><td>SMART</td><td><code>smartctl -a</code>, NVMe 는 <code>nvme smart-log</code></td><td>예</td></tr>
 <tr><td>ATA 기능 · TRIM 지원</td><td><code>hdparm -I</code></td><td>예</td></tr>
 <tr><td>TRIM 가능?</td><td><code>lsblk -d -o NAME,DISC-MAX</code></td><td>아니오</td></tr>
 <tr><td>빈 공간 TRIM</td><td><code>fstrim -v /</code></td><td>예</td></tr>

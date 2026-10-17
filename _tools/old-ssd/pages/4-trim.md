@@ -11,7 +11,7 @@ permalink: /old-ssd-experiments/4-trim/
 <b>목표</b><span>TRIM 된 (매핑이 없는) LBA 를 읽으면 무엇이 얼마나 빨리 오는지, 데이터가 있는 LBA 와 비교한다</span>
 <b>보는 FTL 개념</b><span>매핑 표 (L2P), TRIM, 매핑 없는 읽기, 'deterministic read zero after TRIM'</span>
 <b>지우나?</b><span>예</span>
-<b>연결</b><span>SATA (USB 는 TRIM 이 안 되고, 어댑터 지연이 µs 단위 차이를 덮는다)</span>
+<b>연결</b><span>SATA (TRIM 이 필요하다)</span>
 <b>시간</b><span>약 30분</span>
 <b>명령</b><span><code>sudo ./lab.sh trim</code></span>
 </div>
