@@ -142,6 +142,7 @@ smart)
 oldfiles)
     [ -n "${1:-}" ] || die "usage: $0 oldfiles MOUNTPOINT"
     find_dev
+    findmnt -n "$1" >/dev/null || die "$1 is not a mount point — mount the partition first (setup page, step 5)"
     new_out oldfiles
     findmnt -no SOURCE,FSTYPE,OPTIONS "$1" | tee -a "$OUT/meta.txt"
     findmnt -no OPTIONS "$1" | grep -qE '(^|,)ro(,|$)' || echo "   (warning: $1 is not mounted read-only)"
