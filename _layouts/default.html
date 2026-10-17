@@ -196,7 +196,24 @@
               </ul>
             </details>
           </li>
-          <li><a href="{{ '/old-ssd-experiments/' | relative_url }}"{% if page.url == '/old-ssd-experiments/' %} class="current"{% endif %}>헌 SSD 로 하는 실험</a></li>
+          <li>
+            <details class="nav-group"{% if page.url contains '/old-ssd-experiments/' %} open{% endif %}>
+              <summary><a href="{{ '/old-ssd-experiments/' | relative_url }}">헌 SSD 로 하는 실험</a></summary>
+              <ul class="nav-subitems">
+                <li><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}"{% if page.url == '/old-ssd-experiments/linux-commands/' %} class="current"{% endif %}>SSD 를 다루는 Linux 명령</a></li>
+                <li><a href="{{ '/old-ssd-experiments/0-setup/' | relative_url }}"{% if page.url == '/old-ssd-experiments/0-setup/' %} class="current"{% endif %}>0. 준비</a></li>
+                <li><a href="{{ '/old-ssd-experiments/1-old-data/' | relative_url }}"{% if page.url == '/old-ssd-experiments/1-old-data/' %} class="current"{% endif %}>1. 오래된 데이터 읽기</a></li>
+                <li><a href="{{ '/old-ssd-experiments/2-slc-cache/' | relative_url }}"{% if page.url == '/old-ssd-experiments/2-slc-cache/' %} class="current"{% endif %}>2. SLC 캐시</a></li>
+                <li><a href="{{ '/old-ssd-experiments/3-trim/' | relative_url }}"{% if page.url == '/old-ssd-experiments/3-trim/' %} class="current"{% endif %}>3. TRIM 과 매핑 없는 읽기</a></li>
+                <li><a href="{{ '/old-ssd-experiments/4-write-cliff/' | relative_url }}"{% if page.url == '/old-ssd-experiments/4-write-cliff/' %} class="current"{% endif %}>4. Write cliff</a></li>
+                <li><a href="{{ '/old-ssd-experiments/5-over-provisioning/' | relative_url }}"{% if page.url == '/old-ssd-experiments/5-over-provisioning/' %} class="current"{% endif %}>5. Over-provisioning</a></li>
+                <li><a href="{{ '/old-ssd-experiments/6-waf/' | relative_url }}"{% if page.url == '/old-ssd-experiments/6-waf/' %} class="current"{% endif %}>6. WAF (SMART)</a></li>
+                <li><a href="{{ '/old-ssd-experiments/7-retention/' | relative_url }}"{% if page.url == '/old-ssd-experiments/7-retention/' %} class="current"{% endif %}>7. Retention</a></li>
+                <li><a href="{{ '/old-ssd-experiments/8-endurance/' | relative_url }}"{% if page.url == '/old-ssd-experiments/8-endurance/' %} class="current"{% endif %}>8. 끝까지 쓰기</a></li>
+                <li><a href="{{ '/old-ssd-experiments/9-teardown/' | relative_url }}"{% if page.url == '/old-ssd-experiments/9-teardown/' %} class="current"{% endif %}>9. 열어 보기</a></li>
+              </ul>
+            </details>
+          </li>
         </ul>
       </nav>
 
