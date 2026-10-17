@@ -59,7 +59,7 @@ TLC 는 셀 하나에 3비트를 담느라 전압을 8단계로 정밀하게 맞
 ## 절차
 
 ```
-# 0. SATA 로 옮긴 상태 (0. 준비 6단계). check 를 다시 해서 DISC-MAX 가 0B 가 아닌지
+# 0. SATA 에 연결된 상태 (0. 준비 6단계). check 를 다시 해서 DISC-MAX 가 0B 가 아닌지
 $ sudo ./lab.sh check
 
 # 1. 전체 TRIM → 2분 쉼 → 1 MiB 순차 쓰기 QD8 로 처음부터 끝까지, 1초마다 속도 기록
@@ -73,10 +73,6 @@ $ sudo ./lab.sh scan fresh 8
 ```
 
 `slc` 와 `slc-idle` 은 지우기 전에 시리얼 끝 5자리 (`0389K`) 를 묻는다.
-
-<div class="tip" markdown="1">
-**USB 와 SATA 를 공정하게 비교하려면** 3단계 뒤에 드라이브를 다시 USB 어댑터로 옮겨 `sudo ./lab.sh scan fresh-usb 8` 를 한 번 더 한다. 그러면 실험 1 (USB, 오래된 데이터) 과 같은 연결에서 '새 데이터' 를 읽은 값이 생긴다. 선택이다.
-</div>
 
 ## 저장되는 것
 

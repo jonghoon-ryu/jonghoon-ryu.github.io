@@ -77,7 +77,7 @@ $ cat $R/*-ret-check/verify-summary.txt
 $ python3 smartdiff.py $(ls -d $R/*-ret-check | tail -1)
 ```
 
-세 곡선 (막 쓴 · 몇 주 · 몇 년) 을 한 그림에 놓는 것이 목표다. 실험 1 은 USB 에서 읽었으니, 공정하게 비교하려면 실험 2 의 `fresh-usb` 와 같은 조건을 맞춘다.
+세 곡선 (막 쓴 · 몇 주 · 몇 년) 을 한 그림에 놓는 것이 목표다. 세 곡선 모두 같은 SATA 연결에서 잰다.
 
 ## 결과
 

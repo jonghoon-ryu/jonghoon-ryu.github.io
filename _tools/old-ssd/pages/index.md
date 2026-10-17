@@ -24,7 +24,7 @@ permalink: /old-ssd-experiments/
 용량 | 120,034,123,776 바이트 (234,441,648 섹터 × 512 B)
 NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 값)
 지금 상태 | 옛 Windows 디스크, 91% 차 있음, 파일 날짜 2018–2024
-지금 연결 | USB–SATA 어댑터 (ASMedia, `uas`) : TRIM 이 통과하지 않는다
+지금 연결 | 메인보드 SATA (`ata5`, 2026.10.17 부터) : TRIM 됨 (`DISC-MAX 2G`). 그 전에는 USB 어댑터라 TRIM 이 통과하지 않았다
 ```
 
 ## 실험 순서
@@ -33,8 +33,8 @@ NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 �
 
 ```table
 # | 실험 | 무엇을 보나 | 지우나? | 연결 | 시간 (대략)
-0 | [준비](/old-ssd-experiments/0-setup/) | 드라이브 · 도구 · SMART 기준값 | 아니오 | USB 그대로 | 30분
-1 | [오래된 데이터 읽기](/old-ssd-experiments/1-old-data/) | 몇 년 된 데이터의 읽기 속도 : read retry | **아니오 (지우기 전에 한 번뿐)** | USB 그대로 | 1–2시간
+0 | [준비](/old-ssd-experiments/0-setup/) | 드라이브 · 도구 · SMART 기준값 | 아니오 | SATA | 30분
+1 | [오래된 데이터 읽기](/old-ssd-experiments/1-old-data/) | 몇 년 된 데이터의 읽기 속도 : read retry | **아니오 (지우기 전에 한 번뿐)** | SATA | 1–2시간
 2 | [SLC 캐시](/old-ssd-experiments/2-slc-cache/) | TurboWrite 버퍼 크기, TLC 쓰기 속도 | 예 | SATA | 30분 + 회복 측정
 3 | [TRIM 과 매핑 없는 읽기](/old-ssd-experiments/3-trim/) | 매핑 없는 LBA 읽기는 NAND 를 안 거친다 | 예 | SATA | 30분
 4 | [Write cliff](/old-ssd-experiments/4-write-cliff/) | 빈 블록이 바닥나며 GC 시작 : FOB → steady state | 예 | SATA | 밤새 (4–8시간)

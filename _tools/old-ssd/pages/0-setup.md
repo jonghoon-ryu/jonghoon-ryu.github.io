@@ -10,7 +10,7 @@ permalink: /old-ssd-experiments/0-setup/
 <div class="glance">
 <b>목표</b><span>실험할 드라이브를 확실히 알아보고, 도구를 깔고, 실험 전 SMART 값 (기준값) 을 남긴다</span>
 <b>지우나?</b><span>아니오. 읽기만 한다</span>
-<b>연결</b><span>USB 그대로 (지금 상태)</span>
+<b>연결</b><span>SATA (2026.10.17 에 옮김 : 6단계)</span>
 <b>시간</b><span>30분</span>
 <b>명령</b><span><code>sudo ./lab.sh check</code></span>
 </div>
@@ -28,7 +28,7 @@ SLC 버퍼 (TurboWrite) | 120GB 모델은 약 3 GB 로 알려짐 | Samsung 자�
 컨트롤러 | Samsung MEX (ARM 코어 3개로 알려짐) | 리뷰 (실험 9 에서 확인)
 지금 내용 | 옛 Windows 디스크 : EFI · MSR · NTFS 111 GB (91% 참) · 복구 | `lsblk -f`, `df`
 파일 날짜 | 2018 – 2024.12 (hiberfil.sys 마지막 수정 2024.12.08) | `ls -la`
-지금 연결 | USB 3.0 어댑터 (ASMedia 19da:1125), 드라이버 `uas`, TRIM 안 됨 | `lsusb -t`, `lsblk`
+지금 연결 | 메인보드 SATA `ata5` (`/dev/sda`), TRIM 됨 (`DISC-GRAN 512B`, `DISC-MAX 2G`). 처음에는 USB 3.0 어댑터 (ASMedia 19da:1125, `uas`) 로 `/dev/sdg` 였고 TRIM 이 안 됐다 | `lsblk -o NAME,TRAN,DISC-MAX`, `/sys/block/sda`
 ```
 
 <div class="check" markdown="1">
@@ -104,22 +104,31 @@ $ findmnt /mnt/old840          # OPTIONS 에 ro
 `ntfs-3g` 로 붙여야 `fileage.py` 가 NTFS 생성 시각 (`system.ntfs_crtime`) 을 읽을 수 있다.
 Windows 가 최대 절전 상태 (hiberfil.sys) 로 꺼져 있어서 `ntfs-3g` 가 마운트를 거절하면, 읽기 전용 (`-o ro`) 이므로 그대로 진행해도 된다는 안내가 나온다.
 
-## 6단계 : SATA 로 옮기기 (실험 1 이 끝난 뒤)
+## 6단계 : SATA 로 옮기기 (2026.10.17 완료)
 
-메인보드 (MSI MAG B760M MORTAR II) 의 SATA 포트는 4개로 알고 있고, 모두 차 있다 (`ata5`–`ata8`).
-Linux 에 보이는 `ata1`–`ata4` 는 칩셋이 늘 보여 주는 이름일 뿐 커넥터가 없을 가능성이 크다 (매뉴얼의 SATA1–4 그림으로 확인).
+처음 계획은 실험 1 을 USB 로 한 뒤 `sdc` (WD 1TB HDD) 자리에 꽂는 것이었다. 실제로는 **실험 1 전에** 옮겼고, 자리도 달랐다 :
+840 EVO 120GB 가 `ata5` 에 있던 **840 EVO 500GB 와 자리를 바꿨다**. 500GB 는 대신 USB 어댑터로 간다.
 
 @@FIG setup_sata@@
 
-1. 실험 1 이 끝나고, 남길 데이터를 복사한다
-2. `sdc` (WD 1TB HDD) 의 파일 시스템 두 개가 쓰이고 있지 않은지 확인하고, **컴퓨터를 끈다** (SATA hot-plug 는 꺼져 있을 가능성이 크다)
-3. `sdc` 에서 SATA 데이터 케이블과 전원 케이블을 빼서 840 EVO 120GB 에 꽂는다
-4. 켠 뒤 확인 : `lsblk -o NAME,MODEL,SERIAL,TRAN,DISC-MAX` 에서 840 EVO 120GB 가 `sata`, `DISC-MAX` 가 `0B` 가 아니어야 한다 (`sdX` 글자는 바뀔 수 있다 : 상관없다)
-5. `/etc/fstab` 에 `sdc` 의 파일 시스템 두 개 (HDD_WD_1st_488G, HDD_WD_2nd_443G) 가 있지만 둘 다 `nofail` 이 붙어 있다 (2026.10.17 확인) : 디스크가 없어도 부팅은 그대로 된다. 그 폴더 (`/mnt/a43c4a49-…`, `/mnt/ac82f667-…`) 만 비어 보인다
-6. `sudo ./lab.sh check` 를 한 번 더 : SATA 에서의 SMART · `hdparm -I` (TRIM 지원 줄) 을 남긴다
+```table
+디스크 | 전 | 지금 (2026.10.17 16:44 부팅 뒤)
+840 EVO 120GB (실험용, `…40389K`) | `sdg`, USB, TRIM 안 됨 | **`sda`, SATA `ata5`, TRIM 됨**
+840 EVO 500GB (`…85299B`) | `sda`, SATA `ata5` | `sde`, USB (`/etc/fstab` 에 `nofail` 이라 부팅에 문제 없음)
+750 EVO · WD 1TB · Seagate 2TB | `sdb` · `sdc` · `sdd` (`ata6`–`ata8`) | 그대로
+```
+
+<div class="check" markdown="1">
+**글자가 바뀌었다.** 전에 `sda` 는 500GB 였고, 지금 `sda` 는 실험용 120GB 다. 옛 메모의 `/dev/sdX` 를 그대로 쓰면 다른 디스크를 지운다.
+`lab.sh` 는 장치를 이름이 아니라 **시리얼** 로 찾으므로 그대로 쓰면 된다.
+</div>
+
+**실험 1 에는 오히려 좋다.** 실험 1 (오래된 데이터) 과 실험 2 의 `scan fresh` (새 데이터) 를 같은 SATA 연결에서 재므로, 두 곡선의 차이는 '데이터의 나이' 뿐이다. USB 로 다시 옮겨 한 번 더 재는 단계는 필요 없어졌다.
+
+확인 : `sudo ./lab.sh check` 를 SATA 에서 실행하면 SMART 와 `hdparm -I` (TRIM 지원 줄) 이 모두 나와야 한다 (USB 와 달리 `-d sat` 없이).
 
 <div class="tip" markdown="1">
-**실험이 다 끝나면** 케이블을 원래대로 `sdc` 에 꽂는다. 다른 방법 : PCIe SATA 카드 (ASM1166 · JMB585 칩) 를 쓰면 포트를 바꿀 필요가 없다.
+**실험이 다 끝나면** 500GB 를 `ata5` 로 되돌린다. 다른 방법 : PCIe SATA 카드 (ASM1166 · JMB585 칩) 를 쓰면 포트를 바꿀 필요가 없다.
 </div>
 
 ## 결과

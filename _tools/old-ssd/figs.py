@@ -8,8 +8,8 @@ T, R, B, G, P, K = C["teal"], C["red"], C["blue"], C["gold"], C["purple"], C["in
 def overview_map():
     d = D(760, 375, "실험 순서 : 지우지 않는 것부터, 기다려야 하는 것은 나중에")
     phases = [
-        (20, "A. 지우기 전", "USB 그대로", "gold", [("0", "준비 · SMART"), ("1", "오래된 데이터 읽기")]),
-        (205, "B. SATA 로 옮긴 뒤", "드라이브를 지우며", "teal", [("2", "SLC 캐시"), ("3", "TRIM · 빈 읽기"),
+        (20, "A. 지우기 전", "읽기만 한다", "gold", [("0", "준비 · SMART"), ("1", "오래된 데이터 읽기")]),
+        (205, "B. 지우며", "SATA · TRIM 필요", "teal", [("2", "SLC 캐시"), ("3", "TRIM · 빈 읽기"),
                                                          ("4", "Write cliff"), ("5", "Over-provisioning"), ("6", "WAF (SMART)")]),
         (390, "C. 기다리기", "전원 없이 2–4주", "tlc", [("7", "Retention")]),
         (575, "D. 마지막", "드라이브를 소모", "warn", [("8", "끝까지 쓰기"), ("9", "열어 보기")]),
@@ -96,9 +96,9 @@ def cmd_cache():
 
 # ------------------------------------------------------------------ setup
 def setup_sata():
-    d = D(760, 300, "SATA 포트 4개가 모두 차 있다 : 실험 동안만 HDD 하나와 바꾼다")
-    ports = [("SATA (ata5)", "sda", "840 EVO 500GB", "base"), ("SATA (ata6)", "sdb", "750 EVO 500GB", "base"),
-             ("SATA (ata7)", "sdc", "WD 1TB HDD", "warn"), ("SATA (ata8)", "sdd", "Seagate 2TB HDD", "base")]
+    d = D(760, 300, "SATA 포트 4개가 모두 차 있다 : 실험 동안 840 EVO 500GB 와 자리를 바꿨다")
+    ports = [("SATA (ata5)", "sda", "840 EVO 120GB (실험용)", "new"), ("SATA (ata6)", "sdb", "750 EVO 500GB", "base"),
+             ("SATA (ata7)", "sdc", "WD 1TB HDD", "base"), ("SATA (ata8)", "sdd", "Seagate 2TB HDD", "base")]
     d.box(20, 45, 170, 230, "메인보드", ["MAG B760M", "MORTAR II", "", "Intel B760", "SATA 컨트롤러"], "hw", size=13)
     for i, (p, n, m, k) in enumerate(ports):
         y = 50 + i * 57
@@ -106,10 +106,10 @@ def setup_sata():
         d.line(190, y + 22, 230, y + 22, "#7d3c98", 2)
         d.box(380, y, 170, 44, n, [m], k, size=13)
         d.line(350, y + 22, 380, y + 22, "#7f8c8d", 2)
-    d.box(590, 150, 155, 60, "840 EVO 120GB", ["(지금은 USB)"], "new", size=13)
-    d.path("M590,180 C570,180 570,186 552,186", color=R)
-    d.text(668, 236, "실험 동안 sdc 자리에", 12, color=R)
-    d.text(668, 253, "끝나면 원래대로", 12, color=R)
+    d.box(590, 120, 155, 60, "sde", ["840 EVO 500GB", "USB 어댑터로"], "warn", size=13)
+    d.path("M552,72 C575,72 575,135 590,135", color=R)
+    d.text(668, 206, "120GB 는 USB 의 sdg 였다", 12, color=R)
+    d.text(668, 223, "끝나면 500GB 를 ata5 로", 12, color=R)
     return d.svg("SATA 포트")
 
 
@@ -187,13 +187,13 @@ def old_retry():
 
 def old_expect():
     d = D(760, 340, "예상 : 오래된 파일일수록 읽기가 느리다 (가설)")
-    ch = Chart(d, 85, 45, 640, 220, (0, 8), (0, 450), "데이터를 쓴 지 몇 년", "읽기 속도 (MB/s)",
-               [(i, str(i)) for i in range(9)], [(v, str(v)) for v in (0, 100, 200, 300, 400)])
-    ch.hline(400, T, True, "새로 쓴 데이터 : USB 어댑터 한계 근처")
-    ch.curve([(0, 380), (0.5, 330), (1, 240), (2, 120), (3, 70), (4, 45), (6, 30), (8, 25)], R, 3)
-    ch.note(2.3, 150, "가설 : 해가 갈수록 느려진다", R, size=12, bold=True)
-    ch.note(4.3, 250, "펌웨어가 오래된 데이터를 주기적으로 다시 쓰면", K)
-    ch.note(4.3, 225, "이 곡선은 평평해진다 (그것도 결과다)", K)
+    ch = Chart(d, 85, 45, 640, 220, (0, 8), (0, 600), "데이터를 쓴 지 몇 년", "읽기 속도 (MB/s)",
+               [(i, str(i)) for i in range(9)], [(v, str(v)) for v in (0, 100, 200, 300, 400, 500)])
+    ch.hline(520, T, True, "새로 쓴 데이터 : SATA 한계 근처 (약 540 MB/s)")
+    ch.curve([(0, 500), (0.5, 430), (1, 310), (2, 155), (3, 90), (4, 60), (6, 40), (8, 32)], R, 3)
+    ch.note(2.3, 195, "가설 : 해가 갈수록 느려진다", R, size=12, bold=True)
+    ch.note(4.3, 365, "펌웨어가 오래된 데이터를 주기적으로 다시 쓰면", K)
+    ch.note(4.3, 320, "이 곡선은 평평해진다 (그것도 결과다)", K)
     d.text(400, 330, "모양은 예시일 뿐이다 : 실제 숫자는 측정해 보기 전에는 모른다", 11.5, color="#566573")
     return d.svg("예상 그래프")
 

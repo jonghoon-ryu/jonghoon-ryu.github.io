@@ -11,7 +11,7 @@ permalink: /old-ssd-experiments/1-old-data/
 <b>목표</b><span>데이터를 쓴 지 오래될수록 읽기가 느려지는지, 얼마나 느려지는지를 이 드라이브의 실제 파일로 잰다</span>
 <b>보는 FTL 개념</b><span>셀 전압의 이동 (charge loss), ECC, read retry, 펌웨어의 데이터 새로 쓰기 (refresh)</span>
 <b>지우나?</b><span><b>아니오.</b> 그리고 <b>지우기 전에만 할 수 있다</b> : 한 번 지우면 몇 년 된 데이터는 다시 만들 수 없다</span>
-<b>연결</b><span>USB 그대로 (속도의 '비교' 만 보므로 괜찮다)</span>
+<b>연결</b><span>SATA (실험 2 의 '새 데이터' 스캔과 같은 연결)</span>
 <b>시간</b><span>1–2시간 (데이터가 아주 느리게 읽히면 더 걸린다)</span>
 <b>명령</b><span><code>./lab.sh oldfiles /mnt/old840</code>, <code>sudo ./lab.sh scan old 8</code></span>
 </div>
@@ -100,7 +100,7 @@ $ python3 plot.py scan.png ~/Ryu/old_ssd_results/*-scan-old/scan.csv=old
 
 1. **나이 – 속도 그림** : 점 = 파일 하나, 빨간 선 = 해마다 중앙값. H1 은 중앙값의 기울기로, H2 는 `max_ms` 의 꼬리로 본다.
 2. **위치 지도** : 0 으로만 읽힌 구간 (점) 은 쓴 적이 없거나 Windows 가 TRIM 한 곳이다. 이런 곳은 NAND 를 읽지 않으므로 아주 빠를 것이다 (실험 3 미리 보기). 데이터가 있는 곳의 속도가 위치에 따라 고르게 낮은지, 띠 모양으로 다른지 본다.
-3. **비교 기준** : 실험 2 가 드라이브 전체를 새로 쓴 직후에 같은 스캔을 한 번 더 한다 (`sudo ./lab.sh scan fresh 8`, SATA). 두 곡선을 겹치면 '나이' 만 다른 비교가 된다. USB 와 SATA 의 차이도 있으므로, 공정하게 비교하려면 SATA 에서 '새 데이터' 를 USB 로 한 번 더 읽을 수도 있다 (실험 2 페이지).
+3. **비교 기준** : 실험 2 가 드라이브 전체를 새로 쓴 직후에 같은 스캔을 한 번 더 한다 (`sudo ./lab.sh scan fresh 8`, SATA). 두 곡선을 겹치면 '나이' 만 다른 비교가 된다. 실험 1 도 SATA 에서 하므로 연결의 차이는 없다.
 4. **SMART** : 앞뒤로 195 ECC_Error_Rate 나 187 이 늘었다면 읽는 동안 고친 (또는 못 고친) 오류가 있었다는 뜻이다.
 
 ## 시뮬레이터와의 연결

@@ -23,6 +23,8 @@ table.t code { font-size:0.82rem; }
 **처음 보는 사람을 위한 안내.** 디스크를 찾고, 상태를 보고, 속도를 재고, (조심해서) 지우는 명령을 차례로 익힌다.
 여기 나오는 출력은 모두 **이 컴퓨터 (MSI B760M, Ubuntu 24.04) 에서 실제로 나온 것** 이다 (2026.10.17). `sudo` 가 필요한 명령은 출력을 아직 받지 못해서 명령과 읽는 법만 적었다.
 
+**주의 : 아래 출력은 840 EVO 120GB 가 USB 어댑터에 있던 때 (`sdg`) 의 것이다.** 같은 날 오후 SATA 로 옮긴 뒤로는 `sda` 이고 (`TRAN sata`, `ROTA 0`, `DISC-MAX 2G`), 출력에서 `sda` 로 나오는 840 EVO 500GB 는 지금 USB 의 `sde` 다 ([0. 준비 6단계](/old-ssd-experiments/0-setup/)).
+
 <div class="glance">
 <b>읽는 순서</b><span>1 층 그림 → 2 디스크 찾기 → 3 마운트 → 4 연결 → 5 SMART → 6 TRIM → 7 속도 재기 → 8 지켜보기 → 9 위험한 명령 → 10 요약표</span>
 <b>준비</b><span><code>sudo apt install smartmontools fio sysstat</code> (smartctl, fio, iostat)</span>
