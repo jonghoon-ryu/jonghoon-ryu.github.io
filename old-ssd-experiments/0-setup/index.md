@@ -42,21 +42,23 @@ table.t code { font-size:0.82rem; }
 <tr><td>용량</td><td>120,034,123,776 B (234,441,648 섹터)</td><td>커널 로그</td></tr>
 <tr><td>NAND</td><td>TLC, 128 GiB 로 알려짐</td><td>리뷰 · 자료 (확인 필요)</td></tr>
 <tr><td>SLC 버퍼 (TurboWrite)</td><td>120GB 모델은 약 3 GB 로 알려짐</td><td>Samsung 자료 (확인 필요)</td></tr>
-<tr><td>컨트롤러</td><td>Samsung MEX (ARM 코어 3개로 알려짐)</td><td>리뷰 (실험 9 에서 확인)</td></tr>
+<tr><td>컨트롤러</td><td>Samsung MEX (ARM 코어 3개로 알려짐)</td><td>리뷰 (실험 19 에서 확인)</td></tr>
 <tr><td>지금 내용</td><td>옛 Windows 디스크 : EFI · MSR · NTFS 111 GB (91% 참) · 복구</td><td><code>lsblk -f</code>, <code>df</code></td></tr>
 <tr><td>파일 날짜</td><td>2018 – 2024.12 (hiberfil.sys 마지막 수정 2024.12.08)</td><td><code>ls -la</code></td></tr>
+<tr><td>지난 이력</td><td>2024.12 쯤 마지막으로 쓴 뒤 <strong>1년 넘게 전원 없이</strong> 보관. 2026.10.17 에 다시 연결해 Ryu 가 파일 몇 개를 읽고 몇 개를 새로 씀 (약 17.6 MB)</td><td>Ryu, <code>/proc/diskstats</code></td></tr>
 <tr><td>지금 연결</td><td>메인보드 SATA <code>ata5</code> (<code>/dev/sda</code>), TRIM 됨 (<code>DISC-GRAN 512B</code>, <code>DISC-MAX 2G</code>). 처음에는 USB 3.0 어댑터 (ASMedia 19da:1125, <code>uas</code>) 로 <code>/dev/sdg</code> 였고 TRIM 이 안 됐다</td><td><code>lsblk -o NAME,TRAN,DISC-MAX</code>, <code>/sys/block/sda</code></td></tr>
 </tbody></table></div>
 
 <div class="check" markdown="1">
 **840 EVO 와 '오래된 데이터 읽기 저하'.** 840 EVO 는 2014년, 오래전에 쓴 데이터를 읽는 속도가 크게 떨어지는 문제로 널리 알려졌다. Samsung 은 그해 10월 펌웨어 `EXT0BB6Q` 와 복구 도구를, 2015년에 오래된 데이터를 주기적으로 다시 쓰는 펌웨어 `EXT0DB6Q` 를 냈다고 기억한다 (버전과 날짜는 확인이 필요하다).
-이 드라이브의 `EXT0CB6Q` 가 그 사이 어디에 있는지는 확인하지 못했다. **이 드라이브가 실험 1 에 특히 좋은 이유다.**
+이 드라이브의 `EXT0CB6Q` 가 그 사이 어디에 있는지는 확인하지 못했다.
+어느 쪽이든, '주기적으로 다시 쓰기' 는 **전원이 있을 때만** 할 수 있다. 이 드라이브는 1년 넘게 꺼져 있었으니 펌웨어와 상관없이 모든 데이터가 오래 방치된 상태다 : **실험 1 에 특히 좋은 이유다.**
 </div>
 
 ## 1단계 : 데이터가 필요한지 정하기 (Ryu)
 
-실험 1 은 지금 데이터를 **읽기만** 한다. 실험 2 부터는 모두 지운다. 그 전에 남길 것이 있으면 다른 디스크로 복사한다 (Windows 의 `Users`, `C++ Master pdf` 폴더 등).
-복사 자체도 오래된 데이터를 읽는 일이므로, 실험 1 을 **먼저** 한 뒤에 복사하는 편이 측정에 좋다.
+실험 1 과 2 는 지금 데이터를 **읽기만** 한다. 실험 3 부터는 모두 지운다. 그 전에 남길 것이 있으면 다른 디스크로 복사한다 (Windows 의 `Users`, `C++ Master pdf` 폴더 등).
+복사 자체도 오래된 데이터를 읽는 일이므로, 실험 1 을 **먼저** 한 뒤에 복사한다. 10.17 에 이미 열어 본 파일과 새로 쓴 파일은 실험 1 이 따로 나누어 재므로 지우지 않고 그대로 둔다.
 
 ## 2단계 : 도구 설치
 
@@ -106,25 +108,28 @@ $ sudo ./lab.sh check
 <th>왜</th>
 </tr></thead><tbody>
 <tr><td>펌웨어</td><td>읽기 저하 수정판인지 : 실험 1 의 해석이 달라진다</td></tr>
-<tr><td>9 Power_On_Hours</td><td>얼마나 쓰였나</td></tr>
-<tr><td>177 Wear_Leveling_Count</td><td>지금까지의 평균 P/E : 실험 8 의 남은 수명 계산</td></tr>
-<tr><td>241 Total_LBAs_Written</td><td>지금까지 호스트가 쓴 양</td></tr>
+<tr><td>9 Power_On_Hours</td><td>얼마나 쓰였나. 달력의 시간 (2013년 제품) 과 비교하면 켜져 있던 비율이 보인다</td></tr>
+<tr><td>12 Power_Cycle_Count</td><td>몇 번 켜졌나 (10.17 의 연결도 들어 있다)</td></tr>
+<tr><td>177 Wear_Leveling_Count</td><td>지금까지의 평균 P/E : 실험 18 의 남은 수명 계산</td></tr>
+<tr><td>241 Total_LBAs_Written</td><td>지금까지 호스트가 쓴 양 (10.17 에 쓴 것도 들어 있다)</td></tr>
 <tr><td>5 · 179 · 181 · 182 · 183 · 187</td><td>'믿을 수 없게 됨' 이 실제로 무엇인지 : 재할당, 예비 블록, 실패, 고치지 못한 오류</td></tr>
 <tr><td>195 ECC_Error_Rate</td><td>셀 상태</td></tr>
 </tbody></table></div>
 
 ## 5단계 : 읽기 전용으로 다시 마운트
 
-지금 NTFS 파티션은 읽고 쓰기 (`rw`) 로 붙어 있다. 실험 1 동안 접근 시각 같은 작은 쓰기도 없도록 읽기 전용으로 바꾼다.
+10.17 에는 NTFS 파티션이 파일 관리자를 통해 읽고 쓰기 (`rw`) 로 붙어 있었다 (`/media/ryuj/C8922986922979D8`). 그때 Ryu 가 파일을 읽고 쓴 기록 (쓴 시각, 접근 시각) 이 실험 1 에서 파일을 세 무리로 나누는 근거가 된다.
+2026.10.18 아침에는 붙어 있지 않다 (`lsblk` 에 마운트 지점 없음). 실험 1 동안 접근 시각 같은 작은 쓰기도 없도록 **읽기 전용** 으로 붙인다.
 
 ```
-$ sudo umount /media/ryuj/C8922986922979D8
+$ findmnt /media/ryuj/C8922986922979D8 && sudo umount /media/ryuj/C8922986922979D8   # 붙어 있을 때만
 $ sudo mkdir -p /mnt/old840
 $ sudo mount -t ntfs-3g -o ro /dev/disk/by-id/ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K-part3 /mnt/old840
 $ findmnt /mnt/old840          # OPTIONS 에 ro
 ```
 
-**그 전까지 이 파티션을 파일 관리자로 열지 않는다.** 썸네일 · 미리 보기를 만드느라 오래된 데이터를 읽어 버린다 (읽힌 데이터는 펌웨어가 새로 쓸 수 있다 : 실험 1 의 주의 참고).
+**그 전까지 이 파티션을 파일 관리자로 열지 않는다.** 썸네일 · 미리 보기를 만드느라 오래된 데이터를 읽어 버린다 (읽힌 데이터는 펌웨어가 새로 쓸 수 있다 : 실험 1 의 H5).
+읽기 전용 마운트는 접근 시각도 바꾸지 않으므로, 10.17 에 남은 접근 시각이 그대로 보존된다.
 `umount` 가 `target is busy` 라고 하면 그 폴더를 연 창이나 터미널을 닫고 다시 한다.
 
 `ntfs-3g` 로 붙여야 `fileage.py` 가 NTFS 생성 시각 (`system.ntfs_crtime`) 을 읽을 수 있다.
@@ -151,9 +156,10 @@ Windows 가 최대 절전 상태 (hiberfil.sys) 로 꺼져 있어서 `ntfs-3g` �
 <div class="check" markdown="1">
 **글자가 바뀌었다.** 전에 `sda` 는 500GB 였고, 지금 `sda` 는 실험용 120GB 다. 옛 메모의 `/dev/sdX` 를 그대로 쓰면 다른 디스크를 지운다.
 `lab.sh` 는 장치를 이름이 아니라 **시리얼** 로 찾으므로 그대로 쓰면 된다.
+2026.10.18 아침의 `lsblk` 에서는 USB 쪽 디스크 구성이 또 달랐다 (실험용 120GB 는 그대로 `sda`). 글자는 부팅 · 연결마다 바뀔 수 있다.
 </div>
 
-**실험 1 에는 오히려 좋다.** 실험 1 (오래된 데이터) 과 실험 2 의 `scan fresh` (새 데이터) 를 같은 SATA 연결에서 재므로, 두 곡선의 차이는 '데이터의 나이' 뿐이다. USB 로 다시 옮겨 한 번 더 재는 단계는 필요 없어졌다.
+**실험 1 에는 오히려 좋다.** 실험 1 (오래된 데이터) 과 실험 3 의 `scan fresh` (새 데이터) 를 같은 SATA 연결에서 재므로, 두 곡선의 차이는 '데이터의 나이' 뿐이다. USB 로 다시 옮겨 한 번 더 재는 단계는 필요 없어졌다.
 
 확인 : `sudo ./lab.sh check` 를 SATA 에서 실행하면 SMART 와 `hdparm -I` (TRIM 지원 줄) 이 모두 나와야 한다 (USB 와 달리 `-d sat` 없이).
 
@@ -167,4 +173,4 @@ Windows 가 최대 절전 상태 (hiberfil.sys) 로 꺼져 있어서 `ntfs-3g` �
 아직 실행 전. `sudo ./lab.sh check` 결과가 나오면 여기에 SMART 표와 해석을 붙인다.
 </div>
 
-<div class="step-nav"><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">← SSD 를 다루는 Linux 명령</a><a href="{{ '/old-ssd-experiments/1-old-data/' | relative_url }}">1. 오래된 데이터 읽기 →</a></div>
+<div class="step-nav"><a href="{{ '/old-ssd-experiments/fio/' | relative_url }}">← fio 사용법</a><a href="{{ '/old-ssd-experiments/1-old-data/' | relative_url }}">1. 오래된 데이터 읽기 →</a></div>

@@ -3,16 +3,29 @@
 #
 #   sudo ./lab.sh check                    drive, connection, TRIM, SMART (no writes)
 #   sudo ./lab.sh smart LABEL              SMART snapshot only
-#        ./lab.sh oldfiles MOUNTPOINT      exp 1: read speed of old files vs their age (read-only)
+#        ./lab.sh oldfiles MOUNTPOINT [fileage.py options, e.g. --seed 2]   exp 1: read speed of old files vs their age (read-only)
 #   sudo ./lab.sh scan LABEL [SAMPLE_MIB]  read speed across the whole drive (read-only)
-#   sudo ./lab.sh slc                      exp 2: SLC cache (whole-drive sequential write)       ERASES
-#   sudo ./lab.sh slc-idle MIN...          exp 2: cache recovery after MIN minutes idle          WRITES
-#   sudo ./lab.sh trim                     exp 3: TRIM and reads of unmapped LBAs                ERASES
-#   sudo ./lab.sh cliff [SPAN%] [TIMES]    exp 4/5: 4 KiB random writes over SPAN% (default 100), TIMES x capacity (2)  ERASES
-#   sudo ./lab.sh seqwaf [TIMES]           exp 6: sequential writes of the whole drive TIMES (5) times, WAF from SMART  ERASES
-#   sudo ./lab.sh ret-write                exp 7: write a checked pattern before storing the drive unpowered       ERASES
-#   sudo ./lab.sh ret-check                exp 7: read it back after weeks (scan + verify, no writes)
-#   sudo ./lab.sh endurance [HOURS]        exp 8: random writes until the drive fails or HOURS pass (default 720)  ERASES
+#   sudo ./lab.sh features                 exp 2: every ATA feature, log and statistic the drive reports (no writes)
+#   sudo ./lab.sh selftest [short|long]    exp 2: the drive's own self-test, timed (no writes)
+#   sudo ./lab.sh slc                      exp 3: SLC cache (whole-drive sequential write)       ERASES
+#   sudo ./lab.sh slc-idle MIN...          exp 3: cache recovery after MIN minutes idle          WRITES
+#   sudo ./lab.sh trim                     exp 4: TRIM and reads of unmapped LBAs                ERASES
+#   sudo ./lab.sh perfmap                  exp 5: speed for every block size x queue depth       ERASES
+#   sudo ./lab.sh pattern                  exp 5: does the data (zeros, random, compressible) change the speed?  ERASES
+#   sudo ./lab.sh wsize                    exp 6: write sizes 512 B .. 64 KiB, and misaligned 4 KiB  ERASES
+#   sudo ./lab.sh flush                    exp 7: write cache on/off and a FLUSH after every write  ERASES
+#   sudo ./lab.sh cliff [SPAN%] [TIMES] [DIST]  exp 8/10/11: 4 KiB random writes over SPAN% (100), TIMES x capacity (2),
+#                                          fio random_distribution DIST (random; e.g. zipf:1.2)  ERASES
+#   sudo ./lab.sh idlegc MIN...            exp 9: after cliff: idle MIN minutes, then 2 min of random writes  WRITES
+#   sudo ./lab.sh seqwaf [TIMES]           exp 12: sequential writes of the whole drive TIMES (5) times, WAF from SMART  ERASES
+#   sudo ./lab.sh mixed                    exp 13: read latency alone and while writes run    ERASES
+#   sudo ./lab.sh secerase [enhanced]      exp 14: ATA SECURITY ERASE UNIT, timed, then checked  ERASES
+#   sudo ./lab.sh disturb [HOURS]          exp 15: read the same 1 MiB for HOURS (6), then check the neighbours  ERASES
+#   sudo ./lab.sh ret-write                exp 16: write a checked pattern before storing the drive unpowered  ERASES
+#   sudo ./lab.sh ret-check                exp 16: read it back after weeks (scan + verify, no writes)
+#   sudo ./lab.sh pl-write [GB]            exp 17: write numbered records until the power is cut (or GB, then idle)  ERASES
+#   sudo ./lab.sh pl-check RESULT_DIR      exp 17: after power comes back: which acknowledged writes survived (no writes)
+#   sudo ./lab.sh endurance [HOURS]        exp 18: random writes until the drive fails or HOURS pass (default 720)  ERASES
 #
 # The drive is found by its serial number, never by /dev/sdX (that name changes between USB and SATA).
 # Results go to $RESULTS/<date>-<name>/ (default /home/ryuj/Ryu/old_ssd_results).
@@ -109,6 +122,15 @@ discard_all() {
     sleep "${SETTLE:-120}"
 }
 
+fill_all() {   # sequential 1 MiB writes over the whole drive, so later reads really go to NAND
+    note "fill the whole drive sequentially (1 MiB, QD8)"
+    run_fio fill --rw=write --bs=1M --iodepth=8 --size=100%
+}
+
+summary() {   # summary : one CSV row per fio run in $OUT (fiosum.py)
+    python3 "$HERE/fiosum.py" "$OUT/summary.csv" "$OUT"/*.json | column -s, -t
+}
+
 mib_round() { echo $(( $1 / 1048576 * 1048576 )); }
 
 run_fio() {   # run_fio NAME fio-args... : common options, logs every second, JSON report
@@ -144,9 +166,10 @@ oldfiles)
     find_dev
     findmnt -n "$1" >/dev/null || die "$1 is not a mount point — mount the partition first (setup page, step 5)"
     new_out oldfiles
-    findmnt -no SOURCE,FSTYPE,OPTIONS "$1" | tee -a "$OUT/meta.txt"
-    findmnt -no OPTIONS "$1" | grep -qE '(^|,)ro(,|$)' || echo "   (warning: $1 is not mounted read-only)"
-    python3 "$HERE/fileage.py" "$1" "$OUT/fileage.csv"
+    mnt=$1; shift
+    findmnt -no SOURCE,FSTYPE,OPTIONS "$mnt" | tee -a "$OUT/meta.txt"
+    findmnt -no OPTIONS "$mnt" | grep -qE '(^|,)ro(,|$)' || echo "   (warning: $mnt is not mounted read-only)"
+    python3 "$HERE/fileage.py" "$mnt" "$OUT/fileage.csv" "$@" 2>&1 | tee "$OUT/fileage.log"
     finish ;;
 scan)
     need_root scan; find_dev
@@ -198,18 +221,19 @@ trim)
     finish ;;
 cliff)
     need_root cliff; find_dev; not_mounted; need_trim
-    span=${1:-100}; times=${2:-2}
+    span=${1:-100}; times=${2:-2}; dist=${3:-random}
     [ "$span" -ge 10 ] && [ "$span" -le 100 ] || die "SPAN% must be 10..100"
+    [[ "$dist" =~ ^[a-z]+(:[0-9.:/,]+)?$ ]] || die "DIST '$dist' is not a fio random_distribution (random, zipf:1.2, zoned:80/20:20/80 ...)"
     confirm_erase
-    new_out "cliff-span${span}"
+    if [ "$dist" = random ]; then new_out "cliff-span${span}"; else new_out "cliff-span${span}-${dist//[:\/]/_}"; fi
     sbytes=$(mib_round $(( BYTES * span / 100 )))
     total=$(mib_round $(( BYTES * times )))
     echo "span_bytes: $sbytes  io_bytes: $total" >> "$OUT/meta.txt"
     discard_all
     smart before
-    note "4 KiB random writes, QD32, over the first ${span}% ($(( sbytes / 1000000000 )) GB), $(( total / 1000000000 )) GB in total"
+    note "4 KiB random writes ($dist), QD32, over the first ${span}% ($(( sbytes / 1000000000 )) GB), $(( total / 1000000000 )) GB in total"
     run_fio cliff --rw=randwrite --bs=4k --iodepth=32 --size="$sbytes" --io_size="$total" \
-                  --norandommap --randrepeat=0 --random_generator=tausworthe64
+                  --norandommap --randrepeat=0 --random_generator=tausworthe64 --random_distribution="$dist"
     smart after
     finish ;;
 seqwaf)
@@ -246,6 +270,245 @@ ret-check)
     echo "bad 4 KiB blocks: $bad" | tee "$OUT/verify-summary.txt"
     smart after
     finish ;;
+features)
+    need_root features; find_dev
+    new_out features
+    hdparm -I "$DEV" > "$OUT/hdparm-I.txt" 2>&1 || true
+    note "ATA features (whole list: hdparm-I.txt)"
+    grep -iE "model|firmware|standard|sector size|cache|TRIM|zeros|security|frozen|erase unit|sanitize|NCQ|APM|DIPM|Gen3|DMA:|LBA48" \
+        "$OUT/hdparm-I.txt" | sed 's/^/   /' || true
+    note "visible / native max sectors (HPA), write cache, read look-ahead, APM"
+    hdparm -N -W -A -B "$DEV" 2>&1 | tee "$OUT/hdparm-NWAB.txt" | sed 's/^/   /' || true
+    note "SMART: attributes, logs, device statistics, temperature history"
+    smart features
+    # shellcheck disable=SC2046
+    for l in devstat error xerror selftest scttemp sataphy directory; do
+        smartctl -l "$l" $(smart_args) "$DEV" > "$OUT/smart-log-$l.txt" 2>&1 || true
+    done
+    grep -E "Lifetime Power-On|Logical Sectors (Written|Read)|Power Cycles|Temperature|Error Count|CRC" "$OUT/smart-log-devstat.txt" "$OUT/smart-log-sataphy.txt" \
+        2>/dev/null | sed 's/^/   /' | head -30 || true
+    finish ;;
+selftest)
+    need_root selftest; find_dev
+    kind=${1:-long}
+    [ "$kind" = short ] || [ "$kind" = long ] || die "usage: $0 selftest [short|long]"
+    new_out "selftest-$kind"
+    smart before
+    # shellcheck disable=SC2046
+    smartctl -c $(smart_args) "$DEV" | grep -A1 -i "self-test routine" | sed 's/^/   /' || true
+    t0=$(date +%s)
+    # shellcheck disable=SC2046
+    smartctl -t "$kind" $(smart_args) "$DEV" | tail -4
+    note "waiting for the drive (checked every 30 s; do not use the drive meanwhile)"
+    while sleep 30; do
+        # shellcheck disable=SC2046
+        st=$(smartctl -c $(smart_args) "$DEV" | grep -A1 "Self-test execution status" | tr -s ' \n\t' ' ')
+        echo "   $(( ($(date +%s) - t0) / 60 )) min: $st" | cut -c1-150
+        echo "$st" | grep -q "in progress" || break
+    done
+    echo "seconds: $(( $(date +%s) - t0 ))" | tee -a "$OUT/meta.txt"
+    # shellcheck disable=SC2046
+    smartctl -l selftest $(smart_args) "$DEV" | tee "$OUT/selftest-log.txt" | sed -n '1,12p'
+    smart after
+    finish ;;
+perfmap)
+    need_root perfmap; find_dev; not_mounted; need_trim; confirm_erase
+    new_out perfmap
+    discard_all
+    fill_all
+    smart before
+    note "reads: 4 block sizes x 3 queue depths x (random, sequential), 20 s each (about 17 min)"
+    for rw in randread read; do for bs in 4k 16k 128k 1m; do for qd in 1 4 32; do
+        run_fio "${rw}-${bs}-qd${qd}" --rw=$rw --bs=$bs --iodepth=$qd --size=100% --time_based --runtime=20 --ramp_time=2 \
+                --randrepeat=0 >/dev/null
+        echo "   ${rw} ${bs} QD${qd} done"
+    done; done; done
+    note "writes: the same grid, 15 s each (the SLC buffer refills between runs, so these are buffered speeds)"
+    for rw in randwrite write; do for bs in 4k 128k 1m; do for qd in 1 32; do
+        run_fio "${rw}-${bs}-qd${qd}" --rw=$rw --bs=$bs --iodepth=$qd --size=100% --time_based --runtime=15 \
+                --randrepeat=0 >/dev/null
+        echo "   ${rw} ${bs} QD${qd} done"; sleep 30
+    done; done; done
+    smart after
+    rm -f "$OUT"/fill.json
+    summary
+    finish ;;
+pattern)
+    need_root pattern; find_dev; not_mounted; need_trim; confirm_erase
+    new_out pattern
+    discard_all
+    smart before
+    # 16 GiB each (well past the ~3 GB SLC buffer), each into its own fresh 16 GiB region, 3 min rest between
+    i=0
+    for p in zeros random comp50 comp90 deadbeef; do
+        case $p in
+            zeros)    opt=(--zero_buffers) ;;
+            random)   opt=(--refill_buffers) ;;
+            comp50)   opt=(--refill_buffers --buffer_compress_percentage=50 --buffer_compress_chunk=4k) ;;
+            comp90)   opt=(--refill_buffers --buffer_compress_percentage=90 --buffer_compress_chunk=4k) ;;
+            deadbeef) opt=(--buffer_pattern=0xdeadbeef) ;;
+        esac
+        note "$p: 16 GiB sequential at offset $(( i * 16 )) GiB"
+        run_fio "$p" --rw=write --bs=1M --iodepth=8 --offset=$(( i * 16 ))G --size=16G "${opt[@]}" >/dev/null
+        smart "after-$p" >/dev/null
+        i=$(( i + 1 )); sleep 180
+    done
+    summary
+    finish ;;
+wsize)
+    need_root wsize; find_dev; not_mounted; need_trim; confirm_erase
+    new_out wsize
+    discard_all
+    fill_all
+    smart before
+    note "random writes inside the first 8 GiB, QD1 and QD32, 30 s each, 60 s rest (lets the SLC buffer drain)"
+    for bs in 512 1k 2k 4k 8k 16k 32k 64k; do for qd in 1 32; do
+        run_fio "bs${bs}-qd${qd}" --rw=randwrite --bs=$bs --iodepth=$qd --size=8G --time_based --runtime=30 --randrepeat=0 >/dev/null
+        echo "   ${bs} QD${qd} done"; sleep 60
+    done; done
+    note "4 KiB writes that start 512 B off a 4 KiB boundary"
+    for qd in 1 32; do
+        run_fio "mis4k-qd${qd}" --rw=randwrite --bs=4k --blockalign=4k --offset=512 --iodepth=$qd --size=8G --time_based --runtime=30 \
+                --randrepeat=0 >/dev/null
+        sleep 60
+    done
+    smart after
+    rm -f "$OUT"/fill.json
+    summary
+    finish ;;
+flush)
+    need_root flush; find_dev; not_mounted; need_trim; confirm_erase
+    new_out flush
+    trap 'hdparm -W1 "$DEV" >/dev/null 2>&1 || true' EXIT
+    discard_all
+    hdparm -W "$DEV" | tee -a "$OUT/meta.txt"
+    note "write cache ON"
+    hdparm -W1 "$DEV" >/dev/null
+    run_fio wc1-4k        --rw=randwrite --bs=4k --iodepth=1 --size=8G --time_based --runtime=30 --randrepeat=0 >/dev/null; sleep 60
+    run_fio wc1-4k-fsync  --rw=randwrite --bs=4k --iodepth=1 --size=8G --time_based --runtime=30 --randrepeat=0 --fsync=1 >/dev/null; sleep 60
+    run_fio wc1-1m-fsync  --rw=write --bs=1M --iodepth=1 --offset=16G --size=8G --time_based --runtime=30 --fsync=1 >/dev/null; sleep 60
+    note "write cache OFF (hdparm -W0): every write must be on NAND before it completes"
+    hdparm -W0 "$DEV" >/dev/null
+    run_fio wc0-4k        --rw=randwrite --bs=4k --iodepth=1 --size=8G --time_based --runtime=30 --randrepeat=0 >/dev/null; sleep 60
+    run_fio wc0-4k-qd32   --rw=randwrite --bs=4k --iodepth=32 --size=8G --time_based --runtime=30 --randrepeat=0 >/dev/null; sleep 60
+    run_fio wc0-1m        --rw=write --bs=1M --iodepth=1 --offset=32G --size=8G --time_based --runtime=30 >/dev/null
+    hdparm -W1 "$DEV" >/dev/null
+    note "write cache back ON"
+    summary
+    finish ;;
+idlegc)
+    need_root idlegc; find_dev; not_mounted
+    [ $# -gt 0 ] || die "usage: $0 idlegc MINUTES... (e.g. 0 1 5 15 30), right after 'cliff 100'"
+    confirm_erase
+    new_out idlegc
+    note "10 min of 4 KiB random writes first, so the drive is surely in steady state"
+    run_fio pre --rw=randwrite --bs=4k --iodepth=32 --size=100% --norandommap --randrepeat=0 --time_based --runtime=600
+    for m in "$@"; do
+        note "idle $m min, then 2 min of 4 KiB random writes (IOPS every second)"
+        sleep $(( m * 60 ))
+        run_fio "idle${m}" --rw=randwrite --bs=4k --iodepth=32 --size=100% --norandommap --randrepeat=0 --time_based --runtime=120 >/dev/null
+    done
+    summary
+    finish ;;
+mixed)
+    need_root mixed; find_dev; not_mounted; need_trim; confirm_erase
+    new_out mixed
+    discard_all
+    fill_all
+    note "random 4 KiB writes for 10 min first, so writes later make the drive do GC"
+    run_fio pre --rw=randwrite --bs=4k --iodepth=32 --size=100% --norandommap --randrepeat=0 --time_based --runtime=600
+    rd=(--name=rd --rw=randread --bs=4k --iodepth=1 --randrepeat=0 --per_job_logs=0)
+    for case in alone seqwrite randwrite; do
+        case $case in
+            alone)     wr=() ;;
+            seqwrite)  wr=(--name=wr --rw=write --bs=1M --iodepth=8 --offset=50% --size=50%) ;;
+            randwrite) wr=(--name=wr --rw=randwrite --bs=4k --iodepth=32 --norandommap --randrepeat=0) ;;
+        esac
+        note "4 KiB random reads, QD1, 60 s, with: $case"
+        $FIO --filename="$DEV" --direct=1 --ioengine="$ENGINE" --time_based --runtime=60 --size=100% \
+             --log_avg_msec=1000 --log_max_value=1 --output-format=json --output="$OUT/$case.json" \
+             "${rd[@]}" --write_lat_log="$OUT/$case-rd" "${wr[@]}" >/dev/null
+        sleep 60
+    done
+    rm -f "$OUT"/pre.json "$OUT"/fill.json
+    summary
+    finish ;;
+secerase)
+    need_root secerase; find_dev; not_mounted
+    mode=${1:-normal}
+    [ "$mode" = normal ] || [ "$mode" = enhanced ] || die "usage: $0 secerase [enhanced]"
+    hdparm -I "$DEV" > /tmp/lab-secerase-I.txt 2>&1 || true
+    sec=$(sed -n '/^Security:/,/^Logical/p' /tmp/lab-secerase-I.txt)
+    echo "$sec" | sed 's/^/   /'
+    echo "$sec" | grep -qE "^\s+not\s+frozen" || die "the drive is 'frozen' (the BIOS locks security commands at boot).
+   Unfreeze: 'sudo systemctl suspend', wake the PC, then run this again. The drive must report 'not frozen'."
+    echo "$sec" | grep -qE "^\s+supported$" || die "the drive does not report the ATA security feature set"
+    echo "$sec" | grep -qE "^\s+not\s+enabled" || die "a security password is already set — see the page (exp 14) to unlock or disable it first"
+    confirm_erase
+    new_out "secerase-$mode"
+    cp /tmp/lab-secerase-I.txt "$OUT/hdparm-I-before.txt"
+    fill_all
+    run_fio before-4k --rw=randwrite --bs=4k --iodepth=32 --size=100% --norandommap --randrepeat=0 --time_based --runtime=600
+    smart before
+    note "set a temporary user password 'lab' (needed for the erase command; the erase clears it again)"
+    echo "password: lab (if the erase is interrupted: hdparm --user-master u --security-disable lab $DEV)" >> "$OUT/meta.txt"
+    hdparm --user-master u --security-set-pass lab "$DEV" > /dev/null
+    opt=--security-erase; [ "$mode" = enhanced ] && opt=--security-erase-enhanced
+    note "SECURITY ERASE UNIT ($mode): the command blocks until the drive is done"
+    t0=$(date +%s)
+    hdparm --user-master u $opt lab "$DEV" | tail -2
+    echo "erase_seconds: $(( $(date +%s) - t0 ))" | tee -a "$OUT/meta.txt"
+    hdparm -I "$DEV" > "$OUT/hdparm-I-after.txt" 2>&1 || true
+    sed -n '/^Security:/,/^Logical/p' "$OUT/hdparm-I-after.txt" | sed 's/^/   /'
+    smart after
+    note "1) is everything zero now? scan 8 MiB of every 256 MiB"
+    python3 "$HERE/readscan.py" "$DEV" "$OUT/scan.csv" --chunk-mib 256 --sample-mib 8
+    note "2) are the free blocks back? 10 min of 4 KiB random writes (compare with before-4k)"
+    run_fio after-4k --rw=randwrite --bs=4k --iodepth=32 --size=100% --norandommap --randrepeat=0 --time_based --runtime=600
+    rm -f "$OUT"/fill.json
+    summary
+    finish ;;
+disturb)
+    need_root disturb; find_dev; not_mounted; confirm_erase
+    hours=${1:-6}
+    new_out "disturb-${hours}h"
+    note "write the whole drive with a checked pattern (crc32c in every 4 KiB block)"
+    run_fio ret --rw=write --bs=1M --iodepth=8 --size=100% --verify=crc32c --verify_interval=4096 --do_verify=0
+    note "first look at the first 1 GiB (QD1 4 KiB reads, 60 s) before hammering"
+    run_fio near-before --rw=randread --bs=4k --iodepth=1 --size=1G --time_based --runtime=60 --randrepeat=0 >/dev/null
+    smart before
+    note "read the same 1 MiB (256 x 4 KiB) at QD32 for $hours h: latency max every second shows relocations"
+    $FIO --name=hammer --filename="$DEV" --direct=1 --ioengine="$ENGINE" --rw=randread --bs=4k --iodepth=32 --size=1M \
+         --time_based --runtime=$(( hours * 3600 )) --log_avg_msec=1000 --log_max_value=1 --per_job_logs=0 \
+         --write_lat_log="$OUT/hammer" --write_iops_log="$OUT/hammer" --output-format=json --output="$OUT/hammer.json" \
+         --eta=always --eta-newline=300
+    smart after
+    note "check: the first 1 GiB again, then every block on the drive against its checksum"
+    run_fio near-after --rw=randread --bs=4k --iodepth=1 --size=1G --time_based --runtime=60 --randrepeat=0 >/dev/null
+    run_fio ret --rw=write --bs=1M --iodepth=8 --size=100% --verify=crc32c --verify_interval=4096 \
+                --verify_only --verify_fatal=0 --verify_dump=0 2>&1 | tee "$OUT/verify.log" || true
+    bad=$(grep -c "verify failed" "$OUT/verify.log" || true)
+    echo "bad 4 KiB blocks: $bad" | tee "$OUT/verify-summary.txt"
+    rm -f "$OUT"/ret.json
+    summary
+    finish ;;
+pl-write)
+    need_root pl-write; find_dev; not_mounted; confirm_erase
+    new_out pl-write
+    smart before
+    note "writing numbered 4 KiB records; FLUSH every 8 MiB; acknowledged counts go to $OUT/acked.csv (on this PC's disk)"
+    note "cut the drive's power whenever you like (pull the USB cable of the adapter), then run: sudo $0 pl-check $OUT"
+    echo "stop_gb: ${1:-0}" >> "$OUT/meta.txt"
+    python3 "$HERE/plcheck.py" write "$DEV" "$OUT/acked.csv" --stop-gb "${1:-0}" || true
+    finish ;;
+pl-check)
+    need_root pl-check; find_dev; not_mounted
+    [ -f "${1:-}/acked.csv" ] || die "usage: $0 pl-check RESULT_DIR_OF_pl-write"
+    W=$1
+    OUT=$W
+    smart after
+    python3 "$HERE/plcheck.py" check "$DEV" "$W/acked.csv" | tee "$W/check.txt"
+    finish ;;
 endurance)
     need_root endurance; find_dev; not_mounted; need_trim
     hours=${1:-720}
@@ -266,6 +529,6 @@ endurance)
     done
     finish ;;
 *)
-    sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,/^set -euo/p' "$0" | sed '$d; s/^# \{0,1\}//'
     exit 1 ;;
 esac

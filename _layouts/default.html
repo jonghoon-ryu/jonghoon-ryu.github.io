@@ -201,16 +201,27 @@
               <summary><a href="{{ '/old-ssd-experiments/' | relative_url }}">헌 SSD 로 하는 실험</a></summary>
               <ul class="nav-subitems">
                 <li><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}"{% if page.url == '/old-ssd-experiments/linux-commands/' %} class="current"{% endif %}>SSD 를 다루는 Linux 명령</a></li>
+                <li><a href="{{ '/old-ssd-experiments/fio/' | relative_url }}"{% if page.url == '/old-ssd-experiments/fio/' %} class="current"{% endif %}>fio 사용법</a></li>
                 <li><a href="{{ '/old-ssd-experiments/0-setup/' | relative_url }}"{% if page.url == '/old-ssd-experiments/0-setup/' %} class="current"{% endif %}>0. 준비</a></li>
                 <li><a href="{{ '/old-ssd-experiments/1-old-data/' | relative_url }}"{% if page.url == '/old-ssd-experiments/1-old-data/' %} class="current"{% endif %}>1. 오래된 데이터 읽기</a></li>
-                <li><a href="{{ '/old-ssd-experiments/2-slc-cache/' | relative_url }}"{% if page.url == '/old-ssd-experiments/2-slc-cache/' %} class="current"{% endif %}>2. SLC 캐시</a></li>
-                <li><a href="{{ '/old-ssd-experiments/3-trim/' | relative_url }}"{% if page.url == '/old-ssd-experiments/3-trim/' %} class="current"{% endif %}>3. TRIM 과 매핑 없는 읽기</a></li>
-                <li><a href="{{ '/old-ssd-experiments/4-write-cliff/' | relative_url }}"{% if page.url == '/old-ssd-experiments/4-write-cliff/' %} class="current"{% endif %}>4. Write cliff</a></li>
-                <li><a href="{{ '/old-ssd-experiments/5-over-provisioning/' | relative_url }}"{% if page.url == '/old-ssd-experiments/5-over-provisioning/' %} class="current"{% endif %}>5. Over-provisioning</a></li>
-                <li><a href="{{ '/old-ssd-experiments/6-waf/' | relative_url }}"{% if page.url == '/old-ssd-experiments/6-waf/' %} class="current"{% endif %}>6. WAF (SMART)</a></li>
-                <li><a href="{{ '/old-ssd-experiments/7-retention/' | relative_url }}"{% if page.url == '/old-ssd-experiments/7-retention/' %} class="current"{% endif %}>7. Retention</a></li>
-                <li><a href="{{ '/old-ssd-experiments/8-endurance/' | relative_url }}"{% if page.url == '/old-ssd-experiments/8-endurance/' %} class="current"{% endif %}>8. 끝까지 쓰기</a></li>
-                <li><a href="{{ '/old-ssd-experiments/9-teardown/' | relative_url }}"{% if page.url == '/old-ssd-experiments/9-teardown/' %} class="current"{% endif %}>9. 열어 보기</a></li>
+                <li><a href="{{ '/old-ssd-experiments/2-features/' | relative_url }}"{% if page.url == '/old-ssd-experiments/2-features/' %} class="current"{% endif %}>2. 기능 · 자가 진단</a></li>
+                <li><a href="{{ '/old-ssd-experiments/3-slc-cache/' | relative_url }}"{% if page.url == '/old-ssd-experiments/3-slc-cache/' %} class="current"{% endif %}>3. SLC 캐시</a></li>
+                <li><a href="{{ '/old-ssd-experiments/4-trim/' | relative_url }}"{% if page.url == '/old-ssd-experiments/4-trim/' %} class="current"{% endif %}>4. TRIM 과 매핑 없는 읽기</a></li>
+                <li><a href="{{ '/old-ssd-experiments/5-perf-map/' | relative_url }}"{% if page.url == '/old-ssd-experiments/5-perf-map/' %} class="current"{% endif %}>5. 성능 지도</a></li>
+                <li><a href="{{ '/old-ssd-experiments/6-write-size/' | relative_url }}"{% if page.url == '/old-ssd-experiments/6-write-size/' %} class="current"{% endif %}>6. 쓰기 크기 · 정렬</a></li>
+                <li><a href="{{ '/old-ssd-experiments/7-flush/' | relative_url }}"{% if page.url == '/old-ssd-experiments/7-flush/' %} class="current"{% endif %}>7. 쓰기 캐시 · FLUSH</a></li>
+                <li><a href="{{ '/old-ssd-experiments/8-write-cliff/' | relative_url }}"{% if page.url == '/old-ssd-experiments/8-write-cliff/' %} class="current"{% endif %}>8. Write cliff</a></li>
+                <li><a href="{{ '/old-ssd-experiments/9-idle-gc/' | relative_url }}"{% if page.url == '/old-ssd-experiments/9-idle-gc/' %} class="current"{% endif %}>9. 쉬는 동안 GC</a></li>
+                <li><a href="{{ '/old-ssd-experiments/10-over-provisioning/' | relative_url }}"{% if page.url == '/old-ssd-experiments/10-over-provisioning/' %} class="current"{% endif %}>10. Over-provisioning</a></li>
+                <li><a href="{{ '/old-ssd-experiments/11-hot-cold/' | relative_url }}"{% if page.url == '/old-ssd-experiments/11-hot-cold/' %} class="current"{% endif %}>11. 뜨거운 데이터</a></li>
+                <li><a href="{{ '/old-ssd-experiments/12-waf/' | relative_url }}"{% if page.url == '/old-ssd-experiments/12-waf/' %} class="current"{% endif %}>12. WAF (SMART)</a></li>
+                <li><a href="{{ '/old-ssd-experiments/13-interference/' | relative_url }}"{% if page.url == '/old-ssd-experiments/13-interference/' %} class="current"{% endif %}>13. 읽기 · 쓰기 간섭</a></li>
+                <li><a href="{{ '/old-ssd-experiments/14-secure-erase/' | relative_url }}"{% if page.url == '/old-ssd-experiments/14-secure-erase/' %} class="current"{% endif %}>14. Secure Erase</a></li>
+                <li><a href="{{ '/old-ssd-experiments/15-read-disturb/' | relative_url }}"{% if page.url == '/old-ssd-experiments/15-read-disturb/' %} class="current"{% endif %}>15. Read disturb</a></li>
+                <li><a href="{{ '/old-ssd-experiments/16-retention/' | relative_url }}"{% if page.url == '/old-ssd-experiments/16-retention/' %} class="current"{% endif %}>16. Retention</a></li>
+                <li><a href="{{ '/old-ssd-experiments/17-power-loss/' | relative_url }}"{% if page.url == '/old-ssd-experiments/17-power-loss/' %} class="current"{% endif %}>17. 전원 차단</a></li>
+                <li><a href="{{ '/old-ssd-experiments/18-endurance/' | relative_url }}"{% if page.url == '/old-ssd-experiments/18-endurance/' %} class="current"{% endif %}>18. 끝까지 쓰기</a></li>
+                <li><a href="{{ '/old-ssd-experiments/19-teardown/' | relative_url }}"{% if page.url == '/old-ssd-experiments/19-teardown/' %} class="current"{% endif %}>19. 열어 보기</a></li>
               </ul>
             </details>
           </li>

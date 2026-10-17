@@ -20,12 +20,12 @@ table.t code { font-size:0.82rem; }
 
 # 헌 SSD 로 하는 실험
 
-**믿을 수 없게 된 헌 SSD 를 버리는 대신, SSD 안에서 일어나는 일 (FTL) 을 직접 눈으로 보는 실험에 쓴다.** (2026.10.16 시작)
+**아무도 원하지 않을 헌 SSD 를, 버리기 전에 할 수 있는 실험을 다 해 보는 데 쓴다.** (2026.10.16 시작)
 
-헌 드라이브는 이런 실험에 오히려 딱 맞다. 배울 것이 가장 많은 실험은 **데이터를 지우고 드라이브를 닳게 하는** 것이라, 아끼는 드라이브로는 할 수 없기 때문이다.
-실험은 [FTL Visual Simulator](/ftl-visual-simulator/) 에서 모델로 만든 것 (GC, WAF, OP, SLC 캐시, 매핑 없는 읽기) 을 **실제 드라이브에서 확인** 하는 쪽으로 골랐다.
+이 드라이브는 팔 수도 없고, 실험이 끝나면 버린다. 그래서 아끼는 드라이브로는 할 수 없는 실험 : 데이터를 지우고, 닳게 하고, 전원을 갑자기 끊고, 마지막에는 열어 보는 것까지 모두 한다.
+실험은 SSD 안에서 일어나는 일 (FTL : 매핑, GC, SLC 캐시, 마모, 오류 정정, 전원 차단 복구) 을 밖에서 재는 것으로 골랐다. [FTL Visual Simulator](/ftl-visual-simulator/) 와 겹치는 실험은 그 페이지에 '덤' 으로 비교를 적었다.
 
-이 페이지는 전체 그림만 담는다. 실험마다 따로 튜토리얼 페이지가 있다 : 목표, 배경, 예상 결과, 절차, 결과 읽는 법.
+이 페이지는 전체 그림만 담는다. 실험마다 따로 튜토리얼 페이지가 있다 : 목표, 배경, 가설, 절차, 결과 읽는 법.
 결과가 나오면 각 페이지의 **결과** 절에 그래프와 분석을 붙인다.
 
 ## 실험할 드라이브
@@ -40,12 +40,15 @@ table.t code { font-size:0.82rem; }
 <tr><td>용량</td><td>120,034,123,776 바이트 (234,441,648 섹터 × 512 B)</td></tr>
 <tr><td>NAND</td><td>TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 값)</td></tr>
 <tr><td>지금 상태</td><td>옛 Windows 디스크, 91% 차 있음, 파일 날짜 2018–2024</td></tr>
+<tr><td>지난 이력</td><td>2024.12 쯤 마지막으로 쓴 뒤 <strong>1년 넘게 전원 없이</strong> 보관. 2026.10.17 다시 연결 : Ryu 가 파일 몇 개를 읽고, 몇 개를 새로 씀</td></tr>
 <tr><td>지금 연결</td><td>메인보드 SATA (<code>ata5</code>, 2026.10.17 부터) : TRIM 됨 (<code>DISC-MAX 2G</code>). 그 전에는 USB 어댑터라 TRIM 이 통과하지 않았다</td></tr>
 </tbody></table></div>
 
+1년 넘게 전원 없이 있었다는 것이 실험 1 을 특별하게 만든다 : 켜져 있어야만 할 수 있는 펌웨어의 '오래된 데이터 다시 쓰기' 가 그동안 한 번도 없었다. 그래서 **실험 1 은 가장 먼저, 되도록 빨리** 한다.
+
 ## 실험 순서
 
-<svg viewBox="0 0 760 375" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="실험 순서"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">실험 순서 : 지우지 않는 것부터, 기다려야 하는 것은 나중에</text><rect x="20" y="42" width="165" height="50" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="102.5" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">A. 지우기 전</text><text x="102.5" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">읽기만 한다</text><rect x="30" y="108" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="50.0" y="130.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">0</text><text x="66.0" y="130.0" font-size="12" fill="#4d5656" text-anchor="start">준비 · SMART</text><rect x="30" y="150" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="50.0" y="172.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">1</text><text x="66.0" y="172.0" font-size="12" fill="#4d5656" text-anchor="start">오래된 데이터 읽기</text><rect x="205" y="42" width="165" height="50" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="287.5" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">B. 지우며</text><text x="287.5" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA · TRIM 필요</text><rect x="215" y="108" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="235.0" y="130.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">2</text><text x="251.0" y="130.0" font-size="12" fill="#4d5656" text-anchor="start">SLC 캐시</text><rect x="215" y="150" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="235.0" y="172.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">3</text><text x="251.0" y="172.0" font-size="12" fill="#4d5656" text-anchor="start">TRIM · 빈 읽기</text><rect x="215" y="192" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="235.0" y="214.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">4</text><text x="251.0" y="214.0" font-size="12" fill="#4d5656" text-anchor="start">Write cliff</text><rect x="215" y="234" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="235.0" y="256.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">5</text><text x="251.0" y="256.0" font-size="12" fill="#4d5656" text-anchor="start">Over-provisioning</text><rect x="215" y="276" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="235.0" y="298.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">6</text><text x="251.0" y="298.0" font-size="12" fill="#4d5656" text-anchor="start">WAF (SMART)</text><rect x="390" y="42" width="165" height="50" rx="8" fill="#ebf5fb" stroke="#2874a6" stroke-width="2"/><text x="472.5" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">C. 기다리기</text><text x="472.5" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">전원 없이 2–4주</text><rect x="400" y="108" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="420.0" y="130.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">7</text><text x="436.0" y="130.0" font-size="12" fill="#4d5656" text-anchor="start">Retention</text><rect x="575" y="42" width="165" height="50" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="657.5" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">D. 마지막</text><text x="657.5" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">드라이브를 소모</text><rect x="585" y="108" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="605.0" y="130.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">8</text><text x="621.0" y="130.0" font-size="12" fill="#4d5656" text-anchor="start">끝까지 쓰기</text><rect x="585" y="150" width="145" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="605.0" y="172.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">9</text><text x="621.0" y="172.0" font-size="12" fill="#4d5656" text-anchor="start">열어 보기</text><line x1="185" y1="67" x2="205" y2="67" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><line x1="370" y1="67" x2="390" y2="67" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><line x1="555" y1="67" x2="575" y2="67" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><text x="380.0" y="362.0" font-size="11.5" fill="#566573" text-anchor="middle">실험 6 은 따로 돌리기도 하지만, 실험 2–5 의 SMART 앞뒤 기록으로도 계산한다</text></svg>
+<svg viewBox="0 0 760 370" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="실험 순서"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">실험 순서 : 읽기만 하는 것 → 성능 → GC · 마모 → 기다리기 · 소모</text><rect x="10" y="42" width="140" height="50" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="80.0" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">A. 지우기 전</text><text x="80.0" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">읽기만 한다</text><rect x="14" y="108" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="30.0" y="130.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">0</text><text x="44.0" y="130.0" font-size="11.5" fill="#4d5656" text-anchor="start">준비 · SMART</text><rect x="14" y="150" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="30.0" y="172.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">1</text><text x="44.0" y="172.0" font-size="11.5" fill="#4d5656" text-anchor="start">오래된 데이터</text><rect x="14" y="192" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="30.0" y="214.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">2</text><text x="44.0" y="214.0" font-size="11.5" fill="#4d5656" text-anchor="start">기능 · 자가 진단</text><rect x="160" y="42" width="140" height="50" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="230.0" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">B. 기본 성능</text><text x="230.0" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA · 막 지운 상태</text><rect x="164" y="108" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="180.0" y="130.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">3</text><text x="194.0" y="130.0" font-size="11.5" fill="#4d5656" text-anchor="start">SLC 캐시</text><rect x="164" y="150" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="180.0" y="172.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">4</text><text x="194.0" y="172.0" font-size="11.5" fill="#4d5656" text-anchor="start">TRIM · 빈 읽기</text><rect x="164" y="192" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="180.0" y="214.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">5</text><text x="194.0" y="214.0" font-size="11.5" fill="#4d5656" text-anchor="start">성능 지도</text><rect x="164" y="234" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="180.0" y="256.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">6</text><text x="194.0" y="256.0" font-size="11.5" fill="#4d5656" text-anchor="start">쓰기 크기 · 정렬</text><rect x="164" y="276" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="180.0" y="298.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">7</text><text x="194.0" y="298.0" font-size="11.5" fill="#4d5656" text-anchor="start">쓰기 캐시 · FLUSH</text><rect x="310" y="42" width="140" height="50" rx="8" fill="#ebf5fb" stroke="#2874a6" stroke-width="2"/><text x="380.0" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">C. GC 와 여유</text><text x="380.0" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">꽉 찬 상태</text><rect x="314" y="108" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="330.0" y="130.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">8</text><text x="344.0" y="130.0" font-size="11.5" fill="#4d5656" text-anchor="start">Write cliff</text><rect x="314" y="150" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="330.0" y="172.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">9</text><text x="344.0" y="172.0" font-size="11.5" fill="#4d5656" text-anchor="start">쉬는 동안 GC</text><rect x="314" y="192" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="330.0" y="214.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">10</text><text x="344.0" y="214.0" font-size="11.5" fill="#4d5656" text-anchor="start">Over-provisioning</text><rect x="314" y="234" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="330.0" y="256.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">11</text><text x="344.0" y="256.0" font-size="11.5" fill="#4d5656" text-anchor="start">뜨거운 데이터</text><rect x="314" y="276" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="330.0" y="298.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">12</text><text x="344.0" y="298.0" font-size="11.5" fill="#4d5656" text-anchor="start">WAF (SMART)</text><rect x="460" y="42" width="140" height="50" rx="8" fill="#f4ecf7" stroke="#7d3c98" stroke-width="2"/><text x="530.0" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">D. 간섭 · 지우기</text><text x="530.0" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">읽기와 쓰기 사이</text><rect x="464" y="108" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="480.0" y="130.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">13</text><text x="494.0" y="130.0" font-size="11.5" fill="#4d5656" text-anchor="start">읽기 · 쓰기 간섭</text><rect x="464" y="150" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="480.0" y="172.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">14</text><text x="494.0" y="172.0" font-size="11.5" fill="#4d5656" text-anchor="start">Secure Erase</text><rect x="464" y="192" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="480.0" y="214.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">15</text><text x="494.0" y="214.0" font-size="11.5" fill="#4d5656" text-anchor="start">Read disturb</text><rect x="610" y="42" width="140" height="50" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="680.0" y="63.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">E. 마지막</text><text x="680.0" y="79.0" font-size="11.5" fill="#4d5656" text-anchor="middle">기다리기 · 소모</text><rect x="614" y="108" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="630.0" y="130.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">16</text><text x="644.0" y="130.0" font-size="11.5" fill="#4d5656" text-anchor="start">Retention</text><rect x="614" y="150" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="630.0" y="172.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">17</text><text x="644.0" y="172.0" font-size="11.5" fill="#4d5656" text-anchor="start">전원 차단</text><rect x="614" y="192" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="630.0" y="214.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">18</text><text x="644.0" y="214.0" font-size="11.5" fill="#4d5656" text-anchor="start">끝까지 쓰기</text><rect x="614" y="234" width="132" height="34" rx="6" fill="#ffffff" stroke="#566573" stroke-width="2"/><text x="630.0" y="256.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">19</text><text x="644.0" y="256.0" font-size="11.5" fill="#4d5656" text-anchor="start">열어 보기</text><line x1="150" y1="67" x2="160" y2="67" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><line x1="300" y1="67" x2="310" y2="67" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><line x1="450" y1="67" x2="460" y2="67" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><line x1="600" y1="67" x2="610" y2="67" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><text x="380.0" y="335.0" font-size="11.5" fill="#566573" text-anchor="middle">실험 12 (WAF) 는 따로도 돌리지만, 실험 3–11 의 SMART 앞뒤 기록으로도 계산한다</text><text x="380.0" y="355.0" font-size="11.5" fill="#566573" text-anchor="middle">17 (전원 차단) 은 드라이브를 망가뜨릴 수 있어서, 18 (끝까지 쓰기) 은 드라이브를 소모해서 뒤에 둔다</text></svg>
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -53,22 +56,37 @@ table.t code { font-size:0.82rem; }
 <th>실험</th>
 <th>무엇을 보나</th>
 <th>지우나?</th>
-<th>연결</th>
 <th>시간 (대략)</th>
 </tr></thead><tbody>
-<tr><td>0</td><td><a href="/old-ssd-experiments/0-setup/">준비</a></td><td>드라이브 · 도구 · SMART 기준값</td><td>아니오</td><td>SATA</td><td>30분</td></tr>
-<tr><td>1</td><td><a href="/old-ssd-experiments/1-old-data/">오래된 데이터 읽기</a></td><td>몇 년 된 데이터의 읽기 속도 : read retry</td><td><strong>아니오 (지우기 전에 한 번뿐)</strong></td><td>SATA</td><td>1–2시간</td></tr>
-<tr><td>2</td><td><a href="/old-ssd-experiments/2-slc-cache/">SLC 캐시</a></td><td>TurboWrite 버퍼 크기, TLC 쓰기 속도</td><td>예</td><td>SATA</td><td>30분 + 회복 측정</td></tr>
-<tr><td>3</td><td><a href="/old-ssd-experiments/3-trim/">TRIM 과 매핑 없는 읽기</a></td><td>매핑 없는 LBA 읽기는 NAND 를 안 거친다</td><td>예</td><td>SATA</td><td>30분</td></tr>
-<tr><td>4</td><td><a href="/old-ssd-experiments/4-write-cliff/">Write cliff</a></td><td>빈 블록이 바닥나며 GC 시작 : FOB → steady state</td><td>예</td><td>SATA</td><td>밤새 (4–8시간)</td></tr>
-<tr><td>5</td><td><a href="/old-ssd-experiments/5-over-provisioning/">Over-provisioning</a></td><td>앞쪽 80% 만 쓰면 steady state 가 몇 배 빨라지나</td><td>예</td><td>SATA</td><td>밤새</td></tr>
-<tr><td>6</td><td><a href="/old-ssd-experiments/6-waf/">WAF (SMART)</a></td><td>드라이브가 센 값으로 WAF 추정 : 순차 vs 랜덤</td><td>예</td><td>SATA</td><td>2시간 + 실험 4–5 의 기록</td></tr>
-<tr><td>7</td><td><a href="/old-ssd-experiments/7-retention/">Retention</a></td><td>전원 없이 몇 주 둔 데이터</td><td>예</td><td>SATA</td><td>2–4주 기다림</td></tr>
-<tr><td>8</td><td><a href="/old-ssd-experiments/8-endurance/">끝까지 쓰기</a></td><td>수명이 다할 때 SMART 와 컨트롤러의 행동</td><td>예 (소모)</td><td>SATA</td><td>몇 주–몇 달</td></tr>
-<tr><td>9</td><td><a href="/old-ssd-experiments/9-teardown/">열어 보기</a></td><td>컨트롤러 · DRAM · NAND 패키지</td><td>—</td><td>—</td><td>1시간</td></tr>
+<tr><td>0</td><td><a href="/old-ssd-experiments/0-setup/">준비</a></td><td>드라이브 · 도구 · SMART 기준값</td><td>아니오</td><td>30분</td></tr>
+<tr><td>1</td><td><a href="/old-ssd-experiments/1-old-data/">오래된 데이터 읽기</a></td><td>1년 넘게 전원 없이 둔 데이터의 읽기 속도, 한 번 읽히면 다시 쓰이나</td><td><strong>아니오 (지우기 전에 한 번뿐)</strong></td><td>1–2시간</td></tr>
+<tr><td>2</td><td><a href="/old-ssd-experiments/2-features/">기능 · 자가 진단</a></td><td>ATA 기능, 로그, SMART 자가 진단의 시간</td><td>아니오</td><td>1시간</td></tr>
+<tr><td>3</td><td><a href="/old-ssd-experiments/3-slc-cache/">SLC 캐시</a></td><td>TurboWrite 버퍼 크기, TLC 쓰기 속도, 회복</td><td>예</td><td>1시간</td></tr>
+<tr><td>4</td><td><a href="/old-ssd-experiments/4-trim/">TRIM 과 매핑 없는 읽기</a></td><td>매핑 없는 LBA 읽기는 NAND 를 안 거친다</td><td>예</td><td>30분</td></tr>
+<tr><td>5</td><td><a href="/old-ssd-experiments/5-perf-map/">성능 지도</a></td><td>블록 크기 × 큐 깊이, 데이터 내용 (압축?)</td><td>예</td><td>1.5시간</td></tr>
+<tr><td>6</td><td><a href="/old-ssd-experiments/6-write-size/">쓰기 크기 · 정렬</a></td><td>512 B 쓰기, 어긋난 4 KiB : 매핑 단위</td><td>예</td><td>40분</td></tr>
+<tr><td>7</td><td><a href="/old-ssd-experiments/7-flush/">쓰기 캐시 · FLUSH</a></td><td>'다 썼다' 는 대답이 언제 오나</td><td>예</td><td>15분</td></tr>
+<tr><td>8</td><td><a href="/old-ssd-experiments/8-write-cliff/">Write cliff</a></td><td>빈 블록이 바닥나며 GC 시작 : FOB → steady state</td><td>예</td><td>밤새 (4–8시간)</td></tr>
+<tr><td>9</td><td><a href="/old-ssd-experiments/9-idle-gc/">쉬는 동안 GC</a></td><td>쉬면 빈 블록을 미리 만드나</td><td>예</td><td>1.5시간</td></tr>
+<tr><td>10</td><td><a href="/old-ssd-experiments/10-over-provisioning/">Over-provisioning</a></td><td>덜 쓰면 steady state 가 몇 배 빨라지나</td><td>예</td><td>밤새 × 2–4</td></tr>
+<tr><td>11</td><td><a href="/old-ssd-experiments/11-hot-cold/">뜨거운 데이터</a></td><td>쓰기가 일부에 몰리면 WAF 가 낮아지나</td><td>예</td><td>밤새 × 1–2</td></tr>
+<tr><td>12</td><td><a href="/old-ssd-experiments/12-waf/">WAF (SMART)</a></td><td>드라이브가 센 값으로 WAF 추정 : 순차 vs 랜덤</td><td>예</td><td>2시간 + 앞의 기록</td></tr>
+<tr><td>13</td><td><a href="/old-ssd-experiments/13-interference/">읽기 · 쓰기 간섭</a></td><td>쓰기가 돌 때 읽기의 꼬리 지연</td><td>예</td><td>40분</td></tr>
+<tr><td>14</td><td><a href="/old-ssd-experiments/14-secure-erase/">Secure Erase</a></td><td>드라이브가 스스로 지우는 시간, FOB 로 돌아오나</td><td>예</td><td>1시간</td></tr>
+<tr><td>15</td><td><a href="/old-ssd-experiments/15-read-disturb/">Read disturb</a></td><td>같은 곳을 수억 번 읽으면</td><td>예</td><td>밤새</td></tr>
+<tr><td>16</td><td><a href="/old-ssd-experiments/16-retention/">Retention</a></td><td>전원 없이 몇 주 둔 데이터 (통제된 실험 1)</td><td>예</td><td>2–4주 기다림</td></tr>
+<tr><td>17</td><td><a href="/old-ssd-experiments/17-power-loss/">전원 차단</a></td><td>FLUSH 한 데이터는 전원이 끊겨도 남나</td><td>예 (망가질 수 있음)</td><td>1–2시간</td></tr>
+<tr><td>18</td><td><a href="/old-ssd-experiments/18-endurance/">끝까지 쓰기</a></td><td>수명이 다할 때 SMART 와 컨트롤러의 행동</td><td>예 (소모)</td><td>몇 주–몇 달</td></tr>
+<tr><td>19</td><td><a href="/old-ssd-experiments/19-teardown/">열어 보기</a></td><td>컨트롤러 · DRAM · NAND 패키지</td><td>—</td><td>1시간</td></tr>
 </tbody></table></div>
 
-처음 시작한다면 먼저 [SSD 를 다루는 Linux 명령](/old-ssd-experiments/linux-commands/) 을 읽는다. 실험에 나오는 명령 (`lsblk`, `smartctl`, `fio`, `blkdiscard` …) 이 모두 거기 설명되어 있다.
+연결은 실험 17 만 USB 어댑터 (전원을 끊기 쉽게), 나머지는 모두 메인보드 SATA 다.
+
+처음 시작한다면 먼저 [SSD 를 다루는 Linux 명령](/old-ssd-experiments/linux-commands/) 과 [fio 사용법](/old-ssd-experiments/fio/) 을 읽는다. 실험에 나오는 명령 (`lsblk`, `smartctl`, `hdparm`, `blkdiscard`, `fio` …) 이 거기 설명되어 있다.
+
+## 더 해 볼 수 있는 것
+
+시간이 남으면 (각각 실험 하나 크기) : 파일 시스템별 WAF (ext4 · f2fs · btrfs 로 같은 작업을 하고 SMART 로 비교), 온도와 속도 (SMART 190 을 보며 오래 쓰기 : 열 때문에 느려지나), 순차와 랜덤이 섞인 '실제 같은' 부하 (fio 의 `rwmixread`), 비어 있는 드라이브와 꽉 찬 드라이브의 TRIM 처리 시간.
 
 ## 스크립트
 
@@ -79,14 +97,17 @@ table.t code { font-size:0.82rem; }
 <th>파일</th>
 <th>하는 일</th>
 </tr></thead><tbody>
-<tr><td><code>lab.sh</code></td><td>실험마다 하나씩 있는 명령 (<code>check</code>, <code>scan</code>, <code>slc</code>, <code>cliff</code> …). 드라이브를 <strong>시리얼로</strong> 찾고, 지우기 전에 다섯 가지를 확인한다</td></tr>
+<tr><td><code>lab.sh</code></td><td>실험마다 하나씩 있는 명령 (<code>check</code>, <code>oldfiles</code>, <code>features</code>, <code>slc</code>, <code>perfmap</code>, <code>cliff</code>, <code>mixed</code>, <code>secerase</code>, <code>pl-write</code> …). 드라이브를 <strong>시리얼로</strong> 찾고, 지우기 전에 다섯 가지를 확인한다. <code>./lab.sh</code> 만 치면 전체 목록</td></tr>
 <tr><td><code>readscan.py</code></td><td>드라이브 전체를 읽으며 구간마다 속도, 가장 느린 읽기, 0 으로만 된 비율을 기록 (읽기만 한다)</td></tr>
-<tr><td><code>fileage.py</code></td><td>파일마다 '언제 썼나' 와 '얼마나 빨리 읽히나' (읽기만 한다)</td></tr>
+<tr><td><code>fileage.py</code></td><td>파일마다 '언제 썼나', '다시 연결한 뒤 읽혔나', '얼마나 빨리 읽히나' (읽기만 한다)</td></tr>
+<tr><td><code>fiosum.py</code></td><td>fio 의 JSON 결과들을 한 표 (<code>summary.csv</code>) 로</td></tr>
+<tr><td><code>plcheck.py</code></td><td>전원 차단 실험 : 번호 붙은 기록 쓰기와 확인</td></tr>
 <tr><td><code>plot.py</code></td><td>결과 폴더의 로그로 그래프 그리기</td></tr>
 <tr><td><code>smartdiff.py</code></td><td>실험 앞뒤 SMART 비교, 177 · 241 로 WAF 추정</td></tr>
 </tbody></table></div>
 
 결과는 `~/Ryu/old_ssd_results/<날짜>-<실험>/` 에 쌓인다. Claude 가 같은 컴퓨터에서 바로 읽고 분석한다.
+모든 명령은 실제 드라이브에 쓰기 전에, 파일을 가짜 장치로 쓰는 시험 모드 (`LAB_TESTDEV`) 로 시간과 크기를 줄여 한 번씩 돌려 보았다.
 
 ## 진행 상황
 
@@ -95,12 +116,13 @@ table.t code { font-size:0.82rem; }
 <th>실험</th>
 <th>상태</th>
 </tr></thead><tbody>
-<tr><td>0 준비</td><td>SMART 출력 기다리는 중 (<code>sudo apt install smartmontools fio</code> 다음 <code>sudo ./lab.sh check</code>)</td></tr>
-<tr><td>1 – 9</td><td>아직</td></tr>
+<tr><td>0 준비</td><td>SMART 출력 기다리는 중 (<code>sudo apt install --no-install-recommends smartmontools fio sysstat</code> 다음 <code>sudo ./lab.sh check</code>)</td></tr>
+<tr><td>1 오래된 데이터</td><td>준비 다음 바로 (드라이브가 켜져 있는 시간이 길수록 '1년 넘게 둔 데이터' 가 줄어들 수 있다)</td></tr>
+<tr><td>2 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 
 <div class="warn" markdown="1">
-**안전.** 실험 2–8 은 드라이브 전체를 지운다. `lab.sh` 는 시리얼 `S1D6NSAFB40389K` 인 드라이브에만 쓰고, 시스템 디스크 · 마운트된 디스크 · TRIM 이 안 되는 연결이면 멈추며, 지우기 전에 시리얼 끝 5자리를 직접 입력하게 한다.
+**안전.** 실험 3–18 은 드라이브 전체를 지운다. `lab.sh` 는 시리얼 `S1D6NSAFB40389K` 인 드라이브에만 쓰고, 시스템 디스크 · 마운트된 디스크 · (TRIM 이 필요한 실험에서) TRIM 이 안 되는 연결이면 멈추며, 지우기 전에 시리얼 끝 5자리를 직접 입력하게 한다.
 `lab.sh` 를 거치지 않고 `dd`, `blkdiscard`, `fio` 를 직접 쓸 때는 [Linux 명령 페이지의 위험한 명령 절](/old-ssd-experiments/linux-commands/#danger) 을 먼저 읽는다.
 </div>
 

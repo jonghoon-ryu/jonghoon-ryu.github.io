@@ -96,7 +96,7 @@ nvme0n1     Samsung SSD 990 EVO 2TB   S7GDNS0X212722L   1.8T nvme      0 disk
 
 <div class="tip" markdown="1">
 **`ROTA` 를 보라.** `sdg` 는 SSD 인데 `1` (회전하는 디스크) 이다. USB 어댑터가 커널에게 그렇게 알려 주기 때문이다. 같은 모델의 `sda` (SATA 직접 연결) 는 `0`.
-USB 를 거치면 드라이브에 대한 정보가 이렇게 바뀌거나 사라진다. 실험 2–8 을 SATA 에서 하는 이유다.
+USB 를 거치면 드라이브에 대한 정보가 이렇게 바뀌거나 사라진다. 지우는 실험들 (3–18) 을 SATA 에서 하는 이유다.
 </div>
 
 `lsblk` 의 열 목록은 `lsblk --help` 맨 아래에 있다. 이 페이지에서 쓰는 것은 `FSTYPE` (파일 시스템), `DISC-GRAN` · `DISC-MAX` (TRIM, 6절), `REV` (펌웨어) 정도다.
@@ -257,12 +257,12 @@ Samsung SATA SSD 에서 흔히 보이는 속성 중 실험에 쓰는 것 :
 <th>실험에서의 의미</th>
 </tr></thead><tbody>
 <tr><td>9</td><td>Power_On_Hours</td><td>전원이 켜져 있던 시간</td></tr>
-<tr><td>177</td><td>Wear_Leveling_Count</td><td>raw = 블록들의 <strong>평균 지움 횟수</strong> (P/E). 실험 6, 8</td></tr>
+<tr><td>177</td><td>Wear_Leveling_Count</td><td>raw = 블록들의 <strong>평균 지움 횟수</strong> (P/E). 실험 12, 18</td></tr>
 <tr><td>179</td><td>Used_Rsvd_Blk_Cnt_Tot</td><td>써 버린 예비 블록 수. 수명 끝에 늘어난다</td></tr>
 <tr><td>181 · 182</td><td>Program_Fail · Erase_Fail</td><td>쓰기 · 지우기 실패 횟수</td></tr>
 <tr><td>187</td><td>Uncorrectable_Error_Cnt</td><td>ECC 로도 못 고친 오류</td></tr>
 <tr><td>195</td><td>ECC_Error_Rate</td><td>ECC 가 고친 오류 (늘어날수록 셀 상태가 나쁘다)</td></tr>
-<tr><td>241</td><td>Total_LBAs_Written</td><td>호스트가 쓴 양 (512 바이트 단위). 실험 6</td></tr>
+<tr><td>241</td><td>Total_LBAs_Written</td><td>호스트가 쓴 양 (512 바이트 단위). 실험 12</td></tr>
 </tbody></table></div>
 
 NVMe 드라이브라면 `sudo nvme smart-log /dev/nvme0` (nvme-cli) 가 같은 일을 한다. NVMe 는 속성 번호 대신 정해진 항목 (`data_units_written`, `percentage_used` …) 을 보여 준다.
@@ -273,11 +273,11 @@ NVMe 드라이브라면 `sudo nvme smart-log /dev/nvme0` (nvme-cli) 가 같은 �
 $ sudo hdparm -I /dev/sdg | grep -iE "model|firmware|trim"
 ```
 
-SATA 로 연결하면 `Data Set Management TRIM supported` 같은 줄이 나온다. **`Deterministic read ZEROs after TRIM`** 이 있으면 TRIM 한 LBA 를 읽을 때 반드시 0 이 나온다는 약속이다 (실험 3).
+SATA 로 연결하면 `Data Set Management TRIM supported` 같은 줄이 나온다. **`Deterministic read ZEROs after TRIM`** 이 있으면 TRIM 한 LBA 를 읽을 때 반드시 0 이 나온다는 약속이다 (실험 4).
 
 ## 6. TRIM : SSD 에게 '이제 안 쓴다' 고 알리기
 
-<svg viewBox="0 0 760 260" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="TRIM 흐름"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">파일을 지우면 SSD 는 언제 알게 되나 : TRIM</text><rect x="15" y="50" width="170" height="62" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="100.0" y="77.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">rm file</text><text x="100.0" y="93.0" font-size="11.5" fill="#4d5656" text-anchor="middle">파일 시스템 표에서만 지움</text><rect x="203" y="50" width="170" height="62" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="288.0" y="77.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">fstrim / discard</text><text x="288.0" y="93.0" font-size="11.5" fill="#4d5656" text-anchor="middle">&quot;이 LBA 들은 이제 안 쓴다&quot;</text><line x1="185" y1="81" x2="201" y2="81" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="391" y="50" width="170" height="62" rx="8" fill="#f4ecf7" stroke="#7d3c98" stroke-width="2"/><text x="476.0" y="77.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">TRIM 명령</text><text x="476.0" y="93.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA 의 DSM 명령</text><line x1="373" y1="81" x2="389" y2="81" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="579" y="50" width="170" height="62" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="664.0" y="77.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">FTL</text><text x="664.0" y="93.0" font-size="11.5" fill="#4d5656" text-anchor="middle">LBA → NAND 연결을 끊는다</text><line x1="561" y1="81" x2="577" y2="81" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="15" y="150" width="355" height="85" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="192.5" y="172.5" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">TRIM 이 없으면</text><text x="192.5" y="188.5" font-size="11.5" fill="#4d5656" text-anchor="middle">SSD 는 지운 데이터를 아직 &quot;유효&quot; 로 여긴다</text><text x="192.5" y="204.5" font-size="11.5" fill="#4d5656" text-anchor="middle">→ GC 가 쓸모없는 데이터까지 복사한다</text><text x="192.5" y="220.5" font-size="11.5" fill="#4d5656" text-anchor="middle">→ 느려지고, 더 닳는다</text><rect x="390" y="150" width="355" height="85" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="567.5" y="172.5" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">TRIM 이 있으면</text><text x="567.5" y="188.5" font-size="11.5" fill="#4d5656" text-anchor="middle">그 페이지는 &quot;무효&quot; : GC 가 건너뛴다</text><text x="567.5" y="204.5" font-size="11.5" fill="#4d5656" text-anchor="middle">그 LBA 를 읽으면 NAND 를 안 읽고</text><text x="567.5" y="220.5" font-size="11.5" fill="#4d5656" text-anchor="middle">0 을 돌려줄 수 있다 (실험 3)</text></svg>
+<svg viewBox="0 0 760 260" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="TRIM 흐름"><defs><marker id="ae" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">파일을 지우면 SSD 는 언제 알게 되나 : TRIM</text><rect x="15" y="50" width="170" height="62" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="100.0" y="77.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">rm file</text><text x="100.0" y="93.0" font-size="11.5" fill="#4d5656" text-anchor="middle">파일 시스템 표에서만 지움</text><rect x="203" y="50" width="170" height="62" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="288.0" y="77.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">fstrim / discard</text><text x="288.0" y="93.0" font-size="11.5" fill="#4d5656" text-anchor="middle">&quot;이 LBA 들은 이제 안 쓴다&quot;</text><line x1="185" y1="81" x2="201" y2="81" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="391" y="50" width="170" height="62" rx="8" fill="#f4ecf7" stroke="#7d3c98" stroke-width="2"/><text x="476.0" y="77.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">TRIM 명령</text><text x="476.0" y="93.0" font-size="11.5" fill="#4d5656" text-anchor="middle">SATA 의 DSM 명령</text><line x1="373" y1="81" x2="389" y2="81" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="579" y="50" width="170" height="62" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="664.0" y="77.0" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">FTL</text><text x="664.0" y="93.0" font-size="11.5" fill="#4d5656" text-anchor="middle">LBA → NAND 연결을 끊는다</text><line x1="561" y1="81" x2="577" y2="81" stroke="#7f8c8d" stroke-width="2" marker-end="url(#ae)"/><rect x="15" y="150" width="355" height="85" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="192.5" y="172.5" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">TRIM 이 없으면</text><text x="192.5" y="188.5" font-size="11.5" fill="#4d5656" text-anchor="middle">SSD 는 지운 데이터를 아직 &quot;유효&quot; 로 여긴다</text><text x="192.5" y="204.5" font-size="11.5" fill="#4d5656" text-anchor="middle">→ GC 가 쓸모없는 데이터까지 복사한다</text><text x="192.5" y="220.5" font-size="11.5" fill="#4d5656" text-anchor="middle">→ 느려지고, 더 닳는다</text><rect x="390" y="150" width="355" height="85" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="567.5" y="172.5" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">TRIM 이 있으면</text><text x="567.5" y="188.5" font-size="11.5" fill="#4d5656" text-anchor="middle">그 페이지는 &quot;무효&quot; : GC 가 건너뛴다</text><text x="567.5" y="204.5" font-size="11.5" fill="#4d5656" text-anchor="middle">그 LBA 를 읽으면 NAND 를 안 읽고</text><text x="567.5" y="220.5" font-size="11.5" fill="#4d5656" text-anchor="middle">0 을 돌려줄 수 있다 (실험 4)</text></svg>
 
 ### `lsblk` 로 TRIM 이 되는지 보기
 
@@ -310,7 +310,7 @@ Ubuntu 는 일주일에 한 번 `fstrim` 을 자동으로 돌린다. 다른 방�
 $ sudo blkdiscard /dev/sdX             # 장치 전체의 모든 LBA 를 TRIM : 데이터가 사라진다
 ```
 
-파일 시스템과 상관없이 **장치 전체** 를 버린다. 실험 2–5 를 시작할 때 드라이브를 '막 산' 상태에 가깝게 되돌리는 데 쓴다. 9절의 확인 절차를 거친 뒤에만 쓴다.
+파일 시스템과 상관없이 **장치 전체** 를 버린다. 지우는 실험을 시작할 때 드라이브를 '막 산' 상태에 가깝게 되돌리는 데 쓴다. 9절의 확인 절차를 거친 뒤에만 쓴다.
 
 ## 7. 속도 재기
 
@@ -337,7 +337,7 @@ $ sudo hdparm -t /dev/sdX               # 3초 동안 순차 읽기 속도 (읽�
 
 ### `fio` : 제대로 재는 도구
 
-`fio` 는 '어떤 모양의 입출력을' (순차 / 랜덤, 크기, 동시에 몇 개) 정확히 만들어 내고, 결과를 자세히 보여 준다. 실험은 모두 fio 로 한다.
+`fio` 는 '어떤 모양의 입출력을' (순차 / 랜덤, 크기, 동시에 몇 개) 정확히 만들어 내고, 결과를 자세히 보여 준다. 실험은 모두 fio 로 한다. 옵션과 출력을 하나하나 읽는 법은 [fio 사용법](/old-ssd-experiments/fio/) 페이지에 따로 있다.
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -399,7 +399,8 @@ $ grep " sdg " /proc/diskstats
 <tr><td>13번째</td><td>2428290</td><td>디스크가 바빴던 시간 (ms) = 40분</td></tr>
 </tbody></table></div>
 
-이 숫자는 그 자체로 단서다 : 오늘 아침 꽂은 뒤 `sdg` 에서 **2.8 GB 를 읽는 데 디스크가 40분 동안 바빴다**. 1초에 약 1.2 MB 다. USB 3.0 이라도 SSD 라면 수백 MB/s 가 정상이다. 오래된 데이터의 읽기가 느리다는 실험 1 의 가설과 맞는 모습이다 (아직 측정은 아니다).
+이 숫자는 그 자체로 단서다 : 2026.10.17 아침 꽂은 뒤 `sdg` 에서 **2.8 GB 를 읽는 데 디스크가 40분 동안 바빴다**. 1초에 약 1.2 MB 다. USB 3.0 이라도 SSD 라면 수백 MB/s 가 정상이다.
+이 드라이브는 1년 넘게 전원 없이 있다가 이날 다시 연결되었고, Ryu 가 파일 몇 개를 열어 보고 몇 개를 새로 썼다 (쓰기 쪽 : 요청 2,947개, 34,324 섹터 = 약 17.6 MB). 2.8 GB 의 읽기는 그 파일들과 파일 관리자 · 썸네일 · 색인이 읽은 것이다. **오래 전원 없이 둔 데이터는 읽기가 느리다** 는 실험 1 의 가설과 맞는 모습이다 (아직 측정은 아니다).
 
 ```
 $ iostat -x 1 sdg        # 1초마다 : r/s, rMB/s, r_await (읽기 하나의 평균 대기 ms), %util
@@ -458,4 +459,4 @@ $ iostat -x 1 sdg        # 1초마다 : r/s, rMB/s, r_await (읽기 하나의 �
 <tr><td>지켜보기</td><td><code>iostat -x 1</code>, <code>/proc/diskstats</code></td><td>아니오</td></tr>
 </tbody></table></div>
 
-<div class="step-nav"><a href="{{ '/old-ssd-experiments/' | relative_url }}">← 헌 SSD 로 하는 실험</a><a href="{{ '/old-ssd-experiments/0-setup/' | relative_url }}">0. 준비 →</a></div>
+<div class="step-nav"><a href="{{ '/old-ssd-experiments/' | relative_url }}">← 헌 SSD 로 하는 실험</a><a href="{{ '/old-ssd-experiments/fio/' | relative_url }}">fio 사용법 →</a></div>

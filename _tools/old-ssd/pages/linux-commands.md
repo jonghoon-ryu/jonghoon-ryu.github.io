@@ -80,7 +80,7 @@ nvme0n1     Samsung SSD 990 EVO 2TB   S7GDNS0X212722L   1.8T nvme      0 disk
 
 <div class="tip" markdown="1">
 **`ROTA` 를 보라.** `sdg` 는 SSD 인데 `1` (회전하는 디스크) 이다. USB 어댑터가 커널에게 그렇게 알려 주기 때문이다. 같은 모델의 `sda` (SATA 직접 연결) 는 `0`.
-USB 를 거치면 드라이브에 대한 정보가 이렇게 바뀌거나 사라진다. 실험 2–8 을 SATA 에서 하는 이유다.
+USB 를 거치면 드라이브에 대한 정보가 이렇게 바뀌거나 사라진다. 지우는 실험들 (3–18) 을 SATA 에서 하는 이유다.
 </div>
 
 `lsblk` 의 열 목록은 `lsblk --help` 맨 아래에 있다. 이 페이지에서 쓰는 것은 `FSTYPE` (파일 시스템), `DISC-GRAN` · `DISC-MAX` (TRIM, 6절), `REV` (펌웨어) 정도다.
@@ -234,12 +234,12 @@ Samsung SATA SSD 에서 흔히 보이는 속성 중 실험에 쓰는 것 :
 ```table
 ID | 이름 | 실험에서의 의미
 9 | Power_On_Hours | 전원이 켜져 있던 시간
-177 | Wear_Leveling_Count | raw = 블록들의 **평균 지움 횟수** (P/E). 실험 6, 8
+177 | Wear_Leveling_Count | raw = 블록들의 **평균 지움 횟수** (P/E). 실험 12, 18
 179 | Used_Rsvd_Blk_Cnt_Tot | 써 버린 예비 블록 수. 수명 끝에 늘어난다
 181 · 182 | Program_Fail · Erase_Fail | 쓰기 · 지우기 실패 횟수
 187 | Uncorrectable_Error_Cnt | ECC 로도 못 고친 오류
 195 | ECC_Error_Rate | ECC 가 고친 오류 (늘어날수록 셀 상태가 나쁘다)
-241 | Total_LBAs_Written | 호스트가 쓴 양 (512 바이트 단위). 실험 6
+241 | Total_LBAs_Written | 호스트가 쓴 양 (512 바이트 단위). 실험 12
 ```
 
 NVMe 드라이브라면 `sudo nvme smart-log /dev/nvme0` (nvme-cli) 가 같은 일을 한다. NVMe 는 속성 번호 대신 정해진 항목 (`data_units_written`, `percentage_used` …) 을 보여 준다.
@@ -250,7 +250,7 @@ NVMe 드라이브라면 `sudo nvme smart-log /dev/nvme0` (nvme-cli) 가 같은 �
 $ sudo hdparm -I /dev/sdg | grep -iE "model|firmware|trim"
 ```
 
-SATA 로 연결하면 `Data Set Management TRIM supported` 같은 줄이 나온다. **`Deterministic read ZEROs after TRIM`** 이 있으면 TRIM 한 LBA 를 읽을 때 반드시 0 이 나온다는 약속이다 (실험 3).
+SATA 로 연결하면 `Data Set Management TRIM supported` 같은 줄이 나온다. **`Deterministic read ZEROs after TRIM`** 이 있으면 TRIM 한 LBA 를 읽을 때 반드시 0 이 나온다는 약속이다 (실험 4).
 
 ## 6. TRIM : SSD 에게 '이제 안 쓴다' 고 알리기
 
@@ -287,7 +287,7 @@ Ubuntu 는 일주일에 한 번 `fstrim` 을 자동으로 돌린다. 다른 방�
 $ sudo blkdiscard /dev/sdX             # 장치 전체의 모든 LBA 를 TRIM : 데이터가 사라진다
 ```
 
-파일 시스템과 상관없이 **장치 전체** 를 버린다. 실험 2–5 를 시작할 때 드라이브를 '막 산' 상태에 가깝게 되돌리는 데 쓴다. 9절의 확인 절차를 거친 뒤에만 쓴다.
+파일 시스템과 상관없이 **장치 전체** 를 버린다. 지우는 실험을 시작할 때 드라이브를 '막 산' 상태에 가깝게 되돌리는 데 쓴다. 9절의 확인 절차를 거친 뒤에만 쓴다.
 
 ## 7. 속도 재기
 
@@ -314,7 +314,7 @@ $ sudo hdparm -t /dev/sdX               # 3초 동안 순차 읽기 속도 (읽�
 
 ### `fio` : 제대로 재는 도구
 
-`fio` 는 '어떤 모양의 입출력을' (순차 / 랜덤, 크기, 동시에 몇 개) 정확히 만들어 내고, 결과를 자세히 보여 준다. 실험은 모두 fio 로 한다.
+`fio` 는 '어떤 모양의 입출력을' (순차 / 랜덤, 크기, 동시에 몇 개) 정확히 만들어 내고, 결과를 자세히 보여 준다. 실험은 모두 fio 로 한다. 옵션과 출력을 하나하나 읽는 법은 [fio 사용법](/old-ssd-experiments/fio/) 페이지에 따로 있다.
 
 ```table
 옵션 | 뜻 | 실험에서 쓰는 값
@@ -368,7 +368,8 @@ $ grep " sdg " /proc/diskstats
 13번째 | 2428290 | 디스크가 바빴던 시간 (ms) = 40분
 ```
 
-이 숫자는 그 자체로 단서다 : 오늘 아침 꽂은 뒤 `sdg` 에서 **2.8 GB 를 읽는 데 디스크가 40분 동안 바빴다**. 1초에 약 1.2 MB 다. USB 3.0 이라도 SSD 라면 수백 MB/s 가 정상이다. 오래된 데이터의 읽기가 느리다는 실험 1 의 가설과 맞는 모습이다 (아직 측정은 아니다).
+이 숫자는 그 자체로 단서다 : 2026.10.17 아침 꽂은 뒤 `sdg` 에서 **2.8 GB 를 읽는 데 디스크가 40분 동안 바빴다**. 1초에 약 1.2 MB 다. USB 3.0 이라도 SSD 라면 수백 MB/s 가 정상이다.
+이 드라이브는 1년 넘게 전원 없이 있다가 이날 다시 연결되었고, Ryu 가 파일 몇 개를 열어 보고 몇 개를 새로 썼다 (쓰기 쪽 : 요청 2,947개, 34,324 섹터 = 약 17.6 MB). 2.8 GB 의 읽기는 그 파일들과 파일 관리자 · 썸네일 · 색인이 읽은 것이다. **오래 전원 없이 둔 데이터는 읽기가 느리다** 는 실험 1 의 가설과 맞는 모습이다 (아직 측정은 아니다).
 
 ```
 $ iostat -x 1 sdg        # 1초마다 : r/s, rMB/s, r_await (읽기 하나의 평균 대기 ms), %util

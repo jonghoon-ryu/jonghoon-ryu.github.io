@@ -5,8 +5,9 @@ Draws one figure from experiment results. The kind of plot follows from the inpu
   scan.csv        read speed across the drive (x = position in GiB)
   fileage.csv     read speed of each file vs when it was written
   NAME_bw.log     write/read speed over the run (x = GB transferred so far), e.g. slc_bw.log
-  NAME_iops.log   IOPS over the run (x = GB transferred so far), e.g. cliff_iops.log
-  NAME_lat.log    latency distribution (histogram), e.g. rd-mapped_lat.log
+  NAME_iops.log   IOPS over the run (x = GB transferred so far; x = hours when there is no NAME_bw.log)
+  NAME_lat.log    latency distribution (histogram), e.g. rd-mapped_lat.log;
+                  without a NAME_bw.log next to it: the slowest I/O of every second over time (exp 13, 15)
 Several inputs of the same kind are drawn on top of each other; "=LABEL" names a curve.
 fio logs have one line per second: time_ms, value, direction, block_size, offset.
 """
@@ -41,6 +42,10 @@ def bw_gb_axis(path):
         last = ti
         x.append(s)
     return x
+
+
+def has_bw(path):
+    return os.path.exists(path.rsplit("_", 1)[0] + "_bw.log")
 
 
 def smooth(v, n):
@@ -82,17 +87,27 @@ def main():
             kind = "age"
             rows = list(csv.DictReader(open(path)))
             import datetime as dt
-            x = [dt.date.fromisoformat(r["written"]) for r in rows]
-            y = [float(r["mbps"]) for r in rows]
-            ax.scatter(x, y, s=10, color=c, alpha=.6, label=label)
-            years = sorted({d.year for d in x})
-            for yr in years:
+            groups = {"old": ("#1f6f5c", "untouched since the drive was last powered"),
+                      "read": ("#b7950b", "read once after reconnecting (may be rewritten)"),
+                      "new": ("#2874a6", "written after reconnecting (fresh)")}
+            for g, (gc, gl) in groups.items():
+                sel = [r for r in rows if r.get("group", "old") == g]
+                if sel:
+                    ax.scatter([dt.date.fromisoformat(r["written"]) for r in sel], [float(r["mbps"]) for r in sel],
+                               s=12, color=gc, alpha=.7, label=f"{gl} ({len(sel)})")
+            old_rows = [r for r in rows if r.get("group", "old") == "old"]
+            x = [dt.date.fromisoformat(r["written"]) for r in old_rows]
+            y = [float(r["mbps"]) for r in old_rows]
+            for yr in sorted({d.year for d in x}):
                 ys = sorted(v for d, v in zip(x, y) if d.year == yr)
-                if ys:
-                    ax.plot([dt.date(yr, 1, 1), dt.date(yr, 12, 31)], [ys[len(ys) // 2]] * 2, color="#c0392b", lw=2)
+                ax.plot([dt.date(yr, 1, 1), dt.date(yr, 12, 31)], [ys[len(ys) // 2]] * 2, color="#c0392b", lw=2)
+            new_rows = [r for r in rows if r.get("group") == "new"]
+            if x and new_rows:          # unpowered: from the last write before reconnecting to the first write after
+                ax.axvspan(max(x), min(dt.date.fromisoformat(r["written"]) for r in new_rows), color="#566573", alpha=.12,
+                           label="drive unpowered (estimate)")
             ax.set_xlabel("data last written")
             ax.set_ylabel("read speed (MB/s)")
-            ax.set_title("Read speed of each file vs when it was written (red: median per year)")
+            ax.set_title("Read speed of each file vs when it was written (red: median per year, untouched files)")
         elif name.endswith("_bw.log"):
             kind = "bw"
             t, v, _ = fio_log(path)
@@ -104,11 +119,21 @@ def main():
         elif name.endswith("_iops.log"):
             kind = "iops"
             t, v, _ = fio_log(path)
-            x = bw_gb_axis(path)
+            if has_bw(path):
+                x = bw_gb_axis(path)
+                ax.set_xlabel("data written so far (GB)")
+            else:                              # reads (exp 15): over time
+                x = [a / 3600 for a in t]
+                ax.set_xlabel("hours")
             ax.plot(x, v, color=c, lw=0.6, alpha=.3)
             ax.plot(x, smooth(v, 30), color=c, lw=1.8, label=label)
-            ax.set_xlabel("data written so far (GB)")
             ax.set_ylabel("IOPS (thin: every second, thick: 30 s average)")
+        elif name.endswith("_lat.log") and not has_bw(path):
+            kind = "lat-time"                  # exp 13/15: logged with --log_max_value=1, so each point = slowest I/O of that second
+            t, v, _ = fio_log(path)
+            ax.plot([a / 60 for a in t], [a / 1e6 for a in v], color=c, lw=1, label=label)
+            ax.set_xlabel("minutes")
+            ax.set_ylabel("slowest I/O in each second (ms)")
         elif name.endswith("_lat.log"):
             kind = "lat"
             _, v, _ = fio_log(path)
