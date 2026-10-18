@@ -314,10 +314,12 @@ selftest)
     # shellcheck disable=SC2046
     smartctl -t "$kind" $(smart_args) "$DEV" | tail -4
     note "waiting for the drive (checked every 30 s; do not use the drive meanwhile)"
+    last=
     while sleep 30; do
         # shellcheck disable=SC2046
         st=$(smartctl -c $(smart_args) "$DEV" | grep -A1 "Self-test execution status" | tr -s ' \n\t' ' ')
-        echo "   $(( ($(date +%s) - t0) / 60 )) min: $st" | cut -c1-150
+        [ "$st" = "$last" ] || echo "   $(( ($(date +%s) - t0) / 60 )) min: $st" | cut -c1-150   # only when it changes
+        last=$st
         echo "$st" | grep -q "in progress" || break
     done
     echo "seconds: $(( $(date +%s) - t0 ))" | tee -a "$OUT/meta.txt"
