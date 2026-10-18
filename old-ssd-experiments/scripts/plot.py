@@ -86,6 +86,8 @@ def main():
         elif name.startswith("fileage"):
             kind = "age"
             rows = list(csv.DictReader(open(path)))
+            cached = [r for r in rows if float(r["mbps"]) >= 1000]    # hard links read from RAM (older fileage.py)
+            rows = [r for r in rows if float(r["mbps"]) < 1000]
             import datetime as dt
             groups = {"old": ("#1f6f5c", "untouched since the drive was last powered"),
                       "read": ("#b7950b", "read once after reconnecting (may be rewritten)"),
@@ -107,7 +109,8 @@ def main():
                            label="drive unpowered (estimate)")
             ax.set_xlabel("data last written")
             ax.set_ylabel("read speed (MB/s)")
-            ax.set_title("Read speed of each file vs when it was written (red: median per year, untouched files)")
+            ax.set_title("Read speed of each file vs when it was written (red: median per year, untouched files)"
+                         + (f"\n{len(cached)} reads over 1000 MB/s left out: page-cache hits, not the drive" if cached else ""))
         elif name.endswith("_bw.log"):
             kind = "bw"
             t, v, _ = fio_log(path)

@@ -40,7 +40,7 @@ table.t code { font-size:0.82rem; }
 <tr><td>용량</td><td>120,034,123,776 바이트 (234,441,648 섹터 × 512 B)</td></tr>
 <tr><td>NAND</td><td>TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 값)</td></tr>
 <tr><td>지금 상태</td><td>옛 Windows 디스크, 91% 차 있음, 파일 날짜 2018–2024</td></tr>
-<tr><td>지난 이력</td><td>2024.12 쯤 마지막으로 쓴 뒤 <strong>1년 넘게 전원 없이</strong> 보관. 2026.10.17 다시 연결 : Ryu 가 파일 몇 개를 읽고, 몇 개를 새로 씀</td></tr>
+<tr><td>지난 이력</td><td>2024.12 쯤 마지막으로 쓴 뒤 <strong>1년 넘게 전원 없이</strong> 보관. 2026.10.17 다시 연결 : Ryu 가 파일 몇 개를 읽고, 몇 개를 새로 씀. 원래 Windows 부팅 드라이브였고, 가끔 블루 스크린이 떠서 새 PC 로 옮겼다</td></tr>
 <tr><td>연결</td><td>메인보드 SATA (<code>ata5</code>, SATA 3) : TRIM 됨 (<code>DISC-MAX 2G</code>)</td></tr>
 </tbody></table></div>
 
@@ -117,8 +117,9 @@ table.t code { font-size:0.82rem; }
 <th>상태</th>
 </tr></thead><tbody>
 <tr><td>0 준비</td><td><strong>끝</strong> (2026.10.18) : SMART 오류 0, 평생 WAF ≈ 1.4, 177 = 117 (수명의 약 10%), Security frozen. <a href="/old-ssd-experiments/0-setup/">결과</a></td></tr>
-<tr><td>1 오래된 데이터</td><td>다음 : 바로 한다 (<code>/mnt/old840</code> 읽기 전용 마운트 됨)</td></tr>
-<tr><td>2 – 19</td><td>아직</td></tr>
+<tr><td>1 오래된 데이터</td><td><strong>끝</strong> (2026.10.18) : 데이터가 있는 곳은 약 9 MB/s, 빈 곳은 400–520 MB/s. 나이와 상관없이 모두 느리고, 오류는 없다. 블루 스크린은 이 SSD 탓이 아닐 가능성이 크다. <a href="/old-ssd-experiments/1-old-data/">결과</a></td></tr>
+<tr><td>2 기능 · 자가 진단</td><td>다음</td></tr>
+<tr><td>3 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 
 <div class="warn" markdown="1">

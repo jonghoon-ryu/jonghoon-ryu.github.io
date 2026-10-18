@@ -171,30 +171,104 @@ $ ./lab.sh oldfiles /mnt/old840 --seed 2 --reread 0
 <tr><td><code>…-scan-old/smart-before/after.*</code></td><td>측정 앞뒤 SMART (195 ECC 같은 값이 읽는 동안 늘었는지)</td></tr>
 </tbody></table></div>
 
-## 결과 읽는 법
-
-```
-$ python3 plot.py age.png ~/Ryu/old_ssd_results/*-oldfiles/fileage.csv
-$ python3 plot.py scan.png ~/Ryu/old_ssd_results/*-scan-old/scan.csv=old
-$ column -s, -t ~/Ryu/old_ssd_results/*-oldfiles/fileage-reread.csv
-```
-
-1. **나이 – 속도 그림** : 파란 점 = `new`, 노란 점 = `read`, 초록 점 = `old`, 빨간 선 = `old` 의 해마다 중앙값, 회색 띠 = 전원이 없던 기간 (추정). H1 은 파란 점의 높이, H2 는 초록과 파랑의 차이, H3 은 빨간 선의 기울기, H5 는 노랑과 같은 해 초록의 차이.
-2. **`max_ms`** : 1 MiB 읽기 하나가 수십 ms 를 넘으면 read retry 의 흔적이다 (H4).
-3. **두 번 읽기** : `mbps2 / mbps1` 이 2배를 넘으면 펌웨어가 첫 읽기 직후 다시 썼다 (H6).
-4. **위치 지도** : 0 으로만 읽힌 구간 (점) 은 쓴 적이 없거나 Windows 가 TRIM 한 곳이다. 이런 곳은 NAND 를 읽지 않으므로 아주 빠를 것이다 (실험 4 미리 보기). 데이터가 있는 곳의 속도가 위치에 따라 고르게 낮은지, 띠 모양으로 다른지 본다.
-5. **같은 위치의 새 데이터** : 실험 3 이 드라이브 전체를 새로 쓴 직후 같은 스캔을 한 번 더 한다 (`sudo ./lab.sh scan fresh 8`, SATA). 두 곡선을 겹치면 '나이' 만 다른 비교가 된다.
-6. **SMART** : 앞뒤로 195 ECC_Error_Rate 나 187 이 늘었다면 읽는 동안 고친 (또는 못 고친) 오류가 있었다는 뜻이다.
-7. **실험 16 과 연결** : 여기의 '1년 넘게' 와 실험 16 의 '2–4주' 를 한 그림에 놓는다.
-
-## 시뮬레이터와의 연결 (덤)
-
-[FTL Visual Simulator](/ftl-visual-simulator/) 의 NAND 모델에는 읽기 지연이 하나의 상수다. 실제 드라이브에서는 데이터의 나이 · 전원 이력 · 셀의 마모 · 온도에 따라 읽기 시간이 몇 배씩 달라진다.
-
 ## 결과
 
 <div class="result" markdown="1">
-아직 실행 전.
+**2026.10.18 08:53 – 09:27** (SATA, 읽기 전용 마운트). 결과 폴더 : `20261018-085307-oldfiles`, `20261018-092257-scan-old`.
+
+### 한 줄 요약
+
+**드라이브 전체가 데이터를 아주 느리게 읽는다 : 데이터가 있는 곳은 약 9 MB/s (정상의 1/50), 비어 있는 곳은 400–520 MB/s.** 데이터의 나이와는 상관이 없었다. 읽기 오류는 하나도 없었다.
+
+### A. 파일별 (`fileage.py`)
+
+612개의 큰 파일 (16 MiB 이상) 중 160개를 읽었다 : `new` 12개, `old` 148개 (해마다 최대 25개). `read` 무리는 0개였다 (10.17 에 연 파일은 모두 16 MiB 보다 작았다). '전원 없이 지낸 기간' 추정 : 마지막 쓰기 2024.12.08 → **677일**.
+
+![파일마다 쓴 날과 읽기 속도](/old-ssd-experiments/1-old-data/age.png)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>무리</th>
+<th>파일 수</th>
+<th>읽기 속도 중앙값</th>
+<th>범위</th>
+</tr></thead><tbody>
+<tr><td><code>new</code> (10.17 에 씀, 1–4 MiB)</td><td>12</td><td>3.4 MB/s</td><td>1.8 – 5.6</td></tr>
+<tr><td><code>old</code> 2011–2018</td><td>27</td><td>3.3 – 7.1 MB/s (해마다)</td><td>1.9 – 7.8</td></tr>
+<tr><td><code>old</code> 2019–2024</td><td>113</td><td>4.0 – 6.3 MB/s (해마다)</td><td>1.0 – 15.5</td></tr>
+<tr><td><code>old</code> 전체</td><td>140</td><td><strong>4.7 MB/s</strong></td><td>1 MiB 하나에 중앙값 0.47초, 가장 길게 1.55초</td></tr>
+</tbody></table></div>
+
+- 8개는 1,400–2,200 MB/s 로 읽혔는데, 드라이브가 아니라 RAM 이다 : Windows 의 `WinSxS` 는 같은 파일을 여러 이름 (hard link) 으로 두는데, 다른 이름으로 이미 읽은 데이터가 페이지 캐시에 남아 있었다. 그림과 표에서 뺐고, `fileage.py` 는 이제 hard link 를 한 번만 센다.
+- **H1 (새 파일은 빠르다) : 아니다.** 어제 쓴 파일도 3.4 MB/s 다. 다만 이 파일들은 작아서 (1–4 MiB) 파일마다 드는 고정 비용의 몫이 크고, 어제 쓴 데이터가 어디에 어떻게 쓰였는지 (SLC 버퍼 → TLC) 도 모른다.
+- **H2 (오래 둔 데이터는 느리다) : 그렇다, 그러나 모두 느리다.** 정상 SSD 라면 이 경로 (`ntfs-3g`) 로도 100 MB/s 이상이 나온다.
+- **H3 (오래 썼을수록 더 느리다) : 아니다.** 2011년 파일과 2024년 파일의 중앙값이 비슷하다 (그림의 빨간 선이 평평하다). 차이를 만드는 것은 '쓴 해' 가 아니라 모든 데이터가 함께 겪은 677일인 것으로 보인다.
+- **H4 (read retry) : 그렇다는 쪽.** 1 MiB 읽기 하나가 0.5–1.5초 걸린다. 오류 없이 오래 걸리는 것은 기준 전압을 바꿔 가며 다시 읽는 모습과 맞는다. SMART 187 · 195 는 읽기 앞뒤 모두 0.
+
+### B. 다시 읽기 (H6)
+
+가장 느렸던 `old` 10개를 페이지 캐시를 모두 비운 뒤 (`sudo ./lab.sh reread`) 약 10–15분 뒤에 다시 읽었다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>항목</th>
+<th>첫 읽기 (09:00–09:13)</th>
+<th>다시 읽기 (09:18)</th>
+</tr></thead><tbody>
+<tr><td>속도</td><td>1.0 – 2.3 MB/s</td><td><strong>8.8 – 25.4 MB/s</strong> (5–10배)</td></tr>
+<tr><td>1 MiB 하나의 최대 시간</td><td>0.66 – 1.55 s</td><td>0.11 – 0.33 s</td></tr>
+</tbody></table></div>
+
+더 빨라졌지만 정상과는 거리가 멀다. 펌웨어가 느린 읽기 뒤에 그 데이터를 다시 썼을 수도 있고 (H6), 드라이브가 다시 켜진 뒤 처음 몇 시간 동안 안에서 바빴다가 덜 바빠졌을 수도 있다. 이 결과만으로는 둘을 가를 수 없다.
+
+(첫 실행에서는 같은 실행 안에서 다시 읽었는데 1,800–7,000 MB/s 가 나왔다 : `posix_fadvise` 로는 `ntfs-3g` (FUSE) 의 캐시가 비워지지 않아 RAM 을 읽은 것이다. 그 파일은 `fileage-reread-INVALID-from-page-cache.csv` 로 이름을 바꿔 두었고, 다시 읽기는 캐시 전체를 비우는 sudo 단계로 바꿨다.)
+
+### C. 드라이브 전체 지도 (`scan old 8`)
+
+448개 구간 (256 MiB 마다 8 MiB, `O_DIRECT`, 파일 시스템 없이) :
+
+![드라이브 위치별 읽기 속도](/old-ssd-experiments/1-old-data/scan-old.png)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>구간</th>
+<th>수</th>
+<th>중앙값</th>
+<th>범위</th>
+<th>1 MiB 하나의 최대 시간 (중앙값)</th>
+</tr></thead><tbody>
+<tr><td>데이터가 있는 곳</td><td>403</td><td><strong>8.9 MB/s</strong></td><td>1.5 – 54 MB/s</td><td>229 ms (가장 길게 1.0 s)</td></tr>
+<tr><td>0 으로만 읽힌 곳 (빈 곳)</td><td>45</td><td>85 MB/s</td><td>9 – 524 MB/s</td><td>22 ms</td></tr>
+</tbody></table></div>
+
+- 그림의 높은 봉우리 (12–15 GiB, 83 · 93 · 96 · 98–100 GiB) 는 0 으로만 읽힌 곳 : Windows 가 TRIM 한 빈 공간이다. 여기서는 **400–520 MB/s**, 곧 SATA 3 의 한계까지 나온다. 매핑이 없으니 NAND 를 읽지 않고 대답하기 때문이다 (실험 4 미리 보기).
+- 그러니 연결 · 컨트롤러 · 케이블은 멀쩡하다. **느린 것은 NAND 에서 저장된 데이터를 읽는 일** 뿐이다. 위치에 따른 큰 차이는 없다 (앞쪽 0–70 GiB 는 6–10 MB/s, 뒤쪽 77–111 GiB 는 13–15 MB/s 로 조금 낫다).
+- 파일 경로 (A) 의 4.7 MB/s 보다 여기의 8.9 MB/s 가 빠른 것은 `ntfs-3g` 를 거치지 않고 1 MiB 단위로 바로 읽기 때문이다.
+- SMART : 스캔 앞뒤 187 · 195 · 5 모두 0 그대로, 온도 38 °C.
+
+### Windows 가 남긴 기록
+
+Ryu 에 따르면, 이 드라이브는 Windows 부팅 드라이브였고 가끔 블루 스크린이 떠서 새 PC 로 옮겼다. 그래서 드라이브에 남아 있는 Windows 의 시스템 로그 (`System.evtx`, 2022.06 – 2024.12) 를 읽어 보았다 (읽기 전용으로 복사한 뒤 `python-evtx` 로).
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>기록</th>
+<th>수</th>
+<th>읽는 법</th>
+</tr></thead><tbody>
+<tr><td>블루 스크린 (event 1001, BugCheck)</td><td>11번</td><td>코드가 9가지 : <code>1A</code> · <code>D1</code> · <code>FC</code> · <code>3B</code> ×3 · <code>0A</code> · <code>50</code> · <code>139</code> · <code>7F</code> · <code>1E</code>. 디스크가 원인이면 흔히 보이는 <code>7A</code> (KERNEL_DATA_INPAGE_ERROR) · <code>77</code> · <code>F4</code> 는 없다</td></tr>
+<tr><td>예기치 않은 꺼짐 (event 41)</td><td>67번</td><td>2022.12, 2023.12 – 2024.01 에 몰려 있다. SMART 235 (1,036) 와 같은 쪽</td></tr>
+<tr><td>디스크 오류 · 재시도 (event 51, 153)</td><td>2,337번</td><td><strong>모두 <code>Harddisk3–6</code></strong> : 꽂을 때마다 번호가 바뀌는 USB 디스크들이다 (<code>UASPStor</code> 경고도 있다). 부팅 SSD (<code>Harddisk0</code>) 에는 없다</td></tr>
+<tr><td><code>Minidump</code> 폴더</td><td>비어 있음</td><td>덤프 파일은 남아 있지 않다</td></tr>
+</tbody></table></div>
+
+**블루 스크린의 원인은 이 SSD 가 아니었을 가능성이 크다.** 그때 이 드라이브는 오류 없이 읽혔고, 블루 스크린 코드는 여러 가지가 섞여 있다 : 보통 메모리 (RAM) · 드라이버 · 다른 하드웨어를 먼저 의심하는 모습이다. 지금의 극단적인 느림은 **전원 없이 지낸 677일 동안** 생긴 것으로 보인다.
+
+### 다음
+
+- 실험 3 이 드라이브 전체를 새로 쓴 뒤 같은 스캔 (`scan fresh 8`) 을 한다 : 그때 빠르면 느림의 원인은 '오래 둔 데이터' 이고, 그때도 느리면 드라이브 자체다.
+- 같은 모델 (840 EVO 500GB, 펌웨어 `EXT0BB6Q`) 도 1년 넘게 전원 없이 있었다. 120GB 실험을 모두 마친 뒤 같은 읽기 전용 측정을 해서, 이것이 이 드라이브만의 일인지 모델 전체의 일인지 비교한다.
+- H7 (켜 두면 백그라운드에서 다시 쓰나) 는 하루 뒤 `./lab.sh oldfiles /mnt/old840 --seed 2` 로 확인할 수 있다 (선택).
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/0-setup/' | relative_url }}">← 0. 준비</a><a href="{{ '/old-ssd-experiments/2-features/' | relative_url }}">2. 기능 · 자가 진단 →</a></div>
