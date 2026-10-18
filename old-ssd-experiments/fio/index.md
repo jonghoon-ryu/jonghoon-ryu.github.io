@@ -283,19 +283,43 @@ $ fio ... --ioengine=io_uring --iodepth=32
 NVMe 는 안에서 수십 개를 동시에 처리할 수 있어서, 32개를 걸어도 하나하나의 지연이 늘지 않았다. **SSD 의 병렬성 (채널 × die) 이 이것이다.**
 840 EVO (SATA) 는 NCQ 한도가 32 이고 안의 병렬성도 작으니, 큐 깊이를 올리면 어느 지점부터 지연이 같이 늘 것이다 : 실험 5 에서 그 지점을 찾는다.
 
+### `--ioengine` 이란
+
+`--ioengine` 은 **fio 가 I/O 하나를 커널에 넘기는 방법** 이다 : 어떤 시스템 호출 (또는 커널 인터페이스) 로 '여기서 4 KiB 를 읽어 달라' 고 말하나. 드라이브가 받는 읽기 · 쓰기는 같다. 달라지는 것은 프로그램이 그것을 어떻게 기다리느냐, 그래서 **한꺼번에 몇 개를 걸어 둘 수 있느냐** 다.
+
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
 <th>엔진</th>
-<th>방식</th>
-<th>큐 깊이</th>
+<th>커널 인터페이스</th>
+<th>하는 방식</th>
+<th>걸어 둘 수 있는 수</th>
 </tr></thead><tbody>
-<tr><td><code>sync</code> · <code>psync</code></td><td><code>read()</code>/<code>pread()</code> : 끝날 때까지 기다림</td><td>1 (늘리려면 <code>--numjobs</code>)</td></tr>
-<tr><td><code>libaio</code></td><td>Linux 비동기 I/O (<code>io_submit</code>). <code>--direct=1</code> 일 때만 진짜 비동기</td><td>iodepth 만큼</td></tr>
-<tr><td><code>io_uring</code></td><td>새 비동기 인터페이스 (Linux 5.1+) : 호출 비용이 가장 작다</td><td>iodepth 만큼</td></tr>
-<tr><td><code>posixaio</code></td><td>POSIX AIO (glibc 가 스레드로 흉내)</td><td>흉내</td></tr>
+<tr><td><code>sync</code></td><td><code>read()</code> / <code>write()</code></td><td>요청하고 데이터가 올 때까지 <strong>기다린 뒤</strong> 다음 요청</td><td>1</td></tr>
+<tr><td><code>psync</code> (기본값)</td><td><code>pread()</code> / <code>pwrite()</code></td><td>같다. 위치를 같은 호출에 넣는다 (<code>lseek</code> 가 따로 없다)</td><td>1 (늘리려면 <code>--numjobs</code>)</td></tr>
+<tr><td><code>libaio</code></td><td>Linux AIO : <code>io_submit()</code> + <code>io_getevents()</code></td><td><strong>여러 요청을 넘기고, 끝난 것은 나중에 모아 받는다.</strong> <code>--direct=1</code> 일 때만 진짜 비동기</td><td><code>iodepth</code> 만큼</td></tr>
+<tr><td><code>io_uring</code></td><td>커널과 함께 쓰는 링 버퍼 둘 : 제출 큐와 완료 큐</td><td>libaio 와 같은 일을 시스템 호출을 훨씬 적게 하며 : 요청과 완료가 공유 메모리로 오간다 (Linux 5.1+)</td><td><code>iodepth</code> 만큼</td></tr>
+<tr><td><code>posixaio</code></td><td>POSIX <code>aio_read()</code></td><td>겉보기만 비동기 : glibc 가 도우미 스레드로 흉내 낸다</td><td>흉내</td></tr>
+<tr><td><code>mmap</code></td><td>메모리에 대응시킨 파일</td><td>메모리를 읽고 쓰듯이 I/O</td><td>—</td></tr>
+<tr><td><code>null</code></td><td>없음</td><td>I/O 를 하지 않는다 : fio 자신의 비용을 잰다</td><td>—</td></tr>
+<tr><td><code>sg</code>, <code>io_uring_cmd</code></td><td>SCSI · NVMe 직접 전달</td><td>블록 계층을 건너뛰고 SCSI · NVMe 명령을 그대로 보낸다</td><td>—</td></tr>
 </tbody></table></div>
 
-`lab.sh` 는 `ENGINE=libaio` 가 기본이고, `sudo ENGINE=io_uring ./lab.sh …` 로 바꿀 수 있다. SATA SSD 의 속도에서는 둘의 차이가 거의 없다.
+**두 가지 방식**
+
+```
+동기 (psync) :          넘김 ─ 기다림 ─ 끝 │ 넘김 ─ 기다림 ─ 끝 │ …          한 번에 하나
+비동기 (libaio, io_uring) :
+                        넘김 ×32 ─────────────────────────────────▶
+                        끝난 것을 오는 대로 받고, 다시 채워서 늘 32개가 걸려 있게
+```
+
+그래서 **`--iodepth` 는 비동기 엔진에서만 뜻이 있다.** 위의 (b) 처럼 `psync` 에 `--iodepth=32` 를 주면 `queue depth will be capped at 1` 이 나오고 12.5k IOPS 그대로다. 같은 NVMe 에서 `io_uring` 에 `--iodepth=32` 는 398k IOPS 였다 : 읽기 하나의 시간 (약 79 µs) 은 같은데 걸어 둔 수가 32배다.
+
+**libaio 와 io_uring** : 둘 다 요청을 많이 걸어 둔다. `io_uring` 은 더 새롭고 요청마다 드는 비용이 더 작다 : 한 묶음을 시스템 호출 하나로, 폴링 모드에서는 시스템 호출 없이 넘기고 받는다. 빠른 NVMe 에서 초당 수백만 번을 할 때 차이가 난다. 120GB SSD (SATA, 10만 IOPS 이하) 에서는 둘이 같은 숫자를 낸다.
+
+**SSD 를 잴 때** : `libaio` 나 `io_uring` 을 쓰고 늘 `--direct=1` 을 함께 준다. `psync` 는 '한 번에 하나' 를 일부러 보고 싶을 때 쓴다 : `read()` 를 되풀이하는 단순한 프로그램과 같은 모습이다.
+
+`lab.sh` 는 모든 fio 빌드에 들어 있는 `libaio` 가 기본이고, `sudo ENGINE=io_uring ./lab.sh …` 로 바꿀 수 있다.
 
 ## 6. 페이지 캐시와 `--direct=1`
 
