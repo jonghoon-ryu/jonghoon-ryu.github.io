@@ -96,7 +96,41 @@ $ column -s, -t $(ls -d ~/Ryu/old_ssd_results/*-flush | tail -1)/summary.csv
 ## 결과
 
 <div class="result" markdown="1">
-아직 실행 전.
+2026.10.18 15:19 – 15:34, 결과 폴더 `20261018-151945-flush`. 시작할 때 쓰기 캐시는 켜져 있었고 (`write-caching = 1`), 끝에 다시 켰다.
+
+![4 KiB 랜덤 쓰기 하나에 드는 시간](/old-ssd-experiments/7-flush/flush.png)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>실행</th>
+<th>캐시</th>
+<th>IOPS</th>
+<th>MB/s</th>
+<th>쓰기 하나 (평균)</th>
+<th>FLUSH 하나 (평균 · 99%)</th>
+<th>쓰기 하나에 드는 전체 시간</th>
+</tr></thead><tbody>
+<tr><td><code>wc1-4k</code> (4 KiB 랜덤, QD1)</td><td>켬</td><td><strong>27,255</strong></td><td>111.6</td><td><strong>32 µs</strong></td><td>—</td><td>32 µs</td></tr>
+<tr><td><code>wc1-4k-fsync</code> (+ 쓰기마다 fsync)</td><td>켬</td><td><strong>604</strong></td><td>2.5</td><td>50 µs</td><td><strong>1,643 µs</strong> · 8.1 ms</td><td>약 1.7 ms</td></tr>
+<tr><td><code>wc0-4k</code></td><td><strong>끔</strong></td><td><strong>618</strong></td><td>2.5</td><td><strong>1,609 µs</strong></td><td>—</td><td>1.6 ms</td></tr>
+<tr><td><code>wc0-4k-qd32</code></td><td>끔</td><td>5,758</td><td>23.6</td><td>5.6 ms</td><td>—</td><td>(32개가 동시에)</td></tr>
+<tr><td><code>wc1-1m-fsync</code> (1 MiB 순차 + fsync)</td><td>켬</td><td>100</td><td>105.0</td><td>2.2 ms</td><td>9.8 ms</td><td>약 10 ms</td></tr>
+<tr><td><code>wc0-1m</code> (1 MiB 순차)</td><td>끔</td><td>102</td><td>106.5</td><td>9.7 ms</td><td>—</td><td>9.7 ms</td></tr>
+</tbody></table></div>
+
+FLUSH 의 시간은 fio JSON 의 `sync` 부분에 따로 있다 (`fiosum.py` 의 표에는 나오지 않는다).
+
+**H1 (캐시를 켜면 4 KiB QD1 쓰기는 아주 빠르다) : 맞다.** 32 µs : DRAM 에 담기면 '끝' 이다. NAND 에 쓰는 시간이 아니다.
+
+**H2 (FLUSH 를 하면 NAND 에 쓰는 시간이 보인다) : 맞다, 생각보다 크다.** FLUSH 하나가 평균 **1.6 ms** (99% 8.1 ms). 쓰기 자체 (50 µs) 의 30배다. 4 KiB 하나를 NAND 에 확실히 적는 데 드는 시간에, 매핑 표 같은 내부 기록을 함께 저장하는 시간이 더해진 것으로 보인다. 결과 : 쓰기마다 fsync 하면 **27,255 → 604 IOPS, 45배 느려진다.**
+
+**H3 (캐시를 끄면 FLUSH 를 매번 한 것과 비슷하다) : 맞다, 거의 같다.** 캐시 끔 618 IOPS · 1.6 ms, 캐시 켬 + fsync 604 IOPS · 1.7 ms. 캐시를 끄는 것은 '쓰기마다 FLUSH' 와 같은 비용이다.
+
+**H4 (캐시를 꺼도 큐 깊이로 일부 되찾는다) : 맞다.** 캐시 끔 QD32 는 5,758 IOPS 로 QD1 의 **9.3배** : 32개를 함께 걸어 두면 드라이브가 NAND 칩 여럿에 나눠 쓴다. 그래도 캐시 켬 QD1 (27k) 의 5분의 1이다.
+
+**H5 (FLUSH 를 무시하는 드라이브라면) : 이 드라이브는 무시하지 않는다.** fsync 를 하면 정말로 45배 느려진다. 약속을 지키는 모습이다. 전원이 끊겼을 때 정말 남는지는 [실험 17](/old-ssd-experiments/17-power-loss/) 이 확인한다.
+
+**큰 쓰기에서는 FLUSH 비용의 비율이 작다** : 1 MiB 를 쓰고 fsync 하면 한 번에 약 10 ms (쓰기 2.2 ms + FLUSH 9.8 ms) 로 105 MB/s. 캐시를 끈 1 MiB 쓰기 (106.5 MB/s) 와 같고, TLC 직접 쓰기 속도 ([실험 3](/old-ssd-experiments/3-slc-cache/), 약 150 MB/s) 의 70% 다. 4 KiB 에서는 FLUSH 가 시간의 97% 였는데, 1 MiB 에서는 데이터를 실제로 옮기는 시간이 대부분이다. **'작은 쓰기를 모아서 한 번에 커밋하라'** 는 데이터베이스의 규칙 (group commit) 이 여기서 나온다. [Ref: fio test](/old-ssd-experiments/fio/ref-fio-test/) 의 990 EVO 에서도 `fsync=1` 이 115배, `fsync=32` 가 그보다 4배 나았다.
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/6-write-size/' | relative_url }}">← 6. 쓰기 크기 · 정렬</a><a href="{{ '/old-ssd-experiments/8-write-cliff/' | relative_url }}">8. Write cliff →</a></div>
