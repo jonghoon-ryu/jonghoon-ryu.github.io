@@ -246,9 +246,47 @@ Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA
 
 이로써 [실험 2](/old-ssd-experiments/2-features/) 의 H3 (오래된 데이터 때문에 자가 진단이 오래 걸린다) 의 답 : **그렇다.** 예상 시간 (70 분) 보다 짧았을 뿐, 새 데이터와 비교하면 6.6배 길었다.
 
-### 2단계 : `slc-idle`
+### 2단계 : `slc-idle` (버퍼가 다시 비는 시간)
 
-아직 실행 전.
+2026.10.18 12:19 – 12:44, 결과 폴더 `20261018-121904-slc-idle`. 드라이브 앞쪽 8 GiB 에 1 MiB 순차 쓰기를 `fill` 로 한 번, 그 뒤 0 · 1 · 5 · 15 분 쉬고 같은 8 GiB 를 다시 썼다 (드라이브는 1단계에서 이미 꽉 찬 상태).
+
+![쉰 시간마다 8 GiB 쓰기의 속도](/old-ssd-experiments/3-slc-cache/slc-idle.png)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>실행</th>
+<th>쉰 시간</th>
+<th>빠르게 (300 MB/s 넘게) 쓴 양</th>
+<th>버퍼 뒤 속도 (중앙값)</th>
+<th>8 GiB 전체 평균</th>
+</tr></thead><tbody>
+<tr><td><code>fill</code></td><td>—</td><td>3.16 GB</td><td>140 MB/s</td><td>186 MB/s</td></tr>
+<tr><td><code>idle0</code></td><td><strong>0 분</strong></td><td><strong>3.28 GB</strong></td><td>150 MB/s</td><td>201 MB/s</td></tr>
+<tr><td><code>idle1</code></td><td>1 분</td><td>3.16 GB</td><td>123 MB/s</td><td>173 MB/s</td></tr>
+<tr><td><code>idle5</code></td><td>5 분</td><td>3.16 GB</td><td>110 MB/s</td><td>159 MB/s</td></tr>
+<tr><td><code>idle15</code></td><td>15 분</td><td>3.16 GB</td><td>149 MB/s</td><td>188 MB/s</td></tr>
+</tbody></table></div>
+
+**H3 (쉬면 버퍼가 다시 빈다) : 그렇다, 그런데 생각보다 훨씬 빠르다.** 쉬지 않은 `idle0` 도 버퍼를 통째로 (약 3.2 GB) 다시 썼다. `fill` 이 끝나고 `idle0` 이 시작하기까지는 1–2초뿐이다. 그러니 이 드라이브는 :
+- 버퍼를 넘긴 뒤 TLC 에 바로 쓰는 동안 (`fill` 의 뒤쪽 약 5 GB, 약 35초) **버퍼의 내용을 TLC 로 옮겨 비우거나**,
+- 버퍼를 넘친 쓰기가 오면 버퍼를 비우는 일을 앞으로 미루지 않는 방식으로 보인다.
+
+어느 쪽이든 **쉬는 시간 1분 이상은 차이를 만들지 않는다** : 이 실험의 시간 눈금 (분) 이 너무 굵었다. 회복이 정말 몇 초 단위인지 보려면 버퍼만큼 (약 3 GB) 만 쓰고 0 · 5 · 15 · 30 · 60 **초** 쉬는 실험이 필요하다 (뒤로 미룬다).
+
+**버퍼 뒤 속도가 실행마다 다르다** (110 – 150 MB/s) : `idle1` · `idle5` 는 버퍼가 찬 직후 약 1 GB 동안 100 MB/s 근처로 떨어졌다가 천천히 150 MB/s 로 돌아간다. 같은 8 GiB 를 덮어쓰고 있으므로 지운 블록을 다시 마련하는 일 (GC) 이나 앞 실행의 버퍼를 옮기는 일이 겹쳤을 수 있다. 이것도 쉰 시간과 차례대로 바뀌지는 않는다 (15 분은 다시 149 MB/s).
+
+**실험 3 정리**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>단계</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>1 <code>slc</code></td><td>SLC 버퍼 약 <strong>3.2 GB</strong> 를 <strong>533 MB/s</strong> (SATA 한계), 그 뒤 TLC 직접 약 <strong>150 MB/s</strong> : 쓰기는 정상</td></tr>
+<tr><td>2 <code>slc-idle</code></td><td>버퍼는 몇 초 안에 다시 빈다 : 쉰 시간 0 – 15 분이 모두 같다</td></tr>
+<tr><td>3 <code>scan fresh 8</code></td><td>새 데이터는 약 <strong>445 MB/s</strong> 로 읽힌다 : 오래된 데이터 (약 10 MB/s) 의 약 45배</td></tr>
+<tr><td>4 <code>selftest long</code></td><td>새 데이터의 자가 진단 <strong>9.5 분</strong> : 오래된 데이터 (62.6 분) 의 6.6배 빠름</td></tr>
+</tbody></table></div>
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/2-features/' | relative_url }}">← 2. 기능 · 자가 진단</a><a href="{{ '/old-ssd-experiments/4-trim/' | relative_url }}">4. TRIM 과 매핑 없는 읽기 →</a></div>
