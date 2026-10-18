@@ -40,7 +40,7 @@ table.t code { font-size:0.82rem; }
 <tr><td>용량</td><td>120,034,123,776 바이트 (234,441,648 섹터 × 512 B)</td></tr>
 <tr><td>NAND</td><td>TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 값)</td></tr>
 <tr><td>지금 상태</td><td>옛 Windows 디스크, 91% 차 있음, 파일 날짜 2018–2024</td></tr>
-<tr><td>지난 이력</td><td>2024.12 쯤 마지막으로 쓴 뒤 <strong>1년 넘게 전원 없이</strong> 보관. 2026.10.17 다시 연결 : Ryu 가 파일 몇 개를 읽고, 몇 개를 새로 씀. 원래 Windows 부팅 드라이브였고, 가끔 블루 스크린이 떠서 새 PC 로 옮겼다</td></tr>
+<tr><td>지난 이력</td><td>2024.12 쯤 마지막으로 쓴 뒤 <strong>1년 넘게 전원 없이</strong> 보관. 2026.10.17 다시 연결 : Ryu 가 파일 몇 개를 읽고, 몇 개를 새로 씀. 원래 Windows 부팅 드라이브였고, 가끔 블루 스크린이 떠서 새로 PC 를 조립했고, 이 SSD 는 그 뒤로 쓰지 않고 두었다. 그러다 심심해서 이 SSD 로 실험해 보기로 했다</td></tr>
 <tr><td>연결</td><td>메인보드 SATA (<code>ata5</code>, SATA 3) : TRIM 됨 (<code>DISC-MAX 2G</code>)</td></tr>
 </tbody></table></div>
 

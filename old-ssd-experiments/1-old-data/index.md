@@ -281,7 +281,7 @@ read 3.8 GB in 8.0 min, mean 7.9 MB/s -> /home/ryuj/Ryu/old_ssd_results/20261018
 
 ### Windows 가 남긴 기록
 
-Ryu 에 따르면, 이 드라이브는 Windows 부팅 드라이브였고 가끔 블루 스크린이 떠서 새 PC 로 옮겼다. 그래서 드라이브에 남아 있는 Windows 의 시스템 로그 (`System.evtx`, 2022.06 – 2024.12) 를 읽어 보았다 (읽기 전용으로 복사한 뒤 `python-evtx` 로).
+Ryu 에 따르면, 이 드라이브는 Windows 부팅 드라이브였다. 가끔 블루 스크린이 떠서 새로 PC 를 조립했고, 이 SSD 는 그 뒤로 쓰지 않고 두었다. 그러다 심심해서 이 SSD 로 실험해 보기로 했다. 그래서 드라이브에 남아 있는 Windows 의 시스템 로그 (`System.evtx`, 2022.06 – 2024.12) 를 읽어 보았다 (읽기 전용으로 복사한 뒤 `python-evtx` 로).
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>

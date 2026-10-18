@@ -1,0 +1,267 @@
+---
+layout: default
+title: SSD tutorial
+permalink: /old-ssd-experiments/ssd-tutorial/
+---
+<style>
+.glance { display:grid; grid-template-columns: 9rem 1fr; gap:4px 14px; background:#f4f8f6; border:1px solid #cfe3db; border-left:4px solid #1f6f5c; padding:12px 16px; margin:1.2rem 0; font-size:0.93rem; }
+.glance b { color:#1f6f5c; }
+.warn { background:#fdf2f0; border-left:4px solid #c0392b; padding:10px 14px; margin:1.2rem 0; font-size:0.93rem; }
+.tip { background:#eef8f1; border-left:4px solid #1e8449; padding:10px 14px; margin:1.2rem 0; font-size:0.93rem; }
+.check { background:#f7f9fb; border-left:4px solid #5d6d7e; padding:10px 14px; margin:1.2rem 0; font-size:0.93rem; }
+.result { background:#fffbea; border:1px dashed #b7950b; padding:12px 16px; margin:1.2rem 0; font-size:0.93rem; }
+.step-nav { display:flex; justify-content:space-between; gap:1rem; margin:2.5rem 0 0; font-size:0.95rem; }
+table.t { table-layout:fixed !important; width:100% !important; border-collapse:collapse; font-size:0.86rem; margin:1rem 0; }
+table.t th { background:#e8f3ef !important; color:#1f3d34 !important; text-align:left; padding:6px 8px; border:1px solid #cfe3db; overflow-wrap:break-word; word-break:break-word; }
+table.t td { padding:6px 8px; border:1px solid #e5e8e8; vertical-align:top; overflow-wrap:break-word; word-break:break-word; }
+table.t code { font-size:0.82rem; }
+@media (max-width: 640px) { .glance { grid-template-columns: 1fr; } }
+</style>
+
+# SSD tutorial : 120 GB 드라이브는 왜 111.8 GiB 로 보이나
+
+실험할 840 EVO 의 용량은 **234,441,648 섹터 × 512 B** 다. 이 숫자 하나에서 시작해, SSD 의 용량이 어떻게 정해지는지를 차례로 따라간다 : GB 와 GiB, 왜 두 단위가 섞였나, SSD 안의 2진 NAND 와 밖에 보이는 10진 용량, 섹터 수를 정하는 IDEMA 공식, 그리고 over-provisioning 과 스페어 영역.
+
+<div class="glance">
+<b>이 페이지는</b><span>Claude 와 나눈 질문과 답을 다듬어 정리한 것 (2026.10.18)</span>
+<b>먼저 알면 좋은 것</b><span>섹터 · LBA (<a href="/old-ssd-experiments/linux-commands/">Linux 명령</a> 페이지), FTL 이 무엇인지 대강</span>
+<b>이어지는 실험</b><span><a href="/old-ssd-experiments/10-over-provisioning/">10. Over-provisioning</a>, <a href="/old-ssd-experiments/19-teardown/">19. 열어 보기</a></span>
+</div>
+
+## 1. 섹터 수에서 바이트로
+
+드라이브는 자기 크기를 **섹터 (LBA) 수** 로 알려 준다. 840 EVO 120GB 는 234,441,648 섹터, 섹터 하나는 512 바이트다.
+
+```
+234,441,648 × 512 = 120,034,123,776 바이트
+```
+
+512 = 2⁹ 이므로, 234,441,648 을 아홉 번 두 배 하는 것과 같다.
+
+## 2. GB 와 GiB
+
+같은 바이트 수를 두 가지 단위로 읽을 수 있다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>단위</th><th>1 단위 =</th><th>120,034,123,776 바이트는</th></tr></thead><tbody>
+<tr><td><strong>GB</strong> (기가바이트, 10진)</td><td>10⁹ = 1,000,000,000 바이트</td><td><strong>120.03 GB</strong></td></tr>
+<tr><td><strong>GiB</strong> (기비바이트, 2진)</td><td>2³⁰ = 1,073,741,824 바이트</td><td><strong>111.79 GiB</strong></td></tr>
+</tbody></table></div>
+
+용량이 사라진 것이 아니다. 같은 양을 더 큰 자로 재었을 뿐이다. GiB 값은 언제나 GB 값의 약 **93.1%** (10⁹ ÷ 2³⁰ ≈ 0.9313) 다.
+
+## 3. SSD 는 GB 로 판다
+
+SSD 는 (HDD, USB 메모리와 마찬가지로) **10진 GB** 로 판다 : 1 GB = 10⁹ 바이트. 그래서 '120 GB' 드라이브는 정말로 120.03 × 10⁹ 바이트를 담고, 모자라지 않다.
+
+헷갈리는 것은 운영 체제가 보여 주는 숫자다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>어디서</th><th>무엇으로 계산하나</th><th>840 EVO 가 보이는 값</th></tr></thead><tbody>
+<tr><td>Windows</td><td>GiB 로 계산하고 'GB' 라고 적는다</td><td>111 GB</td></tr>
+<tr><td>macOS (10.6 부터)</td><td>10진 GB</td><td>120 GB</td></tr>
+<tr><td>Linux <code>lsblk</code></td><td>GiB ('G' 라고 적는다)</td><td>111.8G</td></tr>
+<tr><td>Linux <code>df -H</code>, <code>smartctl -i</code></td><td>10진 GB</td><td>120 GB</td></tr>
+</tbody></table></div>
+
+## 4. 왜 두 단위가 섞였나
+
+### 4.1 컴퓨터는 2의 거듭제곱으로 생각한다
+
+메모리는 2진 주소선으로 주소를 고르기 때문에, RAM 은 자연스럽게 1024, 65,536 … 같은 크기로 만들어진다. 초기 엔지니어들은 1024 가 1000 에 가깝다는 이유로 이것을 '킬로바이트' 라고 불렀다. 차이가 2.4% 뿐이라 아무도 신경 쓰지 않았다.
+
+### 4.2 단계가 올라갈수록 차이가 커진다
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>접두어</th><th>10진</th><th>2진</th><th>차이</th></tr></thead><tbody>
+<tr><td>kilo / kibi</td><td>10³</td><td>2¹⁰</td><td>2.4%</td></tr>
+<tr><td>mega / mebi</td><td>10⁶</td><td>2²⁰</td><td>4.9%</td></tr>
+<tr><td>giga / gibi</td><td>10⁹</td><td>2³⁰</td><td>7.4%</td></tr>
+<tr><td>tera / tebi</td><td>10¹²</td><td>2⁴⁰</td><td>10.0%</td></tr>
+</tbody></table></div>
+
+2.4% 는 무시할 수 있었지만, 1 TB 드라이브가 약 931 'GB' 로 보이는 10% 는 누구나 알아챈다.
+
+### 4.3 HDD 는 2진일 이유가 없었다
+
+하드 디스크는 주소선이 아니라 트랙과 섹터로 이루어져 있어서, 크기가 아무 숫자나 될 수 있다. 드라이브 회사들은 SI 의 10진 의미 (giga = 10⁹) 를 썼다. 표준으로 보아도 맞고, 상자에 적힌 숫자도 커진다.
+
+### 4.4 해결책이 늦게 나왔다
+
+1998년 IEC 가 2진 전용 접두어 **KiB · MiB · GiB · TiB** (kibi, mebi, gibi) 를 만들었다. 이제 'GB' 는 10⁹ 만 뜻해야 한다. 하지만 이미 굳은 습관은 그대로 남았다.
+
+- **Windows** 는 아직도 GiB 값을 'GB' 라고 적는다
+- **RAM** 은 아직도 '16 GB' 로 팔지만 실제로는 16 GiB 다 (JEDEC 메모리 표준이 옛 2진 의미를 쓴다)
+- **macOS** (2009 부터) 와 많은 Linux 도구는 10진 GB 로 바꾸었거나 GiB 를 제대로 적는다
+
+### 4.5 소송까지 갔다
+
+Western Digital (2006) 과 Seagate (2007) 는 '용량을 속았다' 는 집단 소송에서 합의했다. 둘 다 용량을 세는 방법은 바꾸지 않고, '1 GB = 10억 바이트' 라는 작은 글씨를 붙였다.
+
+<div class="tip" markdown="1">
+**요약.** 저장 장치와 네트워크 속도에서 'GB' 는 10⁹, RAM 과 Windows 에서는 2³⁰ 이다. 2진을 뜻할 때 'GiB' 라고 적으면 헷갈릴 일이 없다.
+</div>
+
+## 5. SSD 안은 2진이다 : FTL 이 안과 밖을 떼어 놓는다
+
+4.3 의 'HDD 는 2진일 이유가 없었다' 는 SSD 에는 그대로 맞지 않는다. SSD 안의 NAND 는 정말로 2진이다.
+
+- NAND 칩은 행 · 열 주소 (address cycle) 로 주소를 고른다. 그래서 페이지 크기 (4 / 8 / 16 KiB), 블록당 페이지 수, 다이 용량 (256 Gbit, 512 Gbit, 1 Tbit) 이 모두 2의 거듭제곱이다
+- 그래서 원래 NAND 를 더하면 보통 2진 크기가 된다. 예를 들어 '120 GB' 드라이브에 128 GiB 의 NAND
+- 그것도 깔끔한 2진은 아니다. NAND 페이지마다 숨은 **스페어 영역** 이 붙어 있다 (8 절). '16 KiB' 페이지가 실제로는 16,384 + 2,208 바이트일 수 있다
+
+그런데 밖 (호스트) 에서는 10진 용량이 보인다. 그 사이에 **FTL (Flash Translation Layer)** 이 있기 때문이다.
+호스트는 평평한 논리 섹터 (LBA) 목록만 보고, FTL 이 LBA 마다 어느 물리 페이지에 둘지를 정한다. 이 층이 있어서 드라이브가 보여 주는 LBA 수는 물리 구조와 맞을 필요가 없다. **회사는 LBA 수를 마음대로 고를 수 있고, 실제로는 IDEMA 가 정한 수를 고른다** (6 절). NAND 와 그 수의 차이는 over-provisioning 이 된다 (8 절).
+
+<div class="check" markdown="1">
+**정리.** SSD 의 물리 매체는 2진이지만, 호스트에 보이는 크기는 컨트롤러가 따로 정하고, 업계는 10진을 골랐다. HDD 는 매체도, 보이는 크기도 2진일 필요가 없다.
+</div>
+
+## 6. IDEMA 공식 : 섹터 수는 어떻게 정해지나
+
+**IDEMA** (International Disk Drive Equipment and Materials Association) 는 저장 장치 업계 단체다. 그 표준 **LBA1-03** 이 '광고 용량 몇 GB 이면 섹터가 정확히 몇 개' 인지를 정한다.
+
+### 6.1 공식
+
+512 바이트 섹터일 때 :
+
+```
+LBA 수 = 97,696,368 + 1,953,504 × (광고 GB − 50)
+```
+
+840 EVO 에 넣으면 97,696,368 + 1,953,504 × 70 = **234,441,648**. 드라이브가 알려 준 값과 정확히 같다.
+
+공식은 늘 광고 용량보다 조금 더 많이 준다 (120 GB 가 아니라 120.03 GB). 그래서 어느 회사의 '120 GB' 든 섹터 수가 같고, 회사가 달라도 드라이브를 바꿔 끼우거나 디스크를 복제하거나 RAID 를 다시 짤 때 몇 섹터가 모자라는 일이 없다.
+
+### 6.2 1 GB 마다 1,953,504 섹터
+
+두 상수 모두 같은 규칙에서 나온다 : **10⁹ 바이트를 옛 CHS 실린더 단위로 올림한다.**
+
+- 1 GB = 10⁹ 바이트 = 512 B 섹터 1,953,125 개
+- 옛 BIOS 의 CHS 변환은 헤드 16 × 트랙당 섹터 63 = **실린더당 1,008 섹터** 를 썼다
+- 1,953,125 ÷ 1,008 = 1,937.6 → **올려서** 1,938 실린더
+- 1,938 × 1,008 = **1,953,504** 섹터 = 1,000,194,048 바이트
+
+즉 1 GB 가 늘 때마다, 10⁹ 바이트를 담을 수 있는 가장 작은 실린더 수만큼 늘어난다. 올림이므로 광고 용량보다 작아지는 일은 없다.
+
+### 6.3 50 GB 의 기준값 97,696,368
+
+- 97,696,368 ÷ 1,008 = **96,921** 실린더로 나누어떨어진다. 이것도 실린더 단위다
+- 꼭 필요한 최소값은 50 × 10⁹ / 512 = 97,656,250 섹터 → 올리면 96,882 실린더
+- 기준값은 이 최소값보다 39 실린더 (약 20 MB) 크다. 이 여유의 공식 이유는 찾지 못했다. 표준이 나올 때 이미 팔리던 '50 GB' 드라이브 중 가장 큰 것을 덮도록 정했을 가능성이 크다 (그래야 기존 드라이브가 표준보다 작아지지 않는다)
+
+공식이 50 에서 시작하는 것은 표준이 50 GB 이상만 다루기 때문이다. 더 작은 옛 드라이브는 회사마다 크기가 이미 정해져 있었다.
+
+### 6.4 덤 : 4K 섹터에도 맞는다
+
+1,008 = 16 × 63 은 8 로 나누어떨어진다. 그래서 두 상수 모두 8 섹터 (4,096 바이트) 의 배수이고, 4Kn 드라이브용 공식은 그냥 8 로 나눈 것이다.
+
+```
+LBA 수 (4K) = 12,212,046 + 244,188 × (광고 GB − 50)
+```
+
+<div class="check" markdown="1">
+**정리.** IDEMA 용량은 (1) 언제나 광고 GB **이상** 이고 (1 GB 마다 약 0.02%, 기준값에서 조금 더), (2) 실린더 단위로 끝나서 옛 BIOS · 파티션 도구가 실린더 조각을 버리지 않고, (3) 회사가 달라도 같은 크기면 섹터 수가 정확히 같다.
+</div>
+
+## 7. SSD 도 IDEMA 를 따른다
+
+CHS 실린더는 수십 년 동안 아무도 쓰지 않았으니 IDEMA 는 옛 HDD 의 것이라고 생각하기 쉽다. 시작은 HDD 였지만 **SSD 도 따른다.** 실험할 드라이브가 바로 그 증거다 : 234,441,648 은 120 GB 의 IDEMA 값이다.
+
+- **그대로 바꿔 끼우기.** SSD 는 HDD 를 바꾸는 물건으로 팔렸다. 옛 120 GB HDD 를 120 GB SSD 로 복제하려면 SSD 가 섹터 하나라도 작으면 안 된다
+- **RAID 와 회사 바꾸기.** 고장 난 RAID 디스크를 다른 회사의 같은 크기 드라이브로 바꿀 수 있다
+- **FTL 덕분에 공짜.** 5 절에서 본 대로 컨트롤러는 아무 LBA 수나 보여 줄 수 있으니, IDEMA 에 맞추는 데 드는 것이 없다
+
+요즘 NVMe 드라이브에서도 흔히 보는 크기는 모두 이 공식에서 나온다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>광고</th><th>LBA 수 (512 B)</th><th>바이트</th><th>실제 GB</th><th>실제 GiB</th></tr></thead><tbody>
+<tr><td>120 GB</td><td>234,441,648</td><td>120,034,123,776</td><td>120.034</td><td>111.790</td></tr>
+<tr><td>250 GB</td><td>488,397,168</td><td>250,059,350,016</td><td>250.059</td><td>232.886</td></tr>
+<tr><td>500 GB</td><td>976,773,168</td><td>500,107,862,016</td><td>500.108</td><td>465.762</td></tr>
+<tr><td>1 TB</td><td>1,953,525,168</td><td>1,000,204,886,016</td><td>1,000.205</td><td>931.513 (0.910 TiB)</td></tr>
+<tr><td>2 TB</td><td>3,907,029,168</td><td>2,000,398,934,016</td><td>2,000.399</td><td>1,863.017 (1.819 TiB)</td></tr>
+</tbody></table></div>
+
+- **GB** : 모두 광고보다 조금 **크다** (1,000 GB 마다 약 0.2 GB). IDEMA 공식의 올림이다
+- **GiB** : 언제나 GB 의 약 93.1%. Windows 에서 '사라지는' 7.4% 다
+- **TiB** : TB 드라이브는 TiB 와 비교하면 차이가 약 9% 로 더 크다. '1 TB' 가 Windows 에서 약 931 GB 로 보이는 이유다
+
+주의할 점 :
+
+- 상수 뒤의 CHS 이야기는 순전히 역사다. 숫자가 바뀌지 않는 것은 호환성 때문이다
+- IDEMA 를 따르는 것은 관례이지 법이 아니다. 기업용이나 OEM 드라이브 중에는 조금 다른 수를 쓰는 것도 있다. 일반 소비자용은 대부분 따른다
+- 120, 240, 480, 960 GB 같은 어중간한 크기는 SSD 쪽 사정에서 나온다 : 2진 NAND (128, 256, 512, 1024 GiB) 에서 over-provisioning 을 뺀 것. 회사가 광고 GB 를 고르면, 정확한 섹터 수는 IDEMA 공식이 정한다
+
+## 8. 스페어 영역과 over-provisioning
+
+5 절에서 NAND 페이지에 숨은 스페어 영역이 있다고 했다. 이것은 over-provisioning 에 들어가지 **않는다.** 둘은 따로 셈하는 예산이다.
+
+### 8.1 over-provisioning 은 무엇을 재나
+
+```
+OP = (원래 NAND 의 main 영역 용량 − 사용자 용량) / 사용자 용량
+```
+
+여기서 '원래 용량' 은 페이지의 **main (데이터) 영역** 만, 즉 2진인 부분만 센다. '512 Gbit 다이' 는 main 영역이 512 Gbit 라는 뜻이고, 스페어 바이트는 그 위에 따로 있다.
+
+### 8.2 스페어 영역에는 무엇이 있나
+
+- **ECC 패리티.** 대부분이 LDPC 에 쓰인다 (옛 드라이브는 BCH). TLC · QLC 셀은 오류가 많아서 꼭 필요하다
+- **메타데이터.** 페이지의 LBA (전원이 끊긴 뒤 매핑 표를 다시 만들 수 있게), 순서 · 버전 번호, 배드 블록 표시
+
+사용자 데이터에는 절대 쓰이지 않고, FTL 이 GC 나 wear-leveling 에 쓸 수도 없다.
+
+<svg viewBox="0 0 760 250" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="NAND 의 세 층 : 사용자 용량, OP, 스페어 영역"><text x="380.0" y="22.0" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">840 EVO 120GB 의 NAND : 사용자 용량 · OP · 스페어 영역</text><rect x="20" y="60" width="540" height="56" rx="0" fill="#ebf5fb" stroke="#2874a6" stroke-width="2"/><text x="290.0" y="84.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">사용자 용량 (IDEMA LBA)</text><text x="290.0" y="102.0" font-size="11.5" fill="#4d5656" text-anchor="middle">120.03 GB = 111.79 GiB : 내 데이터</text><rect x="560" y="60" width="78" height="56" rx="0" fill="#fdedec" stroke="#c0392b" stroke-width="2"/><text x="599.0" y="84.0" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">OP</text><text x="599.0" y="102.0" font-size="11.5" fill="#4d5656" text-anchor="middle">17.4 GB</text><rect x="638" y="60" width="63" height="56" rx="0" fill="#f4f6f7" stroke="#7f8c8d" stroke-width="2" stroke-dasharray="5 4"/><text x="669.5" y="84.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">스페어</text><text x="669.5" y="102.0" font-size="11.5" fill="#4d5656" text-anchor="middle">+10–13%</text><path d="M20,128 L20,138 L638,138 L638,128" fill="none" stroke="#2c3e50" stroke-width="1.5"/><text x="329.0" y="158.0" font-size="12" font-weight="700" fill="#2c3e50" text-anchor="middle">NAND main 영역 128 GiB = 137.4 GB (2진, 'raw 용량')</text><path d="M638,128 L638,138 L701,138 L701,128" fill="none" stroke="#7f8c8d" stroke-width="1.5"/><text x="669.5" y="158.0" font-size="11.5" fill="#566573" text-anchor="middle">raw 용량에 안 넣음</text><text x="20.0" y="196.0" font-size="11.5" fill="#4d5656" text-anchor="start">OP = (137.4 − 120.03) / 120.03 ≈ 14.5% : GC, wear-leveling, 배드 블록 교체, TurboWrite SLC 버퍼가 여기서 나온다</text><text x="20.0" y="218.0" font-size="11.5" fill="#4d5656" text-anchor="start">스페어 영역 = 페이지마다 붙은 ECC (LDPC) 와 메타데이터 : FTL 도 쓸 수 없다</text><text x="20.0" y="240.0" font-size="11.5" fill="#566573" text-anchor="start">(가로 길이는 GB 비례, 스페어 영역은 대략)</text></svg>
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>층</th><th>쓰는 곳</th><th>OP 에 들어가나</th></tr></thead><tbody>
+<tr><td>페이지마다 붙은 스페어 바이트</td><td>ECC, 메타데이터</td><td>아니오 : 'raw' 용량 밑에 숨어 있다</td></tr>
+<tr><td>사용자 용량을 넘는 main 영역</td><td>GC, wear-leveling, 배드 블록 교체</td><td><strong>예 : 이것이 OP</strong></td></tr>
+<tr><td>사용자 용량 (IDEMA LBA)</td><td>내 데이터</td><td>—</td></tr>
+</tbody></table></div>
+
+### 8.3 예외 : 다이 단위 패리티
+
+어떤 컨트롤러는 페이지마다의 ECC 위에 **다이 단위 패리티** 를 한 겹 더 둔다. Samsung 이나 SandForce 의 'RAISE' 같은 방식으로, 한 다이 몫의 페이지에 나머지 다이의 패리티를 RAID-5 처럼 적는다. 이 패리티는 **main 영역** 에 쓰이므로 OP 를 깎아 먹는다.
+
+## 9. 실험할 드라이브에 대입하면
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>항목</th><th>값</th><th>어디서</th></tr></thead><tbody>
+<tr><td>사용자 용량</td><td>234,441,648 섹터 = 120.03 GB = 111.79 GiB</td><td>드라이브가 알려 준 값, IDEMA 120 GB 와 같음</td></tr>
+<tr><td>NAND main 영역</td><td>128 GiB = 137.4 GB (TLC)</td><td>리뷰에 알려진 값. <a href="/old-ssd-experiments/19-teardown/">실험 19</a> 에서 패키지 표시로 확인</td></tr>
+<tr><td>OP</td><td>약 17.4 GB ≈ 14.5%</td><td>위 두 값으로 계산</td></tr>
+<tr><td>그중 TurboWrite (SLC 버퍼)</td><td>약 3 GB (TLC 로는 약 9 GB 를 차지)</td><td>알려진 값, <a href="/old-ssd-experiments/3-slc-cache/">실험 3</a> 에서 잰다</td></tr>
+<tr><td>GC 가 실제로 쓰는 여유</td><td>약 8 GB 로 가정</td><td><a href="/old-ssd-experiments/10-over-provisioning/">실험 10</a> 의 모델</td></tr>
+</tbody></table></div>
+
+<div class="warn" markdown="1">
+**주의.** 섹터 수만으로는 원래 NAND 크기를 알 수 없다. 컨트롤러는 그것을 보통의 인터페이스로 알려 주지 않는다. 같은 '120 GB' 라도 128 GiB 에 OP 14.5% 일 수도, 다이 패리티가 있어 실제 여유가 더 적을 수도, OEM 모델이라 NAND 구성이 아예 다를 수도 있다. 확인하려면 모델의 데이터시트 · 리뷰를 보거나, 드라이브를 열어 NAND 패키지의 부품 번호를 읽는다.
+</div>
+
+## 10. 직접 확인하는 명령
+
+실험 드라이브는 `sda` 다 (<a href="/old-ssd-experiments/linux-commands/">Linux 명령</a> 페이지).
+
+```sh
+cat /sys/block/sda/size                  # 섹터 수 (512 B 단위로 센다) : 234441648
+lsblk -b -o NAME,SIZE,MODEL /dev/sda     # 바이트 : 120034123776
+lsblk -o NAME,SIZE /dev/sda              # GiB 로 : 111.8G
+sudo smartctl -i /dev/sda                # User Capacity: 120,034,123,776 bytes [120 GB]
+```
+
+<div class="tip" markdown="1">
+**IDEMA 값인지 확인하기.** `(섹터 수 − 97696368) / 1953504 + 50` 이 정수로 떨어지면 IDEMA 크기다. 840 EVO 는 `(234441648 − 97696368) / 1953504 + 50 = 120`.
+</div>
+
+## 요약
+
+- 840 EVO 120GB = 234,441,648 섹터 × 512 B = **120.03 GB = 111.79 GiB.** 같은 양을 다른 자로 잰 것이다
+- SSD 는 10진 GB 로 판다. Windows 는 GiB 로 계산하고 'GB' 라고 적어서 7.4% 가 사라진 것처럼 보인다
+- 1024 를 '킬로' 라고 부른 옛 습관, 1998년에야 나온 KiB · GiB, 그리고 이미 굳은 Windows · RAM 의 관례가 지금의 혼란을 만들었다
+- SSD 안의 NAND 는 2진이지만, FTL 이 안과 밖을 떼어 놓아서 밖에 보이는 섹터 수는 회사가 고를 수 있다
+- 그 섹터 수는 IDEMA 공식이 정한다. 상수는 10⁹ 바이트를 CHS 실린더 (1,008 섹터) 로 올림한 값이고, SSD · NVMe 도 호환성 때문에 그대로 따른다
+- NAND main 영역과 사용자 용량의 차이가 over-provisioning (이 드라이브는 약 14.5%) 이다. 페이지마다 붙은 스페어 영역 (ECC · 메타데이터) 은 OP 에 들어가지 않는다
+
+<div class="step-nav"><a href="{{ '/old-ssd-experiments/' | relative_url }}">← 헌 SSD 로 하는 실험</a><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">SSD 를 다루는 Linux 명령 →</a></div>
