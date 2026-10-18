@@ -118,7 +118,7 @@ smart() {   # smart LABEL : text + JSON snapshot into $OUT
 
 discard_all() {
     note "blkdiscard $DEV (TRIM every LBA)"
-    if [ -n "${LAB_TESTDEV:-}" ]; then fallocate --punch-hole -o 0 -l "$BYTES" "$DEV"; else blkdiscard "$DEV"; fi
+    if [ -n "${LAB_TESTDEV:-}" ]; then fallocate --punch-hole -o 0 -l "$BYTES" "$DEV"; else blkdiscard -f "$DEV"; fi   # -f: newer blkdiscard refuses a disk with a partition table; confirm_erase already asked
     note "let the drive settle for ${SETTLE:-120} s"
     sleep "${SETTLE:-120}"
 }
