@@ -152,7 +152,7 @@ $ python3 smartdiff.py $D
 </tr></thead><tbody>
 <tr><td>0 – 약 3 GB</td><td><strong>약 8만</strong> (최고 80.6k)</td><td>약 330</td><td>SLC 버퍼 (TurboWrite) 에 쓴다</td></tr>
 <tr><td>약 3 – 125 GB</td><td><strong>약 3.6만</strong> (2.7 – 3.8만, 평평)</td><td>약 148</td><td>빈 블록에 TLC 로 바로 쓴다 : GC 없음 (FOB)</td></tr>
-<tr><td>약 125 – 130 GB</td><td>3.6만 → 0.8만</td><td>| <strong>절벽</strong> : 빈 블록이 바닥난다</td></tr>
+<tr><td>약 125 – 130 GB</td><td>3.6만 → 0.8만</td><td>148 → 32</td><td><strong>절벽</strong> : 빈 블록이 바닥난다</td></tr>
 <tr><td>130 – 160 GB</td><td>약 0.8만 (0.54 – 1.27만)</td><td>약 32</td><td>GC 가 시작된다 : 쓰기마다 유효 페이지를 옮긴다</td></tr>
 <tr><td>160 – 200 GB</td><td>약 0.7만</td><td>약 28</td><td>조금씩 더 내려간다</td></tr>
 <tr><td>200 – 240 GB (마지막 4분의 1)</td><td><strong>약 0.6만</strong> (0.47 – 0.96만, 표준편차 655)</td><td>약 <strong>24</strong></td><td>steady state</td></tr>
