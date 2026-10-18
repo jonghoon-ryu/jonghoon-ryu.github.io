@@ -83,27 +83,69 @@ $ sudo ./lab.sh trim
 
 실험을 시작하기 전에 `sudo hdparm -I /dev/disk/by-id/ata-Samsung_SSD_840_EVO_120GB_S1D6NSAFB40389K | grep -i trim` 의 출력을 남겨 둔다 (`check` 결과 폴더의 `hdparm-I.txt` 에도 있다).
 
-## 결과 읽는 법
-
-```
-$ D=$(ls -d ~/Ryu/old_ssd_results/*-trim | tail -1)
-$ python3 plot.py lat.png $D/rd-mapped_lat.log=mapped $D/rd-unmapped_lat.log=unmapped
-$ python3 plot.py scans.png $D/scan-trimmed.csv=trimmed $D/scan-half.csv=half
-```
-
-1. **지연** : 각 `rd-*.json` 의 `clat` percentile (50%, 99%, 99.9%) 을 표로 놓는다. 차이 = NAND 페이지 읽기 + FTL 의 일. 840 EVO 의 TLC 페이지 읽기 시간을 거꾸로 추정해 볼 수 있다.
-2. **IOPS** : `rd32-*` 의 IOPS. 매핑 없는 쪽이 SATA 한계에 붙으면, 그 값이 '인터페이스의 한계' 다.
-3. **0 확인** : `scan-trimmed.csv` 의 `zero_frac` 이 모두 1 이 아니면, TRIM 뒤에 0 이 아닌 값이 나온 것이다 (흥미로운 결과).
-4. **실험 1 과 연결** : 실험 1 의 위치 지도에서 0 으로 읽힌 빈 공간이 빨랐다면, 같은 현상이다.
-
-## 시뮬레이터와의 연결 (덤)
-
-시뮬레이터의 `Unmapped_Reads_Return_Zeros` 와 읽기 지연 차트가 바로 이 동작이다. 실제 드라이브에서 잰 두 지연 (매핑 있음 / 없음) 을 시뮬레이터 설정의 읽기 시간과 비교한다.
-
 ## 결과
 
 <div class="result" markdown="1">
-아직 실행 전.
+2026.10.18 12:53 – 13:07, 결과 폴더 `20261018-125336-trim`.
+
+### H1 : TRIM 한 곳은 0 으로 읽히나
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>스캔 (256 MiB 마다 32 MiB)</th>
+<th>앞쪽 절반</th>
+<th>뒤쪽 절반</th>
+</tr></thead><tbody>
+<tr><td>전체 TRIM 직후 (<code>scan-trimmed</code>)</td><td>0 으로만 읽힘 <strong>100%</strong>, 451 MB/s</td><td>0 으로만 읽힘 <strong>100%</strong>, 456 MB/s</td></tr>
+<tr><td>앞쪽 절반을 쓴 뒤 (<code>scan-half</code>)</td><td>0 으로만 읽힘 <strong>0%</strong> (데이터), 463 MB/s</td><td>0 으로만 읽힘 <strong>100%</strong>, 462 MB/s</td></tr>
+</tbody></table></div>
+
+**맞다.** 448개 구간 (15 GB) 이 하나도 빠짐없이 0 이었다. 이 드라이브는 `hdparm -I` 에 'TRIM 뒤 0 을 약속' (`Deterministic read ZEROs after TRIM`) 하지 않지만 ([실험 2](/old-ssd-experiments/2-features/)), 실제로는 0 을 돌려준다. 커널이 이 모델에 `zeroaftertrim` 예외를 두는 것과 맞는다. 앞쪽에 데이터를 쓰자 정확히 앞쪽 절반만 0 이 아니게 되었다 : TRIM 은 위치마다 정확하다.
+
+![TRIM 직후와 앞쪽 절반을 쓴 뒤의 스캔](/old-ssd-experiments/4-trim/scans.png)
+
+순차로 크게 (1 MiB 씩) 읽는 스캔에서는 데이터가 있는 곳과 0 인 곳이 모두 약 455 MB/s 로 **같다** : 이 읽기는 SATA 링크가 한계라 NAND 를 읽든 안 읽든 차이가 보이지 않는다. 차이는 아래의 4 KiB 읽기 하나하나에서 보인다.
+
+### H2 · H3 : 매핑 없는 읽기는 NAND 를 안 거치나
+
+![지연 percentile](/old-ssd-experiments/4-trim/latency.png)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>4 KiB 랜덤 읽기 60초</th>
+<th>IOPS</th>
+<th>평균</th>
+<th>1%</th>
+<th>50%</th>
+<th>99%</th>
+<th>99.9%</th>
+</tr></thead><tbody>
+<tr><td>QD1, 매핑 있음 (앞쪽 절반, 데이터)</td><td>7,164</td><td>126 µs</td><td>100 µs</td><td>121 µs</td><td>153 µs</td><td>206 µs</td></tr>
+<tr><td>QD1, <strong>매핑 없음</strong> (뒤쪽 절반, TRIM)</td><td><strong>13,987</strong></td><td><strong>61 µs</strong></td><td>35 µs</td><td>63 µs</td><td>78 µs</td><td>134 µs</td></tr>
+<tr><td>QD32, 매핑 있음</td><td>90,475</td><td>351 µs</td><td>322 µs</td><td>334 µs</td><td><strong>506 µs</strong></td><td>618 µs</td></tr>
+<tr><td>QD32, 매핑 없음</td><td>95,111</td><td>334 µs</td><td>326 µs</td><td>334 µs</td><td>342 µs</td><td>399 µs</td></tr>
+</tbody></table></div>
+
+- **H2 : 맞다.** 한 번에 하나씩 (QD1) 읽으면, 매핑 없는 읽기가 **두 배 빠르다** (63 µs 대 121 µs, 중앙값). 차이 약 **58 µs** 가 'NAND 에서 페이지를 읽어 ECC 로 확인하는 시간' 이다 : 매핑이 없으면 컨트롤러는 표만 보고 0 을 돌려준다. 남은 약 60 µs 는 SATA 명령 · 링크 · 컨트롤러 · 매핑 표 찾기 · 커널의 몫이다.
+- 이 드라이브의 TLC 페이지 읽기 시간을 밖에서 어림한 값 : **약 60 µs** (새 데이터 기준. 실험 1 의 오래된 데이터는 다시 읽기 때문에 1 MiB 에 수백 ms 였다).
+- **H3 : 일부만 맞다.** 32개씩 걸어 두면 (QD32) 둘 다 약 **9만 IOPS** 로 거의 같다 (90k 대 95k) : 중앙값 지연이 둘 다 334 µs 이고, 32 ÷ 334 µs ≈ 9.6만이다. 곧 이 때의 한계는 NAND 가 아니라 **SATA 명령 처리** (링크와 컨트롤러가 명령을 주고받는 속도) 다. NAND 를 읽는 쪽은 꼬리에서만 티가 난다 (99% 506 µs 대 342 µs).
+- 이 '약 9.5만 IOPS' 는 Samsung 이 밝힌 4 KiB 랜덤 읽기 QD32 값 (9.4만, 120GB) 과 거의 같다.
+
+### 덤 : 앞쪽 절반 쓰기
+
+앞쪽 절반 (60 GB) 을 1 MiB 순차로 쓰는 데 평균 **151.5 MB/s** (화면의 `w=144MiB/s`). [실험 3](/old-ssd-experiments/3-slc-cache/) 의 TLC 직접 쓰기 속도 (약 150 MB/s) 와 같다. 한 번 33% 근처에서 109 MiB/s 로 잠깐 떨어졌고, 1 MiB 쓰기 하나의 최대가 381 ms 였다 : 쓰기 도중 드라이브 안의 일 (버퍼 정리, 블록 준비) 이 잠깐 끼어든 것으로 보인다.
+
+### 정리
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>가설</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>H1 TRIM 된 LBA 는 0 으로 읽힌다</td><td><strong>맞다</strong> : 100%. 약속 (hdparm) 은 없지만 실제로는 0</td></tr>
+<tr><td>H2 매핑 없는 읽기는 NAND 를 안 거친다</td><td><strong>맞다</strong> : QD1 지연이 절반 (63 대 121 µs). 차이 약 60 µs = NAND 페이지 읽기</td></tr>
+<tr><td>H3 그래서 IOPS 도 높다</td><td>QD1 에서는 2배. <strong>QD32 에서는 거의 같다</strong> (95k 대 90k) : 둘 다 SATA 명령 처리 (약 9.5만 IOPS) 에 묶인다</td></tr>
+</tbody></table></div>
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/3-slc-cache/' | relative_url }}">← 3. SLC 캐시</a><a href="{{ '/old-ssd-experiments/5-perf-map/' | relative_url }}">5. 성능 지도 →</a></div>

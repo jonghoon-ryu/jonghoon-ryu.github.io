@@ -121,8 +121,9 @@ table.t code { font-size:0.82rem; }
 <tr><td>1 오래된 데이터</td><td><strong>끝</strong> (2026.10.18) : 데이터가 있는 곳은 약 9 MB/s, 빈 곳은 400–520 MB/s. 나이와 상관없이 모두 느리고, 오류는 없다. 블루 스크린은 이 SSD 탓이 아닐 가능성이 크다. <a href="/old-ssd-experiments/1-old-data/">결과</a></td></tr>
 <tr><td>2 기능 · 자가 진단</td><td><strong>끝</strong> (2026.10.18) : 오류 로그 · 링크 오류 0, 자가 진단 <code>Completed without error</code> (62.6분, 예상 70분), Security frozen, 읽기만 해도 31 → 40 °C. <a href="/old-ssd-experiments/2-features/">결과</a></td></tr>
 <tr><td>3 SLC 캐시</td><td><strong>끝</strong> (2026.10.18) : 버퍼 약 3.2 GB 를 533 MB/s, 그 뒤 TLC 약 150 MB/s, 버퍼는 몇 초 안에 다시 빈다. <strong>새 데이터는 약 445 MB/s 로 읽히고 (오래된 데이터의 약 45배), 자가 진단은 9.5분 (오래된 데이터는 62.6분)</strong> : 느림의 원인은 데이터의 나이였다. <a href="/old-ssd-experiments/3-slc-cache/">결과</a></td></tr>
-<tr><td>4 TRIM 과 매핑 없는 읽기</td><td>다음</td></tr>
-<tr><td>5 – 19</td><td>아직</td></tr>
+<tr><td>4 TRIM 과 매핑 없는 읽기</td><td><strong>끝</strong> (2026.10.18) : TRIM 한 곳은 100% 0 으로 읽힌다 (약속은 없지만). QD1 지연 : 매핑 없음 63 µs, 있음 121 µs → NAND 페이지 읽기 약 60 µs. QD32 에서는 둘 다 약 9.5만 IOPS (SATA 한계). <a href="/old-ssd-experiments/4-trim/">결과</a></td></tr>
+<tr><td>5 성능 지도</td><td>다음</td></tr>
+<tr><td>6 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 
 <div class="warn" markdown="1">
