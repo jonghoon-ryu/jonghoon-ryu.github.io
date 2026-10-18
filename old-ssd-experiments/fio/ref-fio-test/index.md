@@ -127,7 +127,29 @@ table.t code { font-size:0.82rem; }
 </tbody></table></div>
 
 - **512 B 와 4 KiB 의 IOPS 가 같다** (408k / 402k) : 드라이브는 4 KiB 단위로 일한다. 512 B 를 읽어도 일은 4 KiB 만큼 하니, MB/s 만 8분의 1이 된다 ([실험 6](/old-ssd-experiments/6-write-size/) 이 120GB SSD 의 쓰기에서 이것을 본다).
-- **16 KiB 부터 MB/s 가 천장 (약 1.9 – 2.3 GB/s) 에 닿는다.** 그 뒤로는 블록이 커질수록 IOPS 는 줄고 지연은 크기에 비례해 늘 뿐이다. 이 장치 · 이 설정 (큐 깊이 32 랜덤 읽기) 의 대역 한계다.
+- **16 KiB 에서 가장 빠르고, 그보다 크면 오히려 느리다** (2,277 → 1,911 MB/s). 이상해 보여서 다시 쟀다 (2026.10.18 13:30, 각 8초) :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>다시 재기</th>
+<th>16k</th>
+<th>32k</th>
+<th>64k</th>
+<th>128k – 1m</th>
+</tr></thead><tbody>
+<tr><td>같은 시험 파일, 작은 → 큰 순서</td><td>2,431 MB/s</td><td><strong>1,294</strong></td><td>1,378</td><td>1,360 – 1,381</td></tr>
+<tr><td>같은 시험 파일, 큰 → 작은 순서</td><td>2,444</td><td><strong>1,293</strong></td><td>1,378</td><td>1,359 – 1,377</td></tr>
+<tr><td><strong>새로 순차로 쓴 파일</strong> (1 MiB 씩)</td><td>2,896</td><td><strong>3,251</strong></td><td><strong>4,362</strong></td><td>(재지 않음)</td></tr>
+<tr><td>새 파일, 32k 를 큐 깊이 64 · 128 로</td><td>| 3,251 · 3,249</td><td>|</td></tr>
+<tr><td>새 파일, 순차 읽기</td><td>3,061</td><td>3,085</td><td>|</td></tr>
+</tbody></table></div>
+
+  **계단은 진짜다** (순서를 뒤집어도 같은 자리) : 그런데 **새로 순차로 쓴 파일에서는 없다** (16k → 32k → 64k 로 계속 오른다). 차이는 파일이 **어떻게 쓰였나** 다. 이 그룹이 읽은 시험 파일은 앞의 `randwrite` 실행들이 4 KiB 씩 랜덤으로 덮어쓴 뒤였다. SSD 는 새 데이터를 다음 빈 자리에 쓰므로, 처음엔 NAND 에 이어져 있던 파일이 **4 KiB 조각들로 흩어진다** (서로 다른 페이지 · 블록 · 칩).
+  - 새 파일 : 32 KiB 읽기 = 이웃한 16 KiB NAND 페이지 둘 = 페이지 읽기 약 2번 (동시에)
+  - 흩어진 파일 : 32 KiB 읽기 = 서로 다른 8곳의 4 KiB 조각 = 페이지 읽기 최대 8번 + 매핑 찾기 8번. DRAM 없이 매핑을 PC 의 RAM (HMB) 에 빌려 두는 이 드라이브에는 특히 비싸다
+
+  그래서 흩어진 파일에서는 블록이 클수록 요청 하나가 모아야 할 조각이 많아진다. 16 KiB 까지는 큰 전송의 이득이 이겼고, 32 KiB 부터는 조각마다의 일이 이겨 약 1.3 GB/s 로 떨어졌다. 큐 깊이를 늘려도 그대로인 것 (32k 의 64 · 128) 도 한계가 요청 **하나** 안의 일이라는 뜻이다. 계단이 **정확히** 16 과 32 KiB 사이인 이유는 밖에서 보이지 않는다 (NAND 페이지 16 KiB, 펌웨어의 읽기 경로, 매핑 캐시의 크기 같은 것일 수 있다).
+  **벤치마크의 교훈** : 읽기 시험은 드라이브만이 아니라 **데이터가 그 전에 어떻게 쓰였나** 를 잰다. SNIA 의 SSD 성능 시험 표준 (PTS) 이 측정마다 앞서 정해진 방식으로 쓰기 (preconditioning) 를 하라고 정한 이유다.
 - 숫자를 말할 때 IOPS 와 MB/s 는 늘 블록 크기와 함께 말해야 하는 이유다 : `400k IOPS` 는 512 B 면 0.2 GB/s, 4 KiB 면 1.6 GB/s 다.
 
 ## `--iodepth` : 동시에 걸어 둔 요청 수
@@ -349,7 +371,7 @@ IOPS 는 비슷한데 버퍼 쓰기의 99% 지연이 4배 짧다 : 쓰기가 RAM
 <tr><td><code>--iodepth</code></td><td>1 → 64</td><td>IOPS <strong>35배</strong>, 그 뒤로는 지연만 는다</td><td>장치의 병렬성을 쓰려면 요청을 걸어 둬야 한다. 천장 뒤로는 줄 서기</td></tr>
 <tr><td><code>--ioengine</code></td><td><code>io_uring</code> → <code>psync</code></td><td>IOPS <strong>30배 낮음</strong></td><td>동기 엔진은 <code>iodepth</code> 를 무시한다. <code>posixaio</code> 는 겉모습만 비동기</td></tr>
 <tr><td><code>--fsync</code></td><td>0 → 1</td><td>쓰기 IOPS <strong>115배 낮음</strong></td><td>FLUSH 는 비싸다 : 모아서 한다</td></tr>
-<tr><td><code>--bs</code></td><td>4k → 1m</td><td>IOPS 230배 낮음, MB/s 는 천장 근처</td><td>512 B 와 4 KiB 는 같은 일, 16 KiB 부터 대역 천장</td></tr>
+<tr><td><code>--bs</code></td><td>4k → 1m</td><td>IOPS 230배 낮음</td><td>512 B 와 4 KiB 는 같은 일. 흩어진 파일에서는 32 KiB 부터 MB/s 가 반으로 (새 파일은 64 KiB 에 4.4 GB/s) : 데이터가 쓰인 방식이 읽기를 바꾼다</td></tr>
 <tr><td><code>--rw</code></td><td>randread → randrw</td><td>읽기 99% 지연 <strong>12배</strong></td><td>섞인 쓰기가 읽기의 꼬리를 늘린다. 순차로 섞기 (<code>rw</code>) 의 느림은 그때의 드라이브 상태였다 (다시 재니 <code>randrw</code> 와 비슷)</td></tr>
 <tr><td><code>--random_distribution</code></td><td>random → zipf:1.2</td><td>IOPS +34%, 꼬리 절반</td><td>몰린 접근은 빨라진다 (매핑 캐시)</td></tr>
 <tr><td><code>--numjobs</code></td><td>1 → 2</td><td>+24%, 그 뒤로는 지연만</td><td>job × iodepth 가 걸린 요청의 합</td></tr>
