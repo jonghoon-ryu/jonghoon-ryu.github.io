@@ -140,8 +140,8 @@ table.t code { font-size:0.82rem; }
 <tr><td>같은 시험 파일, 작은 → 큰 순서</td><td>2,431 MB/s</td><td><strong>1,294</strong></td><td>1,378</td><td>1,360 – 1,381</td></tr>
 <tr><td>같은 시험 파일, 큰 → 작은 순서</td><td>2,444</td><td><strong>1,293</strong></td><td>1,378</td><td>1,359 – 1,377</td></tr>
 <tr><td><strong>새로 순차로 쓴 파일</strong> (1 MiB 씩)</td><td>2,896</td><td><strong>3,251</strong></td><td><strong>4,362</strong></td><td>(재지 않음)</td></tr>
-<tr><td>새 파일, 32k 를 큐 깊이 64 · 128 로</td><td>| 3,251 · 3,249</td><td>|</td></tr>
-<tr><td>새 파일, 순차 읽기</td><td>3,061</td><td>3,085</td><td>|</td></tr>
+<tr><td>새 파일, 32k 를 큐 깊이 64 · 128 로</td><td>—</td><td>3,251 · 3,249</td><td>—</td><td>—</td></tr>
+<tr><td>새 파일, 순차 읽기</td><td>3,061</td><td>3,085</td><td>—</td><td>—</td></tr>
 </tbody></table></div>
 
   **계단은 진짜다** (순서를 뒤집어도 같은 자리) : 그런데 **새로 순차로 쓴 파일에서는 없다** (16k → 32k → 64k 로 계속 오른다). 차이는 파일이 **어떻게 쓰였나** 다. 이 그룹이 읽은 시험 파일은 앞의 `randwrite` 실행들이 4 KiB 씩 랜덤으로 덮어쓴 뒤였다. SSD 는 새 데이터를 다음 빈 자리에 쓰므로, 처음엔 NAND 에 이어져 있던 파일이 **4 KiB 조각들로 흩어진다** (서로 다른 페이지 · 블록 · 칩).
