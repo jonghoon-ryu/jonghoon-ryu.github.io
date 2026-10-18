@@ -19,7 +19,7 @@ table.t code { font-size:0.82rem; }
 
 # TBD : system programming for SSD
 
-**SSD 테스트 도구를 C 로 직접 쓰면서 시스템 프로그래밍을 배운다.** (2026.10.18 시작, 아직 진행 중 : TBD)
+**SSD 테스트 도구를 C 로 직접 쓰면서 시스템 프로그래밍을 배운다.** (2027 시작 예정)
 
 [헌 SSD 로 하는 실험](/old-ssd-experiments/) 은 fio 와 `lab.sh` 같은 남이 만든 도구로 잰다. 이 페이지는 한 걸음 더 들어가, **내 코드가 직접 `open` · `pwrite` · `fsync` · `ioctl` 을 불러 드라이브를 재게** 한다. 그러면서 SSD 안의 일 (SLC 캐시, GC, FLUSH, TRIM) 을 fio 의 평균 뒤에 숨지 않은 모습으로 본다.
 
