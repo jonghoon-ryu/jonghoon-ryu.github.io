@@ -25,7 +25,7 @@ table.t code { font-size:0.82rem; }
 <b>보는 FTL 개념</b><span>빈 블록 풀, GC (victim 선택, 유효 페이지 복사), WAF, steady state</span>
 <b>지우나?</b><span>예</span>
 <b>연결</b><span>SATA</span>
-<b>시간</b><span>2–6시간 (steady state 의 속도에 달렸다) : 밤새 돌린다</span>
+<b>시간</b><span>2–6시간으로 어림했지만 실제로는 81분 (steady state 가 약 24 MB/s 였다)</span>
 <b>명령</b><span><code>sudo ./lab.sh cliff 100</code></span>
 </div>
 
@@ -137,7 +137,53 @@ $ python3 smartdiff.py $D
 ## 결과
 
 <div class="result" markdown="1">
-아직 실행 전.
+2026.10.18 15:36 – 16:57 (**81분**), 결과 폴더 `20261018-153629-cliff-span100`. 전체 TRIM → 4 KiB 랜덤 쓰기 QD32 를 120 GB 범위에 240 GB.
+
+![write cliff : 쓴 양에 따른 IOPS](/old-ssd-experiments/8-write-cliff/cliff.png)
+
+**교과서 같은 세 구간**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>쓴 양</th>
+<th>IOPS (평균, 범위)</th>
+<th>MB/s</th>
+<th>무슨 일이</th>
+</tr></thead><tbody>
+<tr><td>0 – 약 3 GB</td><td><strong>약 8만</strong> (최고 80.6k)</td><td>약 330</td><td>SLC 버퍼 (TurboWrite) 에 쓴다</td></tr>
+<tr><td>약 3 – 125 GB</td><td><strong>약 3.6만</strong> (2.7 – 3.8만, 평평)</td><td>약 148</td><td>빈 블록에 TLC 로 바로 쓴다 : GC 없음 (FOB)</td></tr>
+<tr><td>약 125 – 130 GB</td><td>3.6만 → 0.8만</td><td>| <strong>절벽</strong> : 빈 블록이 바닥난다</td></tr>
+<tr><td>130 – 160 GB</td><td>약 0.8만 (0.54 – 1.27만)</td><td>약 32</td><td>GC 가 시작된다 : 쓰기마다 유효 페이지를 옮긴다</td></tr>
+<tr><td>160 – 200 GB</td><td>약 0.7만</td><td>약 28</td><td>조금씩 더 내려간다</td></tr>
+<tr><td>200 – 240 GB (마지막 4분의 1)</td><td><strong>약 0.6만</strong> (0.47 – 0.96만, 표준편차 655)</td><td>약 <strong>24</strong></td><td>steady state</td></tr>
+</tbody></table></div>
+
+전체 : 240 GB 를 81분에, 평균 12.1k IOPS · 49.4 MB/s. 쓰기 하나의 지연 평균 2.7 ms, 99% 26 ms, 99.9% 37 ms, 가장 길게 281 ms. 오류 0. 온도 32 → 44 °C.
+
+**가설 확인**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>가설</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>H1 처음엔 빠르다</td><td><strong>맞다</strong> : 처음 약 3 GB 는 8만 IOPS (SLC 버퍼), 그 뒤 125 GB 까지 3.6만 IOPS 로 평평</td></tr>
+<tr><td>H2 용량 근처에서 급히 떨어진다</td><td><strong>맞다</strong> : 125 – 130 GB 에서 몇 분 만에 3.6만 → 0.8만. 사용자 용량 120 GB 를 넘긴 바로 뒤</td></tr>
+<tr><td>H3 steady state 는 수천 IOPS 이하</td><td><strong>맞다</strong> : 마지막 4분의 1 평균 <strong>약 6천 IOPS</strong>, 처음 평평한 구간의 <strong>6분의 1</strong></td></tr>
+<tr><td>H4 steady state 는 크게 흔들린다</td><td><strong>맞다</strong> : 1초 값이 4.7 – 9.6천 사이를 오간다 (평균의 ±10% 가 보통, 때로 +60%)</td></tr>
+</tbody></table></div>
+
+**절벽의 자리로 숨은 여유를 어림하기.** 절벽은 약 125 – 130 GB 에서 왔다. 사용자 용량 120 GB 를 다 쓰고도 **약 5 – 10 GB** 를 GC 없이 더 썼다는 뜻이다. [실험 10](/old-ssd-experiments/10-over-provisioning/) 의 모델은 NAND 137.4 GB − 사용자 120 GB = OP 17.4 GB 에서 SLC 버퍼 (TLC 로 약 9 GB) 를 빼고 'GC 가 쓰는 여유 약 8 GB' 를 가정했다 : **측정과 맞는다.**
+
+**steady state 와 모델.** 모델의 예측은 약 20 MB/s (약 5천 IOPS) 였고, 측정은 약 24 MB/s (약 6천 IOPS) 이며 아직 조금씩 내려가고 있었다. 평평한 구간 (약 148 MB/s) 과 steady state 의 비 **약 6** 은, NAND 쓰기 속도가 그대로라면 'NAND 에 쓰는 양이 호스트가 쓰는 양의 약 6배' (WAF 약 6) 라는 뜻이다.
+
+**그런데 SMART 177 은 다른 말을 한다.** 177 은 123 → **126 (+3)**, 241 은 +240.1 GB : `smartdiff.py` 의 WAF 는 약 **1.7** (177 이 정수로만 늘어서 1.15 – 2.29). 첫 120 GB 를 WAF 1 로 보면 나머지 120 GB 의 WAF 는 약 2.4 다. 속도로 어림한 '약 6' 과 크게 다르다. 가능한 이유 :
+- 177 이 늦게 반영된다 (평균 지움 횟수를 나중에 계산), 또는 SLC 영역의 지움을 세지 않는다
+- steady state 의 느림이 GC 의 복사만이 아니라 다른 일 (SLC → TLC 옮기기, 매핑 표 저장) 에서도 온다
+- steady state 에 아직 다 이르지 않았다 (마지막까지 내려가고 있었다)
+[실험 12](/old-ssd-experiments/12-waf/) 가 순차 쓰기 5번으로 177 의 눈금을 따로 재고, 이 실행의 WAF 를 다시 본다. 실험 9 직후의 SMART 도 177 이 늦게 오르는지 알려 줄 것이다.
+
+**실험 5 와 이어서** : [실험 5](/old-ssd-experiments/5-perf-map/) 의 쓰기 지도에서 '꽉 찬 드라이브의 랜덤 덮어쓰기는 무너진다' 를 몇 분 동안 보았다. 이 실험은 그 무너짐이 **어디서 시작해서 어디까지 내려가는지** 를 보여 준다.
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/7-flush/' | relative_url }}">← 7. 쓰기 캐시 · FLUSH</a><a href="{{ '/old-ssd-experiments/9-idle-gc/' | relative_url }}">9. 쉬는 동안 GC →</a></div>
