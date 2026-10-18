@@ -510,4 +510,4 @@ $ iostat -x 1 sda        # 1초마다 : r/s, rMB/s, r_await (읽기 하나의 �
 <tr><td>지켜보기</td><td><code>iostat -x 1</code>, <code>/proc/diskstats</code></td><td>아니오</td></tr>
 </tbody></table></div>
 
-<div class="step-nav"><a href="{{ '/old-ssd-experiments/ssd-tutorial/' | relative_url }}">← SSD tutorial</a><a href="{{ '/old-ssd-experiments/fio/' | relative_url }}">fio 사용법 →</a></div>
+<div class="step-nav"><a href="{{ '/old-ssd-experiments/ssd-tutorial/' | relative_url }}">← SSD Q&A</a><a href="{{ '/old-ssd-experiments/fio/' | relative_url }}">fio 사용법 →</a></div>

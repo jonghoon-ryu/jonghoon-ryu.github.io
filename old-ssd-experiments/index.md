@@ -82,7 +82,7 @@ table.t code { font-size:0.82rem; }
 
 연결은 실험 17 만 USB 어댑터 (전원을 끊기 쉽게), 나머지는 모두 메인보드 SATA 다.
 
-처음 시작한다면 먼저 [SSD tutorial](/old-ssd-experiments/ssd-tutorial/) (용량 · GB 와 GiB · over-provisioning · 드라이브 · 네임스페이스 · 파티션), [SSD 를 다루는 Linux 명령](/old-ssd-experiments/linux-commands/), [fio 사용법](/old-ssd-experiments/fio/) 을 읽는다. 실험에 나오는 명령 (`lsblk`, `smartctl`, `hdparm`, `blkdiscard`, `fio` …) 이 거기 설명되어 있다.
+처음 시작한다면 먼저 [SSD Q&A](/old-ssd-experiments/ssd-tutorial/) (용량 · GB 와 GiB · over-provisioning · 드라이브 · 네임스페이스 · 파티션), [SSD 를 다루는 Linux 명령](/old-ssd-experiments/linux-commands/), [fio 사용법](/old-ssd-experiments/fio/) 을 읽는다. fio 의 옵션을 하나씩 바꿔 잰 참고 자료는 [Ref: fio test](/old-ssd-experiments/ref-fio-test/). 실험에 나오는 명령 (`lsblk`, `smartctl`, `hdparm`, `blkdiscard`, `fio` …) 이 거기 설명되어 있다.
 
 ## 더 해 볼 수 있는 것
 
@@ -103,6 +103,7 @@ table.t code { font-size:0.82rem; }
 <tr><td><code>fiosum.py</code></td><td>fio 의 JSON 결과들을 한 표 (<code>summary.csv</code>) 로</td></tr>
 <tr><td><code>plcheck.py</code></td><td>전원 차단 실험 : 번호 붙은 기록 쓰기와 확인</td></tr>
 <tr><td><code>plot.py</code></td><td>결과 폴더의 로그로 그래프 그리기</td></tr>
+<tr><td><code>fiosweep.py</code> · <code>sweepplot.py</code></td><td>fio 옵션을 하나씩 바꿔 재고 그리기 (<a href="/old-ssd-experiments/ref-fio-test/">Ref: fio test</a>)</td></tr>
 <tr><td><code>smartdiff.py</code></td><td>실험 앞뒤 SMART 비교, 177 · 241 로 WAF 추정</td></tr>
 </tbody></table></div>
 
@@ -129,4 +130,4 @@ table.t code { font-size:0.82rem; }
 `lab.sh` 를 거치지 않고 `dd`, `blkdiscard`, `fio` 를 직접 쓸 때는 [Linux 명령 페이지의 위험한 명령 절](/old-ssd-experiments/linux-commands/#danger) 을 먼저 읽는다.
 </div>
 
-<div class="step-nav"><span></span><a href="{{ '/old-ssd-experiments/ssd-tutorial/' | relative_url }}">SSD tutorial →</a></div>
+<div class="step-nav"><span></span><a href="{{ '/old-ssd-experiments/ssd-tutorial/' | relative_url }}">SSD Q&A →</a></div>

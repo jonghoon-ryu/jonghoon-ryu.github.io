@@ -1,6 +1,6 @@
 ---
 layout: default
-title: SSD tutorial
+title: SSD Q&A
 permalink: /old-ssd-experiments/ssd-tutorial/
 ---
 <style>
@@ -18,7 +18,7 @@ table.t code { font-size:0.82rem; }
 @media (max-width: 640px) { .glance { grid-template-columns: 1fr; } }
 </style>
 
-# SSD tutorial : 120 GB 드라이브는 왜 111.8 GiB 로 보이나
+# SSD Q&A : 120 GB 드라이브는 왜 111.8 GiB 로 보이나
 
 실험할 840 EVO 의 용량은 **234,441,648 섹터 × 512 B** 다. 이 숫자 하나에서 시작해, SSD 의 용량이 어떻게 정해지는지를 차례로 따라간다 : GB 와 GiB, 왜 두 단위가 섞였나, SSD 안의 2진 NAND 와 밖에 보이는 10진 용량, 섹터 수를 정하는 IDEMA 공식, over-provisioning 과 스페어 영역, 용량을 나누는 세 층 (드라이브 · 네임스페이스 · 파티션), USB 로 붙인 NVMe, 그리고 읽을 수 없는 섹터가 생겼을 때 드라이브 · 커널 · OS 가 하는 일.
 

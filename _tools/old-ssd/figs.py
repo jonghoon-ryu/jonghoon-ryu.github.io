@@ -572,3 +572,22 @@ def sim_map():
     d.text(380, 150, "열어서 볼 수 있는 것은 앞의 둘 (채널은 배선, 칩은 패키지) 까지", 12, color=K)
     d.text(380, 175, "나머지는 데이터시트와 실험 (블록 크기 · 페이지 크기 추정) 으로", 12, color=K)
     return d.svg("계층")
+
+
+# ------------------------------------------------------------------ Ref: fio test
+def ref_method():
+    d = D(760, 300, "방법 : 기준 하나에서 옵션을 딱 하나만 바꾼다")
+    d.box(20, 50, 220, 200, "기준 (baseline)", ["--rw=randread", "--bs=4k", "--iodepth=32", "--ioengine=io_uring",
+                                                "--direct=1 --size=4G", "--numjobs=1", "--runtime=10"],
+          "teal", mono=True, size=12.5)
+    rows = [("--rw", "randread, read, randwrite, write, randrw, rw"), ("--bs", "512, 4k, 16k, 64k, 128k, 1m"),
+            ("--iodepth", "1, 2, 4, 8, 16, 32, 64, 128, 256"), ("--numjobs", "1, 2, 4, 8, 16"),
+            ("--ioengine", "io_uring, psync, sync, pvsync2, posixaio, mmap"),
+            ("--direct / --size", "0 / 1,  16M – 4G"), ("그 밖", "--thread, 분포 (zipf, pareto), io_uring 옵션")]
+    for i, (k, v) in enumerate(rows):
+        y = 50 + i * 29
+        d.box(290, y, 150, 24, "", [k], "chg", mono=True, size=11.5, rx=4)
+        d.text(452, y + 17, v, 11.5, anchor="start")
+        d.arrow(240, 150, 288, y + 12)
+    d.text(380, 280, "쓰기에만 있는 옵션 (--fsync, 쓰기의 --bs · --direct) 은 rw=randwrite 인 쓰기 기준에서 하나만 바꾼다", 11.5, color="#566573")
+    return d.svg("방법")

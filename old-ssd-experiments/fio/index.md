@@ -755,4 +755,4 @@ fio --name=NAME --filename=$DEV --direct=1 --ioengine=$ENGINE \
 - `/usr/share/doc/fio/examples/` : job 파일 예제 (apt 로 깔면 있다)
 - `fio --cmdhelp=옵션이름` : 옵션 하나의 설명. 예 : `fio --cmdhelp=norandommap`
 
-<div class="step-nav"><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">← SSD 를 다루는 Linux 명령</a><a href="{{ '/old-ssd-experiments/0-setup/' | relative_url }}">0. 준비 →</a></div>
+<div class="step-nav"><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">← SSD 를 다루는 Linux 명령</a><a href="{{ '/old-ssd-experiments/ref-fio-test/' | relative_url }}">Ref: fio test →</a></div>
