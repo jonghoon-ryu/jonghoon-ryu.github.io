@@ -28,7 +28,7 @@ SLC 버퍼 (TurboWrite) | 120GB 모델은 약 3 GB 로 알려짐 | Samsung 자�
 컨트롤러 | Samsung MEX (ARM 코어 3개로 알려짐) | 리뷰 (실험 19 에서 확인)
 지금 내용 | 옛 Windows 디스크 : EFI · MSR · NTFS 111 GB (91% 참) · 복구 | `lsblk -f`, `df`
 파일 날짜 | 2018 – 2024.12 (hiberfil.sys 마지막 수정 2024.12.08) | `ls -la`
-지난 이력 | 2024.12 쯤 마지막으로 쓴 뒤 **1년 넘게 전원 없이** 보관. 2026.10.17 에 다시 연결해 Ryu 가 파일 몇 개를 읽고 몇 개를 새로 씀 (약 17.6 MB). 원래 Windows 부팅 드라이브였고, 가끔 블루 스크린이 떠서 새로 PC 를 조립했고, 이 SSD 는 그 뒤로 쓰지 않고 두었다. 그러다 심심해서 이 SSD 로 실험해 보기로 했다 | Ryu, `/proc/diskstats`
+지난 이력 | 2024.12 쯤 마지막으로 쓴 뒤 **1년 넘게 전원 없이** 보관. 2026.10.17 에 다시 연결해 Ryu 가 파일 몇 개를 읽고 몇 개를 새로 씀 (약 17.6 MB). 원래 Windows 부팅 드라이브였다. 가끔 블루 스크린이 떠서 새로 PC 를 조립했고, 이 SSD 는 그 뒤로 쓰지 않고 두었다. 그러다 심심해서 이 SSD 로 실험해 보기로 했다 | Ryu, `/proc/diskstats`
 연결 | 메인보드 SATA `ata5` (`/dev/sda`), SATA 3 (6.0 Gbps), TRIM 됨 (`DISC-GRAN 512B`, `DISC-MAX 2G`) | `lsblk -o NAME,TRAN,DISC-MAX`, `journalctl -k`
 ```
 
