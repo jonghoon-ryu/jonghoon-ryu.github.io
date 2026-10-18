@@ -82,7 +82,7 @@ table.t code { font-size:0.82rem; }
 
 연결은 실험 17 만 USB 어댑터 (전원을 끊기 쉽게), 나머지는 모두 메인보드 SATA 다.
 
-처음 시작한다면 먼저 [SSD 를 다루는 Linux 명령](/old-ssd-experiments/linux-commands/) 과 [fio 사용법](/old-ssd-experiments/fio/) 을 읽는다. 실험에 나오는 명령 (`lsblk`, `smartctl`, `hdparm`, `blkdiscard`, `fio` …) 이 거기 설명되어 있다.
+처음 시작한다면 먼저 [SSD tutorial](/old-ssd-experiments/ssd-tutorial/) (용량 · GB 와 GiB · over-provisioning · 드라이브 · 네임스페이스 · 파티션), [SSD 를 다루는 Linux 명령](/old-ssd-experiments/linux-commands/), [fio 사용법](/old-ssd-experiments/fio/) 을 읽는다. 실험에 나오는 명령 (`lsblk`, `smartctl`, `hdparm`, `blkdiscard`, `fio` …) 이 거기 설명되어 있다.
 
 ## 더 해 볼 수 있는 것
 
@@ -127,4 +127,4 @@ table.t code { font-size:0.82rem; }
 `lab.sh` 를 거치지 않고 `dd`, `blkdiscard`, `fio` 를 직접 쓸 때는 [Linux 명령 페이지의 위험한 명령 절](/old-ssd-experiments/linux-commands/#danger) 을 먼저 읽는다.
 </div>
 
-<div class="step-nav"><span></span><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">SSD 를 다루는 Linux 명령 →</a></div>
+<div class="step-nav"><span></span><a href="{{ '/old-ssd-experiments/ssd-tutorial/' | relative_url }}">SSD tutorial →</a></div>

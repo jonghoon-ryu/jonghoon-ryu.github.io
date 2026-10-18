@@ -20,7 +20,7 @@ table.t code { font-size:0.82rem; }
 
 # SSD tutorial : 120 GB 드라이브는 왜 111.8 GiB 로 보이나
 
-실험할 840 EVO 의 용량은 **234,441,648 섹터 × 512 B** 다. 이 숫자 하나에서 시작해, SSD 의 용량이 어떻게 정해지는지를 차례로 따라간다 : GB 와 GiB, 왜 두 단위가 섞였나, SSD 안의 2진 NAND 와 밖에 보이는 10진 용량, 섹터 수를 정하는 IDEMA 공식, 그리고 over-provisioning 과 스페어 영역.
+실험할 840 EVO 의 용량은 **234,441,648 섹터 × 512 B** 다. 이 숫자 하나에서 시작해, SSD 의 용량이 어떻게 정해지는지를 차례로 따라간다 : GB 와 GiB, 왜 두 단위가 섞였나, SSD 안의 2진 NAND 와 밖에 보이는 10진 용량, 섹터 수를 정하는 IDEMA 공식, over-provisioning 과 스페어 영역, 그리고 용량을 나누는 세 층 (드라이브 · 네임스페이스 · 파티션).
 
 <div class="glance">
 <b>이 페이지는</b><span>Claude 와 나눈 질문과 답을 다듬어 정리한 것 (2026.10.18)</span>
@@ -255,6 +255,74 @@ sudo smartctl -i /dev/sda                # User Capacity: 120,034,123,776 bytes 
 **IDEMA 값인지 확인하기.** `(섹터 수 − 97696368) / 1953504 + 50` 이 정수로 떨어지면 IDEMA 크기다. 840 EVO 는 `(234441648 − 97696368) / 1953504 + 50 = 120`.
 </div>
 
+## 11. 드라이브, 네임스페이스, 파티션 : 용량을 나누는 세 층
+
+용량을 나누는 방법은 하나가 아니다. **드라이브** 가 있고, NVMe 드라이브는 그 안을 **네임스페이스** 로 나눌 수 있고, OS 는 각 디스크를 **파티션** 으로 나눈다. 셋 다 '용량을 쪼갠다' 는 점은 같아서 헷갈리지만, **누가 나누고 누가 그 경계를 아는지** 가 다르다.
+
+<svg viewBox="0 0 760 330" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="드라이브, 네임스페이스, 파티션"><text x="380" y="22" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">용량을 나누는 세 층 : 누가 나누고, 누가 아나</text><rect x="20" y="40" width="720" height="250" rx="8" fill="#f4ecf7" stroke="#7d3c98" stroke-width="2"/><text x="36" y="62" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="start">① 드라이브 (NVMe 컨트롤러 nvme0) : NAND 전체 + FTL</text><text x="36" y="80" font-size="11.5" fill="#4d5656" text-anchor="start">나누는 것 : 드라이브 펌웨어 (NVMe 관리 명령)  ·  OS 에는 보이지 않는 NAND 와 OP 도 여기 있다</text><rect x="40" y="94" width="480" height="180" rx="8" fill="#ebf5fb" stroke="#2874a6" stroke-width="2"/><text x="56" y="116" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="start">② 네임스페이스 1 (nvme0n1) : OS 에게는 '디스크 하나'</text><text x="56" y="134" font-size="11.5" fill="#4d5656" text-anchor="start">LBA 0 … 3,907,029,167 (512 B 섹터)</text><rect x="60" y="146" width="140" height="98" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="130" y="170" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">③ 파티션 1</text><text x="130" y="188" font-size="11.5" fill="#2c3e50" text-anchor="middle">nvme0n1p1</text><text x="130" y="206" font-size="11.5" fill="#2c3e50" text-anchor="middle">EFI, 512 MiB</text><text x="130" y="224" font-size="11.5" fill="#2c3e50" text-anchor="middle">LBA 2048 부터</text><rect x="212" y="146" width="290" height="98" rx="8" fill="#eafaf1" stroke="#1e8449" stroke-width="2"/><text x="357" y="170" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">③ 파티션 2</text><text x="357" y="188" font-size="11.5" fill="#2c3e50" text-anchor="middle">nvme0n1p2</text><text x="357" y="206" font-size="11.5" fill="#2c3e50" text-anchor="middle">ext4 (/), 1.8 TiB</text><text x="357" y="224" font-size="11.5" fill="#2c3e50" text-anchor="middle">LBA 1,050,624 부터</text><text x="280" y="262" font-size="11.5" fill="#1e8449" text-anchor="middle">나누는 것 : OS (디스크 맨 앞의 GPT 표)</text><rect x="536" y="94" width="190" height="180" rx="8" fill="#ffffff" stroke="#2874a6" stroke-width="2" stroke-dasharray="6 4"/><text x="631" y="118" font-size="12.5" font-weight="700" fill="#2874a6" text-anchor="middle">(네임스페이스 2 …)</text><text x="631" y="140" font-size="11.5" fill="#4d5656" text-anchor="middle">만들 수 있다면 nvme0n2</text><text x="631" y="158" font-size="11.5" fill="#4d5656" text-anchor="middle">따로 LBA 0 부터 시작</text><text x="631" y="190" font-size="11.5" fill="#4d5656" text-anchor="middle">어느 네임스페이스에도</text><text x="631" y="208" font-size="11.5" fill="#4d5656" text-anchor="middle">넣지 않은 용량은</text><text x="631" y="226" font-size="11.5" font-weight="700" fill="#7d3c98" text-anchor="middle">FTL 이 OP 처럼 쓸 수 있다</text><text x="380" y="318" font-size="11.5" fill="#566573" text-anchor="middle">SATA (840 EVO) 에는 ② 가 없다 : 드라이브 = 디스크 하나 (sda), 그 안에 파티션 (sda1 …)</text></svg>
+
+### 11.1 세 층의 차이
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th></th><th>① 드라이브</th><th>② 네임스페이스 (NVMe)</th><th>③ 파티션</th></tr></thead><tbody>
+<tr><td>무엇인가</td><td>물건 하나 : 컨트롤러 + DRAM + NAND</td><td>드라이브가 OS 에게 내보이는 '디스크'. 드라이브 하나가 여러 개를 내보일 수 있다</td><td>디스크 안의 LBA 구간 하나</td></tr>
+<tr><td>누가 만드나</td><td>공장</td><td><strong>드라이브 펌웨어</strong> : NVMe 관리 명령 (<code>nvme create-ns</code>, <code>attach-ns</code>)</td><td><strong>OS · 도구</strong> : <code>fdisk</code>, <code>parted</code>, 설치 프로그램</td></tr>
+<tr><td>경계가 적힌 곳</td><td>—</td><td>드라이브 안 (펌웨어의 표)</td><td>디스크 맨 앞의 <strong>파티션 표</strong> (GPT : LBA 1–33, 끝에 백업)</td></tr>
+<tr><td>LBA 번호</td><td>밖에서는 보이지 않는다 (NAND 주소는 FTL 만 안다)</td><td>네임스페이스마다 <strong>0 부터 따로</strong> 센다</td><td>디스크의 LBA 를 그대로 쓴다 : 시작 위치 (예 : 2048) 만 표에 적혀 있다</td></tr>
+<tr><td>Linux 이름</td><td>컨트롤러 <code>nvme0</code> (SATA 는 이름 없이 <code>ata5</code> 포트)</td><td><code>nvme0n1</code>, <code>nvme0n2</code> … (SATA 는 <code>sda</code> 하나)</td><td><code>nvme0n1p1</code> · <code>sda1</code></td></tr>
+<tr><td>경계를 넘을 수 있나</td><td>—</td><td><strong>없다.</strong> 다른 네임스페이스의 블록은 주소로 가리킬 수조차 없다</td><td><strong>있다.</strong> 표의 숫자일 뿐이라, 디스크 전체 (<code>/dev/sda</code>) 에 쓰는 프로그램은 모든 파티션을 덮어쓸 수 있다</td></tr>
+<tr><td>따로 정할 수 있는 것</td><td>—</td><td>섹터 크기 (512 B / 4 KiB), 암호화 키, 쓰기 보호, VM 에 따로 붙이기</td><td>파일 시스템 종류, 용도 표시 (EFI, Linux …)</td></tr>
+<tr><td>FTL 이 아나</td><td>FTL 그 자체</td><td><strong>안다</strong> : 어느 네임스페이스에도 넣지 않은 용량은 쓰지 않을 것이 확실하다</td><td><strong>모른다.</strong> 파티션 표도 FTL 에게는 그냥 데이터. 빈 곳은 TRIM 으로만 알려 줄 수 있다</td></tr>
+<tr><td>흔히 쓰는 곳</td><td>—</td><td>서버 · 가상 머신 : SSD 하나를 여러 '디스크' 로 나눠 손님마다 하나씩</td><td>모든 PC : EFI · Linux · Windows 나누기</td></tr>
+</tbody></table></div>
+
+그래서 이름에서 **파티션이 네임스페이스 아래** 에 온다 (<code>nvme0n1<strong>p1</strong></code>). 네임스페이스는 '파티션 비슷한 것' 이 아니라 **디스크 하나** 이고, OS 는 그 디스크를 받아 늘 하던 대로 파티션을 나눈다. 일반 PC 에서는 네임스페이스가 1번 하나뿐이고 드라이브 전체를 차지해서, 사람이 다루는 것은 파티션뿐이다. 그래서 둘이 '거의 같다' 고 느껴진다.
+
+### 11.2 이 컴퓨터의 실제 숫자
+
+파티션의 시작과 크기는 <code>/sys</code> 에 섹터 (512 B) 단위로 있다 (2026.10.18 실제 값) :
+
+```
+$ for p in sda1 sda2 sda3 sda4; do echo "$p start $(cat /sys/block/sda/$p/start) size $(cat /sys/block/sda/$p/size)"; done
+sda1 start 2048 size 204800
+sda2 start 206848 size 32768
+sda3 start 239616 size 233108373
+sda4 start 233349120 size 1089536
+$ cat /sys/block/nvme0n1/nsid
+1
+```
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>디스크</th><th>전체 (섹터)</th><th>파티션</th><th>읽는 법</th></tr></thead><tbody>
+<tr><td><code>sda</code> (840 EVO 120GB, SATA)</td><td>234,441,648</td><td>sda1 EFI 100 MiB · sda2 MSR 16 MiB · sda3 NTFS 111.2 GiB · sda4 복구 532 MiB</td><td>첫 파티션이 LBA 2048 = <strong>1 MiB</strong> 에서 시작한다 : 1 MiB 정렬 (그 앞은 GPT 표). 마지막 파티션 뒤에 2,992 섹터 (1.5 MiB) 가 남는다 : GPT 백업 표와 여분</td></tr>
+<tr><td><code>nvme0n1</code> (990 EVO 2TB, NVMe, 네임스페이스 1)</td><td>3,907,029,168</td><td>p1 EFI 512 MiB · p2 ext4 1.8 TiB</td><td>같은 1 MiB 정렬. <code>nsid</code> = 1 : 이 네임스페이스의 번호</td></tr>
+</tbody></table></div>
+
+1 MiB 정렬은 실험 6 과 이어진다 : 파티션이 4 KiB 경계에서 어긋나 있으면, 파일 시스템의 4 KiB 쓰기가 모두 FTL 의 4 KiB 칸 두 개에 걸친다 (옛 Windows XP 의 63 섹터 시작이 그랬다).
+
+### 11.3 직접 확인하는 명령
+
+```sh
+lsblk -o NAME,SIZE,TYPE,PARTTYPENAME,FSTYPE      # 디스크 · 파티션과 그 용도
+cat /sys/block/sda/sda1/start                    # 파티션의 시작 섹터
+sudo parted /dev/sda unit s print                # 파티션 표 전체를 섹터 단위로
+sudo nvme list                                   # NVMe 네임스페이스 목록 (nvme-cli)
+sudo nvme id-ctrl /dev/nvme0 | grep -E '^(nn|tnvmcap|unvmcap) '
+                                                 # nn : 만들 수 있는 네임스페이스 수
+                                                 # tnvmcap / unvmcap : 전체 / 어느 네임스페이스에도 안 넣은 용량
+```
+
+PC 용 NVMe 드라이브는 대개 네임스페이스를 하나만 지원한다 (<code>nn</code> = 1). 여러 개를 만들 수 있는 것은 주로 데이터센터용이다. SATA 에는 네임스페이스가 없지만, 비슷하게 '드라이브가 정하는 경계' 로 <strong>HPA</strong> (보이는 최대 섹터를 줄이기, <a href="/old-ssd-experiments/10-over-provisioning/">실험 10</a>) 가 있다.
+
+### 11.4 FTL 에게 '여기는 안 쓴다' 를 알리는 세 방법
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>방법</th><th>층</th><th>FTL 이 아는가</th><th>OP 로 쓰이나</th></tr></thead><tbody>
+<tr><td>파티션을 작게 만들고 뒤를 비워 둠</td><td>OS</td><td>비운 곳을 한 번도 쓰지 않았거나 TRIM 했을 때만</td><td>그때만 예 (<a href="/old-ssd-experiments/10-over-provisioning/">실험 10</a> 의 span 방식)</td></tr>
+<tr><td>HPA 로 보이는 크기를 줄임 (SATA)</td><td>드라이브</td><td>숨긴 곳은 OS 가 쓸 수 없다. 이미 쓴 데이터가 있었다면 TRIM 이 먼저 필요</td><td>예</td></tr>
+<tr><td>네임스페이스를 작게 만듦 (NVMe)</td><td>드라이브</td><td>예 : 펌웨어가 경계를 직접 안다</td><td>예, 가장 확실하다</td></tr>
+</tbody></table></div>
+
 ## 요약
 
 - 840 EVO 120GB = 234,441,648 섹터 × 512 B = **120.03 GB = 111.79 GiB.** 같은 양을 다른 자로 잰 것이다
@@ -263,5 +331,6 @@ sudo smartctl -i /dev/sda                # User Capacity: 120,034,123,776 bytes 
 - SSD 안의 NAND 는 2진이지만, FTL 이 안과 밖을 떼어 놓아서 밖에 보이는 섹터 수는 회사가 고를 수 있다
 - 그 섹터 수는 IDEMA 공식이 정한다. 상수는 10⁹ 바이트를 CHS 실린더 (1,008 섹터) 로 올림한 값이고, SSD · NVMe 도 호환성 때문에 그대로 따른다
 - NAND main 영역과 사용자 용량의 차이가 over-provisioning (이 드라이브는 약 14.5%) 이다. 페이지마다 붙은 스페어 영역 (ECC · 메타데이터) 은 OP 에 들어가지 않는다
+- 용량은 세 층으로 나뉜다 : **드라이브** (물건), **네임스페이스** (드라이브가 내보이는 디스크, NVMe), **파티션** (OS 가 디스크 안에 적은 표). 네임스페이스는 드라이브가 경계를 알고, 파티션은 모른다. 그래서 이름도 `nvme0n1p1` 처럼 파티션이 네임스페이스 아래에 온다
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/' | relative_url }}">← 헌 SSD 로 하는 실험</a><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">SSD 를 다루는 Linux 명령 →</a></div>

@@ -17,6 +17,7 @@ SITE = os.path.abspath(os.path.join(HERE, "..", ".."))
 OUT = os.path.join(SITE, "old-ssd-experiments")
 PAGES = [  # slug, sidebar / nav title
     ("index", "헌 SSD 로 하는 실험"),
+    ("ssd-tutorial", "SSD tutorial"),   # hand-written (no pages/ source): only listed for the nav
     ("linux-commands", "SSD 를 다루는 Linux 명령"),
     ("fio", "fio 사용법"),
     ("0-setup", "0. 준비"),
@@ -73,7 +74,10 @@ def nav(slug):
 
 
 def build(slug):
-    src = open(os.path.join(HERE, "pages", slug + ".md")).read()
+    path = os.path.join(HERE, "pages", slug + ".md")
+    if not os.path.exists(path):          # a page written by hand in old-ssd-experiments/<slug>/
+        return
+    src = open(path).read()
     style = open(os.path.join(HERE, "pages", "_style.txt")).read().strip()
     src = src.replace("@@STYLE@@", style).replace("@@NAV@@", nav(slug))
     src = re.sub(r"@@FIG (\w+)@@", lambda m: getattr(figs, m.group(1))(), src)

@@ -200,6 +200,7 @@
             <details class="nav-group"{% if page.url contains '/old-ssd-experiments/' %} open{% endif %}>
               <summary><a href="{{ '/old-ssd-experiments/' | relative_url }}">헌 SSD 로 하는 실험</a></summary>
               <ul class="nav-subitems">
+                <li><a href="{{ '/old-ssd-experiments/ssd-tutorial/' | relative_url }}"{% if page.url == '/old-ssd-experiments/ssd-tutorial/' %} class="current"{% endif %}>SSD tutorial</a></li>
                 <li><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}"{% if page.url == '/old-ssd-experiments/linux-commands/' %} class="current"{% endif %}>SSD 를 다루는 Linux 명령</a></li>
                 <li><a href="{{ '/old-ssd-experiments/fio/' | relative_url }}"{% if page.url == '/old-ssd-experiments/fio/' %} class="current"{% endif %}>fio 사용법</a></li>
                 <li><a href="{{ '/old-ssd-experiments/0-setup/' | relative_url }}"{% if page.url == '/old-ssd-experiments/0-setup/' %} class="current"{% endif %}>0. 준비</a></li>
