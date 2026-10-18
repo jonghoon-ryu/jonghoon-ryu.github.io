@@ -145,6 +145,61 @@ Disk stats (read/write):
 `--output-format=json --output=F` | 결과를 JSON 파일로 (9절) | 모든 실행
 ```
 
+### `--name` : job 의 이름
+
+job 하나 = **I/O 작업 하나의 설명** (모양 하나, 대상 하나, 옵션 한 벌). `--name` 은 그 job 의 이름이고, 세 가지 일을 한다.
+
+**1. 결과에 이름표를 붙인다.** 출력의 줄마다 앞에 붙고 (`first: (groupid=0, jobs=1) …`), JSON 에서는 `"jobname"`, `fiosum.py` 의 `job` 열이 된다. job 이 여러 개일 때 어느 숫자가 어느 job 것인지 알려 준다.
+
+**2. 명령 줄에서 `--name` 은 새 job 의 시작이다.** fio 는 옵션을 왼쪽부터 읽는다 : 첫 `--name` **앞** 의 옵션은 모든 job 에 공통 (global), `--name` **뒤** 의 옵션은 다음 `--name` 까지 **그 job** 의 것이다.
+
+```
+fio --filename=test.img --size=1G --direct=1 \        ← 공통 : 두 job 모두
+    --name=reader --rw=randread --bs=4k \             ← job 1
+    --name=writer --rw=write --bs=1M                  ← job 2
+```
+
+job 파일 (8절) 에서는 같은 것을 `[global]`, `[reader]`, `[writer]` 절로 적는다.
+
+**3. `--filename` 이 없으면 이름이 파일 이름이 된다** (실제 출력, 2026.10.18) :
+
+```
+$ fio --name=hello --size=16M --rw=write --bs=1M
+hello: Laying out IO file (1 file / 16MiB)
+$ ls
+hello.0.0
+$ fio --name=hello --size=16M --rw=read --bs=1M --numjobs=2
+hello: (groupid=0, jobs=1): err= 0: pid=51749: …
+hello: (groupid=0, jobs=1): err= 0: pid=51750: …
+$ ls
+hello.0.0  hello.1.0
+```
+
+파일 이름은 `이름.job번호.파일번호` 다. `--numjobs=2` (같은 job 의 복사본 둘) 는 복사본마다 자기 파일을 가지고, 둘 다 `hello` 라는 이름으로 (다른 `pid` 로) 보고한다. 로그 파일 (`--write_bw_log` …) 도 보통 이름을 앞에 붙인다 : `lab.sh` 가 job 이름을 `slc`, `rd-mapped`, `cliff` 처럼 재는 것으로 짓는 이유다. `--name` 은 꼭 있어야 하고, I/O 자체는 바꾸지 않는다.
+
+### job 은 무엇인가 : 동시에 하는 세 가지 방법
+
+job 하나 = **일꾼 하나 + 작업 하나** 다. job 마다 프로세스가 하나씩 생기고, **여러 job 은 기본으로 동시에** 돈다. 같은 파일에 4 KiB 랜덤 읽기를 3초씩 (실제 출력, 이 컴퓨터의 NVMe) :
+
+```table
+설정 | 일어난 일 | IOPS | 뜻
+job 2개 (A, B) | `Starting 2 processes`, 둘 다 같은 3초에 (`groupid=0`) | A 14.4k + B 14.8k = **29.2k** | 서로 다른 작업 둘이 **동시에**, 프로세스 둘
+job 2개 + `--stonewall` | B 가 `groupid=1` : **A 가 끝나기를 기다렸다** | A 16.5k, 그다음 B 14.4k | `stonewall` = 앞의 job 들이 끝난 뒤에 시작 (**차례로**)
+job 1개, `--iodepth=1` | 프로세스 하나, I/O 하나씩 | 14.5k | 기준 (job 하나가 낼 수 있는 만큼)
+job 1개, `--iodepth=2` | 프로세스 하나가 I/O 둘을 걸어 둠 | **27.7k** (거의 2배) | 프로세스를 늘리지 않고 job **안에서** 동시에
+```
+
+'동시에' 에는 세 가지가 있다 :
+
+```table
+방법 | 무엇을 동시에 | 언제 쓰나
+job 여러 개 | **서로 다른** 작업 : 예를 들어 읽기 + 쓰기 | 실험 13 (간섭) : `lab.sh mixed`
+`--numjobs=N` | **같은** job 의 복사본 N 개 | 여러 프로그램이 같은 일을 하는 모습
+`--iodepth=N` | job 하나가 장치에 N 개의 요청을 걸어 둠 | SSD 에 짐을 싣는 보통 방법 : `lab.sh` 의 QD8 · QD32
+```
+
+job 2개 (29.2k) 와 job 1개 · 깊이 2 (27.7k) 가 거의 같다 : 어느 쪽이든 NVMe 는 요청 2개를 함께 받았다. 읽기 하나의 시간은 그대로 (64 – 67 µs) 였으니, 걸린 요청이 많을수록 IOPS 가 는다 (5절의 Little 의 법칙).
+
 ## 5. 엔진과 큐 깊이 : IOPS = 큐 깊이 ÷ 지연
 
 4 KiB 랜덤 읽기를 세 번 했다 (모두 `--direct=1 --runtime=10 --time_based`).

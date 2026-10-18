@@ -169,6 +169,70 @@ Disk stats (read/write):
 <tr><td><code>--output-format=json --output=F</code></td><td>결과를 JSON 파일로 (9절)</td><td>모든 실행</td></tr>
 </tbody></table></div>
 
+### `--name` : job 의 이름
+
+job 하나 = **I/O 작업 하나의 설명** (모양 하나, 대상 하나, 옵션 한 벌). `--name` 은 그 job 의 이름이고, 세 가지 일을 한다.
+
+**1. 결과에 이름표를 붙인다.** 출력의 줄마다 앞에 붙고 (`first: (groupid=0, jobs=1) …`), JSON 에서는 `"jobname"`, `fiosum.py` 의 `job` 열이 된다. job 이 여러 개일 때 어느 숫자가 어느 job 것인지 알려 준다.
+
+**2. 명령 줄에서 `--name` 은 새 job 의 시작이다.** fio 는 옵션을 왼쪽부터 읽는다 : 첫 `--name` **앞** 의 옵션은 모든 job 에 공통 (global), `--name` **뒤** 의 옵션은 다음 `--name` 까지 **그 job** 의 것이다.
+
+```
+fio --filename=test.img --size=1G --direct=1 \        ← 공통 : 두 job 모두
+    --name=reader --rw=randread --bs=4k \             ← job 1
+    --name=writer --rw=write --bs=1M                  ← job 2
+```
+
+job 파일 (8절) 에서는 같은 것을 `[global]`, `[reader]`, `[writer]` 절로 적는다.
+
+**3. `--filename` 이 없으면 이름이 파일 이름이 된다** (실제 출력, 2026.10.18) :
+
+```
+$ fio --name=hello --size=16M --rw=write --bs=1M
+hello: Laying out IO file (1 file / 16MiB)
+$ ls
+hello.0.0
+$ fio --name=hello --size=16M --rw=read --bs=1M --numjobs=2
+hello: (groupid=0, jobs=1): err= 0: pid=51749: …
+hello: (groupid=0, jobs=1): err= 0: pid=51750: …
+$ ls
+hello.0.0  hello.1.0
+```
+
+파일 이름은 `이름.job번호.파일번호` 다. `--numjobs=2` (같은 job 의 복사본 둘) 는 복사본마다 자기 파일을 가지고, 둘 다 `hello` 라는 이름으로 (다른 `pid` 로) 보고한다. 로그 파일 (`--write_bw_log` …) 도 보통 이름을 앞에 붙인다 : `lab.sh` 가 job 이름을 `slc`, `rd-mapped`, `cliff` 처럼 재는 것으로 짓는 이유다. `--name` 은 꼭 있어야 하고, I/O 자체는 바꾸지 않는다.
+
+### job 은 무엇인가 : 동시에 하는 세 가지 방법
+
+job 하나 = **일꾼 하나 + 작업 하나** 다. job 마다 프로세스가 하나씩 생기고, **여러 job 은 기본으로 동시에** 돈다. 같은 파일에 4 KiB 랜덤 읽기를 3초씩 (실제 출력, 이 컴퓨터의 NVMe) :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>설정</th>
+<th>일어난 일</th>
+<th>IOPS</th>
+<th>뜻</th>
+</tr></thead><tbody>
+<tr><td>job 2개 (A, B)</td><td><code>Starting 2 processes</code>, 둘 다 같은 3초에 (<code>groupid=0</code>)</td><td>A 14.4k + B 14.8k = <strong>29.2k</strong></td><td>서로 다른 작업 둘이 <strong>동시에</strong>, 프로세스 둘</td></tr>
+<tr><td>job 2개 + <code>--stonewall</code></td><td>B 가 <code>groupid=1</code> : <strong>A 가 끝나기를 기다렸다</strong></td><td>A 16.5k, 그다음 B 14.4k</td><td><code>stonewall</code> = 앞의 job 들이 끝난 뒤에 시작 (<strong>차례로</strong>)</td></tr>
+<tr><td>job 1개, <code>--iodepth=1</code></td><td>프로세스 하나, I/O 하나씩</td><td>14.5k</td><td>기준 (job 하나가 낼 수 있는 만큼)</td></tr>
+<tr><td>job 1개, <code>--iodepth=2</code></td><td>프로세스 하나가 I/O 둘을 걸어 둠</td><td><strong>27.7k</strong> (거의 2배)</td><td>프로세스를 늘리지 않고 job <strong>안에서</strong> 동시에</td></tr>
+</tbody></table></div>
+
+'동시에' 에는 세 가지가 있다 :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>방법</th>
+<th>무엇을 동시에</th>
+<th>언제 쓰나</th>
+</tr></thead><tbody>
+<tr><td>job 여러 개</td><td><strong>서로 다른</strong> 작업 : 예를 들어 읽기 + 쓰기</td><td>실험 13 (간섭) : <code>lab.sh mixed</code></td></tr>
+<tr><td><code>--numjobs=N</code></td><td><strong>같은</strong> job 의 복사본 N 개</td><td>여러 프로그램이 같은 일을 하는 모습</td></tr>
+<tr><td><code>--iodepth=N</code></td><td>job 하나가 장치에 N 개의 요청을 걸어 둠</td><td>SSD 에 짐을 싣는 보통 방법 : <code>lab.sh</code> 의 QD8 · QD32</td></tr>
+</tbody></table></div>
+
+job 2개 (29.2k) 와 job 1개 · 깊이 2 (27.7k) 가 거의 같다 : 어느 쪽이든 NVMe 는 요청 2개를 함께 받았다. 읽기 하나의 시간은 그대로 (64 – 67 µs) 였으니, 걸린 요청이 많을수록 IOPS 가 는다 (5절의 Little 의 법칙).
+
 ## 5. 엔진과 큐 깊이 : IOPS = 큐 깊이 ÷ 지연
 
 4 KiB 랜덤 읽기를 세 번 했다 (모두 `--direct=1 --runtime=10 --time_based`).
