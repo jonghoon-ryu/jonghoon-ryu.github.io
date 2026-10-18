@@ -94,7 +94,7 @@ NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 �
 2 기능 · 자가 진단 | **끝** (2026.10.18) : 오류 로그 · 링크 오류 0, 자가 진단 `Completed without error` (62.6분, 예상 70분), Security frozen, 읽기만 해도 31 → 40 °C. [결과](/old-ssd-experiments/2-features/)
 3 SLC 캐시 | **끝** (2026.10.18) : 버퍼 약 3.2 GB 를 533 MB/s, 그 뒤 TLC 약 150 MB/s, 버퍼는 몇 초 안에 다시 빈다. **새 데이터는 약 445 MB/s 로 읽히고 (오래된 데이터의 약 45배), 자가 진단은 9.5분 (오래된 데이터는 62.6분)** : 느림의 원인은 데이터의 나이였다. [결과](/old-ssd-experiments/3-slc-cache/)
 4 TRIM 과 매핑 없는 읽기 | **끝** (2026.10.18) : TRIM 한 곳은 100% 0 으로 읽힌다 (약속은 없지만). QD1 지연 : 매핑 없음 63 µs, 있음 121 µs → NAND 페이지 읽기 약 60 µs. QD32 에서는 둘 다 약 9.5만 IOPS (SATA 한계). [결과](/old-ssd-experiments/4-trim/)
-5 성능 지도 | 다음
+5 성능 지도 | `perfmap` **끝** : 4 KiB 랜덤 읽기 QD1 7.0k → QD32 90.7k IOPS, 큰 블록은 QD4 에서 SATA 한계 (약 550 MB/s), 순차 4 KiB 는 미리 읽기로 44 µs. 꽉 찬 드라이브의 랜덤 덮어쓰기는 29 MB/s 까지 무너짐 (write cliff 미리 보기). 다음 : `pattern`. [결과](/old-ssd-experiments/5-perf-map/)
 6 – 19 | 아직
 ```
 
