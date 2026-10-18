@@ -45,7 +45,7 @@ $ sudo ./lab.sh features
 `hdparm -I` 에서 특히 볼 줄 :
 
 ```table
-줄 (예) | 뜻 | 어느 실험
+줄 (예) | 뜻 | 이 정보를 쓰는 실험 (번호)
 `Data Set Management TRIM supported (limit 8 blocks)` | TRIM 지원, 명령 하나에 몇 개 범위 | 4
 `Deterministic read ZEROs after TRIM` | TRIM 한 곳을 읽으면 반드시 0 | 4
 `Write cache` (앞에 `*`) | 쓰기 캐시가 켜져 있다 | 7
@@ -89,7 +89,7 @@ H3 의 비교를 위해, **실험 3 (드라이브 전체를 새로 씀) 이 끝�
 **ATA 기능** (`hdparm -I`, `hdparm -N -W -A -B`)
 
 ```table
-보이는 것 | 뜻 | 어느 실험
+보이는 것 | 뜻 | 이 정보를 쓰는 실험 (번호)
 `Data Set Management TRIM supported (limit 8 blocks)` | TRIM 지원. 명령 하나에 범위 8개 블록 (블록 하나에 범위 64개) | 4
 `Deterministic read ZEROs after TRIM` 줄 **없음** | 드라이브는 'TRIM 한 곳은 0' 을 약속하지 않는다 (커널은 `zeroaftertrim` 으로 0 이라고 믿는다) | 4
 `Device encrypts all user data` | 항상 암호화하는 드라이브 (SED) | 14

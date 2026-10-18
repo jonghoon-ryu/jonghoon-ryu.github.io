@@ -190,11 +190,11 @@ sd 4:0:0:0: [sda] Attached SCSI disk
 (앞의 날짜 · 호스트 이름은 줄였다.) 실험에 쓸 정보가 많다 :
 
 ```table
-줄 | 뜻 | 어느 실험
+줄 | 뜻 | 이 정보를 쓰는 실험 (번호)
 `SATA link up 6.0 Gbps` | SATA 3 로 붙었다 : 상한 약 550 MB/s | 5
 `applying quirks: noncqtrim zeroaftertrim …` | 커널이 이 모델에 맞춰 바꾸는 동작 : TRIM 은 NCQ 없이 보내고 (`noncqtrim`), TRIM 한 곳은 0 으로 읽힌다고 믿는다 (`zeroaftertrim`) | 4
 `NCQ (depth 32)` | 명령을 32개까지 한꺼번에 받는다 | 5
-`234441648 512-byte logical blocks` | 정확한 용량. 234,441,648 × 512 = 120,034,123,776 바이트 | 0
+`234441648 512-byte logical blocks` | 정확한 용량. 234,441,648 × 512 = 120,034,123,776 바이트 | 0 (준비)
 `Write cache: enabled … doesn't support DPO or FUA` | 쓰기 캐시가 켜져 있고, '이 쓰기만 바로 NAND 에' (FUA) 는 지원하지 않는다 : 데이터를 지키려면 FLUSH 뿐 | 7, 17
 `supports TCG Opal` | 자체 암호화 드라이브 (SED) 의 표준을 지원한다 | 14
 ```

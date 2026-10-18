@@ -170,7 +170,7 @@ Windows 가 최대 절전 상태 (hiberfil.sys) 로 꺼져 있어서 `ntfs-3g` �
 <thead><tr>
 <th>보이는 것</th>
 <th>뜻</th>
-<th>어느 실험</th>
+<th>이 정보를 쓰는 실험 (번호)</th>
 </tr></thead><tbody>
 <tr><td><code>Data Set Management TRIM supported (limit 8 blocks)</code></td><td>TRIM 지원</td><td>4</td></tr>
 <tr><td><code>Deterministic read ZEROs after TRIM</code> <strong>줄이 없다</strong></td><td>드라이브는 '0 으로 읽힌다' 를 약속하지 않는다. 그런데 커널은 이 모델에 <code>zeroaftertrim</code> 예외를 적용한다 (<a href="/old-ssd-experiments/linux-commands/">Linux 명령 4절</a>). 누가 맞는지 실험 4 가 잰다</td><td>4</td></tr>

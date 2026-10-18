@@ -65,7 +65,7 @@ $ sudo ./lab.sh features
 <thead><tr>
 <th>줄 (예)</th>
 <th>뜻</th>
-<th>어느 실험</th>
+<th>이 정보를 쓰는 실험 (번호)</th>
 </tr></thead><tbody>
 <tr><td><code>Data Set Management TRIM supported (limit 8 blocks)</code></td><td>TRIM 지원, 명령 하나에 몇 개 범위</td><td>4</td></tr>
 <tr><td><code>Deterministic read ZEROs after TRIM</code></td><td>TRIM 한 곳을 읽으면 반드시 0</td><td>4</td></tr>
@@ -116,7 +116,7 @@ H3 의 비교를 위해, **실험 3 (드라이브 전체를 새로 씀) 이 끝�
 <thead><tr>
 <th>보이는 것</th>
 <th>뜻</th>
-<th>어느 실험</th>
+<th>이 정보를 쓰는 실험 (번호)</th>
 </tr></thead><tbody>
 <tr><td><code>Data Set Management TRIM supported (limit 8 blocks)</code></td><td>TRIM 지원. 명령 하나에 범위 8개 블록 (블록 하나에 범위 64개)</td><td>4</td></tr>
 <tr><td><code>Deterministic read ZEROs after TRIM</code> 줄 <strong>없음</strong></td><td>드라이브는 'TRIM 한 곳은 0' 을 약속하지 않는다 (커널은 <code>zeroaftertrim</code> 으로 0 이라고 믿는다)</td><td>4</td></tr>

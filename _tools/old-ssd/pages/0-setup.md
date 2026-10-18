@@ -142,7 +142,7 @@ ID | 이름 | 값 | 읽는 법
 **ATA 기능** (`hdparm -I`)
 
 ```table
-보이는 것 | 뜻 | 어느 실험
+보이는 것 | 뜻 | 이 정보를 쓰는 실험 (번호)
 `Data Set Management TRIM supported (limit 8 blocks)` | TRIM 지원 | 4
 `Deterministic read ZEROs after TRIM` **줄이 없다** | 드라이브는 '0 으로 읽힌다' 를 약속하지 않는다. 그런데 커널은 이 모델에 `zeroaftertrim` 예외를 적용한다 ([Linux 명령 4절](/old-ssd-experiments/linux-commands/)). 누가 맞는지 실험 4 가 잰다 | 4
 `Device encrypts all user data` | **항상 암호화하는 드라이브** : Secure Erase 가 키 교체일 가능성이 크다 | 14

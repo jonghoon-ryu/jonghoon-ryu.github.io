@@ -213,12 +213,12 @@ sd 4:0:0:0: [sda] Attached SCSI disk
 <thead><tr>
 <th>줄</th>
 <th>뜻</th>
-<th>어느 실험</th>
+<th>이 정보를 쓰는 실험 (번호)</th>
 </tr></thead><tbody>
 <tr><td><code>SATA link up 6.0 Gbps</code></td><td>SATA 3 로 붙었다 : 상한 약 550 MB/s</td><td>5</td></tr>
 <tr><td><code>applying quirks: noncqtrim zeroaftertrim …</code></td><td>커널이 이 모델에 맞춰 바꾸는 동작 : TRIM 은 NCQ 없이 보내고 (<code>noncqtrim</code>), TRIM 한 곳은 0 으로 읽힌다고 믿는다 (<code>zeroaftertrim</code>)</td><td>4</td></tr>
 <tr><td><code>NCQ (depth 32)</code></td><td>명령을 32개까지 한꺼번에 받는다</td><td>5</td></tr>
-<tr><td><code>234441648 512-byte logical blocks</code></td><td>정확한 용량. 234,441,648 × 512 = 120,034,123,776 바이트</td><td>0</td></tr>
+<tr><td><code>234441648 512-byte logical blocks</code></td><td>정확한 용량. 234,441,648 × 512 = 120,034,123,776 바이트</td><td>0 (준비)</td></tr>
 <tr><td><code>Write cache: enabled … doesn't support DPO or FUA</code></td><td>쓰기 캐시가 켜져 있고, '이 쓰기만 바로 NAND 에' (FUA) 는 지원하지 않는다 : 데이터를 지키려면 FLUSH 뿐</td><td>7, 17</td></tr>
 <tr><td><code>supports TCG Opal</code></td><td>자체 암호화 드라이브 (SED) 의 표준을 지원한다</td><td>14</td></tr>
 </tbody></table></div>
