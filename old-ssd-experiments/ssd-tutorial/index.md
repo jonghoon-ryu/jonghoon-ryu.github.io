@@ -20,7 +20,7 @@ table.t code { font-size:0.82rem; }
 
 # SSD tutorial : 120 GB 드라이브는 왜 111.8 GiB 로 보이나
 
-실험할 840 EVO 의 용량은 **234,441,648 섹터 × 512 B** 다. 이 숫자 하나에서 시작해, SSD 의 용량이 어떻게 정해지는지를 차례로 따라간다 : GB 와 GiB, 왜 두 단위가 섞였나, SSD 안의 2진 NAND 와 밖에 보이는 10진 용량, 섹터 수를 정하는 IDEMA 공식, over-provisioning 과 스페어 영역, 용량을 나누는 세 층 (드라이브 · 네임스페이스 · 파티션), 그리고 USB 로 붙인 NVMe.
+실험할 840 EVO 의 용량은 **234,441,648 섹터 × 512 B** 다. 이 숫자 하나에서 시작해, SSD 의 용량이 어떻게 정해지는지를 차례로 따라간다 : GB 와 GiB, 왜 두 단위가 섞였나, SSD 안의 2진 NAND 와 밖에 보이는 10진 용량, 섹터 수를 정하는 IDEMA 공식, over-provisioning 과 스페어 영역, 용량을 나누는 세 층 (드라이브 · 네임스페이스 · 파티션), USB 로 붙인 NVMe, 그리고 읽을 수 없는 섹터가 생겼을 때 드라이브 · 커널 · OS 가 하는 일.
 
 <div class="glance">
 <b>이 페이지는</b><span>Claude 와 나눈 질문과 답을 다듬어 정리한 것 (2026.10.18)</span>
@@ -376,6 +376,85 @@ $ cat /sys/bus/usb/devices/1-8/speed
 
 같은 이야기가 SATA SSD 를 USB 어댑터에 넣을 때도 그대로다 : 어댑터가 SCSI 를 ATA 로 번역하고, SMART 는 `-d sat`, TRIM 은 어댑터가 허락할 때만 지나간다.
 
+## 13. 읽을 수 없는 섹터가 생기면
+
+드라이브가 아무리 애써도 어떤 페이지를 읽지 못할 때가 있다. 그때 무슨 일이 일어나고, 섹터 하나 때문에 OS 전체가 망가지는지, OS 는 이것을 어떻게 견디는지를 층마다 따라간다.
+
+### 13.1 드라이브 안 : 예비 블록과 '고칠 수 없는 오류'
+
+드라이브는 공장에서 일부 블록을 **예비 블록** 으로 떼어 숨겨 둔다 (8 절의 OP 의 일부). 블록이 닳아 쓰기 · 지우기에 실패하거나 (SMART 181 · 182), 읽을 때 오류가 너무 많으면, FTL 은 데이터를 옮기고 그 블록을 '불량' 으로 표시한 뒤 예비 블록으로 바꾼다. 컴퓨터는 알아채지 못한다 : 같은 LBA 가 그대로 쓰인다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>SMART</th><th>이름</th><th>세는 것</th></tr></thead><tbody>
+<tr><td>179</td><td>Used_Rsvd_Blk_Cnt_Tot</td><td>써 버린 예비 블록 수. 젊은 드라이브는 0 이고, 수명 (지움 한도) 끝에 가까워질수록 빨리 는다. 정규화 값은 100 (예비가 그대로) 에서 내려가고, 기준값 (이 드라이브는 10) 에 닿으면 SMART 가 '실패' 로 판정한다</td></tr>
+<tr><td>5 · 183</td><td>Reallocated_Sector_Ct · Runtime_Bad_Block</td><td>바꿔 단 블록, 쓰는 동안 나빠진 블록</td></tr>
+<tr><td>187</td><td>Uncorrectable_Error_Cnt</td><td>ECC 와 다시 읽기 (read retry) 를 다 해도 고치지 못한 읽기</td></tr>
+</tbody></table></div>
+
+예비가 바닥나면 더는 나쁜 블록을 바꿀 수 없다. 많은 드라이브가 이때 **읽기 전용** 으로 바뀌어 데이터라도 지킨다 (<a href="/old-ssd-experiments/18-endurance/">실험 18</a> 이 이 끝을 본다).
+
+ECC 와 다시 읽기로도 페이지를 살리지 못하면, 드라이브는 데이터 대신 **오류** 를 돌려준다 (ATA 의 `UNC`, SCSI 로는 *Medium Error / Unrecovered read error*). 187 이 하나 늘고, 오류 로그에 한 줄이 남는다. 다시 읽기를 다 해 본 뒤라 보통 **오래 걸린 뒤에** 온다.
+
+### 13.2 커널 : 디스크 드라이버에서 프로그램까지
+
+커널 로그에는 이런 줄이 남는다 (모양을 보이는 예다. 이 드라이브의 실제 출력이 아니다) :
+
+```
+ata5.00: failed command: READ FPDMA QUEUED
+ata5.00: status: { DRDY ERR }
+ata5.00: error: { UNC }
+sd 4:0:0:0: [sda] Sense Key : Medium Error
+sd 4:0:0:0: [sda] Add. Sense: Unrecovered read error
+I/O error, dev sda, sector 123456 op 0x0:(READ)
+```
+
+- NCQ 로 명령 32 개가 함께 걸려 있었다면, 오류 처리기가 드라이브의 NCQ 오류 로그를 읽어 **어느 것이 실패했는지** 찾고, 나머지는 다시 보낸다. 진짜 매체 오류는 되풀이하지 않는다 : 드라이브가 이미 할 수 있는 것을 다 했기 때문이다.
+- **느린** 것과 **실패** 는 다르다. 커널은 명령 하나를 **30 초** (`/sys/block/sda/device/timeout`) 기다린다. 드라이브가 그보다 오래 다시 읽고 있으면 커널은 포기하고 명령을 취소한 뒤 **링크를 다시 연결한다** (`hard resetting link`).
+
+실패한 섹터는 데이터 대신 오류 (`-EIO`) 로 위로 올라간다. 그다음은 **누가 읽고 있었나** 에 달렸다 :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>읽고 있던 것</th><th>결과</th></tr></thead><tbody>
+<tr><td>프로그램의 <code>read()</code></td><td><code>EIO</code> : <code>cp: error reading 'x': Input/output error</code>. 실험 1 의 <code>fileage.py</code> 는 이것을 <code>fileage-errors.csv</code> 에 적는다</td></tr>
+<tr><td>파일 시스템 자신의 데이터 (inode, 디렉터리, 저널)</td><td>ext4 가 오류를 알린다. 이 컴퓨터의 <code>/</code> 는 <code>errors=remount-ro</code> 로 마운트되어 있어서 (<a href="/old-ssd-experiments/linux-commands/">Linux 명령</a> 3 절의 <code>findmnt</code>), 더 망가지지 않도록 <strong>읽기 전용</strong> 으로 바뀐다</td></tr>
+<tr><td>디스크에서 올리는 프로그램 코드 (<code>mmap</code>, 실행 파일)</td><td>그 프로세스가 <strong><code>SIGBUS</code></strong> 를 받고 끝난다</td></tr>
+<tr><td>스왑 (디스크로 내린 메모리)</td><td>그 메모리를 쓰던 프로세스가 끝난다</td></tr>
+<tr><td>RAID 1 (<code>md</code> 미러) · 복사본이 있는 btrfs/ZFS</td><td><strong>저절로 고친다</strong> : 다른 디스크의 복사본을 읽고, 나쁜 섹터를 좋은 데이터로 다시 쓴다</td></tr>
+</tbody></table></div>
+
+Windows 도 같은 사슬이다 : 이벤트 로그의 디스크 이벤트 **7** ('bad block') 이나 51 · 153, 그리고 커널 자신의 메모리를 읽다 실패하면 블루 스크린 **`0x7A KERNEL_DATA_INPAGE_ERROR`**. (<a href="/old-ssd-experiments/1-old-data/">실험 1</a> 에서 읽은 이 드라이브의 옛 Windows 로그에는 이것들이 없었다.)
+
+나쁜 섹터를 '고치는' 방법은 **다시 쓰기** 다. SSD 에서 쓰기는 늘 새 페이지로 가고 매핑이 바뀌므로, 나쁜 페이지는 다시 읽히지 않는다 (HDD 는 그 섹터를 예비로 바꾼다 : 197 'pending' → 5 'reallocated'). 그래서 상한 파일은 백업에서 되살리거나 덮어쓸 수는 있어도, 읽을 수는 없다.
+
+### 13.3 섹터 하나로 OS 전체가 망가지나
+
+대개 **아니다.** 섹터 하나는 그 안에 있던 것만 망가뜨리고, 디스크의 대부분은 평범한 파일 내용이다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>나쁜 섹터에 있던 것</th><th>결과</th></tr></thead><tbody>
+<tr><td>사진 · 동영상 · 문서의 일부</td><td>그 파일 하나만 상한다</td></tr>
+<tr><td>쓰지 않는 곳, 지운 파일의 자리</td><td>아무 일도 없다 : 알아채지도 못한다</td></tr>
+<tr><td>프로그램 · 라이브러리 파일</td><td>그 프로그램이 그 부분을 올릴 때 죽는다. 패키지를 다시 설치하면 고쳐진다</td></tr>
+<tr><td>파일 시스템의 구조 (디렉터리, inode 표, 저널)</td><td>일부 파일 · 디렉터리에 닿을 수 없게 된다. 파일 시스템이 자신을 지킨다 (아래)</td></tr>
+<tr><td>부팅에 꼭 필요한 파일, 커널</td><td>부팅이 안 될 수 있다 : 드물지만 가장 나쁜 경우</td></tr>
+</tbody></table></div>
+
+### 13.4 OS 는 어떻게 견디나 : 여섯 겹
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>층</th><th>하는 일</th></tr></thead><tbody>
+<tr><td>1. 드라이브</td><td>페이지마다의 ECC, 다시 읽기, 예비 블록, 약해진 블록을 <strong>실패하기 전에</strong> 옮기기. '거의 나쁜' 섹터는 대부분 드라이브가 조용히 옮겨서 OS 의 문제가 되지 않는다. 187 은 이 모든 것을 뚫은 것만 센다</td></tr>
+<tr><td>2. 파일 시스템</td><td>중요한 구조는 두 벌, 그리고 검사한다. <strong>ext4</strong> : 디스크 곳곳에 superblock 백업, 메타데이터 체크섬 (<code>metadata_csum</code>), 저널, 오류 때 읽기 전용, 다음 부팅 때 <code>fsck</code>. <strong>NTFS</strong> : MFT 앞부분의 거울 (<code>$MFTMirr</code>), <code>chkdsk</code>. <strong>btrfs · ZFS</strong> : 데이터까지 <strong>모든 블록에 체크섬</strong>, 메타데이터는 기본으로 두 벌. 나쁜 블록을 몰래 돌려주지 않고 찾아내며, 복사본이 있으면 저절로 고친다</td></tr>
+<tr><td>3. OS 다시 세우기</td><td>시스템 파일을 알려진 좋은 사본과 비교해 다시 설치한다. <strong>Ubuntu</strong> : <code>debsums</code> · <code>dpkg --verify</code> 로 검사, <code>apt install --reinstall</code> 로 고침. <strong>Windows</strong> : <code>sfc /scannow</code>, <code>DISM /RestoreHealth</code>, 그리고 복구 파티션 (이 드라이브의 <code>sda4</code>, 532 MB). 켜져 있는 동안은 OS 의 많은 부분이 이미 RAM 에 있어서, 나중에 생긴 나쁜 섹터는 다음 부팅까지 드러나지 않을 수도 있다</td></tr>
+<tr><td>4. 디스크 사이의 중복</td><td><strong>RAID 1 · 미러</strong> (<code>md</code>, btrfs · ZFS 미러) : 모든 블록이 두 디스크에 있다. 실패한 읽기는 다른 디스크가 대신하고, 나쁜 쪽을 다시 쓴다. 서버는 이렇게 해서 나쁜 섹터 하나, 디스크 하나가 통째로 죽어도 멈추지 않는다</td></tr>
+<tr><td>5. 미리 알리기</td><td><code>smartd</code> (smartmontools 에 들어 있다) 가 SMART 의 5 · 179 · 187 · 197 을 지켜보다가 오르기 시작하면 알린다 : 드라이브를 바꿀 때다</td></tr>
+<tr><td>6. 백업</td><td>나머지 모두를 덮는 마지막 층 : 죽은 드라이브, 지운 파일, 랜섬웨어까지</td></tr>
+</tbody></table></div>
+
+**정리하면** : 나쁜 섹터 하나의 값은 보통 **파일 하나** 다. 파일 시스템은 자기 구조가 상해도 견디도록 만들어져 있고, OS 는 고칠 수 있다. 시스템 전체를 잃는 것은 운이 나쁠 때 (부팅에 꼭 필요한 구조) 나, 드라이브가 넓게 망가져 갈 때다.
+
+이 드라이브는 지금 187 = 0, 179 = 0, 오류 로그가 비어 있다. 읽기가 아주 느릴 뿐 (<a href="/old-ssd-experiments/1-old-data/">실험 1</a>) 모든 읽기가 결국 성공했다. 고칠 수 없는 오류를 처음 볼 가능성이 있는 것은 <a href="/old-ssd-experiments/15-read-disturb/">실험 15</a> (read disturb), <a href="/old-ssd-experiments/16-retention/">16</a> (retention), <a href="/old-ssd-experiments/18-endurance/">18</a> (끝까지 쓰기) 이다. 그래서 이 실험들은 체크섬으로 데이터를 확인하고 (<code>verify</code>), 오류가 나도 멈추지 않고 기록한다.
+
 ## 요약
 
 - 840 EVO 120GB = 234,441,648 섹터 × 512 B = **120.03 GB = 111.79 GiB.** 같은 양을 다른 자로 잰 것이다
@@ -386,5 +465,6 @@ $ cat /sys/bus/usb/devices/1-8/speed
 - NAND main 영역과 사용자 용량의 차이가 over-provisioning (이 드라이브는 약 14.5%) 이다. 페이지마다 붙은 스페어 영역 (ECC · 메타데이터) 은 OP 에 들어가지 않는다
 - 용량은 세 층으로 나뉜다 : **드라이브** (물건), **네임스페이스** (드라이브가 내보이는 디스크, NVMe), **파티션** (OS 가 디스크 안에 적은 표). 네임스페이스는 드라이브가 경계를 알고, 파티션은 모른다. 그래서 이름도 `nvme0n1p1` 처럼 파티션이 네임스페이스 아래에 온다
 - USB 는 NVMe 를 모른다. USB 외장 NVMe 는 케이스 안의 브리지 칩이 SCSI 를 NVMe 로 번역하고, Linux 에는 `sdX` (SCSI disk) 로 보인다. SMART · TRIM · 속도는 브리지와 USB 링크에 달렸다
+- 드라이브가 고치지 못한 읽기 (SMART 187) 는 커널을 거쳐 `EIO` 로 올라간다. 섹터 하나의 값은 보통 파일 하나다 : 드라이브의 예비 블록, 파일 시스템의 두 벌 구조 · 체크섬 · 읽기 전용 전환, OS 다시 설치, RAID, SMART 감시, 백업이 겹겹이 막는다
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/' | relative_url }}">← 헌 SSD 로 하는 실험</a><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">SSD 를 다루는 Linux 명령 →</a></div>
