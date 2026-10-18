@@ -79,19 +79,62 @@ H4 '믿을 수 없게 됨' 의 흔적이 로그에 있다 | 오류 로그에 항
 
 H3 의 비교를 위해, **실험 3 (드라이브 전체를 새로 씀) 이 끝난 뒤** `sudo ./lab.sh selftest long` 을 한 번 더 한다. 같은 드라이브가 같은 일을 하는데 데이터의 나이만 다르다.
 
-## 결과 읽는 법
-
-```
-$ D=$(ls -d ~/Ryu/old_ssd_results/*-features | tail -1)
-$ less $D/hdparm-I.txt
-$ grep -E "seconds|Completed|failure" ~/Ryu/old_ssd_results/*-selftest-long/{meta.txt,selftest-log.txt}
-```
-
-Claude 가 두 결과 폴더를 읽어 '지원하는 기능' 표와 '두 번의 자가 진단 시간' 을 이 페이지의 결과에 붙인다. 뒤 실험들 (4, 7, 14) 이 기대하는 기능이 없으면 그 실험의 절차를 바꾼다.
-
 ## 결과
 
 <div class="result" markdown="1">
+### 1단계 : `features` (2026.10.18 09:41, 결과 폴더 `20261018-094145-features`)
+
+**ATA 기능** (`hdparm -I`, `hdparm -N -W -A -B`)
+
+```table
+보이는 것 | 뜻 | 어느 실험
+`Data Set Management TRIM supported (limit 8 blocks)` | TRIM 지원. 명령 하나에 범위 8개 블록 (블록 하나에 범위 64개) | 4
+`Deterministic read ZEROs after TRIM` 줄 **없음** | 드라이브는 'TRIM 한 곳은 0' 을 약속하지 않는다 (커널은 `zeroaftertrim` 으로 0 이라고 믿는다) | 4
+`Device encrypts all user data` | 항상 암호화하는 드라이브 (SED) | 14
+Security : `supported` · `not enabled` · `not locked` · **`frozen`** · `supported: enhanced erase` · `2min … 8min` | Secure Erase 를 할 수 있지만 지금은 BIOS 가 잠갔다. 드라이브가 말하는 시간 : 보통 2분, enhanced 8분 | 14
+`max sectors = 234441648/234441648, HPA is disabled` | 보이는 크기 = 진짜 크기. 숨긴 영역 없음 | 10
+`write-caching = 1 (on)`, `look-ahead = 1 (on)` | 쓰기 캐시 켜짐, 미리 읽기 켜짐 | 7
+`APM_level = not supported` | 전원 관리 (APM) 설정은 없다 : SSD 에서는 흔하다 |
+`Queue depth: 32`, `Native Command Queueing (NCQ)`, `Gen3 (6.0Gb/s)` | 명령 32개까지 한꺼번에, SATA 3 | 5
+`Logical / Physical Sector size: 512 bytes` | 호스트에는 512 B 섹터로 보인다 (안쪽의 4 KiB 매핑 단위는 실험 6 이 찾는다) | 6
+```
+
+**SMART 로그**
+
+```table
+로그 | 내용 | 읽는 법
+오류 로그 (`error`, `xerror`) | `No Errors Logged` | 드라이브가 기억하는 명령 오류가 하나도 없다 : 13년 동안, 그리고 오늘의 느린 읽기에서도
+자가 진단 기록 (`selftest`) | `No self-tests have been logged` | 한 번도 자가 진단을 한 적이 없다 : 2단계가 첫 번째다
+장치 통계 (`devstat`) | `not supported` | 이 드라이브에는 없다 (더 새 드라이브의 기능)
+SATA 링크 (`sataphy`, 켠 뒤부터 센 값) | CRC · R_ERR 오류 모두 0. `PhyRdy → PhyNRdy` 31번, `COMRESET` 2번 | 링크 오류 없음. 31번은 오류가 아니라 링크가 쉬는 상태로 들어갔다 나온 횟수 (link power management), COMRESET 2번은 부팅 때의 초기화
+로그 목록 (`directory`) | Samsung 전용 로그 `0xa1`, `0xce`, `0xde` 가 있다 | 내용은 공개되어 있지 않다 (펌웨어 내부 기록)
+```
+
+**온도 기록** (`scttemp`, 10분마다) : 이번 실험들 동안의 드라이브 온도가 그대로 남았다.
+
+```table
+시각 | 온도 | 그때 한 일
+08:20 – 08:50 | 28 → 31 °C | 켠 뒤, 실험 0 (`check`)
+09:00 – 09:10 | **38 – 40 °C** | 실험 1 파일별 측정 (느린 읽기가 계속됨)
+09:20 | 33 °C | 쉬는 시간, 다시 읽기
+09:30 | **38 °C** | 실험 1 드라이브 전체 지도
+09:40 | 31 °C | 쉼
+```
+
+**읽기만 하는데도 7–9 °C 가 오른다.** 정상 SSD 의 읽기는 거의 열을 내지 않는다. 이 드라이브는 읽기 하나에 여러 번 다시 읽으므로 (read retry) 컨트롤러와 NAND 가 쉬지 않고 일한다. 실험 1 의 해석과 맞는 독립된 증거다.
+
+**가설 확인 (1단계까지)**
+
+```table
+가설 | 결과
+H1 TRIM 뒤 0 이 보장된다 | **아니다** (약속 줄이 없다). 실제로 0 이 나오는지는 실험 4
+H2 Secure Erase 를 할 수 있다 | **할 수 있다, 단 지금은 frozen** : 실험 14 에서 절전 → 깨우기
+H3 자가 진단이 예상보다 오래 걸린다 | 2단계 (`selftest long`) 에서 확인. 권장 시간 70분
+H4 '믿을 수 없게 됨' 의 흔적이 로그에 있다 | **아니다** : 오류 로그 · 링크 오류 모두 0. 남은 흔적은 '느림' 과 '열' 뿐
+```
+
+### 2단계 : `selftest long`
+
 아직 실행 전.
 </div>
 

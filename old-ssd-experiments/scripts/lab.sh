@@ -284,8 +284,9 @@ features)
     new_out features
     hdparm -I "$DEV" > "$OUT/hdparm-I.txt" 2>&1 || true
     note "ATA features (whole list: hdparm-I.txt)"
-    grep -iE "model|firmware|standard|sector size|cache|TRIM|zeros|security|frozen|erase unit|sanitize|NCQ|APM|DIPM|Gen3|DMA:|LBA48" \
+    grep -E "Model Number|Firmware Revision|LBA48 +user|Logical +Sector size|Queue depth|Write cache|FLUSH_CACHE_EXT|Gen3|Native Command Queueing|TRIM|ZEROs|encrypts|Sanitize" \
         "$OUT/hdparm-I.txt" | sed 's/^/   /' || true
+    sed -n '/^Security:/,/^Logical Unit/p' "$OUT/hdparm-I.txt" | sed '$d; s/^/   /' || true
     note "visible / native max sectors (HPA), write cache, read look-ahead, APM"
     hdparm -N -W -A -B "$DEV" 2>&1 | tee "$OUT/hdparm-NWAB.txt" | sed 's/^/   /' || true
     note "SMART: attributes, logs, device statistics, temperature history"
@@ -294,8 +295,12 @@ features)
     for l in devstat error xerror selftest scttemp sataphy directory; do
         smartctl -l "$l" $(smart_args) "$DEV" > "$OUT/smart-log-$l.txt" 2>&1 || true
     done
-    grep -E "Lifetime Power-On|Logical Sectors (Written|Read)|Power Cycles|Temperature|Error Count|CRC" "$OUT/smart-log-devstat.txt" "$OUT/smart-log-sataphy.txt" \
-        2>/dev/null | sed 's/^/   /' | head -30 || true
+    note "error log, self-test log, device statistics"
+    for l in error selftest devstat; do grep -hE "No Errors|No self-tests|not supported|Error [0-9]+ |# ?[0-9]+ " "$OUT/smart-log-$l.txt" | head -5 | sed "s/^/   $l: /"; done || true
+    note "SATA link counters that are not zero (counted since power-on)"
+    awk '$1 ~ /^0x/ && $3 != 0' "$OUT/smart-log-sataphy.txt" | sed 's/^/   /' || true
+    note "temperature history (every 10 min)"
+    grep -E "^ +[0-9]+ +20[0-9-]+ [0-9:]+ +[0-9]+ " "$OUT/smart-log-scttemp.txt" | tail -12 | sed 's/^/   /' || true
     finish ;;
 selftest)
     need_root selftest; find_dev

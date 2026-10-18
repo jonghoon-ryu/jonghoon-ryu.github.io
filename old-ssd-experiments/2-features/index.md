@@ -103,19 +103,77 @@ $ sudo ./lab.sh selftest long
 
 H3 의 비교를 위해, **실험 3 (드라이브 전체를 새로 씀) 이 끝난 뒤** `sudo ./lab.sh selftest long` 을 한 번 더 한다. 같은 드라이브가 같은 일을 하는데 데이터의 나이만 다르다.
 
-## 결과 읽는 법
-
-```
-$ D=$(ls -d ~/Ryu/old_ssd_results/*-features | tail -1)
-$ less $D/hdparm-I.txt
-$ grep -E "seconds|Completed|failure" ~/Ryu/old_ssd_results/*-selftest-long/{meta.txt,selftest-log.txt}
-```
-
-Claude 가 두 결과 폴더를 읽어 '지원하는 기능' 표와 '두 번의 자가 진단 시간' 을 이 페이지의 결과에 붙인다. 뒤 실험들 (4, 7, 14) 이 기대하는 기능이 없으면 그 실험의 절차를 바꾼다.
-
 ## 결과
 
 <div class="result" markdown="1">
+### 1단계 : `features` (2026.10.18 09:41, 결과 폴더 `20261018-094145-features`)
+
+**ATA 기능** (`hdparm -I`, `hdparm -N -W -A -B`)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>보이는 것</th>
+<th>뜻</th>
+<th>어느 실험</th>
+</tr></thead><tbody>
+<tr><td><code>Data Set Management TRIM supported (limit 8 blocks)</code></td><td>TRIM 지원. 명령 하나에 범위 8개 블록 (블록 하나에 범위 64개)</td><td>4</td></tr>
+<tr><td><code>Deterministic read ZEROs after TRIM</code> 줄 <strong>없음</strong></td><td>드라이브는 'TRIM 한 곳은 0' 을 약속하지 않는다 (커널은 <code>zeroaftertrim</code> 으로 0 이라고 믿는다)</td><td>4</td></tr>
+<tr><td><code>Device encrypts all user data</code></td><td>항상 암호화하는 드라이브 (SED)</td><td>14</td></tr>
+<tr><td>Security : <code>supported</code> · <code>not enabled</code> · <code>not locked</code> · <strong><code>frozen</code></strong> · <code>supported: enhanced erase</code> · <code>2min … 8min</code></td><td>Secure Erase 를 할 수 있지만 지금은 BIOS 가 잠갔다. 드라이브가 말하는 시간 : 보통 2분, enhanced 8분</td><td>14</td></tr>
+<tr><td><code>max sectors = 234441648/234441648, HPA is disabled</code></td><td>보이는 크기 = 진짜 크기. 숨긴 영역 없음</td><td>10</td></tr>
+<tr><td><code>write-caching = 1 (on)</code>, <code>look-ahead = 1 (on)</code></td><td>쓰기 캐시 켜짐, 미리 읽기 켜짐</td><td>7</td></tr>
+<tr><td><code>APM_level = not supported</code></td><td>전원 관리 (APM) 설정은 없다 : SSD 에서는 흔하다 |</td></tr>
+<tr><td><code>Queue depth: 32</code>, <code>Native Command Queueing (NCQ)</code>, <code>Gen3 (6.0Gb/s)</code></td><td>명령 32개까지 한꺼번에, SATA 3</td><td>5</td></tr>
+<tr><td><code>Logical / Physical Sector size: 512 bytes</code></td><td>호스트에는 512 B 섹터로 보인다 (안쪽의 4 KiB 매핑 단위는 실험 6 이 찾는다)</td><td>6</td></tr>
+</tbody></table></div>
+
+**SMART 로그**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>로그</th>
+<th>내용</th>
+<th>읽는 법</th>
+</tr></thead><tbody>
+<tr><td>오류 로그 (<code>error</code>, <code>xerror</code>)</td><td><code>No Errors Logged</code></td><td>드라이브가 기억하는 명령 오류가 하나도 없다 : 13년 동안, 그리고 오늘의 느린 읽기에서도</td></tr>
+<tr><td>자가 진단 기록 (<code>selftest</code>)</td><td><code>No self-tests have been logged</code></td><td>한 번도 자가 진단을 한 적이 없다 : 2단계가 첫 번째다</td></tr>
+<tr><td>장치 통계 (<code>devstat</code>)</td><td><code>not supported</code></td><td>이 드라이브에는 없다 (더 새 드라이브의 기능)</td></tr>
+<tr><td>SATA 링크 (<code>sataphy</code>, 켠 뒤부터 센 값)</td><td>CRC · R_ERR 오류 모두 0. <code>PhyRdy → PhyNRdy</code> 31번, <code>COMRESET</code> 2번</td><td>링크 오류 없음. 31번은 오류가 아니라 링크가 쉬는 상태로 들어갔다 나온 횟수 (link power management), COMRESET 2번은 부팅 때의 초기화</td></tr>
+<tr><td>로그 목록 (<code>directory</code>)</td><td>Samsung 전용 로그 <code>0xa1</code>, <code>0xce</code>, <code>0xde</code> 가 있다</td><td>내용은 공개되어 있지 않다 (펌웨어 내부 기록)</td></tr>
+</tbody></table></div>
+
+**온도 기록** (`scttemp`, 10분마다) : 이번 실험들 동안의 드라이브 온도가 그대로 남았다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>시각</th>
+<th>온도</th>
+<th>그때 한 일</th>
+</tr></thead><tbody>
+<tr><td>08:20 – 08:50</td><td>28 → 31 °C</td><td>켠 뒤, 실험 0 (<code>check</code>)</td></tr>
+<tr><td>09:00 – 09:10</td><td><strong>38 – 40 °C</strong></td><td>실험 1 파일별 측정 (느린 읽기가 계속됨)</td></tr>
+<tr><td>09:20</td><td>33 °C</td><td>쉬는 시간, 다시 읽기</td></tr>
+<tr><td>09:30</td><td><strong>38 °C</strong></td><td>실험 1 드라이브 전체 지도</td></tr>
+<tr><td>09:40</td><td>31 °C</td><td>쉼</td></tr>
+</tbody></table></div>
+
+**읽기만 하는데도 7–9 °C 가 오른다.** 정상 SSD 의 읽기는 거의 열을 내지 않는다. 이 드라이브는 읽기 하나에 여러 번 다시 읽으므로 (read retry) 컨트롤러와 NAND 가 쉬지 않고 일한다. 실험 1 의 해석과 맞는 독립된 증거다.
+
+**가설 확인 (1단계까지)**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>가설</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>H1 TRIM 뒤 0 이 보장된다</td><td><strong>아니다</strong> (약속 줄이 없다). 실제로 0 이 나오는지는 실험 4</td></tr>
+<tr><td>H2 Secure Erase 를 할 수 있다</td><td><strong>할 수 있다, 단 지금은 frozen</strong> : 실험 14 에서 절전 → 깨우기</td></tr>
+<tr><td>H3 자가 진단이 예상보다 오래 걸린다</td><td>2단계 (<code>selftest long</code>) 에서 확인. 권장 시간 70분</td></tr>
+<tr><td>H4 '믿을 수 없게 됨' 의 흔적이 로그에 있다</td><td><strong>아니다</strong> : 오류 로그 · 링크 오류 모두 0. 남은 흔적은 '느림' 과 '열' 뿐</td></tr>
+</tbody></table></div>
+
+### 2단계 : `selftest long`
+
 아직 실행 전.
 </div>
 
