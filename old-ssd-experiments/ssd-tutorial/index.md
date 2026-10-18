@@ -20,7 +20,7 @@ table.t code { font-size:0.82rem; }
 
 # SSD tutorial : 120 GB 드라이브는 왜 111.8 GiB 로 보이나
 
-실험할 840 EVO 의 용량은 **234,441,648 섹터 × 512 B** 다. 이 숫자 하나에서 시작해, SSD 의 용량이 어떻게 정해지는지를 차례로 따라간다 : GB 와 GiB, 왜 두 단위가 섞였나, SSD 안의 2진 NAND 와 밖에 보이는 10진 용량, 섹터 수를 정하는 IDEMA 공식, over-provisioning 과 스페어 영역, 그리고 용량을 나누는 세 층 (드라이브 · 네임스페이스 · 파티션).
+실험할 840 EVO 의 용량은 **234,441,648 섹터 × 512 B** 다. 이 숫자 하나에서 시작해, SSD 의 용량이 어떻게 정해지는지를 차례로 따라간다 : GB 와 GiB, 왜 두 단위가 섞였나, SSD 안의 2진 NAND 와 밖에 보이는 10진 용량, 섹터 수를 정하는 IDEMA 공식, over-provisioning 과 스페어 영역, 용량을 나누는 세 층 (드라이브 · 네임스페이스 · 파티션), 그리고 USB 로 붙인 NVMe.
 
 <div class="glance">
 <b>이 페이지는</b><span>Claude 와 나눈 질문과 답을 다듬어 정리한 것 (2026.10.18)</span>
@@ -323,6 +323,59 @@ PC 용 NVMe 드라이브는 대개 네임스페이스를 하나만 지원한다 
 <tr><td>네임스페이스를 작게 만듦 (NVMe)</td><td>드라이브</td><td>예 : 펌웨어가 경계를 직접 안다</td><td>예, 가장 확실하다</td></tr>
 </tbody></table></div>
 
+## 12. USB 로 붙인 NVMe : USB 는 NVMe 를 모른다
+
+USB 외장 SSD 의 안에는 NVMe SSD 가 들어 있는 경우가 많다. 그런데 **USB 에는 NVMe 를 실어 나르는 방법이 없다.** USB 저장 장치는 SCSI 명령으로 말한다 (USB 메모리와 같다). 그래서 케이스 안의 **브리지 칩** 이 둘 사이를 번역한다.
+
+<svg viewBox="0 0 760 250" style="font-variant-ligatures:none;width:100%;max-width:760px;height:auto;display:block;margin:1rem auto;" font-family="'IBM Plex Sans KR','IBM Plex Sans','Apple SD Gothic Neo','Malgun Gothic',sans-serif" role="img" aria-label="USB NVMe 외장 SSD 의 구조"><defs><marker id="au" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7f8c8d"/></marker></defs><text x="380" y="22" font-size="14" font-weight="700" fill="#2c3e50" text-anchor="middle">USB 외장 NVMe : 가운데의 브리지 칩이 번역한다</text><rect x="20" y="50" width="170" height="80" rx="8" fill="#eef2f7" stroke="#34495e" stroke-width="2"/><text x="105" y="78" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">PC (Linux)</text><text x="105" y="98" font-size="11.5" fill="#2c3e50" text-anchor="middle">uas 드라이버 → /dev/sdf</text><text x="105" y="116" font-size="11.5" fill="#2c3e50" text-anchor="middle">SCSI 명령을 보낸다</text><line x1="190" y1="90" x2="268" y2="90" stroke="#7f8c8d" stroke-width="2" marker-end="url(#au)"/><text x="229.0" y="82" font-size="11" fill="#566573" text-anchor="middle">USB (SCSI)</text><rect x="270" y="50" width="200" height="80" rx="8" fill="#fef9e7" stroke="#b7950b" stroke-width="2"/><text x="370" y="78" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">브리지 칩</text><text x="370" y="98" font-size="11.5" fill="#2c3e50" text-anchor="middle">SCSI READ / WRITE / UNMAP</text><text x="370" y="116" font-size="11.5" fill="#2c3e50" text-anchor="middle">→ NVMe Read / Write / Deallocate</text><line x1="470" y1="90" x2="548" y2="90" stroke="#7f8c8d" stroke-width="2" marker-end="url(#au)"/><text x="509.0" y="82" font-size="11" fill="#566573" text-anchor="middle">PCIe (NVMe)</text><rect x="550" y="50" width="190" height="80" rx="8" fill="#e8f3ef" stroke="#1f6f5c" stroke-width="2"/><text x="645" y="78" font-size="13" font-weight="700" fill="#2c3e50" text-anchor="middle">NVMe SSD</text><text x="645" y="98" font-size="11.5" fill="#2c3e50" text-anchor="middle">컨트롤러 + FTL + NAND</text><text x="645" y="116" font-size="11.5" fill="#2c3e50" text-anchor="middle">NVMe 명령만 안다</text><rect x="20" y="150" width="720" height="80" rx="8" fill="#ffffff" stroke="#566573" stroke-width="2" stroke-dasharray="5 4"/><text x="380" y="174" font-size="12.5" font-weight="700" fill="#2c3e50" text-anchor="middle">Linux 는 브리지만 본다 : 이름은 nvme0n1 이 아니라 sdX</text><text x="380" y="194" font-size="11.5" fill="#4d5656" text-anchor="middle">잃는 것 : NVMe 이름 · 큐 · 네임스페이스, 그냥은 안 되는 SMART, 번역되어야 하는 TRIM, USB 링크의 속도</text><text x="380" y="214" font-size="11.5" fill="#4d5656" text-anchor="middle">예외 : Thunderbolt · USB4 외장은 PCIe 를 그대로 터널링해서 진짜 nvme1n1 으로 보인다</text></svg>
+
+### 12.1 이름 : 왜 sdX 인가
+
+Linux 에서 `sd` 는 **SCSI disk** 다 (드라이버 `drivers/scsi/sd.c`). SATA 디스크 (`libata` 가 SCSI 명령을 ATA 명령으로 번역), USB 디스크 (원래 SCSI 명령을 USB 로 보냄), 진짜 SCSI · SAS 디스크가 모두 이 층을 지나므로 `sda`, `sdb` … 가 된다. NVMe 는 SCSI 층을 거치지 않는 자기 드라이버가 있어서 `nvme0n1` 이다.
+그런데 USB 브리지 뒤의 NVMe SSD 는 Linux 에게 **USB 저장 장치** 로 보인다 : 그래서 다시 `sd` 이름을 받는다.
+
+(덤 : 파티션 번호의 `p` 는 커널의 규칙 하나에서 나온다. 디스크 이름이 숫자로 끝나면 `p` 를 넣는다 : `nvme0n1` → `nvme0n1p1`, `mmcblk0` → `mmcblk0p1`, `loop0` → `loop0p1`. 넣지 않으면 `nvme0n11` 이 '네임스페이스 11' 인지 '네임스페이스 1 의 파티션 1' 인지 알 수 없다. 글자로 끝나는 `sda` 는 그냥 `sda1` 이다.)
+
+### 12.2 이 컴퓨터의 예 : Samsung T7
+
+이 컴퓨터의 `sdf` 가 바로 그것이다 : Samsung T7 외장 SSD, 안은 NVMe, 브리지가 케이스에 들어 있다 (2026.10.18 실제 출력).
+
+```
+$ lsblk -d -o NAME,MODEL,TRAN,DISC-MAX,ROTA /dev/sdf
+NAME MODEL   TRAN DISC-MAX ROTA
+sdf  PSSD T7 usb        0B    0
+$ lsusb | grep T7
+Bus 001 Device 007: ID 04e8:4001 Samsung Electronics Co., Ltd PSSD T7
+$ basename $(readlink /sys/bus/usb/devices/1-8:1.0/driver)
+uas
+$ cat /sys/bus/usb/devices/1-8/speed
+480
+```
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>보이는 것</th><th>뜻</th></tr></thead><tbody>
+<tr><td><code>TRAN usb</code>, 이름 <code>sdf</code></td><td>NVMe 가 아니라 USB 저장 장치로 보인다</td></tr>
+<tr><td><code>driver uas</code></td><td>USB Attached SCSI : USB 위의 SCSI (옛 방식은 <code>usb-storage</code>)</td></tr>
+<tr><td><code>DISC-MAX 0B</code></td><td>지금 이 연결로는 TRIM 이 지나가지 않는다 (브리지가 SCSI <code>UNMAP</code> 을 NVMe <code>Deallocate</code> 로 번역해 줘야 한다)</td></tr>
+<tr><td><code>speed 480</code></td><td><strong>USB 2.0 속도 (480 Mb/s)</strong> 로 붙어 있다. T7 은 10 Gb/s 포트에서 약 1,000 MB/s 인데, 지금은 약 40 MB/s 가 한계다. USB 2.0 케이블이거나 USB 2.0 포트 (흔히 검은색) 에 꽂힌 것이다. T7 의 USB-C 케이블로 파란색 · USB-C 포트에 꽂으면 <code>5000</code> 또는 <code>10000</code> 이 나와야 한다</td></tr>
+</tbody></table></div>
+
+### 12.3 브리지를 지나면 달라지는 것
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>항목</th><th>안쪽 (NVMe 로 바로)</th><th>USB 브리지를 지나면</th></tr></thead><tbody>
+<tr><td>이름</td><td><code>nvme0n1</code></td><td><code>sdX</code></td></tr>
+<tr><td>명령 큐</td><td>큐 여러 개, 큐마다 수천 개</td><td>UAS 는 작은 큐 하나 (BOT 방식은 한 번에 하나)</td></tr>
+<tr><td>네임스페이스</td><td>보인다</td><td>보이지 않는다 (브리지가 하나만 내보인다)</td></tr>
+<tr><td>SMART</td><td><code>smartctl -a /dev/nvme0</code></td><td>브리지에 맞는 옵션이 필요하다 : <code>-d sntrealtek</code>, <code>-d sntjmicron</code>, <code>-d sntasmedia</code> (지원하는 브리지만)</td></tr>
+<tr><td>TRIM</td><td><code>Deallocate</code></td><td>브리지가 <code>UNMAP</code> 을 번역해야 한다 : 안 되는 것도 많다</td></tr>
+<tr><td>속도</td><td>PCIe : 수 GB/s</td><td>USB 링크가 한계 : 10 Gb/s 에서 약 1 GB/s, 5 Gb/s 에서 약 450 MB/s, USB 2.0 에서 약 40 MB/s</td></tr>
+</tbody></table></div>
+
+흔한 브리지 칩 : Realtek RTL9210, JMicron JMS583, ASMedia ASM2362. **Thunderbolt · USB4** 외장은 다르다 : PCIe 를 그대로 터널링하므로 안의 SSD 가 진짜 `nvme1n1` 으로 보이고, 번역도 없다.
+
+같은 이야기가 SATA SSD 를 USB 어댑터에 넣을 때도 그대로다 : 어댑터가 SCSI 를 ATA 로 번역하고, SMART 는 `-d sat`, TRIM 은 어댑터가 허락할 때만 지나간다.
+
 ## 요약
 
 - 840 EVO 120GB = 234,441,648 섹터 × 512 B = **120.03 GB = 111.79 GiB.** 같은 양을 다른 자로 잰 것이다
@@ -332,5 +385,6 @@ PC 용 NVMe 드라이브는 대개 네임스페이스를 하나만 지원한다 
 - 그 섹터 수는 IDEMA 공식이 정한다. 상수는 10⁹ 바이트를 CHS 실린더 (1,008 섹터) 로 올림한 값이고, SSD · NVMe 도 호환성 때문에 그대로 따른다
 - NAND main 영역과 사용자 용량의 차이가 over-provisioning (이 드라이브는 약 14.5%) 이다. 페이지마다 붙은 스페어 영역 (ECC · 메타데이터) 은 OP 에 들어가지 않는다
 - 용량은 세 층으로 나뉜다 : **드라이브** (물건), **네임스페이스** (드라이브가 내보이는 디스크, NVMe), **파티션** (OS 가 디스크 안에 적은 표). 네임스페이스는 드라이브가 경계를 알고, 파티션은 모른다. 그래서 이름도 `nvme0n1p1` 처럼 파티션이 네임스페이스 아래에 온다
+- USB 는 NVMe 를 모른다. USB 외장 NVMe 는 케이스 안의 브리지 칩이 SCSI 를 NVMe 로 번역하고, Linux 에는 `sdX` (SCSI disk) 로 보인다. SMART · TRIM · 속도는 브리지와 USB 링크에 달렸다
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/' | relative_url }}">← 헌 SSD 로 하는 실험</a><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">SSD 를 다루는 Linux 명령 →</a></div>
