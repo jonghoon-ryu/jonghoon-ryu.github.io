@@ -173,6 +173,45 @@ $ sudo ./lab.sh selftest long
 - 가장 느린 읽기가 2.6 ms 로 고르다 : 다시 읽기 (read retry) 가 거의 없다는 뜻이다.
 - SMART : 187 · 195 0 그대로, 온도 31 → 33 °C (실험 1 의 지도 때는 31 → 40 °C).
 
+**화면 출력 읽기.** `sudo ./lab.sh scan fresh 8` 의 터미널 출력 (SMART 표는 줄였다) :
+
+```
+[sudo] password for ryuj:
+Sorry, try again.
+[sudo] password for ryuj:
+== results -> /home/ryuj/Ryu/old_ssd_results/20261018-114459-scan-fresh
+   177 Wear_Leveling_Count     PO--C-   090   090   000    -    118
+   187 Uncorrectable_Error_Cnt -O--CK   100   100   000    -    0
+   190 Airflow_Temperature_Cel -O--CK   069   052   000    -    31
+   241 Total_LBAs_Written      -O--CK   099   099   000    -    22715630218
+   …
+448/448   111.8 GiB    445.8 MB/s  max     2.4 ms  zero 0.00  ETA   0.0 min
+read 3.8 GB in 0.1 min, mean 437.1 MB/s -> /home/ryuj/Ryu/old_ssd_results/20261018-114459-scan-fresh/scan.csv
+   177 Wear_Leveling_Count     PO--C-   090   090   000    -    118
+   187 Uncorrectable_Error_Cnt -O--CK   100   100   000    -    0
+   190 Airflow_Temperature_Cel -O--CK   067   052   000    -    33
+   241 Total_LBAs_Written      -O--CK   099   099   000    -    22715630218
+   …
+```
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>줄</th>
+<th>뜻</th>
+</tr></thead><tbody>
+<tr><td><code>Sorry, try again.</code></td><td>sudo 비밀번호를 한 번 잘못 쳤다. 실험과 상관없다</td></tr>
+<tr><td><code>== results -&gt;</code></td><td>결과 폴더. 이름 = 시작 시각 (11:44:59) + 붙인 이름 (<code>fresh</code>). 실험 1 의 <code>scan-old</code> 와 구별된다</td></tr>
+<tr><td>첫 SMART 표</td><td>읽기 전의 값 (마지막 열이 실제 숫자). 오류 (5 · 179 · 181–183 · 187 · 195) 모두 0. <strong>177 = 118</strong> : 아침 (117) 보다 1 늘었다 = 1단계에서 드라이브 전체를 한 번 썼다. <strong>241</strong> 은 1단계의 120 GB 가 더해진 값 (× 512 B = 11.63 TB). 온도 31 °C (1단계 끝에는 48 °C)</td></tr>
+<tr><td><code>448/448</code></td><td>448개 구간 (256 MiB 씩) 중 마지막</td></tr>
+<tr><td><code>111.8 GiB</code></td><td>위치 : 드라이브의 맨 끝</td></tr>
+<tr><td><code>445.8 MB/s</code></td><td>이 구간의 읽기 속도</td></tr>
+<tr><td><code>max 2.4 ms</code></td><td>이 구간에서 가장 느린 1 MiB 읽기. 오래된 데이터에서는 100 – 1,000 ms 였다</td></tr>
+<tr><td><code>zero 0.00</code></td><td>0 으로만 읽힌 비율 = 0 : TRIM 된 빈 곳이 아니라 진짜 NAND 의 데이터다</td></tr>
+<tr><td><code>ETA 0.0 min</code></td><td>남은 시간 : 끝</td></tr>
+<tr><td><code>read 3.8 GB in 0.1 min, mean 437.1 MB/s</code></td><td>합계 : 3.8 GB (8 MiB × 448) 를 약 9초에, <strong>평균 437 MB/s</strong>. 아침의 같은 스캔은 8분, 7.9 MB/s : <strong>약 55배</strong></td></tr>
+<tr><td>두 번째 SMART 표</td><td>읽은 뒤 : 오류 모두 0 그대로. 241 · 177 도 그대로 (읽기만 했다). 온도 <strong>31 → 33 °C</strong> : 오래된 데이터를 읽을 때 (31 → 40 °C) 와 달리 다시 읽기가 없어 거의 데워지지 않는다</td></tr>
+</tbody></table></div>
+
 **결론 : 실험 1 의 느림은 '데이터의 나이' 가 전부였다.** 같은 드라이브, 같은 연결, 같은 위치, 같은 방법에서, 1년 넘게 전원 없이 둔 데이터는 약 10 MB/s, 막 쓴 데이터는 약 445 MB/s 로 읽혔다. 드라이브 (컨트롤러, NAND, 연결) 자체는 멀쩡하다. 오래 둔 셀은 전하가 빠져 기준 전압을 여러 번 옮겨 가며 다시 읽어야 했고 (그래서 느리고 뜨거웠고), 새로 쓴 셀은 한 번에 읽힌다.
 
 ### 2단계 : `slc-idle` · 4단계 : `selftest long`
