@@ -65,7 +65,24 @@ table.t code { font-size:0.82rem; }
 - 순차가 랜덤보다 빠르다 (읽기 +15%, 쓰기 +14%). NVMe 에서는 차이가 작다 : 디스크와 달리 머리가 움직이지 않는다. 차이는 미리 읽기 · 같은 페이지 안의 읽기 같은 컨트롤러 쪽 이득이다.
 - 쓰기는 읽기보다 지연의 **꼬리** 가 길다 (99% 326 µs) : NAND 프로그램은 읽기보다 느리고, 가끔 SLC 버퍼 정리 · GC 가 끼어든다.
 - **섞으면 둘 다 나빠진다** : `randrw` 의 읽기 99% 지연은 1.5 ms 로, 읽기만 할 때의 12배다. 읽기가 쓰기 (프로그램) 뒤에서 기다린다 ([실험 13](/old-ssd-experiments/13-interference/) 이 120GB SSD 에서 이것을 잰다).
-- `rw` (순차로 섞기) 는 `randrw` 보다도 느렸다 : 읽기와 쓰기가 같은 위치를 바로 이어서 지나가므로, 방금 쓴 곳을 곧바로 읽는 경우가 많다. 이 결과만으로 이유를 단정하지는 않는다.
+- `rw` (순차로 섞기, '쓰기' 가 아니다) 는 이 그룹에서 `randrw` 보다 2.3배 느렸다 (116k 대 264k). **다시 재 보니 그렇지 않았다** (아래 표, 2026.10.18 13:20, 각 10초) : `rw` 276k, `randrw` 302k 로 비슷하다. 이 그룹에서 `rw` 는 `randwrite` · `write` · `randrw` 바로 뒤에 돌았다 : 1분 남짓에 약 30 GB 를 쓴 직후라, 97% 찬 이 드라이브의 SLC 버퍼가 다 찼을 것이다. 그러면 쓰기가 느려지고 섞인 읽기도 함께 느려진다. 곧 그 숫자는 '순차로 섞기' 의 성질이 아니라 **그때 드라이브의 상태** 였다 (위의 경고, 아래 쓰기 `--bs` 1 MiB 와 같은 일). 처음에 적었던 '방금 쓴 곳을 곧바로 읽어서' 라는 설명은 이 다시 재기가 뒷받침하지 않는다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>다시 재기 (드라이브가 쉰 뒤)</th>
+<th>읽기 IOPS</th>
+<th>쓰기 IOPS</th>
+<th>합계</th>
+</tr></thead><tbody>
+<tr><td><code>randrw</code> (랜덤으로 섞기)</td><td>151k</td><td>151k</td><td><strong>302k</strong></td></tr>
+<tr><td><code>rw</code> (순차로 섞기)</td><td>138k</td><td>138k</td><td><strong>276k</strong></td></tr>
+<tr><td><code>rw</code>, <code>iodepth=1</code></td><td>15.9k</td><td>15.9k</td><td>32k</td></tr>
+<tr><td>읽기 · 쓰기를 다른 절반에 (job 2개 × 깊이 16)</td><td><strong>40.6k</strong></td><td>273k</td><td>314k</td></tr>
+<tr><td>순차 읽기만</td><td>522k</td><td>—</td><td>522k</td></tr>
+<tr><td>순차 쓰기만</td><td>—</td><td>364k</td><td>364k</td></tr>
+</tbody></table></div>
+
+- 마지막에서 셋째 줄도 볼 만하다 : 읽기와 쓰기에 요청을 16개씩 똑같이 줬는데, 쓰기가 273k 를 가져가고 읽기는 40.6k 뿐이었다. 쓰기는 드라이브의 버퍼에 들어가면 곧 끝나서 자리를 계속 채운다. 섞인 일을 드라이브가 어떻게 나눠 주는지는 우리가 준 숫자가 아니라 **드라이브의 스케줄링** 이 정한다.
 
 ## `--bs` : I/O 하나의 크기
 
@@ -311,7 +328,7 @@ IOPS 는 비슷한데 버퍼 쓰기의 99% 지연이 4배 짧다 : 쓰기가 RAM
 <tr><td><code>--ioengine</code></td><td><code>io_uring</code> → <code>psync</code></td><td>IOPS <strong>30배 낮음</strong></td><td>동기 엔진은 <code>iodepth</code> 를 무시한다. <code>posixaio</code> 는 겉모습만 비동기</td></tr>
 <tr><td><code>--fsync</code></td><td>0 → 1</td><td>쓰기 IOPS <strong>115배 낮음</strong></td><td>FLUSH 는 비싸다 : 모아서 한다</td></tr>
 <tr><td><code>--bs</code></td><td>4k → 1m</td><td>IOPS 230배 낮음, MB/s 는 천장 근처</td><td>512 B 와 4 KiB 는 같은 일, 16 KiB 부터 대역 천장</td></tr>
-<tr><td><code>--rw</code></td><td>randread → randrw</td><td>읽기 99% 지연 <strong>12배</strong></td><td>섞인 쓰기가 읽기의 꼬리를 늘린다</td></tr>
+<tr><td><code>--rw</code></td><td>randread → randrw</td><td>읽기 99% 지연 <strong>12배</strong></td><td>섞인 쓰기가 읽기의 꼬리를 늘린다. 순차로 섞기 (<code>rw</code>) 의 느림은 그때의 드라이브 상태였다 (다시 재니 <code>randrw</code> 와 비슷)</td></tr>
 <tr><td><code>--random_distribution</code></td><td>random → zipf:1.2</td><td>IOPS +34%, 꼬리 절반</td><td>몰린 접근은 빨라진다 (매핑 캐시)</td></tr>
 <tr><td><code>--numjobs</code></td><td>1 → 2</td><td>+24%, 그 뒤로는 지연만</td><td>job × iodepth 가 걸린 요청의 합</td></tr>
 <tr><td><code>--direct</code></td><td>1 → 0</td><td>읽기 −17%, 쓰기의 꼬리는 RAM 의 것</td><td>캐시를 거친 숫자는 장치가 아니다</td></tr>
