@@ -111,7 +111,7 @@ $ sudo ./lab.sh selftest long
 </tr></thead><tbody>
 <tr><td>처음 약 6초</td><td>약 <strong>3.2 GB</strong></td><td><strong>533 MB/s</strong> (1초마다 533, 533, 533, 533, 533, 515)</td><td>SLC 버퍼 (TurboWrite) 에 쓰는 속도. 533 MB/s 는 SATA 3 의 한계 근처라, 버퍼 자체는 더 빠를 수도 있다</td></tr>
 <tr><td>그 뒤 끝까지 (약 780초)</td><td>약 116.8 GB</td><td><strong>약 150 MB/s</strong> (147 – 153, 거의 평평)</td><td>버퍼가 다 찬 뒤 TLC 에 바로 쓰는 속도</td></tr>
-<tr><td>전체 평균</td><td>120.03 GB / 786.6 s</td><td>152.6 MB/s |</td></tr>
+<tr><td>전체 평균</td><td>120.03 GB / 786.6 s</td><td>152.6 MB/s</td><td>거의 전부가 TLC 직접 쓰기라 그 속도에 가깝다</td></tr>
 </tbody></table></div>
 
 화면의 fio 진행 줄 `w=144MiB/s` 는 같은 값이다 : 144 MiB/s × 1.049 = 151 MB/s (MiB 와 MB 의 차이는 [fio 사용법](/old-ssd-experiments/fio/) 3절).
