@@ -55,7 +55,7 @@ table.t code { font-size:0.82rem; }
 1. **실험의 숫자 하나 바꾸기.** `lab.sh` 의 fio 명령에서 하나만 바꾼다 : 블록 크기, 큐 깊이, `randwrite` 와 `write`, span, 압축되는 데이터와 랜덤 데이터. **먼저 결과를 예측하고** 돌린다. 예측이 틀린 곳에서 FTL 에 대해 몰랐던 것을 찾는다
 2. **분석 스크립트 고치기.** `smartdiff.py` 가 단계마다 WAF 를 내게, `plot.py` 가 두 실행을 겹쳐 그리게, `readscan.py` 가 지연 분포를 남기게
 3. **C 로 작은 테스트 도구 쓰기.** 각각 100–200 줄 :
-   - **지연 기록기** : `O_DIRECT` 4 KiB 쓰기의 지연을 하나하나 기록. SLC 캐시가 바닥나는 순간과 GC 의 멈춤이 평균 없이 바로 보인다 (→ 5 절의 step 1)
+   - **지연 기록기** : `O_DIRECT` 4 KiB 쓰기의 지연을 하나하나 기록. SLC 캐시가 바닥나는 순간과 GC 의 멈춤이 평균 없이 바로 보인다 (→ 7 절의 step 1)
    - **FLUSH 시계** : 쓰기와 `fdatasync()` 의 시간을 따로 (실험 7)
    - **TRIM 탐침** : 무늬를 쓰고, 일부를 TRIM 하고, 다시 읽기 (실험 4)
    - **작은 fio** : `io_uring` 으로 큐 깊이를 직접 정하고 fio 와 비교
@@ -78,6 +78,8 @@ C/C++ 를 알고 시스템 프로그래밍은 처음, 일주일에 5–10 시간
 - **느려지는 곳** : 이상하게 좋은 숫자 (드라이브가 아니라 캐시를 잼), `O_DIRECT` 의 정렬 오류 (`EINVAL`), `io_uring` 의 배우는 곡선. 각각 며칠씩 막히는 것이 보통이고, 거기서 가장 많이 배운다
 - **읽을거리** : *The Linux Programming Interface* (Kerrisk) 4–5 장 (파일 I/O), 13 장 (버퍼링, `O_DIRECT`). 큐 깊이 단계에서는 `io_uring` man 페이지와 liburing 예제
 
+이 예상은 주 5–10 시간일 때다. 실제 계획은 주말 2 시간 (2027년 3–9월, 약 60 시간) 이고, 그에 맞춰 범위를 줄인 계획이 [6 절](#6-학습-계획--2027년-3월--9월-주말-2-시간) 에 있다.
+
 ## 4. 웹으로 하려면 : 두 가지 길
 
 [FTL Visual Simulator](/ftl-visual-simulator/) 처럼 웹에서 하고 싶었다. 그런데 FTL 시뮬레이터는 MQSim 을 WASM 으로 컴파일해서 **시뮬레이션된 SSD 가 페이지 안에 있기 때문에** 브라우저에서 돈다. 시스템 프로그래밍에는 넘을 수 없는 벽이 있다 : **웹 페이지는 진짜 디스크에 닿을 수 없다.** 브라우저의 샌드박스가 `open("/dev/sda", O_DIRECT)`, `fsync`, `ioctl` 을 모두 막는다. 그래서 '웹으로' 는 두 가지 다른 프로젝트가 된다.
@@ -98,11 +100,11 @@ C/C++ 를 알고 시스템 프로그래밍은 처음, 일주일에 5–10 시간
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr><th>단계</th><th>하는 일</th><th>새로 배우는 것</th><th>상태</th></tr></thead><tbody>
-<tr><td>1</td><td><code>O_DIRECT</code> 쓰기 하나하나의 시간 재기 (CSV)</td><td><code>open</code>, <code>O_DIRECT</code>, <code>posix_memalign</code>, <code>pwrite</code>, <code>clock_gettime</code>, 페이지 캐시</td><td><strong>끝</strong> (6 절)</td></tr>
+<tr><td>1</td><td><code>O_DIRECT</code> 쓰기 하나하나의 시간 재기 (CSV)</td><td><code>open</code>, <code>O_DIRECT</code>, <code>posix_memalign</code>, <code>pwrite</code>, <code>clock_gettime</code>, 페이지 캐시</td><td><strong>코드 있음</strong> (7 절)</td></tr>
 <tr><td>2</td><td>구간마다 통계 (MB/s, IOPS, p50 · p99 · 최대 지연) 를 JSON 한 줄씩. 순차 · 랜덤, 읽기 · 쓰기</td><td>통계, 난수 오프셋, 출력 형식</td><td>다음</td></tr>
 <tr><td>3</td><td>진짜 드라이브를 위한 안전 확인 : 블록 장치인가, 크기, 시리얼, 마운트되어 있나, 시스템 디스크인가, 확인 입력</td><td><code>fstat</code>, <code>ioctl(BLKGETSIZE64)</code>, <code>/sys</code> · <code>/proc/mounts</code> 읽기</td><td>아직</td></tr>
 <tr><td>4</td><td>이 PC 에서만 여는 웹 페이지 : 파라미터 정하기, 시작 · 멈춤, 실시간 그래프</td><td>프로세스 띄우기와 파이프, 작은 HTTP 서버, 스트리밍 (SSE)</td><td>아직</td></tr>
-<tr><td>5</td><td>큐 깊이 : 여러 I/O 를 동시에</td><td><code>io_uring</code> (liburing : <code>sudo apt install liburing-dev</code>)</td><td>아직</td></tr>
+<tr><td>5</td><td>큐 깊이 : 여러 I/O 를 동시에</td><td>스레드 (<code>pthread</code>) 로 먼저, 덤으로 <code>io_uring</code> (liburing : <code>sudo apt install liburing-dev</code>)</td><td>아직</td></tr>
 <tr><td>6</td><td>FLUSH 시간, TRIM</td><td><code>fdatasync</code>, <code>ioctl(BLKDISCARD)</code></td><td>아직</td></tr>
 </tbody></table></div>
 
@@ -112,15 +114,125 @@ C/C++ 를 알고 시스템 프로그래밍은 처음, 일주일에 5–10 시간
 **한계.** 파일은 SSD 가 아니다. 페이지 캐시, 파일 시스템, 그 밑의 시스템 디스크가 끼어든다. 가짜 장치는 **코드가 맞는지** 확인하는 데에만 쓰고, 거기서 나온 **숫자는 840 EVO 의 숫자가 아니다.**
 </div>
 
-## 6. Step 1 : O_DIRECT 쓰기 하나하나의 시간 재기
+## 6. 학습 계획 : 2027년 3월 – 9월, 주말 2 시간
+
+<div class="glance">
+<b>기간</b><span>2027.3.6 – 9.25 : 토요일 (또는 일요일) 30 번</span>
+<b>시간</b><span>주말마다 2 시간 → 모두 약 <strong>60 시간</strong>. 그중 4 번은 밀린 것을 따라잡는 여유 주</span>
+<b>책</b><span><strong>TLPI</strong> : <em>The Linux Programming Interface</em> (Kerrisk), <strong>Weiss</strong> : <em>System Programming in Linux</em> (Stewart Weiss)</span>
+<b>목표 (9월)</b><span>내가 쓴 C 도구로 진짜 SSD 의 SLC 캐시 · GC · OP · TRIM · 큐 깊이를 재고, 웹 화면으로 보고, 결과를 이 블로그에 쓴다</span>
+</div>
+
+### 6.1 먼저 정할 것
+
+- **60 시간은 3 절의 예상 (주 5–10 시간, 약 석 달 = 60–130 시간) 의 아래쪽 끝이다.** 그래서 범위를 줄였다 : `io_uring` 은 스레드로 큐 깊이를 먼저 익힌 뒤의 '덤' 으로, 웹 화면은 서버 쪽 틀을 받아 C 쪽에 집중한다. `SG_IO` 로 SMART 를 직접 읽는 것은 9월에 시간이 남으면
+- **2 시간 나누기 : 읽기 40 분, 코드 · 측정 80 분.** 책의 장을 다 읽으려 하지 않는다. 아래 표의 절만 읽고, 나머지는 필요할 때 찾아 읽는다. 같은 주제를 Weiss 에서 먼저 읽고 (예제로 감을 잡고), TLPI 로 깊이를 채운다. Weiss 의 장 번호는 이 계획에 적지 않았다 : 시작할 때 표의 주제에 맞는 장을 한 번 짝지어 둔다
+- **오래 걸리는 측정은 2 시간 밖에서.** 드라이브를 꽉 채우는 쓰기, steady state 는 몇 시간씩 걸린다. 2 시간 안에서는 설정 → 시작 → (밤새 돌림) → 다음 주에 분석
+- **드라이브가 남아 있어야 한다.** [헌 SSD 실험](/old-ssd-experiments/) 의 17 (전원 차단), 18 (끝까지 쓰기), 19 (열어 보기) 는 840 EVO 를 망가뜨리거나 분해한다. 그 전에 2027년 3월이 오면 840 EVO 를 그대로 두거나, **망가져도 되는 SATA SSD 를 하나 더** (중고 120–256 GB) 마련한다
+- **매주 끝에 이 페이지에 몇 줄.** 무엇을 했고, 무엇이 놀라웠나. 9월의 결과 페이지가 저절로 쌓인다
+
+### 6.2 한눈에
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>달</th><th>주제</th><th>책 (TLPI)</th><th>만드는 것 (5 절의 단계)</th><th>달 끝의 확인</th></tr></thead><tbody>
+<tr><td>3월</td><td>파일 I/O 기초</td><td>2–5 장</td><td>step 1 을 직접 다시 쓰기</td><td>가짜 장치에서 <code>O_DIRECT</code> 와 buffered 의 차이를 내 코드로 설명할 수 있다</td></tr>
+<tr><td>4월</td><td>버퍼링 · 시간 · 내구성</td><td>13 장, 23.5 절</td><td>FLUSH 시계 (step 6 의 앞 절반)</td><td><code>write</code> 와 <code>fdatasync</code> 가 각각 어디서 시간을 쓰는지 안다</td></tr>
+<tr><td>5월</td><td>통계 · 안전 · 첫 진짜 측정</td><td>14–15 장</td><td>step 2, step 3</td><td><strong>내 도구로 840 EVO 의 SLC 캐시가 바닥나는 순간을 본다</strong></td></tr>
+<tr><td>6월</td><td>프로세스 · 시그널 · 파이프 · 웹 화면</td><td>20–22, 24–27, 44 장</td><td>step 4</td><td>브라우저에서 시작을 누르고 실시간 그래프를 본다</td></tr>
+<tr><td>7월</td><td>진짜 SSD 실험을 내 도구로</td><td>(앞에서 배운 것)</td><td>TRIM (step 6 의 뒤 절반)</td><td>write cliff, OP, TRIM, idle GC 를 내 도구로 재고 fio 와 맞춰 본다</td></tr>
+<tr><td>8월</td><td>큐 깊이</td><td>29–30 장 (스레드)</td><td>step 5 (스레드 → 덤 : <code>io_uring</code>)</td><td>QD 1–32 에서 IOPS 가 왜 늘고 어디서 멈추는지 설명한다</td></tr>
+<tr><td>9월</td><td>정리</td><td>—</td><td>실험 하나를 처음부터 끝까지</td><td>결과 페이지와 회고</td></tr>
+</tbody></table></div>
+
+### 6.3 주마다
+
+**3월 : 파일 I/O 기초**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>주</th><th>읽기</th><th>코드 · 측정</th><th>끝나면</th></tr></thead><tbody>
+<tr><td>1 (3.6)</td><td>TLPI 2–3 장 : 시스템 호출, 오류 처리 (<code>errno</code>, <code>perror</code>)</td><td>준비 : <code>gcc</code>, <code>smartmontools</code>, <code>fio</code>. <code>open</code> 에 없는 파일을 주고 오류 메시지 보기</td><td>시스템 호출과 라이브러리 함수의 차이를 말할 수 있다</td></tr>
+<tr><td>2 (3.13)</td><td>TLPI 4 장 : <code>open</code> / <code>read</code> / <code>write</code> / <code>close</code></td><td>나만의 <code>cp</code> : 버퍼 크기를 바꿔 가며 시간 재기</td><td>파일 디스크립터가 무엇인지 안다</td></tr>
+<tr><td>3 (3.20)</td><td>TLPI 5 장 : <code>pread</code> / <code>pwrite</code>, <code>O_*</code> 플래그, 파일 구멍</td><td><code>truncate</code> 로 가짜 장치 만들기, <code>ls -l</code> 과 <code>du</code> 가 왜 다른지 (구멍)</td><td>가짜 장치가 무엇인지 안다</td></tr>
+<tr><td>4 (3.27)</td><td>TLPI 13.6 절 : direct I/O</td><td><strong>step 1 을 보지 않고 다시 쓰기</strong>, 7 절의 실행을 되풀이. 막히면 그때 <a href="https://github.com/jonghoon-ryu/jonghoon-ryu.github.io/blob/main/ssd-system-programming/code/step1.c"><code>step1.c</code></a> 를 본다</td><td>7.4 절의 결과를 내 숫자로 다시 얻는다</td></tr>
+</tbody></table></div>
+
+**4월 : 버퍼링 · 시간 · 내구성**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>주</th><th>읽기</th><th>코드 · 측정</th><th>끝나면</th></tr></thead><tbody>
+<tr><td>5 (4.3)</td><td>TLPI 13 장 나머지 : 커널 버퍼, <code>fsync</code> / <code>fdatasync</code>, <code>O_SYNC</code></td><td>7.5 절의 해 볼 것 1–2 : 큰 buffered 쓰기에서 지연이 튀는 곳, <code>time sync</code></td><td>'더러운 페이지' 와 <code>dirty_ratio</code> 를 설명한다</td></tr>
+<tr><td>6 (4.10)</td><td>TLPI 10 장 (시간), 23.5 절 (POSIX 시계)</td><td>시계 자체의 비용 재기 : <code>clock_gettime</code> 을 백만 번. 지연 히스토그램 출력</td><td>내 측정의 오차가 몇 µs 인지 안다</td></tr>
+<tr><td>7 (4.17)</td><td>(5 주의 복습)</td><td><strong>FLUSH 시계</strong> : <code>pwrite</code> 와 <code>fdatasync</code> 의 시간을 따로. buffered, <code>O_DIRECT</code>, <code>O_DIRECT</code> + <code>fdatasync</code> 를 비교</td><td>'다 썼다' 는 대답이 언제 오는지 세 가지로 말한다 (실험 7)</td></tr>
+<tr><td>8 (4.24)</td><td>—</td><td><strong>여유 주</strong> : 밀린 것, 이 페이지에 3–4월 정리</td><td></td></tr>
+</tbody></table></div>
+
+**5월 : 통계 · 안전 · 첫 진짜 측정**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>주</th><th>읽기</th><th>코드 · 측정</th><th>끝나면</th></tr></thead><tbody>
+<tr><td>9 (5.1)</td><td>(C 복습 : <code>qsort</code>, 백분위수)</td><td><strong>step 2 앞</strong> : 구간 (0.5 초) 마다 MB/s, IOPS, p50 · p99 · 최대</td><td>수백만 번 써도 출력이 감당된다</td></tr>
+<tr><td>10 (5.8)</td><td>—</td><td><strong>step 2 뒤</strong> : 랜덤 오프셋, 읽기 (<code>pread</code>), JSON 한 줄 출력, 처음 N 개 버리기 (워밍업)</td><td>순차 · 랜덤, 읽기 · 쓰기 네 가지를 한 프로그램으로</td></tr>
+<tr><td>11 (5.15)</td><td>TLPI 14 장 (파일 시스템, 마운트), 15 장 (<code>stat</code>)</td><td><code>fstat</code> 으로 블록 장치인지, <code>ioctl(BLKGETSIZE64)</code> · <code>ioctl(BLKSSZGET)</code> 로 크기와 섹터 크기</td><td>파일과 블록 장치를 코드가 구별한다</td></tr>
+<tr><td>12 (5.22)</td><td>—</td><td><strong>step 3</strong> : <code>/sys</code> 에서 시리얼, <code>/proc/mounts</code> 로 마운트 확인, 시스템 디스크 거부, 시리얼 끝 5자리 입력. <code>losetup</code> 으로 만든 loop 장치 (진짜 블록 장치지만 안전) 에서 시험</td><td>내 도구가 시스템 디스크에 쓸 수 없다</td></tr>
+<tr><td>13 (5.29)</td><td>—</td><td><strong>첫 진짜 측정</strong> : 840 EVO 에 순차 쓰기, 구간마다 MB/s. 약 3 GB 뒤에 떨어지나? (<a href="/old-ssd-experiments/3-slc-cache/">실험 3</a> 과 비교)</td><td><strong>5월의 목표</strong> : SLC 캐시의 끝을 내 코드로 본다</td></tr>
+</tbody></table></div>
+
+**6월 : 프로세스 · 시그널 · 파이프 · 웹 화면**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>주</th><th>읽기</th><th>코드 · 측정</th><th>끝나면</th></tr></thead><tbody>
+<tr><td>14 (6.5)</td><td>TLPI 20–22 장 (시그널) 중 <code>sigaction</code>, <code>sig_atomic_t</code></td><td>Ctrl-C 를 누르면 측정을 멈추고 요약을 찍고 끝나기</td><td>긴 측정을 안전하게 멈출 수 있다</td></tr>
+<tr><td>15 (6.12)</td><td>TLPI 24–27 장 : <code>fork</code> / <code>exec</code> / <code>wait</code></td><td>실행기 : 측정 앞뒤로 <code>smartctl -A</code> 를 돌려 저장</td><td>SMART 앞뒤 기록이 저절로 남는다 (WAF 계산의 재료)</td></tr>
+<tr><td>16 (6.19)</td><td>TLPI 44 장 : 파이프</td><td>실행기가 파이프로 테스트 도구의 JSON 을 한 줄씩 받아 화면에 찍기</td><td>두 프로세스가 파이프로 이야기한다</td></tr>
+<tr><td>17 (6.26)</td><td>—</td><td><strong>step 4</strong> : 이 PC 에서만 여는 웹 페이지 (Python 표준 라이브러리 서버 + SSE + canvas 그래프 : 틀은 받아서 쓴다). 파라미터 → 시작 → 실시간 그래프</td><td><strong>6월의 목표</strong> : 브라우저에서 SLC 캐시의 끝을 실시간으로 본다</td></tr>
+</tbody></table></div>
+
+**7월 : 진짜 SSD 실험을 내 도구로**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>주</th><th>읽기</th><th>코드 · 측정</th><th>끝나면</th></tr></thead><tbody>
+<tr><td>18 (7.3)</td><td><a href="/old-ssd-experiments/8-write-cliff/">실험 8</a> 다시 읽기</td><td>랜덤 4 KiB 쓰기를 밤새 : FOB → write cliff → steady state</td><td>GC 가 시작되는 곳을 그래프에서 짚는다</td></tr>
+<tr><td>19 (7.10)</td><td><a href="/old-ssd-experiments/10-over-provisioning/">실험 10</a></td><td>span 100% 와 80% 를 비교 (오프셋 범위만 바꾸면 된다)</td><td>OP 가 steady state 를 몇 배 바꾸는지 내 숫자로</td></tr>
+<tr><td>20 (7.17)</td><td><code>ioctl_list</code>, <code>BLKDISCARD</code></td><td><strong>step 6 뒤</strong> : TRIM 을 내 코드로. TRIM 뒤 읽기 속도, 쓰기 성능이 돌아오나</td><td>TRIM 이 FTL 에게 무엇을 알리는지 측정으로 보인다 (실험 4)</td></tr>
+<tr><td>21 (7.24)</td><td><a href="/old-ssd-experiments/9-idle-gc/">실험 9</a></td><td>steady state 에서 멈추고 10 · 30 · 60 분 쉰 뒤 다시 쓰기</td><td>쉬는 동안 드라이브가 GC 를 하는지</td></tr>
+<tr><td>22 (7.31)</td><td>—</td><td><strong>여유 주</strong> : fio 결과와 맞춰 보기, 이 페이지에 7월 결과</td><td></td></tr>
+</tbody></table></div>
+
+**8월 : 큐 깊이**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>주</th><th>읽기</th><th>코드 · 측정</th><th>끝나면</th></tr></thead><tbody>
+<tr><td>23 (8.7)</td><td>TLPI 29–30 장 : pthread, mutex</td><td><strong>step 5 (스레드)</strong> : 스레드 N 개가 각자 <code>pwrite</code> = 큐 깊이 N. 지연 기록을 스레드마다 따로 두고 끝에 합치기</td><td>스레드로 QD 를 만든다</td></tr>
+<tr><td>24 (8.14)</td><td>(SATA NCQ : 큐 깊이 최대 32)</td><td>QD 1, 2, 4, 8, 16, 32 에서 랜덤 4 KiB 읽기 · 쓰기, fio 와 비교</td><td>IOPS 가 어디까지 늘고 왜 멈추는지 (<a href="/old-ssd-experiments/5-perf-map/">실험 5</a>)</td></tr>
+<tr><td>25 (8.21)</td><td><code>io_uring</code> man 페이지, liburing 예제</td><td><strong>덤</strong> : 스레드 하나 + <code>io_uring</code> 으로 같은 QD (<code>sudo apt install liburing-dev</code>)</td><td>시스템 호출 없이 I/O 를 여러 개 내는 방법을 안다</td></tr>
+<tr><td>26 (8.28)</td><td>—</td><td><strong>여유 주</strong> : 스레드 · <code>io_uring</code> · fio 세 가지 비교 정리</td><td></td></tr>
+</tbody></table></div>
+
+**9월 : 정리**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>주</th><th>읽기</th><th>코드 · 측정</th><th>끝나면</th></tr></thead><tbody>
+<tr><td>27 (9.4)</td><td><a href="/old-ssd-experiments/12-waf/">실험 12</a></td><td>6월의 실행기가 남긴 SMART 앞뒤 기록으로 실험마다 WAF. (덤 : <code>SG_IO</code> 로 SMART 를 직접 읽기)</td><td>실험마다 WAF 표</td></tr>
+<tr><td>28 (9.11)</td><td>—</td><td>실험 하나 (예 : OP) 를 처음부터 끝까지 내 도구 + 웹 화면으로 다시</td><td>도구만으로 실험 하나가 된다</td></tr>
+<tr><td>29 (9.18)</td><td>—</td><td>결과 페이지 쓰기 : 그래프, fio 와의 차이, 놀라웠던 것</td><td></td></tr>
+<tr><td>30 (9.25)</td><td>—</td><td>회고 : 계획과 실제, 다음에 할 것 (NVMe, <code>SG_IO</code>, A 안의 브라우저 시뮬레이터)</td><td><strong>9월의 목표</strong></td></tr>
+</tbody></table></div>
+
+### 6.4 늦어지면
+
+- 가장 먼저 줄이는 것 : 8월의 `io_uring` (25 주) → 스레드만으로도 큐 깊이는 배운다
+- 그다음 : 6월의 웹 화면 (17 주) → CSV 를 그래프로 그려도 같은 것이 보인다. 9월에 다시
+- **줄이지 않는 것** : 3–5월. 파일 I/O, `O_DIRECT`, 안전 확인이 나머지 모두의 바탕이고, 5월의 '첫 진짜 측정' 이 이 계획의 첫 번째 진짜 보상이다
+
+## 7. Step 1 : O_DIRECT 쓰기 하나하나의 시간 재기
 
 코드 : [`code/step1.c`](https://github.com/jonghoon-ryu/jonghoon-ryu.github.io/blob/main/ssd-system-programming/code/step1.c) (주석 포함 약 90 줄)
 
-### 6.1 하는 일
+### 7.1 하는 일
 
 4 KiB 블록을 0, 1, 2 … 번째 자리에 차례로 쓰고, `pwrite()` 하나하나의 시간을 재서 CSV (`i,offset,lat_us`) 로 낸다. 세 번째 인자로 `buffered` 를 주면 `O_DIRECT` 없이 보통 쓰기로 한다 : 둘을 비교하는 것이 이 단계의 요점이다.
 
-### 6.2 코드의 네 부분
+### 7.2 코드의 네 부분
 
 **① 열기 : `O_DIRECT`**
 
@@ -176,7 +288,7 @@ printf("%ld,%lld,%.1f\n", i, (long long)off, t1 - t0);
 - `CLOCK_MONOTONIC` 은 NTP 가 벽시계를 옮겨도 뛰지 않는다. 그래서 두 값의 차이가 진짜 걸린 시간이다 (`gettimeofday()` 는 그렇지 않다)
 - 돌려준 바이트 수를 **늘 확인한다.** 시스템 호출은 조용히 덜 쓸 수 있다
 
-### 6.3 실행
+### 7.3 실행
 
 ```sh
 cd ssd-system-programming/code
@@ -204,7 +316,7 @@ i,offset,lat_us
 <tr><td><code>buffered</code></td><td><strong>5.3 µs</strong></td><td>13.6 µs</td><td>66.1 µs</td><td>12.3 ms</td></tr>
 </tbody></table></div>
 
-### 6.4 결과 읽기
+### 7.4 결과 읽기
 
 <div class="result" markdown="1">
 - **보통 쓰기가 약 6 배 빠르다 : 드라이브가 빨라서가 아니라 드라이브에 가지 않아서다.** `buffered` 의 5.3 µs 는 4 KiB 를 RAM 에 복사하는 시간이다. 이것이 '이상하게 좋은 숫자' 의 정체이고, SSD 를 잴 때 `O_DIRECT` 가 필요한 이유다
@@ -221,13 +333,13 @@ pwrite: Invalid argument
 
 `EINVAL` : `O_DIRECT` 의 정렬 규칙을 어긴 것이다. 처음 `O_DIRECT` 를 쓸 때 가장 자주 만나는 오류다. 오프셋을 4096 의 배수가 아닌 곳 (예 : `i * bs + 512`) 으로 해도 같다.
 
-### 6.5 해 볼 것
+### 7.5 해 볼 것
 
 1. `count` 를 2,000 에서 200,000 (약 800 MB) 으로 늘려 `buffered` 를 다시 돌린다. 지연이 어느 순간 크게 튀나? (힌트 : 커널이 쌓인 더러운 페이지를 디스크로 내보내기 시작하면 `write()` 가 기다리게 된다. `/proc/sys/vm/dirty_ratio`)
 2. `buffered` 로 쓴 직후 `sync` 명령이 얼마나 걸리는지 `time sync` 로 잰다. 그 시간은 어디서 온 것인가?
 3. 블록 크기 `bs` 를 512, 4096, 65536, 1 MiB 로 바꿔 본다. 512 에서는 `EINVAL` 이 나나? (장치의 논리 블록 크기 : `cat /sys/block/nvme0n1/queue/logical_block_size`)
 4. `head` 대신 그래프로 : CSV 를 `plot.py` 나 스프레드시트에 넣어 `i` 에 대한 `lat_us` 를 그린다. 이 그래프를 실시간으로 보는 것이 4 단계의 웹 페이지다
 
-## 7. 다음 : step 2
+## 8. 다음 : step 2
 
 한 줄씩 2,000 개를 찍는 것은 진짜 드라이브에서 수백만 번 쓰면 감당이 안 된다. 2 단계에서는 **구간 (예 : 0.5 초) 마다** MB/s, IOPS, p50 · p99 · 최대 지연을 계산해 JSON 한 줄로 낸다. 이 형식이 그대로 4 단계 웹 페이지의 실시간 그래프로 들어간다. 랜덤 오프셋 (FTL 에게 가장 힘든 쓰기) 과 읽기도 더한다.
