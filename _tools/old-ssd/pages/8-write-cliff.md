@@ -62,8 +62,8 @@ $ sudo ./lab.sh cliff 100          # SPAN% = 100 (전체), TIMES = 2 (용량의 
 2. **전체 TRIM** (`blkdiscard`), 2분 쉼 | 모든 매핑을 지운다 | **FOB** (막 산 상태) : 모든 블록이 비어 있는 출발점
 3. SMART 기록 (`smart-before`) | 177 · 241 등 | [실험 12](/old-ssd-experiments/12-waf/) 의 WAF 계산의 앞 값
 4. **fio 로 랜덤 쓰기** : `--rw=randwrite --bs=4k --iodepth=32`, 범위 = 드라이브 전체 (120 GB), 총량 = 용량의 2배 (`--io_size`, 240 GB) | 같은 LBA 를 여러 번 덮어쓴다 | 처음 한 바퀴로 빈 블록을 다 쓰고, 두 번째 바퀴부터는 쓰기마다 GC 가 필요하다
-5. 1초마다 IOPS · 대역폭 · 지연을 로그로 (`cliff_iops.log`, `cliff_bw.log`, `cliff_lat.log`) | | 절벽의 모양과 steady state 의 출렁임
-6. SMART 기록 (`smart-after`) | | WAF = (NAND 에 쓴 양) ÷ (호스트가 쓴 양) 의 재료
+5. 1초마다 IOPS · 대역폭 · 지연을 로그로 (`cliff_iops.log`, `cliff_bw.log`, `cliff_lat.log`) | 평균이 아닌 1초 단위 | 절벽의 모양과 steady state 의 출렁임
+6. SMART 기록 (`smart-after`) | 177 · 241 의 뒤 값 | WAF = (NAND 에 쓴 양) ÷ (호스트가 쓴 양) 의 재료
 ```
 
 fio 의 랜덤 옵션 :

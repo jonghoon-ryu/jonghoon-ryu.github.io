@@ -82,8 +82,8 @@ $ sudo ./lab.sh cliff 100          # SPAN% = 100 (전체), TIMES = 2 (용량의 
 <tr><td>2. <strong>전체 TRIM</strong> (<code>blkdiscard</code>), 2분 쉼</td><td>모든 매핑을 지운다</td><td><strong>FOB</strong> (막 산 상태) : 모든 블록이 비어 있는 출발점</td></tr>
 <tr><td>3. SMART 기록 (<code>smart-before</code>)</td><td>177 · 241 등</td><td><a href="/old-ssd-experiments/12-waf/">실험 12</a> 의 WAF 계산의 앞 값</td></tr>
 <tr><td>4. <strong>fio 로 랜덤 쓰기</strong> : <code>--rw=randwrite --bs=4k --iodepth=32</code>, 범위 = 드라이브 전체 (120 GB), 총량 = 용량의 2배 (<code>--io_size</code>, 240 GB)</td><td>같은 LBA 를 여러 번 덮어쓴다</td><td>처음 한 바퀴로 빈 블록을 다 쓰고, 두 번째 바퀴부터는 쓰기마다 GC 가 필요하다</td></tr>
-<tr><td>5. 1초마다 IOPS · 대역폭 · 지연을 로그로 (<code>cliff_iops.log</code>, <code>cliff_bw.log</code>, <code>cliff_lat.log</code>)</td><td>| 절벽의 모양과 steady state 의 출렁임</td></tr>
-<tr><td>6. SMART 기록 (<code>smart-after</code>)</td><td>| WAF = (NAND 에 쓴 양) ÷ (호스트가 쓴 양) 의 재료</td></tr>
+<tr><td>5. 1초마다 IOPS · 대역폭 · 지연을 로그로 (<code>cliff_iops.log</code>, <code>cliff_bw.log</code>, <code>cliff_lat.log</code>)</td><td>평균이 아닌 1초 단위</td><td>절벽의 모양과 steady state 의 출렁임</td></tr>
+<tr><td>6. SMART 기록 (<code>smart-after</code>)</td><td>177 · 241 의 뒤 값</td><td>WAF = (NAND 에 쓴 양) ÷ (호스트가 쓴 양) 의 재료</td></tr>
 </tbody></table></div>
 
 fio 의 랜덤 옵션 :
