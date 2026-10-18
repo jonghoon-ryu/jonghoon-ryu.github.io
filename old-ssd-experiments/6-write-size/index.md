@@ -82,7 +82,7 @@ $ sudo ./lab.sh wsize
 <tr><td>1. 안전 확인 + <code>0389K</code> 입력</td><td>늘 하던 대로</td><td>입력하기 전에는 아무것도 지우지 않는다</td></tr>
 <tr><td>2. 전체 TRIM, 2분 쉼</td><td>모든 매핑을 지운다</td><td>깨끗한 출발점</td></tr>
 <tr><td>3. <strong>드라이브 전체를 채운다</strong> (1 MiB 순차, 약 14분)</td><td>모든 주소에 데이터가 있게</td><td>512 B 쓰기가 정말로 옛 데이터를 읽어 합쳐야 하게</td></tr>
-<tr><td>4. SMART 기록</td><td>앞의 값 |</td></tr>
+<tr><td>4. SMART 기록</td><td>앞의 값</td><td>뒤의 값과 비교</td></tr>
 <tr><td>5. <strong>앞 8 GiB 안의 랜덤 쓰기</strong>, 각 30초, 사이 60초 쉼 : 크기 <strong>512 B · 1 · 2 · 4 · 8 · 16 · 32 · 64 KiB</strong>, 크기마다 <strong>QD1 과 QD32</strong></td><td>측정 16번</td><td>크기 지도. QD1 은 쓰기 하나의 시간, QD32 는 처리량</td></tr>
 <tr><td>6. <strong>어긋난 4 KiB 쓰기</strong> (<code>--blockalign=4k --offset=512</code>), QD1 과 QD32</td><td>측정 2번</td><td>걸치는 경우</td></tr>
 <tr><td>7. SMART 기록, <code>summary.csv</code></td><td>측정마다 한 줄 : IOPS, MB/s, 지연 percentile</td><td>표와 그림의 재료</td></tr>
