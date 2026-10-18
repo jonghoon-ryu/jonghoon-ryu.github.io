@@ -330,7 +330,33 @@ SSD 안 | 컨트롤러가 여러 명령을 동시에 다룬다 : NAND 칩 (die) 
 
 ## 6. 페이지 캐시와 `--direct=1`
 
-3절의 첫 실행은 `--direct` 를 주지 않았다 : 읽기가 **페이지 캐시** (RAM) 를 거쳤다. 같은 읽기를 `--direct=1` 로 하면 :
+**`--direct=1` 은 대상을 `O_DIRECT` 로 연다 : 읽기 · 쓰기가 Linux 의 페이지 캐시 (PC 의 RAM) 를 건너뛰고 장치로 바로 간다.**
+
+보통 Linux 는 프로그램과 디스크 사이에 RAM 을 둔다 :
+
+```
+--direct 없이 (버퍼 I/O) :      프로그램 ⇄ 페이지 캐시 (RAM) ⇄ … 나중에 … ⇄ 디스크
+--direct=1 (O_DIRECT) :         프로그램 ⇄ 디스크
+```
+
+- **버퍼 읽기** : 데이터가 이미 RAM 에 있으면 디스크를 건드리지도 않는다
+- **버퍼 쓰기** : 데이터를 RAM 에 복사하고 곧바로 '끝났다' 고 돌아온다. 디스크에는 커널이 **나중에** 뒤에서 쓴다 (보통 30초 안, 또는 `sync` · `fsync` 때)
+
+### 어느 RAM 인가
+
+여기서 RAM 은 **PC 의 메인 메모리** (메인보드의 DRAM, 이 컴퓨터는 31 GiB) 다. `free -h` 의 `buff/cache` 가 지금 페이지 캐시로 쓰이는 양이다.
+
+```
+$ free -h | head -2
+               total        used        free      shared  buff/cache   available
+Mem:            31Gi       8.7Gi        18Gi       2.5Gi       6.5Gi        22Gi
+```
+
+**SSD 안에도 DRAM 이 따로 있다** (120GB SSD 는 매핑 표를 거기 두고, 작은 쓰기 캐시로도 쓴다). `--direct=1` 이 건너뛰는 것은 **PC 의** 페이지 캐시뿐이다. 드라이브의 캐시는 건너뛰지 않는다 : `--direct=1` 의 '끝났다' 는 **드라이브가 데이터를 받았다** 는 뜻이고, 그 데이터는 아직 드라이브의 캐시에 있을 수 있다. NAND 까지 확실히 보내는 것은 FLUSH 이고, 그것을 재는 것이 [실험 7](/old-ssd-experiments/7-flush/) 이다.
+
+### 읽기 : 캐시를 버리고 시작한다
+
+3절의 첫 실행은 `--direct` 를 주지 않았다. 같은 읽기를 `--direct=1` 로 하면 :
 
 ```
 $ fio --name=first --filename=test.img --size=1G --rw=read --bs=1M --direct=1
@@ -338,15 +364,52 @@ $ fio --name=first --filename=test.img --size=1G --rw=read --bs=1M --direct=1
     clat (usec): min=357, max=3082, avg=421.03, stdev=91.10
 ```
 
-fio 는 기본값 `--invalidate=1` 로 **시작 전에 그 파일의 캐시를 버린다.** 그래서 첫 실행도 RAM 이 아니라 디스크에서 읽었다. 캐시를 버리지 않게 하면 (`--invalidate=0`, 파일이 이미 RAM 에 있음) :
+fio 는 기본값 `--invalidate=1` 로 **시작 전에 그 파일의 캐시를 버린다.** 그래서 3절의 첫 실행도 RAM 이 아니라 디스크에서 읽었다. 캐시를 버리지 않게 하면 (`--invalidate=0`, 파일이 이미 RAM 에 있음) :
 
 ```
 $ fio --name=cached --filename=test.img --size=1G --rw=read --bs=1M --invalidate=0
   read: IOPS=2632, BW=2632MiB/s (2760MB/s)(1024MiB/389msec)
 ```
 
-이 NVMe 는 RAM 복사와 속도가 비슷해서 차이가 작다. **840 EVO 에서는 다르다** : 디스크는 수백 MB/s 인데 RAM 은 수 GB/s 라, 캐시를 거치면 디스크가 아니라 RAM 을 재게 된다. 쓰기는 더 심하다 : 캐시를 거친 쓰기는 RAM 에 담기만 하고 '끝났다' 고 하기 때문이다.
-그래서 `lab.sh` 의 fio 는 **모두 `--direct=1`** 이다. `fileage.py` 와 `readscan.py` 도 같은 이유로 `posix_fadvise(DONTNEED)` · `O_DIRECT` 를 쓴다.
+이 NVMe 는 RAM 복사와 속도가 비슷해서 읽기의 차이는 작다.
+
+### 쓰기 : 차이가 훨씬 크다
+
+같은 1 GiB 를 1 MiB 씩 세 가지로 썼다 (실제 출력, 2026.10.18, 이 컴퓨터의 NVMe) :
+
+```
+$ fio --name=w --filename=w.img --size=1G --rw=write --bs=1M --direct=0
+  write: IOPS=4923, BW=4923MiB/s (5162MB/s)(1024MiB/208msec)
+$ fio --name=w --filename=w.img --size=1G --rw=write --bs=1M --direct=0 --end_fsync=1
+  write: IOPS=1057, BW=1058MiB/s (1109MB/s)(1024MiB/968msec)
+    clat (usec): min=164, max=442, avg=186.40, stdev=30.35
+$ fio --name=w --filename=w.img --size=1G --rw=write --bs=1M --direct=1
+  write: IOPS=2605, BW=2606MiB/s (2732MB/s)(1024MiB/393msec)
+```
+
+```table
+방법 | fio 가 보여 준 속도 | 실제로 잰 것
+버퍼 (`--direct=0`) | **5,162 MB/s** | **RAM 에 복사** 하는 속도. fio 가 '끝' 이라고 한 0.2초 뒤에도 데이터는 아직 디스크에 없었다
+버퍼 + `--end_fsync=1` | 1,109 MB/s | RAM 복사 **와** 끝에 모두 디스크로 밀어내기. 전체 시간은 정직하지만, 쓰기 하나의 지연 (186 µs) 은 여전히 RAM 의 것이다
+**`--direct=1`** | **2,732 MB/s** | **NVMe 드라이브 자신** : 쓰기 하나는 드라이브가 받아야 끝난다
+```
+
+버퍼 쓰기의 5.2 GB/s 는 이 드라이브가 실제로 쓸 수 있는 속도보다 빠르다 : 그 숫자는 디스크가 아니라 **RAM** 이다. 120GB SSD 라면 차이가 훨씬 크다 : RAM 은 수 GB/s, 드라이브의 TLC 쓰기는 약 150 MB/s ([실험 3](/old-ssd-experiments/3-slc-cache/)).
+
+### `lab.sh` 가 늘 `--direct=1` 을 쓰는 이유
+
+1. **RAM 이 아니라 드라이브를 재려고.** 버퍼 I/O 였다면 실험 3 은 RAM 이 찰 때까지 빠르고 평평한 선을 그리다가, 그 뒤로는 커널의 쓰기 일정에 따라 들쭉날쭉했을 것이다
+2. **시간을 맞게 재려고.** 버퍼 I/O 의 실제 디스크 쓰기는 나중에, 커널이 정한 때에 일어난다. 1초마다의 속도 기록, SLC 버퍼의 계단, GC 의 절벽은 모두 I/O 하나하나가 드라이브에서 실제로 일어난 때에 재야 보인다
+3. **`iodepth` 가 먹게 하려고.** `libaio` 는 `O_DIRECT` 일 때만 진짜 비동기다 (5절). 아니면 `--iodepth=32` 가 조용히 1 처럼 움직인다
+4. **드라이브가 받는 것을 정확히 알려고.** 버퍼 I/O 에서는 커널이 요청을 합치고, 쪼개고, 미리 읽고, 미룬다. `O_DIRECT` 면 fio 의 4 KiB 랜덤 쓰기가 그대로 4 KiB 랜덤 쓰기로 드라이브에 간다
+
+### 함께 오는 규칙 : 정렬
+
+`O_DIRECT` 는 정렬된 I/O 를 요구한다 : 위치와 크기가 장치의 논리 블록 크기 (`sda` 는 512 B, 장치에 따라 4 KiB) 의 배수여야 하고, 메모리 버퍼도 정렬되어 있어야 한다. fio 는 알아서 맞춘다. 직접 쓰는 프로그램은 스스로 맞춰야 한다 (`posix_memalign`). 아니면 호출이 `EINVAL` 로 실패한다.
+
+### 실험 1 에서 실제로 걸린 함정
+
+실험 1 의 `fileage.py` 는 파일을 `ntfs-3g` 를 거쳐 읽었고, 그 경로에서는 캐시 버리기 (`posix_fadvise(DONTNEED)`) 가 먹지 않았다. 그래서 두 번째 읽기가 RAM 에서 와서 1,800 – 7,000 MB/s 라는 뜻 없는 숫자가 나왔다 ([실험 1 의 결과](/old-ssd-experiments/1-old-data/)). fio 의 `--direct=1` 이 막아 주는 것이 바로 이것이다. `readscan.py` 는 장치를 `O_DIRECT` 로 읽어서 이 문제가 없다.
 
 ## 7. 지연을 읽는 법
 
