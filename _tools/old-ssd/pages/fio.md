@@ -20,6 +20,27 @@ fio (flexible I/O tester) 는 Linux 블록 계층의 관리자인 Jens Axboe 가
 '4 KiB 를 무작위 위치에서, 동시에 32개씩, 60초 동안 읽어라' 처럼 I/O 의 모양을 말로 적으면, fio 가 그대로 만들어 내고 속도 · 지연을 잰다.
 `dd` 는 순차로 한 줄씩만 할 수 있지만 fio 는 모양 (순차 / 랜덤, 크기, 동시성, 섞기, 분포) 을 거의 다 바꿀 수 있다. SSD 연구 · 리뷰의 표준 도구다.
 
+**한 줄로 보는 fio** : I/O 의 모양을 옵션으로 적으면, fio 가 그대로 만들어 내고 잰다.
+
+```
+fio --name=NAME --filename=TARGET --rw=PATTERN --bs=SIZE --iodepth=N --size=RANGE [--runtime=S --time_based] --direct=1
+      누가        어디에           무엇을         얼마나 크게  동시에 몇 개     얼마나 많이 / 얼마나 오래        RAM 캐시를 건너뛰고
+```
+
+```table
+옵션 | 묻는 것 | 예
+`--name` | **누가** : job 의 이름. 출력 · JSON · 로그 파일 이름에 쓰인다 | `--name=slc`
+`--filename` | **어디에** : 파일 또는 장치 | `--filename=test.img`, `/dev/sda`
+`--rw` | **무엇을** : 읽기 / 쓰기, 순차 / 랜덤 | `read`, `write`, `randread`, `randwrite`
+`--bs` | **얼마나 크게** : I/O 하나의 크기 | `4k`, `1M`
+`--iodepth` | **동시에 몇 개** : 한꺼번에 걸어 둘 I/O 수 (큐 깊이) | `1`, `32`
+`--size` | **얼마나 많이** : 다룰 범위 | `1G`, `100%`
+`--runtime=S --time_based` | **얼마나 오래** : S 초 동안 (범위를 다 돌아도 다시 처음부터) | `--runtime=60 --time_based`
+`--direct=1` | **RAM 캐시를 건너뛰고** : 페이지 캐시가 아니라 장치를 잰다 | 실험에서는 항상
+```
+
+옵션 하나하나는 4절, 큐 깊이는 5절, 캐시는 6절에서 자세히 본다.
+
 이 실험 시리즈의 `lab.sh` 는 거의 모든 측정을 fio 로 한다. 이 페이지를 읽고 나면 `lab.sh` 안의 fio 줄을 직접 읽고 바꿀 수 있다.
 
 ## 2. 설치와 확인
