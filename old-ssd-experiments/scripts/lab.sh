@@ -5,6 +5,7 @@
 #   sudo ./lab.sh smart LABEL              SMART snapshot only
 #        ./lab.sh oldfiles MOUNTPOINT [fileage.py options, e.g. --seed 2]   exp 1: read speed of old files vs their age (read-only)
 #   sudo ./lab.sh scan LABEL [SAMPLE_MIB]  read speed across the whole drive (read-only)
+#   sudo ./lab.sh reread OLDFILES_DIR     exp 1: read the 10 slowest old files again, page cache dropped (no writes)
 #   sudo ./lab.sh features                 exp 2: every ATA feature, log and statistic the drive reports (no writes)
 #   sudo ./lab.sh selftest [short|long]    exp 2: the drive's own self-test, timed (no writes)
 #   sudo ./lab.sh slc                      exp 3: SLC cache (whole-drive sequential write)       ERASES
@@ -269,6 +270,14 @@ ret-check)
     bad=$(grep -c "verify failed" "$OUT/verify.log" || true)
     echo "bad 4 KiB blocks: $bad" | tee "$OUT/verify-summary.txt"
     smart after
+    finish ;;
+reread)
+    need_root reread; find_dev
+    [ -f "${1:-}/fileage.csv" ] || die "usage: $0 reread RESULT_DIR_OF_oldfiles"
+    mnt=$(findmnt -nro TARGET "$(readlink -f "$DEV")3" | head -1)
+    [ -n "$mnt" ] || die "partition 3 of $DEV is not mounted (setup page, step 5)"
+    OUT=$1
+    python3 "$HERE/fileage.py" "$mnt" "$OUT/fileage-reread.csv" --reread-from "$OUT/fileage.csv"
     finish ;;
 features)
     need_root features; find_dev

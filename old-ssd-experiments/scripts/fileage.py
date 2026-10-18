@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """fileage.py ROOT OUT.csv [--since 2026-10-17] [--min-mib 16] [--per-year 25] [--per-file-mib 16] [--reread 10] [--seed 1]
+   fileage.py ROOT OUT.csv --reread-from FILEAGE.csv [--reread 10]     (as root: drops the page cache first)
 
 Read speed of old files versus how long ago they were written. Read-only.
 
@@ -34,13 +35,18 @@ Files whose allocated size is clearly below their length (sparse, or NTFS/WOF-co
 holes read as zeros without touching NAND, and compressed reads measure the CPU. Files that fail to
 read are not put in the CSV (a 0 MB/s row would look like a very old file); they go to OUT-errors.csv.
 
-Afterwards the --reread slowest "old" files are read a second time (same 16 MiB, cache dropped again):
-OUT-reread.csv has both speeds. Much faster the second time = the firmware rewrote the data right after
-the slow read; the same = it did not (or not yet: it may do it later in the background).
+Hard links (one file under several names, common in Windows/WinSxS) are counted once: a second name would
+be read from the page cache.
+
+Re-read (--reread-from, run as root): the --reread slowest "old" files of an earlier FILEAGE.csv are read a
+second time, after the whole page cache is dropped (echo 3 > /proc/sys/vm/drop_caches). posix_fadvise alone
+does not drop the cache of a FUSE file system such as ntfs-3g, so a re-read in the same run would read RAM.
+OUT has both speeds. Much faster the second time = the firmware rewrote the data after the slow read;
+the same = it did not (or not yet).
 
 Mount the volume read-only first (see the setup page), so not even access times are written.
 """
-import argparse, collections, datetime, os, random, struct, sys, time
+import argparse, collections, csv, datetime, os, random, struct, sys, time
 
 MIB = 1 << 20
 NTFS_EPOCH = datetime.datetime(1601, 1, 1)
@@ -68,11 +74,15 @@ def main():
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--since", default="2026-10-17", help="date the drive was reconnected (YYYY-MM-DD)")
     ap.add_argument("--reread", type=int, default=10)
+    ap.add_argument("--reread-from")
     a = ap.parse_args()
+    if a.reread_from:
+        return reread(a)
     since = datetime.datetime.fromisoformat(a.since)
 
     files = []
     skipped = 0
+    seen = set()
     print(f"listing files under {a.root} (reads only metadata; can take minutes on a slow drive)", file=sys.stderr)
     for d, dirs, names in os.walk(a.root):
         for n in names:
@@ -86,6 +96,9 @@ def main():
             if st.st_blocks * 512 < 0.9 * st.st_size:   # sparse or compressed
                 skipped += 1
                 continue
+            if (st.st_dev, st.st_ino) in seen:     # hard link: same data under another name
+                continue
+            seen.add((st.st_dev, st.st_ino))
             wt = written_time(p, st)
             at = datetime.datetime.fromtimestamp(st.st_atime)
             group = "new" if wt >= since else "read" if at >= since else "old"
@@ -140,16 +153,31 @@ def main():
             print(f"\r{i + 1}/{len(pick)}  {grp:4} {wt:%Y-%m-%d}  {mbps:7.1f} MB/s  ", end="", file=sys.stderr, flush=True)
     print(f"\n-> {a.out}" + (f"   ({nerr} files failed -> {errpath})" if nerr else ""), file=sys.stderr)
 
-    slow = sorted(r for r in rows if r[5] == "old")[:a.reread]
-    if slow:
-        with open(base + "-reread.csv", "w") as out:
-            out.write("written,mbps1,mbps2,max_ms1,max_ms2,path\n")
-            for mbps, worst, wt, p, size, grp, rel in slow:
-                _, mbps2, worst2, err = read_head(p, size, a.per_file_mib, buf)
-                if err is None:
-                    out.write(f'{wt:%Y-%m-%d},{mbps:.1f},{mbps2:.1f},{worst * 1e3:.1f},{worst2 * 1e3:.1f},"{rel}"\n')
-                    print(f"reread {wt:%Y-%m-%d}  {mbps:7.1f} -> {mbps2:7.1f} MB/s", file=sys.stderr)
-        print(f"-> {base}-reread.csv", file=sys.stderr)
+
+
+def reread(a):
+    with open(a.reread_from) as f:
+        rows = [r for r in csv.DictReader(f) if r["group"] == "old"]
+    rows.sort(key=lambda r: float(r["mbps"]))
+    rows = rows[:a.reread]
+    if os.geteuid() == 0:
+        os.sync()
+        with open("/proc/sys/vm/drop_caches", "w") as f:
+            f.write("3\n")
+        print("page cache dropped", file=sys.stderr)
+    else:
+        print("not root: the page cache is NOT dropped, the second read may come from RAM", file=sys.stderr)
+    buf = bytearray(MIB)
+    with open(a.out, "w") as out:
+        out.write("written,mbps1,mbps2,max_ms1,max_ms2,path\n")
+        for r in rows:
+            p = os.path.join(a.root, r["path"])
+            size = os.stat(p).st_size
+            _, mbps2, worst2, err = read_head(p, size, a.per_file_mib, buf)
+            if err is None:
+                out.write(f'{r["written"]},{r["mbps"]},{mbps2:.1f},{r["max_ms"]},{worst2 * 1e3:.1f},"{r["path"]}"\n')
+                print(f'reread {r["written"]}  {float(r["mbps"]):7.1f} -> {mbps2:7.1f} MB/s', file=sys.stderr)
+    print(f"-> {a.out}", file=sys.stderr)
 
 
 def read_head(p, size, per_file_mib, buf):
