@@ -244,7 +244,40 @@ $ ./lab.sh oldfiles /mnt/old840 --seed 2 --reread 0
 - 그림의 높은 봉우리 (12–15 GiB, 83 · 93 · 96 · 98–100 GiB) 는 0 으로만 읽힌 곳 : Windows 가 TRIM 한 빈 공간이다. 여기서는 **400–520 MB/s**, 곧 SATA 3 의 한계까지 나온다. 매핑이 없으니 NAND 를 읽지 않고 대답하기 때문이다 (실험 4 미리 보기).
 - 그러니 연결 · 컨트롤러 · 케이블은 멀쩡하다. **느린 것은 NAND 에서 저장된 데이터를 읽는 일** 뿐이다. 위치에 따른 큰 차이는 없다 (앞쪽 0–70 GiB 는 6–10 MB/s, 뒤쪽 77–111 GiB 는 13–15 MB/s 로 조금 낫다).
 - 파일 경로 (A) 의 4.7 MB/s 보다 여기의 8.9 MB/s 가 빠른 것은 `ntfs-3g` 를 거치지 않고 1 MiB 단위로 바로 읽기 때문이다.
-- SMART : 스캔 앞뒤 187 · 195 · 5 모두 0 그대로, 온도 38 °C.
+- SMART : 스캔 앞뒤 187 · 195 · 5 모두 0 그대로.
+
+**화면 출력 읽기.** `sudo ./lab.sh scan old 8` 을 실행한 터미널에는 이렇게 나왔다 (SMART 표는 줄였다) :
+
+```
+== results -> /home/ryuj/Ryu/old_ssd_results/20261018-092257-scan-old
+   187 Uncorrectable_Error_Cnt -O--CK   100   100   000    -    0
+   190 Airflow_Temperature_Cel -O--CK   069   053   000    -    31
+   195 ECC_Error_Rate          -O-RC-   200   200   000    -    0
+   …
+448/448   111.8 GiB     11.7 MB/s  max   195.4 ms  zero 0.00  ETA   0.0 min
+read 3.8 GB in 8.0 min, mean 7.9 MB/s -> /home/ryuj/Ryu/old_ssd_results/20261018-092257-scan-old/scan.csv
+   187 Uncorrectable_Error_Cnt -O--CK   100   100   000    -    0
+   190 Airflow_Temperature_Cel -O--CK   060   053   000    -    40
+   195 ECC_Error_Rate          -O-RC-   200   200   000    -    0
+   …
+== done: /home/ryuj/Ryu/old_ssd_results/20261018-092257-scan-old
+```
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>줄</th>
+<th>뜻</th>
+</tr></thead><tbody>
+<tr><td><code>== results -&gt;</code></td><td>이번 실행의 결과 폴더 (시작 시각 09:22:57 이 이름)</td></tr>
+<tr><td>첫 SMART 표</td><td>읽기 전의 값. 마지막 열 (<code>RAW_VALUE</code>) 이 실제 숫자</td></tr>
+<tr><td><code>448/448 111.8 GiB 11.7 MB/s max 195.4 ms zero 0.00</code></td><td>진행 줄 (마지막 구간) : 448개 중 448번째, 위치 111.8 GiB, 그 구간의 속도, 그 구간에서 가장 느린 1 MiB 읽기, 0 으로만 된 비율</td></tr>
+<tr><td><code>read 3.8 GB in 8.0 min, mean 7.9 MB/s</code></td><td>합계 : 3.8 GB (448 × 8 MiB) 를 8분에. 정상 SATA SSD 라면 약 8초 : <strong>약 60배 느리다</strong></td></tr>
+<tr><td>두 번째 SMART 표</td><td>읽은 뒤의 값. 오류 (5 · 179 · 181–183 · 187 · 195 · 199) 는 모두 0 그대로, 쓴 양 (241) · 마모 (177) 도 그대로 : 읽기만 했다</td></tr>
+<tr><td>190 온도</td><td><strong>31 → 40 °C, 8분 만에 9 °C.</strong> 드라이브가 쉬지 않고 일했다는 뜻이다 : 다시 읽기를 거듭하는 읽기는 보통 읽기보다 일이 훨씬 많다</td></tr>
+<tr><td><code>5 0 0 Not_testing</code>, <code>5 2026-10-18 09:00 38 ***</code> 같은 줄</td><td>SMART 속성이 아니다 : 선택 자가 진단 표와 온도 기록 표의 줄이 <code>lab.sh</code> 의 걸러내기에 잘못 걸렸다 (줄 맨 앞 숫자만 보았기 때문). 고쳤다 : 이제 번호 뒤에 속성 이름이 있는 줄만 보인다</td></tr>
+</tbody></table></div>
+
+**정리** : 448개 구간을 **오류 하나 없이**, 그러나 **아주 느리게** 읽었고, 그동안 드라이브가 뜨거워졌다. 저장된 데이터는 여러 번 다시 읽어야 하고 빈 곳은 빠르다는 위의 분석과 맞는다.
 
 ### Windows 가 남긴 기록
 

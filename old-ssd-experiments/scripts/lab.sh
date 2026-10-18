@@ -113,7 +113,7 @@ smart() {   # smart LABEL : text + JSON snapshot into $OUT
     smartctl -x $(smart_args) "$DEV" > "$OUT/smart-$1.txt" 2>&1 || true
     # shellcheck disable=SC2046
     smartctl -x --json=c $(smart_args) "$DEV" > "$OUT/smart-$1.json" 2>/dev/null || true
-    grep -E "^ *(5|9|12|177|179|181|182|183|187|190|195|199|235|241) " "$OUT/smart-$1.txt" | sed 's/^/   /' || true
+    grep -E "^ *(5|9|12|177|179|181|182|183|187|190|195|199|235|241) [A-Z][A-Za-z_]+ " "$OUT/smart-$1.txt" | sed 's/^/   /' || true
 }
 
 discard_all() {
