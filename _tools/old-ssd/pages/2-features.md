@@ -94,7 +94,7 @@ H3 의 비교를 위해, **실험 3 (드라이브 전체를 새로 씀) 이 끝�
 Security : `supported` · `not enabled` · `not locked` · **`frozen`** · `supported: enhanced erase` · `2min … 8min` | Secure Erase 를 할 수 있지만 지금은 BIOS 가 잠갔다. 드라이브가 말하는 시간 : 보통 2분, enhanced 8분 | 14
 `max sectors = 234441648/234441648, HPA is disabled` | 보이는 크기 = 진짜 크기. 숨긴 영역 없음 | 10
 `write-caching = 1 (on)`, `look-ahead = 1 (on)` | 쓰기 캐시 켜짐, 미리 읽기 켜짐 | 7
-`APM_level = not supported` | 전원 관리 (APM) 설정은 없다 : SSD 에서는 흔하다 |
+`APM_level = not supported` | 전원 관리 (APM) 설정은 없다 : SSD 에서는 흔하다 | —
 `Queue depth: 32`, `Native Command Queueing (NCQ)`, `Gen3 (6.0Gb/s)` | 명령 32개까지 한꺼번에, SATA 3 | 5
 `Logical / Physical Sector size: 512 bytes` | 호스트에는 512 B 섹터로 보인다 (안쪽의 4 KiB 매핑 단위는 실험 6 이 찾는다) | 6
 ```

@@ -122,7 +122,7 @@ H3 의 비교를 위해, **실험 3 (드라이브 전체를 새로 씀) 이 끝�
 <tr><td>Security : <code>supported</code> · <code>not enabled</code> · <code>not locked</code> · <strong><code>frozen</code></strong> · <code>supported: enhanced erase</code> · <code>2min … 8min</code></td><td>Secure Erase 를 할 수 있지만 지금은 BIOS 가 잠갔다. 드라이브가 말하는 시간 : 보통 2분, enhanced 8분</td><td>14</td></tr>
 <tr><td><code>max sectors = 234441648/234441648, HPA is disabled</code></td><td>보이는 크기 = 진짜 크기. 숨긴 영역 없음</td><td>10</td></tr>
 <tr><td><code>write-caching = 1 (on)</code>, <code>look-ahead = 1 (on)</code></td><td>쓰기 캐시 켜짐, 미리 읽기 켜짐</td><td>7</td></tr>
-<tr><td><code>APM_level = not supported</code></td><td>전원 관리 (APM) 설정은 없다 : SSD 에서는 흔하다 |</td></tr>
+<tr><td><code>APM_level = not supported</code></td><td>전원 관리 (APM) 설정은 없다 : SSD 에서는 흔하다</td><td>—</td></tr>
 <tr><td><code>Queue depth: 32</code>, <code>Native Command Queueing (NCQ)</code>, <code>Gen3 (6.0Gb/s)</code></td><td>명령 32개까지 한꺼번에, SATA 3</td><td>5</td></tr>
 <tr><td><code>Logical / Physical Sector size: 512 bytes</code></td><td>호스트에는 512 B 섹터로 보인다 (안쪽의 4 KiB 매핑 단위는 실험 6 이 찾는다)</td><td>6</td></tr>
 </tbody></table></div>
