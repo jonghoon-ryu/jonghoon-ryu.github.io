@@ -387,8 +387,10 @@ Samsung SATA SSD 에서 흔히 보이는 속성 중 실험에 쓰는 것 :
 <tr><td>0 · 1 · 2 : 읽기만</td><td>117 그대로</td><td>그대로</td><td>31 → 40 (오래된 데이터 읽기가 뜨겁다)</td></tr>
 <tr><td>3 <code>slc</code> : 120 GB 쓰기</td><td>117 → 118</td><td>+120.0 GB</td><td>32 → <strong>48</strong></td></tr>
 <tr><td>3 <code>scan fresh</code>, <code>selftest</code> : 읽기만</td><td>118 그대로</td><td>그대로</td><td>31 → 33 · 31 → 42</td></tr>
-<tr><td>4 · 5 : TRIM, 채우기, 쓰기 지도</td><td>118 → 121</td><td>+490 GB 쯤</td><td>32 – 47</td></tr>
-<tr><td>6 <code>wsize</code> : 채우기 + 작은 쓰기</td><td>122 → 123</td><td>+48.6 GB (측정 부분)</td><td>48 → 43</td></tr>
+<tr><td>4 · 5 <code>perfmap</code> : 반 쓰기, 전체 채우기, 쓰기 지도</td><td>118 → 121</td><td>+250.9 GB</td><td>32 – 47</td></tr>
+<tr><td>5 <code>pattern</code> : 16 GiB × 5</td><td>121 그대로</td><td>+85.9 GB</td><td>32 → 43</td></tr>
+<tr><td>6 <code>wsize</code> : 전체 채우기 + 작은 쓰기</td><td>121 → 123</td><td>+120.0 + 48.6 GB</td><td>48 → 43</td></tr>
+<tr><td>7 <code>flush</code></td><td>123 그대로</td><td>+10.6 GB</td><td>—</td></tr>
 <tr><td>8 <code>cliff</code> 시작 직전</td><td><strong>123</strong> (VALUE 89)</td><td>평생 <strong>12.1 TB</strong></td><td>32</td></tr>
 </tbody></table></div>
 
