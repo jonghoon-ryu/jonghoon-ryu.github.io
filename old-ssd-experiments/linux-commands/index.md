@@ -272,6 +272,52 @@ Samsung SATA SSD 에서 흔히 보이는 속성 중 실험에 쓰는 것 :
 <tr><td>241</td><td>Total_LBAs_Written</td><td>호스트가 쓴 양 (512 바이트 단위). 실험 12</td></tr>
 </tbody></table></div>
 
+### SMART 한 줄 읽기 : 예 (190 온도)
+
+실험 3 (2026.10.18) 의 한 줄이다 :
+
+```
+190 Airflow_Temperature_Cel   -O--CK   069   052   000    -    31
+                               플래그  VALUE WORST THRESH FAIL RAW
+```
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>열</th>
+<th>값</th>
+<th>읽는 법</th>
+</tr></thead><tbody>
+<tr><td>플래그 <code>-O--CK</code></td><td><code>P</code> 가 없다</td><td>고장 예고 (pre-failure) 속성이 아니다 : 온도가 높다는 것만으로 '고장' 판정은 나지 않는다. <code>O</code> 평소에도 갱신, <code>C</code> 수를 세는 속성, <code>K</code> 저절로 저장 (첫 자리 <code>P</code> 가 있는 5 · 177 · 179 등은 기준값 아래로 내려가면 '고장 임박' 이다)</td></tr>
+<tr><td><strong>RAW</strong></td><td><strong>31</strong></td><td>실제 숫자 : <strong>지금 31 °C</strong></td></tr>
+<tr><td><strong>VALUE</strong></td><td><strong>069</strong></td><td>정규화 값. 온도는 Samsung 이 <strong>100 − 온도</strong> 로 정한다 : 100 − 31 = 69. 클수록 시원하다</td></tr>
+<tr><td><strong>WORST</strong></td><td><strong>052</strong></td><td>지금까지 가장 낮았던 VALUE = <strong>가장 뜨거웠던 때</strong> : 100 − 52 = <strong>48 °C</strong></td></tr>
+<tr><td><strong>THRESH</strong></td><td><strong>000</strong></td><td>고장 기준값. 0 = 이 속성으로는 고장 판정을 하지 않는다</td></tr>
+<tr><td>FAIL</td><td><code>-</code></td><td>지금도, 예전에도 기준값에 닿은 적이 없다</td></tr>
+</tbody></table></div>
+
+**분석하는 법**
+
+1. **WORST 가 바뀌었는지 본다.** 이날 아침 (실험 0–2) 의 WORST 는 053 (13년 동안 가장 뜨거웠던 때 47 °C) 이었고, 실험 3 의 전체 쓰기 뒤에는 052 (48 °C) 가 되었다 : **이 드라이브의 평생 최고 온도를 우리 실험이 새로 썼다.**
+2. **RAW 를 실험마다 이어 본다** : 드라이브가 얼마나 일했는지가 보인다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>때</th>
+<th>RAW</th>
+<th>하던 일</th>
+</tr></thead><tbody>
+<tr><td>켠 뒤 (08:20)</td><td>28 °C</td><td>쉼</td></tr>
+<tr><td>오래된 데이터 읽기 (실험 1, 2)</td><td><strong>38 – 40 °C</strong></td><td>다시 읽기가 많은 느린 읽기</td></tr>
+<tr><td>오래된 데이터의 자가 진단 (실험 2)</td><td>31 → 39 °C</td><td>드라이브가 안에서 전체를 읽음</td></tr>
+<tr><td>120 GB 쓰기 (실험 3, 1단계)</td><td>32 → <strong>48 °C</strong></td><td>13분 쉬지 않고 쓰기 : 가장 힘든 일</td></tr>
+<tr><td>새 데이터 읽기 (실험 3, 3단계)</td><td>31 → 33 °C</td><td>빠른 읽기, 다시 읽기 없음</td></tr>
+</tbody></table></div>
+
+   같은 양을 같은 방법으로 읽었는데, 오래된 데이터는 약 9 °C, 새 데이터는 약 2 °C 올렸다 : 다시 읽기 (read retry) 의 또 다른 증거다.
+3. **위험한 값인가** : SSD 의 동작 온도는 보통 0 – 70 °C 로 정해져 있고, 많은 드라이브가 70 °C 근처부터 스스로 속도를 낮춘다 (thermal throttling). 48 °C 는 괜찮다. 밤새 쓰는 실험 8 과 실험 18 에서는 지켜본다.
+
+**모든 SMART 줄에 쓰는 규칙** : 실제 숫자는 **RAW**, 제조사의 판정은 **VALUE 와 THRESH** 의 비교, 드라이브 역사의 가장 나빴던 순간은 **WORST**. VALUE 가 무엇을 뜻하는지는 속성과 제조사마다 다르다 : 190 은 '100 − 온도', 177 은 '정해진 수명 중 남은 %'.
+
 NVMe 드라이브라면 `sudo nvme smart-log /dev/nvme0` (nvme-cli) 가 같은 일을 한다. NVMe 는 속성 번호 대신 정해진 항목 (`data_units_written`, `percentage_used` …) 을 보여 준다.
 
 ### `hdparm -I` : ATA 기능 목록
