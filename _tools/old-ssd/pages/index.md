@@ -90,8 +90,9 @@ NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 �
 실험 | 상태
 0 준비 | **끝** (2026.10.18) : SMART 오류 0, 평생 WAF ≈ 1.4, 177 = 117 (수명의 약 10%), Security frozen. [결과](/old-ssd-experiments/0-setup/)
 1 오래된 데이터 | **끝** (2026.10.18) : 데이터가 있는 곳은 약 9 MB/s, 빈 곳은 400–520 MB/s. 나이와 상관없이 모두 느리고, 오류는 없다. 블루 스크린은 이 SSD 탓이 아닐 가능성이 크다. [결과](/old-ssd-experiments/1-old-data/)
-2 기능 · 자가 진단 | `features` **끝** : 오류 로그 · 링크 오류 0, Security frozen, 읽기만 해도 31 → 40 °C. `selftest long` 다음. [결과](/old-ssd-experiments/2-features/)
-3 – 19 | 아직
+2 기능 · 자가 진단 | **끝** (2026.10.18) : 오류 로그 · 링크 오류 0, 자가 진단 `Completed without error` (62.6분, 예상 70분), Security frozen, 읽기만 해도 31 → 40 °C. [결과](/old-ssd-experiments/2-features/)
+3 SLC 캐시 | 다음 : **여기부터 드라이브를 지운다**
+4 – 19 | 아직
 ```
 
 <div class="warn" markdown="1">

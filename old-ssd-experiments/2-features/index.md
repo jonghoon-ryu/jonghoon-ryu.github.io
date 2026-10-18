@@ -176,7 +176,46 @@ H3 의 비교를 위해, **실험 3 (드라이브 전체를 새로 씀) 이 끝�
 
 ### 2단계 : `selftest long`
 
-아직 실행 전.
+2026.10.18 09:47 – 10:50, 결과 폴더 `20261018-094708-selftest-long`.
+
+```
+SMART Self-test log structure revision number 1
+Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
+# 1  Extended offline    Completed without error       00%         2         -
+```
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>항목</th>
+<th>값</th>
+<th>읽는 법</th>
+</tr></thead><tbody>
+<tr><td>결과</td><td><code>Completed without error</code>, <code>LBA_of_first_error -</code></td><td>드라이브가 스스로 전체를 검사했고, 읽지 못한 곳이 없다</td></tr>
+<tr><td>드라이브가 말한 시간</td><td>70분</td><td><code>smartctl -c</code> 의 권장 대기 시간</td></tr>
+<tr><td>실제 걸린 시간</td><td><strong>3,758초 = 62.6분</strong></td><td>말한 시간보다 <strong>짧았다</strong></td></tr>
+<tr><td>진행</td><td>10% 마다 약 7.7분 (8 · 16 · 23 · 31 · 39 · 47 · 54 · 62분)</td><td>처음부터 끝까지 고르다 : 특별히 느린 구간이 없다</td></tr>
+<tr><td>온도</td><td>31 → 39 °C</td><td>자가 진단 동안 계속 일했다</td></tr>
+<tr><td>SMART 앞뒤</td><td>5 · 179 · 181–183 · 187 · 195 · 199 모두 0 그대로</td><td>고치지 못한 오류 없음</td></tr>
+<tr><td><code>LifeTime(hours)</code> 2</td><td>Power_On_Hours (10,375) 와 다르다</td><td>이 펌웨어가 이 칸에 무엇을 적는지는 알 수 없다 (켠 뒤의 시간으로 보인다 : 오늘 08:05 에 켰다)</td></tr>
+</tbody></table></div>
+
+**속도로 바꾸면** : 120 GB 를 62.6분에 다 읽었다면 약 **32 MB/s** 다. 실험 1 에서 호스트가 `O_DIRECT` 로 읽은 속도 (데이터가 있는 곳 약 9 MB/s) 의 3–4배다. 가능한 이유 :
+- 자가 진단은 SATA 링크 · 커널 · 명령 대기 없이 드라이브 안에서 바로 읽는다
+- 데이터가 없는 곳 (TRIM 된 곳, 파일 시스템의 빈 공간 약 9%) 은 NAND 를 읽지 않는다
+- 자가 진단이 모든 페이지를 호스트 읽기와 같은 방식 (같은 다시 읽기 단계) 으로 읽는지는 공개되어 있지 않다
+
+**가설 확인**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>가설</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>H3 오래된 데이터 때문에 자가 진단이 예상보다 오래 걸린다</td><td><strong>아니다</strong> : 70분 예상보다 7분 짧았다. 실험 3 (전체를 새로 씀) 뒤에 한 번 더 해서 '새 데이터' 의 시간과 비교한다</td></tr>
+<tr><td>H4 '믿을 수 없게 됨' 의 흔적이 로그에 있다</td><td><strong>아니다</strong> : 자가 진단도 오류 없이 끝났다</td></tr>
+</tbody></table></div>
+
+**실험 2 정리** : 이 드라이브는 지원하는 기능 · 로그 · 자가 진단 모두 '건강' 하다고 말한다. 남은 이상은 실험 1 에서 잰 **아주 느린 읽기와 그때의 열** 뿐이다 : SMART 와 로그만 보면 이 드라이브의 문제를 알 수 없다는 것이 실험 0–2 의 결론이다.
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/1-old-data/' | relative_url }}">← 1. 오래된 데이터 읽기</a><a href="{{ '/old-ssd-experiments/3-slc-cache/' | relative_url }}">3. SLC 캐시 →</a></div>

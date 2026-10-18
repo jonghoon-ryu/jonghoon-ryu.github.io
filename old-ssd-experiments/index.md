@@ -118,8 +118,9 @@ table.t code { font-size:0.82rem; }
 </tr></thead><tbody>
 <tr><td>0 준비</td><td><strong>끝</strong> (2026.10.18) : SMART 오류 0, 평생 WAF ≈ 1.4, 177 = 117 (수명의 약 10%), Security frozen. <a href="/old-ssd-experiments/0-setup/">결과</a></td></tr>
 <tr><td>1 오래된 데이터</td><td><strong>끝</strong> (2026.10.18) : 데이터가 있는 곳은 약 9 MB/s, 빈 곳은 400–520 MB/s. 나이와 상관없이 모두 느리고, 오류는 없다. 블루 스크린은 이 SSD 탓이 아닐 가능성이 크다. <a href="/old-ssd-experiments/1-old-data/">결과</a></td></tr>
-<tr><td>2 기능 · 자가 진단</td><td><code>features</code> <strong>끝</strong> : 오류 로그 · 링크 오류 0, Security frozen, 읽기만 해도 31 → 40 °C. <code>selftest long</code> 다음. <a href="/old-ssd-experiments/2-features/">결과</a></td></tr>
-<tr><td>3 – 19</td><td>아직</td></tr>
+<tr><td>2 기능 · 자가 진단</td><td><strong>끝</strong> (2026.10.18) : 오류 로그 · 링크 오류 0, 자가 진단 <code>Completed without error</code> (62.6분, 예상 70분), Security frozen, 읽기만 해도 31 → 40 °C. <a href="/old-ssd-experiments/2-features/">결과</a></td></tr>
+<tr><td>3 SLC 캐시</td><td>다음 : <strong>여기부터 드라이브를 지운다</strong></td></tr>
+<tr><td>4 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 
 <div class="warn" markdown="1">
