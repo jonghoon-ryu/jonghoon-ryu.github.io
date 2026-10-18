@@ -318,6 +318,82 @@ Samsung SATA SSD 에서 흔히 보이는 속성 중 실험에 쓰는 것 :
 
 **모든 SMART 줄에 쓰는 규칙** : 실제 숫자는 **RAW**, 제조사의 판정은 **VALUE 와 THRESH** 의 비교, 드라이브 역사의 가장 나빴던 순간은 **WORST**. VALUE 가 무엇을 뜻하는지는 속성과 제조사마다 다르다 : 190 은 '100 − 온도', 177 은 '정해진 수명 중 남은 %'.
 
+### `lab.sh` 가 실험마다 찍는 SMART 14줄
+
+`lab.sh` 는 드라이브에 무언가를 하는 실험마다 **앞 (`smart-before`)** 과 **뒤 (`smart-after`)** 에 SMART 를 저장하고, 그중 실험에 쓰는 속성 14개를 화면에 찍는다. 예 : 실험 8 을 시작할 때 (2026.10.18 15:36)
+
+```
+     5 Reallocated_Sector_Ct   PO--CK   100   100   010    -    0
+     9 Power_On_Hours          -O--CK   097   097   000    -    10379
+    12 Power_Cycle_Count       -O--CK   095   095   000    -    4600
+   177 Wear_Leveling_Count     PO--C-   089   089   000    -    123
+   179 Used_Rsvd_Blk_Cnt_Tot   PO--C-   100   100   010    -    0
+   181 Program_Fail_Cnt_Total  -O--CK   100   100   010    -    0
+   182 Erase_Fail_Count_Total  -O--CK   100   100   010    -    0
+   183 Runtime_Bad_Block       PO--C-   100   100   010    -    0
+   187 Uncorrectable_Error_Cnt -O--CK   100   100   000    -    0
+   190 Airflow_Temperature_Cel -O--CK   068   052   000    -    32
+   195 ECC_Error_Rate          -O-RC-   200   200   000    -    0
+   199 CRC_Error_Count         -OSRCK   100   100   000    -    0
+   235 POR_Recovery_Count      -O--C-   099   099   000    -    1036
+   241 Total_LBAs_Written      -O--CK   099   099   000    -    23723464395
+```
+
+열의 뜻 (플래그, VALUE, WORST, THRESH, RAW) 은 위의 'SMART 한 줄 읽기' 를 본다. 짧게 : **RAW** = 실제 숫자, **VALUE** = 제조사의 점수 (보통 100 에서 내려간다), **WORST** = 가장 나빴던 점수, **THRESH** = 고장 판정선, 플래그의 첫 글자 **P** = 그 선에 닿으면 '고장 임박'.
+
+**14줄 하나하나** (값은 위의 스냅숏, '오늘' = 2026.10.18 실험 0 – 7)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>ID</th>
+<th>이름</th>
+<th>지금 (RAW / VALUE)</th>
+<th>무엇을 세나</th>
+<th>오늘 어떻게 변했나</th>
+<th>쓰는 실험</th>
+</tr></thead><tbody>
+<tr><td>5</td><td>Reallocated_Sector_Ct</td><td>0 / 100</td><td>나빠서 예비로 바꿔 단 블록 수</td><td>0 그대로</td><td>18</td></tr>
+<tr><td>9</td><td>Power_On_Hours</td><td>10,379 시간 / 97</td><td>전원이 켜져 있던 시간의 합</td><td>10,373 → 10,379 (오늘 켠 시간만큼)</td><td>0</td></tr>
+<tr><td>12</td><td>Power_Cycle_Count</td><td>4,600 / 95</td><td>전원을 켠 횟수</td><td>그대로 (오늘은 한 번 켰다)</td><td>0</td></tr>
+<tr><td>177</td><td>Wear_Leveling_Count</td><td><strong>123</strong> / <strong>89</strong></td><td>블록들의 <strong>평균 지움 횟수</strong> (P/E). VALUE 는 펌웨어가 보는 남은 수명 %</td><td><strong>117 → 123</strong> : 드라이브 전체를 약 6번 덮어쓴 만큼. VALUE 는 122 에서 90 → 89</td><td>12, 18</td></tr>
+<tr><td>179</td><td>Used_Rsvd_Blk_Cnt_Tot</td><td>0 / 100</td><td>써 버린 예비 블록 수 (수명 끝에 는다)</td><td>0 그대로</td><td>18</td></tr>
+<tr><td>181</td><td>Program_Fail_Cnt_Total</td><td>0 / 100</td><td>NAND 쓰기 (프로그램) 실패</td><td>0 그대로</td><td>18</td></tr>
+<tr><td>182</td><td>Erase_Fail_Count_Total</td><td>0 / 100</td><td>블록 지우기 실패</td><td>0 그대로</td><td>18</td></tr>
+<tr><td>183</td><td>Runtime_Bad_Block</td><td>0 / 100</td><td>쓰는 동안 나빠진 블록</td><td>0 그대로</td><td>18</td></tr>
+<tr><td>187</td><td>Uncorrectable_Error_Cnt</td><td>0 / 100</td><td>ECC 와 다시 읽기로도 고치지 못한 읽기</td><td>0 그대로 (오래된 데이터를 아주 느리게 읽었을 때도)</td><td>1, 15, 16</td></tr>
+<tr><td>190</td><td>Airflow_Temperature_Cel</td><td><strong>32 °C</strong> / 68 (WORST <strong>52</strong>)</td><td>지금 온도. VALUE = 100 − 온도, WORST = 평생 가장 뜨거웠던 때</td><td>28 – 48 °C 를 오갔다. WORST 53 → <strong>52</strong> : 평생 최고 48 °C 를 실험 3 이 새로 썼다</td><td>모든 실험</td></tr>
+<tr><td>195</td><td>ECC_Error_Rate</td><td>0 / 200</td><td>ECC 가 고친 오류의 비율 (Samsung 은 늘 0 에 가깝게 보고한다)</td><td>0 그대로</td><td>1, 15</td></tr>
+<tr><td>199</td><td>CRC_Error_Count</td><td>0 / 100</td><td>SATA 케이블 위에서 깨진 전송 (드라이브 탓이 아니라 연결 탓)</td><td>0 그대로</td><td>0</td></tr>
+<tr><td>235</td><td>POR_Recovery_Count</td><td>1,036 / 99</td><td><strong>정상 종료 없이</strong> 전원이 끊긴 횟수 (Samsung)</td><td>그대로</td><td>17</td></tr>
+<tr><td>241</td><td>Total_LBAs_Written</td><td><strong>23,723,464,395</strong> / 99</td><td>호스트가 쓴 512 B 섹터의 합</td><td>22,481,189,514 → 23,723,464,395 : <strong>오늘 636 GB</strong> (평생 12.1 TB)</td><td>12, 18</td></tr>
+</tbody></table></div>
+
+**빠르게 읽는 순서**
+
+1. **오류 8줄이 모두 0 인가** : 5 · 179 · 181 · 182 · 183 · 187 · 195 · 199. 하나라도 앞보다 늘었다면 그 실험의 가장 중요한 결과다. 지금까지 모두 0 이다
+2. **177 과 241 의 차이** : 이번 실험이 NAND 를 얼마나 닳게 했고 (177), 호스트가 얼마나 썼나 (241 × 512 B). 둘의 비율이 WAF 다 : `python3 smartdiff.py 결과폴더` 가 계산한다 ([실험 12](/old-ssd-experiments/12-waf/))
+3. **190** : 지금 온도와 WORST (평생 최고). 70 °C 근처면 드라이브가 스스로 느려질 수 있다
+4. **9 · 12 · 235** : 드라이브의 이력. 실험 17 (전원 차단) 뒤에는 235 가 늘어야 한다
+
+**오늘의 흐름** (실험마다 앞 → 뒤)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>실험</th>
+<th>177</th>
+<th>241 (× 512 B)</th>
+<th>190 (°C)</th>
+</tr></thead><tbody>
+<tr><td>0 · 1 · 2 : 읽기만</td><td>117 그대로</td><td>그대로</td><td>31 → 40 (오래된 데이터 읽기가 뜨겁다)</td></tr>
+<tr><td>3 <code>slc</code> : 120 GB 쓰기</td><td>117 → 118</td><td>+120.0 GB</td><td>32 → <strong>48</strong></td></tr>
+<tr><td>3 <code>scan fresh</code>, <code>selftest</code> : 읽기만</td><td>118 그대로</td><td>그대로</td><td>31 → 33 · 31 → 42</td></tr>
+<tr><td>4 · 5 : TRIM, 채우기, 쓰기 지도</td><td>118 → 121</td><td>+490 GB 쯤</td><td>32 – 47</td></tr>
+<tr><td>6 <code>wsize</code> : 채우기 + 작은 쓰기</td><td>122 → 123</td><td>+48.6 GB (측정 부분)</td><td>48 → 43</td></tr>
+<tr><td>8 <code>cliff</code> 시작 직전</td><td><strong>123</strong> (VALUE 89)</td><td>평생 <strong>12.1 TB</strong></td><td>32</td></tr>
+</tbody></table></div>
+
+177 이 6 늘어날 때 241 은 약 636 GB 늘었다 : 6 × 137 GB (NAND 128 GiB) ≈ 822 GB 를 NAND 에 썼다고 보면, 오늘 전체의 WAF 는 약 1.3 (177 의 눈금이 커서 대략의 값이다).
+
 NVMe 드라이브라면 `sudo nvme smart-log /dev/nvme0` (nvme-cli) 가 같은 일을 한다. NVMe 는 속성 번호 대신 정해진 항목 (`data_units_written`, `percentage_used` …) 을 보여 준다.
 
 ### `hdparm -I` : ATA 기능 목록
