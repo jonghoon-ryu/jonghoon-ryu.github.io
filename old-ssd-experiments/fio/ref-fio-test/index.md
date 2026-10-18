@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Ref: fio test"
-permalink: /old-ssd-experiments/ref-fio-test/
+permalink: /old-ssd-experiments/fio/ref-fio-test/
 ---
 <style>
 .glance { display:grid; grid-template-columns: 9rem 1fr; gap:4px 14px; background:#f4f8f6; border:1px solid #cfe3db; border-left:4px solid #1f6f5c; padding:12px 16px; margin:1.2rem 0; font-size:0.93rem; }
@@ -44,7 +44,7 @@ table.t code { font-size:0.82rem; }
 
 ## `--rw` : I/O 의 모양
 
-![--rw](/old-ssd-experiments/ref-fio-test/rw.png)
+![--rw](/old-ssd-experiments/fio/ref-fio-test/rw.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -69,7 +69,7 @@ table.t code { font-size:0.82rem; }
 
 ## `--bs` : I/O 하나의 크기
 
-![--bs](/old-ssd-experiments/ref-fio-test/bs.png)
+![--bs](/old-ssd-experiments/fio/ref-fio-test/bs.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -93,7 +93,7 @@ table.t code { font-size:0.82rem; }
 
 ## `--iodepth` : 동시에 걸어 둔 요청 수
 
-![--iodepth](/old-ssd-experiments/ref-fio-test/iodepth.png)
+![--iodepth](/old-ssd-experiments/fio/ref-fio-test/iodepth.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -121,7 +121,7 @@ table.t code { font-size:0.82rem; }
 
 ## `--numjobs` : 같은 job 의 복사본 수
 
-![--numjobs](/old-ssd-experiments/ref-fio-test/numjobs.png)
+![--numjobs](/old-ssd-experiments/fio/ref-fio-test/numjobs.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -143,7 +143,7 @@ table.t code { font-size:0.82rem; }
 
 ## `--ioengine` : 요청을 넘기는 방법
 
-![--ioengine](/old-ssd-experiments/ref-fio-test/ioengine.png)
+![--ioengine](/old-ssd-experiments/fio/ref-fio-test/ioengine.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -167,7 +167,7 @@ table.t code { font-size:0.82rem; }
 
 ## `--direct` : 페이지 캐시를 건너뛰나
 
-![--direct](/old-ssd-experiments/ref-fio-test/direct.png)
+![--direct](/old-ssd-experiments/fio/ref-fio-test/direct.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -185,13 +185,13 @@ table.t code { font-size:0.82rem; }
 
 ## `--size` : 읽는 범위의 크기
 
-![--size](/old-ssd-experiments/ref-fio-test/size.png)
+![--size](/old-ssd-experiments/fio/ref-fio-test/size.png)
 
 16 MiB · 256 MiB · 1 GiB · 4 GiB 가 모두 **395k – 405k** 로 같다. `--direct=1` 이므로 PC 의 캐시는 없고, 드라이브 쪽에도 범위가 작다고 빨라지는 캐시가 보이지 않는다. 디스크 (HDD) 라면 범위가 작을수록 머리가 덜 움직여 빨라진다 : SSD 와 HDD 가 다른 점.
 
 ## `--random_distribution` : 어디를 고르나
 
-![--random_distribution](/old-ssd-experiments/ref-fio-test/random_distribution.png)
+![--random_distribution](/old-ssd-experiments/fio/ref-fio-test/random_distribution.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -211,13 +211,13 @@ table.t code { font-size:0.82rem; }
 
 ## `--thread` : 프로세스 대신 스레드
 
-![--thread](/old-ssd-experiments/ref-fio-test/thread.png)
+![--thread](/old-ssd-experiments/fio/ref-fio-test/thread.png)
 
 398k (프로세스) 와 394k (스레드) : 차이 없음. job 이 하나일 때 프로세스냐 스레드냐는 I/O 에 영향이 없다. job 이 아주 많을 때 메모리 · 시작 비용에서만 다르다.
 
 ## io_uring 의 추가 옵션
 
-![io_uring options](/old-ssd-experiments/ref-fio-test/io_uring_opt.png)
+![io_uring options](/old-ssd-experiments/fio/ref-fio-test/io_uring_opt.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -238,7 +238,7 @@ table.t code { font-size:0.82rem; }
 
 ## 쓰기 기준 : `--fsync`
 
-![--fsync](/old-ssd-experiments/ref-fio-test/fsync.png)
+![--fsync](/old-ssd-experiments/fio/ref-fio-test/fsync.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -258,7 +258,7 @@ table.t code { font-size:0.82rem; }
 
 ## 쓰기 기준 : `--bs`
 
-![--bs (randwrite)](/old-ssd-experiments/ref-fio-test/wbs.png)
+![--bs (randwrite)](/old-ssd-experiments/fio/ref-fio-test/wbs.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -277,7 +277,7 @@ table.t code { font-size:0.82rem; }
 
 ## 쓰기 기준 : `--direct`
 
-![--direct (randwrite)](/old-ssd-experiments/ref-fio-test/wdirect.png)
+![--direct (randwrite)](/old-ssd-experiments/fio/ref-fio-test/wdirect.png)
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -294,7 +294,7 @@ IOPS 는 비슷한데 버퍼 쓰기의 99% 지연이 4배 짧다 : 쓰기가 RAM
 
 ## 기준 세 번 : 잡음은 얼마나 되나
 
-![baseline](/old-ssd-experiments/ref-fio-test/baseline.png)
+![baseline](/old-ssd-experiments/fio/ref-fio-test/baseline.png)
 
 같은 기준을 이어서 세 번 : 474k · 474k · 479k IOPS (±0.5%). 이어서 돈 실행끼리의 잡음은 1% 안이다. 그러니 한 그룹 안의 차이가 몇 % 넘으면 진짜 차이다. 그룹 사이에서는 위의 경고처럼 드라이브의 상태가 바뀌어 20% 까지 달라졌다.
 

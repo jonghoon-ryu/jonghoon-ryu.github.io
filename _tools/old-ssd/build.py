@@ -20,7 +20,7 @@ PAGES = [  # slug, sidebar / nav title
     ("ssd-tutorial", "SSD Q&A"),   # hand-written (no pages/ source): only listed for the nav
     ("linux-commands", "SSD 를 다루는 Linux 명령"),
     ("fio", "fio 사용법"),
-    ("ref-fio-test", "Ref: fio test"),
+    ("fio/ref-fio-test", "Ref: fio test"),
     ("0-setup", "0. 준비"),
     ("1-old-data", "1. 오래된 데이터 읽기"),
     ("2-features", "2. 기능 · 자가 진단"),

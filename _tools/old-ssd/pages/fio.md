@@ -41,7 +41,7 @@ fio --name=NAME --filename=TARGET --rw=PATTERN --bs=SIZE --iodepth=N --size=RANG
 
 옵션 하나하나는 4절, 큐 깊이는 5절, 캐시는 6절에서 자세히 본다.
 
-이 실험 시리즈의 `lab.sh` 는 거의 모든 측정을 fio 로 한다. 이 페이지를 읽고 나면 `lab.sh` 안의 fio 줄을 직접 읽고 바꿀 수 있다.
+이 실험 시리즈의 `lab.sh` 는 거의 모든 측정을 fio 로 한다. 옵션을 하나씩 바꿔 가며 실제로 잰 결과는 이 페이지 아래의 [Ref: fio test](/old-ssd-experiments/fio/ref-fio-test/) 에 있다. 이 페이지를 읽고 나면 `lab.sh` 안의 fio 줄을 직접 읽고 바꿀 수 있다.
 
 ## 2. 설치와 확인
 

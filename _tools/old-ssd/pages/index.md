@@ -60,7 +60,7 @@ NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 �
 
 연결은 실험 17 만 USB 어댑터 (전원을 끊기 쉽게), 나머지는 모두 메인보드 SATA 다.
 
-처음 시작한다면 먼저 [SSD Q&A](/old-ssd-experiments/ssd-tutorial/) (용량 · GB 와 GiB · over-provisioning · 드라이브 · 네임스페이스 · 파티션), [SSD 를 다루는 Linux 명령](/old-ssd-experiments/linux-commands/), [fio 사용법](/old-ssd-experiments/fio/) 을 읽는다. fio 의 옵션을 하나씩 바꿔 잰 참고 자료는 [Ref: fio test](/old-ssd-experiments/ref-fio-test/). 실험에 나오는 명령 (`lsblk`, `smartctl`, `hdparm`, `blkdiscard`, `fio` …) 이 거기 설명되어 있다.
+처음 시작한다면 먼저 [SSD Q&A](/old-ssd-experiments/ssd-tutorial/) (용량 · GB 와 GiB · over-provisioning · 드라이브 · 네임스페이스 · 파티션), [SSD 를 다루는 Linux 명령](/old-ssd-experiments/linux-commands/), [fio 사용법](/old-ssd-experiments/fio/) 을 읽는다. fio 의 옵션을 하나씩 바꿔 잰 참고 자료는 [Ref: fio test](/old-ssd-experiments/fio/ref-fio-test/). 실험에 나오는 명령 (`lsblk`, `smartctl`, `hdparm`, `blkdiscard`, `fio` …) 이 거기 설명되어 있다.
 
 ## 더 해 볼 수 있는 것
 
@@ -78,7 +78,7 @@ NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 �
 `fiosum.py` | fio 의 JSON 결과들을 한 표 (`summary.csv`) 로
 `plcheck.py` | 전원 차단 실험 : 번호 붙은 기록 쓰기와 확인
 `plot.py` | 결과 폴더의 로그로 그래프 그리기
-`fiosweep.py` · `sweepplot.py` | fio 옵션을 하나씩 바꿔 재고 그리기 ([Ref: fio test](/old-ssd-experiments/ref-fio-test/))
+`fiosweep.py` · `sweepplot.py` | fio 옵션을 하나씩 바꿔 재고 그리기 ([Ref: fio test](/old-ssd-experiments/fio/ref-fio-test/))
 `smartdiff.py` | 실험 앞뒤 SMART 비교, 177 · 241 로 WAF 추정
 ```
 

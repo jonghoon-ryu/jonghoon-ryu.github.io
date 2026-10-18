@@ -186,4 +186,4 @@ Windows 가 최대 절전 상태 (hiberfil.sys) 로 꺼져 있어서 `ntfs-3g` �
 같은 명령을 08:44 에도 한 번 했다 (`20261018-084416-check`) : 켜진 시간이 1시간 늘어난 것 말고는 같다.
 </div>
 
-<div class="step-nav"><a href="{{ '/old-ssd-experiments/ref-fio-test/' | relative_url }}">← Ref: fio test</a><a href="{{ '/old-ssd-experiments/1-old-data/' | relative_url }}">1. 오래된 데이터 읽기 →</a></div>
+<div class="step-nav"><a href="{{ '/old-ssd-experiments/fio/ref-fio-test/' | relative_url }}">← Ref: fio test</a><a href="{{ '/old-ssd-experiments/1-old-data/' | relative_url }}">1. 오래된 데이터 읽기 →</a></div>
