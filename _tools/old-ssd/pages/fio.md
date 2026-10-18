@@ -200,6 +200,42 @@ job 여러 개 | **서로 다른** 작업 : 예를 들어 읽기 + 쓰기 | 실�
 
 job 2개 (29.2k) 와 job 1개 · 깊이 2 (27.7k) 가 거의 같다 : 어느 쪽이든 NVMe 는 요청 2개를 함께 받았다. 읽기 하나의 시간은 그대로 (64 – 67 µs) 였으니, 걸린 요청이 많을수록 IOPS 가 는다 (5절의 Little 의 법칙).
 
+### `--group_reporting` : 결과를 묶어서 보고
+
+`--group_reporting` 은 **한 그룹에 속한 job 들의 결과를 보고 하나로 합친다.** I/O 는 바꾸지 않고, 출력만 바꾼다. 같은 job 을 `--numjobs=4` (같은 job 4개) 로, 옵션 없이 · 옵션과 함께 돌렸다 (실제 출력, 이 컴퓨터의 NVMe) :
+
+```
+$ fio --name=r --filename=t.img --size=256M --direct=1 --rw=randread --bs=4k --numjobs=4 --runtime=3 --time_based
+r: (groupid=0, jobs=1): err= 0: pid=58622: …
+  read: IOPS=15.4k, BW=60.1MiB/s (63.1MB/s)(180MiB/3001msec)
+    clat (usec): min=10, max=514, avg=64.06, stdev=10.93
+r: (groupid=0, jobs=1): err= 0: pid=58623: …
+  read: IOPS=15.4k, BW=60.0MiB/s (63.0MB/s)(180MiB/3001msec)
+… (job 4개의 보고가 따로)
+   READ: bw=239MiB/s (250MB/s), 58.4MiB/s-60.2MiB/s (61.3MB/s-63.1MB/s), io=717MiB (751MB), run=3001-3001msec
+
+$ fio … --numjobs=4 --group_reporting
+r: (groupid=0, jobs=4): err= 0: pid=58677: …
+  read: IOPS=61.2k, BW=239MiB/s (251MB/s)(718MiB/3002msec)
+    clat (usec): min=8, max=3442, avg=64.43, stdev=20.33
+```
+
+```table
+항목 | 옵션 없이 | `--group_reporting`
+보고 | **4 덩어리**, 복사본마다 하나 (`jobs=1`, `pid` 4개) | **1 덩어리** (`jobs=4`)
+IOPS | 15.4k + 15.4k + 15.4k + 15.0k : **직접 더한다** | **61.2k** : 이미 합계
+지연 (`clat`) | 평균 4개 (64.1 – 65.9 µs) | **모든** I/O 의 평균 하나 (64.4 µs), percentile 도 모두를 합쳐 하나
+맨 아래 `READ:` 줄 | 합계 239 MiB/s, job 마다의 범위 58.4 – 60.2 | 239 MiB/s
+```
+
+**'그룹' 이란** : job 은 **보고 그룹** 에 속한다. 함께 도는 job 들은 모두 그룹 0 (`groupid=0`) 이고, `--stonewall` (또는 `--new_group`) 이 붙은 job 부터 새 그룹이 된다. `--group_reporting` 은 그룹 **안에서만** 합친다. 맨 아래 `Run status group N` 줄은 이 옵션이 없어도 늘 그룹의 합계다.
+
+**언제 쓰나**
+- **`--numjobs` 와 함께** : 거의 늘. 복사본은 똑같으니 보고 4개가 아니라 합계가 필요하다
+- **서로 다른 job** (예 : 읽기 job + 쓰기 job, 실험 13) : 쓰지 않는다. 합치면 읽기와 쓰기가 한 덩어리로 섞인다. 그래서 `lab.sh mixed` 는 이 옵션 없이 `rd` 와 `wr` 를 따로 보고한다
+
+`lab.sh` 의 `run_fio` 는 습관처럼 `--group_reporting` 을 붙이지만, 거기서는 job 하나에 `numjobs` 도 없어서 아무것도 바꾸지 않는다. JSON 출력도 같은 규칙이다 : 그룹마다 합친 항목 하나.
+
 ## 5. 엔진과 큐 깊이 : IOPS = 큐 깊이 ÷ 지연
 
 4 KiB 랜덤 읽기를 세 번 했다 (모두 `--direct=1 --runtime=10 --time_based`).
