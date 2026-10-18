@@ -119,7 +119,7 @@ table.t code { font-size:0.82rem; }
 <tr><td>0 준비</td><td><strong>끝</strong> (2026.10.18) : SMART 오류 0, 평생 WAF ≈ 1.4, 177 = 117 (수명의 약 10%), Security frozen. <a href="/old-ssd-experiments/0-setup/">결과</a></td></tr>
 <tr><td>1 오래된 데이터</td><td><strong>끝</strong> (2026.10.18) : 데이터가 있는 곳은 약 9 MB/s, 빈 곳은 400–520 MB/s. 나이와 상관없이 모두 느리고, 오류는 없다. 블루 스크린은 이 SSD 탓이 아닐 가능성이 크다. <a href="/old-ssd-experiments/1-old-data/">결과</a></td></tr>
 <tr><td>2 기능 · 자가 진단</td><td><strong>끝</strong> (2026.10.18) : 오류 로그 · 링크 오류 0, 자가 진단 <code>Completed without error</code> (62.6분, 예상 70분), Security frozen, 읽기만 해도 31 → 40 °C. <a href="/old-ssd-experiments/2-features/">결과</a></td></tr>
-<tr><td>3 SLC 캐시</td><td><code>slc</code> <strong>끝</strong> : 버퍼 약 3.2 GB 를 533 MB/s, 그 뒤 TLC 약 150 MB/s (평평). 쓰기는 정상. 다음 : <code>slc-idle</code>, <code>scan fresh 8</code>, <code>selftest long</code>. <a href="/old-ssd-experiments/3-slc-cache/">결과</a></td></tr>
+<tr><td>3 SLC 캐시</td><td><code>slc</code> · <code>scan fresh</code> <strong>끝</strong> : 버퍼 약 3.2 GB 를 533 MB/s, 그 뒤 TLC 약 150 MB/s. <strong>새 데이터는 약 445 MB/s 로 읽힌다 (오래된 데이터의 약 45배)</strong> : 느림의 원인은 데이터의 나이였다. 다음 : <code>selftest long</code>, <code>slc-idle</code>. <a href="/old-ssd-experiments/3-slc-cache/">결과</a></td></tr>
 <tr><td>4 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 

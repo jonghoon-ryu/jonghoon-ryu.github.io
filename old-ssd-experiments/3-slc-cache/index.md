@@ -149,7 +149,33 @@ $ sudo ./lab.sh selftest long
 
 **실험 1 과 비교** : 이 드라이브는 **쓰기는 정상** 이다 (버퍼 533 MB/s, TLC 150 MB/s : 이 모델에 알려진 값과 비슷하다). 문제는 오래 둔 데이터를 **읽을 때** 뿐이었다 (약 9 MB/s). 이제 드라이브 전체가 막 쓴 데이터이므로, 같은 지도 (`scan fresh 8`) 를 다시 그리면 '데이터의 나이' 만 다른 비교가 된다.
 
-### 2단계 : `slc-idle` · 3단계 : `scan fresh 8` · 4단계 : `selftest long`
+### 3단계 : `scan fresh 8` (새 데이터의 지도)
+
+2026.10.18 11:45, 결과 폴더 `20261018-114459-scan-fresh`. 1단계가 드라이브 전체를 쓴 직후, 실험 1 의 지도와 **똑같은 방법** (256 MiB 마다 8 MiB, `O_DIRECT`, 같은 SATA 연결) 으로 다시 읽었다. 다른 것은 **데이터의 나이** 뿐이다.
+
+![같은 드라이브, 오래된 데이터와 새 데이터](/old-ssd-experiments/3-slc-cache/scan-old-vs-fresh.png)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>지도</th>
+<th>걸린 시간</th>
+<th>구간 속도 중앙값</th>
+<th>1 MiB 읽기 하나 (평균, 중앙값)</th>
+<th>가장 느린 1 MiB 읽기 (중앙값 / 최악)</th>
+</tr></thead><tbody>
+<tr><td>오래된 데이터 (실험 1, 677일 전원 없음)</td><td>8.0 분</td><td><strong>9.8 MB/s</strong></td><td>107 ms</td><td>208 ms / <strong>1,008 ms</strong></td></tr>
+<tr><td><strong>새 데이터 (방금 씀)</strong></td><td><strong>0.1 분 (약 9초)</strong></td><td><strong>444.7 MB/s</strong></td><td><strong>2.4 ms</strong></td><td>2.4 ms / <strong>2.6 ms</strong></td></tr>
+<tr><td>차이</td><td>약 55배</td><td>약 45배</td><td>약 45배</td><td>최악 약 390배</td></tr>
+</tbody></table></div>
+
+- **새 데이터는 448개 구간 전부 381 – 481 MB/s** 다. 빠진 곳도, 느린 띠도 없다. 0 으로만 읽힌 구간은 0개 : 모두 진짜 NAND 를 읽었다.
+- 실험 1 에서 빨랐던 곳 (TRIM 된 빈 곳, NAND 를 안 읽음) 과 거의 같은 속도다. 곧 **새 데이터는 NAND 에서 읽어도 SATA 링크의 한계까지 나온다.**
+- 가장 느린 읽기가 2.6 ms 로 고르다 : 다시 읽기 (read retry) 가 거의 없다는 뜻이다.
+- SMART : 187 · 195 0 그대로, 온도 31 → 33 °C (실험 1 의 지도 때는 31 → 40 °C).
+
+**결론 : 실험 1 의 느림은 '데이터의 나이' 가 전부였다.** 같은 드라이브, 같은 연결, 같은 위치, 같은 방법에서, 1년 넘게 전원 없이 둔 데이터는 약 10 MB/s, 막 쓴 데이터는 약 445 MB/s 로 읽혔다. 드라이브 (컨트롤러, NAND, 연결) 자체는 멀쩡하다. 오래 둔 셀은 전하가 빠져 기준 전압을 여러 번 옮겨 가며 다시 읽어야 했고 (그래서 느리고 뜨거웠고), 새로 쓴 셀은 한 번에 읽힌다.
+
+### 2단계 : `slc-idle` · 4단계 : `selftest long`
 
 아직 실행 전.
 </div>
