@@ -323,6 +323,50 @@ PC 용 NVMe 드라이브는 대개 네임스페이스를 하나만 지원한다 
 <tr><td>네임스페이스를 작게 만듦 (NVMe)</td><td>드라이브</td><td>예 : 펌웨어가 경계를 직접 안다</td><td>예, 가장 확실하다</td></tr>
 </tbody></table></div>
 
+### 11.5 Windows 에서는 왜 파티션이 드라이브 두 개처럼 보이나
+
+Windows 에서 디스크 하나를 둘로 나누면 탐색기에 C: 와 D: 가 생겨서, 디스크가 두 개가 된 것처럼 보인다. 하지만 탐색기가 보여 주는 것은 **볼륨 (드라이브 문자)** 이지 디스크가 아니다. 파일 시스템이 있는 파티션마다 문자가 하나씩 붙을 뿐이다.
+
+진짜 모습은 **디스크 관리** (`diskmgmt.msc`) 에 있다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>나눈 방법</th><th>탐색기</th><th>디스크 관리</th></tr></thead><tbody>
+<tr><td>파티션 둘</td><td>C: 와 D:</td><td><strong>디스크 0</strong> 하나, 막대 하나 안에 파티션 둘</td></tr>
+<tr><td>네임스페이스 둘 (NVMe)</td><td>C: 와 D: (각각 파티션을 만들었다면)</td><td><strong>디스크 0 과 디스크 1</strong> : 따로 된 디스크 두 개, 각자 파티션을 가진다</td></tr>
+</tbody></table></div>
+
+비유하면 **파티션은 공책 한 권의 첫 장에 적은 목차** 다 : '1–100 쪽은 수학, 101–200 쪽은 물리'. 공책은 이 나눔을 모른다. 첫 장의 잉크일 뿐이라, 그 장을 찢으면 다시 공책 한 권이다.
+**네임스페이스는 공장에서 공책을 두 권으로 따로 묶은 것** 이다. 두 권 다 1 쪽부터 시작하고, 한 권에 쓴 것이 다른 권을 건드릴 수 없다.
+
+### 11.6 네임스페이스 만들기
+
+<div class="warn" markdown="1">
+**주의.** 네임스페이스를 지우거나 만들면 **드라이브의 모든 데이터가 지워진다.** 시스템 디스크 (이 컴퓨터의 990 EVO, `nvme0`) 에서는 절대 하지 않는다. 840 EVO 는 SATA 라 네임스페이스가 아예 없다.
+</div>
+
+Linux 에서는 `nvme-cli` 로 한다. Windows 에는 내장 도구가 없다 : Linux 라이브 USB 로 부팅하거나, 드라이브 회사의 도구가 지원하면 그것을 쓴다 (지원하는 일반 소비자용 도구는 드물다).
+
+```sh
+# 1. 지원하는지 : OACS 에 "NS Management and Attachment Supported" 가 있어야 한다
+sudo nvme id-ctrl /dev/nvme0 -H | grep -iE "ns management|^nn|tnvmcap|unvmcap"
+# 2. 지금 있는 것 : 네임스페이스 번호, 그리고 attach 에 필요한 컨트롤러 번호 (cntlid)
+sudo nvme list-ns /dev/nvme0 --all
+sudo nvme id-ctrl /dev/nvme0 | grep cntlid
+# 3. 용량 비우기 (데이터가 지워진다)
+sudo nvme delete-ns /dev/nvme0 --namespace-id=1
+# 4. 만들기 : 크기는 바이트가 아니라 블록 수. --flbas=0 은 보통 512 B 블록 (nvme id-ns 로 확인)
+#    예 : 100 GB 두 개 = 100e9 / 512 = 195312500 블록
+sudo nvme create-ns /dev/nvme0 --nsze=195312500 --ncap=195312500 --flbas=0
+sudo nvme create-ns /dev/nvme0 --nsze=195312500 --ncap=195312500 --flbas=0
+# 5. 컨트롤러에 붙이고 다시 찾기
+sudo nvme attach-ns /dev/nvme0 --namespace-id=1 --controllers=<cntlid>
+sudo nvme attach-ns /dev/nvme0 --namespace-id=2 --controllers=<cntlid>
+sudo nvme ns-rescan /dev/nvme0
+lsblk          # nvme0n1, nvme0n2 가 따로 된 디스크로 보인다
+```
+
+어느 네임스페이스에도 넣지 않은 용량 (`unvmcap` > 0) 은 11.4 의 마지막 줄처럼 FTL 의 여유가 될 수 있다. 네임스페이스 관리를 지원하는 NVMe 를 하나 얻으면, 같은 부하를 남긴 용량이 있을 때와 없을 때 돌려 보는 것이 <a href="/old-ssd-experiments/10-over-provisioning/">실험 10</a> 의 하드웨어 판이다.
+
 ## 12. USB 로 붙인 NVMe : USB 는 NVMe 를 모른다
 
 USB 외장 SSD 의 안에는 NVMe SSD 가 들어 있는 경우가 많다. 그런데 **USB 에는 NVMe 를 실어 나르는 방법이 없다.** USB 저장 장치는 SCSI 명령으로 말한다 (USB 메모리와 같다). 그래서 케이스 안의 **브리지 칩** 이 둘 사이를 번역한다.
@@ -356,8 +400,8 @@ $ cat /sys/bus/usb/devices/1-8/speed
 <thead><tr><th>보이는 것</th><th>뜻</th></tr></thead><tbody>
 <tr><td><code>TRAN usb</code>, 이름 <code>sdf</code></td><td>NVMe 가 아니라 USB 저장 장치로 보인다</td></tr>
 <tr><td><code>driver uas</code></td><td>USB Attached SCSI : USB 위의 SCSI (옛 방식은 <code>usb-storage</code>)</td></tr>
-<tr><td><code>DISC-MAX 0B</code></td><td>지금 이 연결로는 TRIM 이 지나가지 않는다 (브리지가 SCSI <code>UNMAP</code> 을 NVMe <code>Deallocate</code> 로 번역해 줘야 한다)</td></tr>
-<tr><td><code>speed 480</code></td><td><strong>USB 2.0 속도 (480 Mb/s)</strong> 로 붙어 있다. T7 은 10 Gb/s 포트에서 약 1,000 MB/s 인데, 지금은 약 40 MB/s 가 한계다. USB 2.0 케이블이거나 USB 2.0 포트 (흔히 검은색) 에 꽂힌 것이다. T7 의 USB-C 케이블로 파란색 · USB-C 포트에 꽂으면 <code>5000</code> 또는 <code>10000</code> 이 나와야 한다</td></tr>
+<tr><td><code>DISC-MAX 0B</code></td><td>지금 이 연결로는 TRIM 이 지나가지 않는다 (브리지가 SCSI <code>UNMAP</code> 을 NVMe <code>Deallocate</code> 로 번역해 줘야 한다). 브리지는 할 수 있는데 Linux 가 꺼 둔 것이었다 : 17.2 절에서 살렸다</td></tr>
+<tr><td><code>speed 480</code></td><td><strong>USB 2.0 속도 (480 Mb/s)</strong> 로 붙어 있다. T7 은 10 Gb/s 포트에서 약 1,000 MB/s 인데, 지금은 약 40 MB/s 가 한계다. USB 2.0 케이블이거나 USB 2.0 포트 (흔히 검은색) 에 꽂힌 것이다. T7 의 USB-C 케이블로 파란색 · USB-C 포트에 꽂으면 <code>5000</code> 또는 <code>10000</code> 이 나와야 한다. (나중에 포트를 바꿔 <code>10000</code> 이 되었다 : 17.3 절)</td></tr>
 </tbody></table></div>
 
 ### 12.3 브리지를 지나면 달라지는 것
@@ -455,6 +499,300 @@ Windows 도 같은 사슬이다 : 이벤트 로그의 디스크 이벤트 **7** 
 
 이 드라이브는 지금 187 = 0, 179 = 0, 오류 로그가 비어 있다. 읽기가 아주 느릴 뿐 (<a href="/old-ssd-experiments/1-old-data/">실험 1</a>) 모든 읽기가 결국 성공했다. 고칠 수 없는 오류를 처음 볼 가능성이 있는 것은 <a href="/old-ssd-experiments/15-read-disturb/">실험 15</a> (read disturb), <a href="/old-ssd-experiments/16-retention/">16</a> (retention), <a href="/old-ssd-experiments/18-endurance/">18</a> (끝까지 쓰기) 이다. 그래서 이 실험들은 체크섬으로 데이터를 확인하고 (<code>verify</code>), 오류가 나도 멈추지 않고 기록한다.
 
+## 14. 직접 SSD 테스트 도구 만들기
+
+SSD 를 더 깊이 알고 싶다면, 남이 만든 도구의 숫자를 읽는 데서 한 걸음 나아가 **코드를 고쳐 보고, 작은 테스트 도구를 직접 써 보는 것** 이 가장 빠르다. 이 드라이브는 망가져도 되는 드라이브이고, `lab.sh` 와 Python 도구, fio 작업은 모두 [`old-ssd-experiments/scripts/`](https://github.com/jonghoon-ryu/jonghoon-ryu.github.io/tree/main/old-ssd-experiments/scripts) 에 읽을 수 있는 스크립트로 있다.
+
+### 14.1 시스템 프로그래밍이 어디에 쓰이나
+
+SSD 테스트에서 어려운 부분은 대부분 시스템 프로그래밍이다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>알아야 할 것</th><th>왜 필요한가</th><th>이어지는 실험</th></tr></thead><tbody>
+<tr><td><code>open()</code> 의 <code>O_DIRECT</code> · <code>O_SYNC</code>, <code>fsync()</code> · <code>fdatasync()</code>, 페이지 캐시</td><td>모르면 드라이브가 아니라 RAM 을 잰다 (실험 1 에서 ntfs-3g/FUSE 캐시 때문에 다시 읽기가 RAM 을 읽었다)</td><td>1, 7</td></tr>
+<tr><td><code>posix_memalign()</code>, 4 KiB 정렬</td><td><code>O_DIRECT</code> 는 정렬된 버퍼와 오프셋만 받는다</td><td>6</td></tr>
+<tr><td><code>io_uring</code> · <code>libaio</code></td><td>큐 깊이 (QD) 를 직접 다룬다. fio 가 안에서 쓰는 것</td><td>5</td></tr>
+<tr><td><code>ioctl()</code> : <code>BLKDISCARD</code>, <code>SG_IO</code>, <code>NVME_IOCTL_ADMIN_CMD</code></td><td>TRIM, SMART, Secure Erase 처럼 드라이브에 직접 명령을 보낸다 (<code>smartctl</code>, <code>hdparm</code>, <code>nvme-cli</code> 가 하는 일)</td><td>4, 12, 14</td></tr>
+<tr><td><code>clock_gettime(CLOCK_MONOTONIC)</code>, CPU 고정, 인터럽트</td><td>지연 시간, 특히 꼬리 지연을 믿을 수 있게</td><td>13</td></tr>
+<tr><td>블록 층 : I/O 스케줄러, <code>/sys/block/sda/queue/*</code>, <code>blktrace</code> · <code>bpftrace</code></td><td>OS 가 드라이브에 실제로 무엇을 보냈는지 본다</td><td>전부</td></tr>
+<tr><td>쓰기 → FLUSH → 대답</td><td>데이터가 언제 '안전' 한지</td><td>7, 17</td></tr>
+</tbody></table></div>
+
+시스템 프로그래밍이 다루지 않는 것 : NAND 물리, FTL 의 내부, ECC. 이것은 저장 장치 지식이고, 이 실험들과 [FTL Visual Simulator](/ftl-visual-simulator/) 로 익힌다.
+
+### 14.2 고치는 세 단계
+
+1. **실험의 숫자 하나 바꾸기.** `lab.sh` 의 fio 명령에서 하나만 바꾼다 : 블록 크기, 큐 깊이, `randwrite` 와 `write`, span (실험 10 처럼), 압축되는 데이터와 랜덤 데이터. **먼저 결과를 예측하고** 돌린다. 예측이 틀린 곳에서 FTL 에 대해 몰랐던 것을 찾는다
+2. **분석 스크립트 고치기.** `smartdiff.py` 가 단계마다 WAF 를 내게, `plot.py` 가 두 실행을 겹쳐 그리게, `readscan.py` 가 가장 느린 읽기 하나가 아니라 지연 분포를 남기게
+3. **C 로 작은 테스트 도구 쓰기.** 각각 100–200 줄 정도 :
+   - **지연 기록기** : `O_DIRECT` 4 KiB 랜덤 쓰기의 지연을 하나하나 기록한다. 시간 축으로 그리면 SLC 캐시가 바닥나는 순간과 GC 의 멈춤이 fio 의 평균 없이 바로 보인다
+   - **FLUSH 시계** : 쓰기와 `fdatasync()` 의 시간을 따로 잰다. 실험 7 을 내 코드로
+   - **TRIM 탐침** : 무늬를 쓰고, 일부를 TRIM 하고, 다시 읽는다. 드라이브가 매핑 없는 LBA 를 어떻게 다루는지 (실험 4)
+   - **작은 fio** : `io_uring` 으로 큐 깊이를 직접 정하고, fio 의 숫자와 비교한다
+
+### 14.3 얼마나 걸리나
+
+C/C++ 를 알고 시스템 프로그래밍은 처음이라면, 일주일에 5–10 시간을 쓴다고 할 때 대략 :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>단계</th><th>익히는 것</th><th>시간</th></tr></thead><tbody>
+<tr><td>1. 첫 쓸모 있는 도구 : <code>O_DIRECT</code> 지연 기록기</td><td><code>open</code> / <code>pread</code> / <code>pwrite</code>, 파일 디스크립터, <code>O_DIRECT</code> 정렬, <code>posix_memalign</code>, <code>clock_gettime</code>, <code>fsync</code></td><td><strong>2–3 주</strong></td></tr>
+<tr><td>2. 믿을 수 있는 측정</td><td>페이지 캐시, 처음 숫자가 왜 틀렸나, CPU 고정, 워밍업, <code>/sys/block/*/queue</code></td><td>+2 주</td></tr>
+<tr><td>3. 진짜 큐 깊이</td><td><code>io_uring</code> (또는 <code>libaio</code>), 제출과 완료, QD 가 SSD 처리량을 바꾸는 이유</td><td>+3–4 주</td></tr>
+<tr><td>4. 드라이브와 직접 말하기</td><td><code>ioctl</code>, <code>BLKDISCARD</code> 로 TRIM, <code>SG_IO</code> 로 SMART · ATA 명령</td><td>+3–4 주</td></tr>
+</tbody></table></div>
+
+**약 한 달** 이면 fio 의 요약이 숨기는 것 (SLC 캐시 바닥, GC 멈춤) 을 보여 주는 작은 도구가, **약 석 달** 이면 실험 대부분을 내 코드로 하는 도구가 된다.
+
+생각보다 빠른 이유 : 새 언어가 아니라 시스템 호출 스무 개 남짓과 그 함정을 배우는 것이고, fio 를 다시 만들 필요 없이 한 가지만 잘하면 되며 (fio 는 숫자를 맞춰 보는 기준으로 남는다), 무엇을 잴지는 이미 실험 페이지에 있다.
+느려지는 곳 : 이상하게 좋은 숫자 (드라이브가 아니라 캐시를 잼), `O_DIRECT` 의 정렬 오류 (`EINVAL`), `io_uring` 의 배우는 곡선. 각각 며칠씩 막히는 것이 보통이고, 그곳에서 가장 많이 배운다.
+
+읽을거리 : *The Linux Programming Interface* (Kerrisk) 의 4–5 장 (파일 I/O) 과 13 장 (버퍼링, `O_DIRECT`). 3 단계에서는 `io_uring` man 페이지와 liburing 의 예제.
+
+### 14.4 먼저 가짜 장치로 : LAB_TESTDEV
+
+`lab.sh` 에는 시험 모드가 있다. 환경 변수 **`LAB_TESTDEV`** 에 보통 파일을 주면, 그 파일을 SSD 대신 쓴다.
+
+```sh
+truncate -s 2G /tmp/fake-ssd.img              # 2 GB 짜리 빈 파일
+LAB_TESTDEV=/tmp/fake-ssd.img ./lab.sh slc    # 실험을 그 파일에 돌린다
+```
+
+- 파일을 '드라이브' 로 여기고, 크기도 파일에서 읽는다
+- 진짜 디스크에서만 뜻이 있는 확인은 건너뛴다 : 시리얼, `sudo`, SMART, '시리얼 끝 5자리 입력'
+- TRIM (`blkdiscard`) 대신 파일에 구멍을 뚫는다 (`fallocate --punch-hole`)
+
+모든 명령은 이렇게 작고 짧게 먼저 돌려서, 버그가 진짜 SSD 가 아니라 아무래도 좋은 파일에서 드러나게 했다. 내 C 도구도 같은 순서로 한다 : **먼저 파일에, 동작하면 진짜 드라이브에.** 엉뚱한 오프셋에 쓰거나 끝없이 도는 버그가 있어도 잃는 것이 없다. `lab.sh` 의 시리얼 확인도 내 도구에 옮겨 두면, 버그가 시스템 디스크에 쓰는 일이 없다. 그리고 매번 앞뒤로 SMART 를 남겨 NAND 쓰기와 마모를 센다.
+
+<div class="warn" markdown="1">
+**한계.** 파일은 SSD 가 아니다. 페이지 캐시, 파일 시스템, 그 밑의 시스템 디스크가 끼어든다. 그래서 가짜 장치는 **코드가 맞는지** 를 확인하는 데에만 쓰고, 거기서 나온 **숫자는 아무 뜻이 없다.** 진짜 측정은 `/dev/sda` 에서만 나온다.
+</div>
+
+## 15. NVMe 와 SATA
+
+### 15.1 무엇이 다른가
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th></th><th>SATA SSD (AHCI)</th><th>NVMe SSD</th></tr></thead><tbody>
+<tr><td>연결</td><td>SATA 6 Gb/s : 데이터 · 전원 케이블</td><td>PCIe (보통 4 레인) : 보드에 바로 꽂는 M.2</td></tr>
+<tr><td>순차 읽기</td><td>약 550 MB/s (SATA 6 Gb/s 의 천장)</td><td>3,000–7,000 MB/s (PCIe 4.0 x4)</td></tr>
+<tr><td>4 KiB 랜덤 읽기 지연 (QD1)</td><td>약 80–100 µs</td><td>약 20–60 µs</td></tr>
+<tr><td>명령 큐</td><td>큐 1 개 × 명령 32 개 (NCQ)</td><td>큐 최대 64K 개 × 큐마다 64K 개 : CPU 코어마다 큐 하나</td></tr>
+<tr><td>소프트웨어 길</td><td>ATA 명령, HDD 시절에 만든 AHCI</td><td>플래시를 위해 새로 만든 명령 체계 : 층이 적고 I/O 하나의 CPU 비용이 작다</td></tr>
+<tr><td>그 밖에</td><td>네임스페이스 없음</td><td>네임스페이스 (11 절), 표준 health log (16 절). 대신 더 뜨겁다 (방열판)</td></tr>
+</tbody></table></div>
+
+### 15.2 OS 디스크로는 얼마나 나은가
+
+**생각보다 작다.** HDD 에서 SATA SSD 로 바꿀 때 느린 것은 거의 사라진다. NVMe 는 그 위에 조금 더 얹는다. OS 는 주로 **작은 읽기를 낮은 큐 깊이로** 하기 때문에, 부팅과 프로그램 시작은 '조금' (몇 초) 빨라질 뿐 극적이지 않다. 큰 차이는 큰 파일 복사, 빌드, 가상 머신, 데이터베이스에서 난다.
+이 컴퓨터에서 잰 값 (17.1 절) 으로는 990 EVO 가 750 EVO 의 약 9 배 (순차 읽기) 지만, 평소에 OS 가 9 배 빠르게 느껴지지는 않는다.
+
+### 15.3 이 컴퓨터에서 NVMe 는 어느 것인가
+
+**990 EVO 2TB (`nvme0n1`) 하나뿐이다.**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>드라이브</th><th>안에 든 것</th><th>Linux 가 말하는 방법</th></tr></thead><tbody>
+<tr><td>990 EVO 2TB</td><td>NVMe (<code>lspci</code> 로는 Samsung PM9C1a 컨트롤러)</td><td><strong>PCIe 로 NVMe</strong></td></tr>
+<tr><td>T7 1TB</td><td>NVMe</td><td>USB → 브리지 → NVMe : Linux 에는 USB 디스크 (12 절)</td></tr>
+<tr><td>840 EVO, 750 EVO, 870 EVO</td><td>SATA SSD</td><td>SATA (870 EVO 는 USB 어댑터를 거쳐)</td></tr>
+<tr><td>Samsung USB 메모리 128 GB</td><td>USB 메모리 컨트롤러 + NAND</td><td>USB : 안에 NVMe 가 아예 없다</td></tr>
+<tr><td>WD 1TB, Seagate 2TB, Toshiba 2TB</td><td>HDD</td><td>SATA / USB</td></tr>
+</tbody></table></div>
+
+**USB 로는 NVMe 를 쓸 수 없다.** USB 는 SCSI 명령 (BOT · UAS) 만 나른다. NVMe 에는 PCIe 가 필요하고, 케이스 밖으로 PCIe 를 내보내는 것은 Thunderbolt · USB4 뿐이다. 그래서 T7 은 TRIM 은 되어도 (17.2 절) `nvme-cli`, 네임스페이스, NVMe 큐는 쓸 수 없다. M.2 NVMe 를 USB 케이스에 넣어도 같다. USB 메모리는 안에 NVMe 가 없으니 더 말할 것도 없고, SMART · TRIM 도 대개 없어서 SSD 실험 대상으로도 알맞지 않다 (부팅 · 설치용 USB 로는 좋다).
+
+### 15.4 진짜 NVMe 를 쓰려면 : M.2 슬롯과 드라이브 고르기
+
+메인보드는 **MSI MAG B760M MORTAR II (MS-7E13)** 이고, M.2 슬롯이 **셋** 있다 (MSI 사양) :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>슬롯</th><th>연결</th><th>속도</th><th>길이</th></tr></thead><tbody>
+<tr><td>M.2_1</td><td>CPU</td><td>PCIe 4.0 x4</td><td>2280 / 2260 / 2242</td></tr>
+<tr><td>M.2_2</td><td>칩셋</td><td>PCIe 4.0 x4</td><td>2280 / 2260</td></tr>
+<tr><td>M.2_3</td><td>칩셋</td><td>PCIe 4.0 x4 또는 SATA</td><td>2280</td></tr>
+</tbody></table></div>
+
+990 EVO 는 PCIe 루트 포트 `00:1c.4` 뒤에 있다 : Intel 에서 이것은 칩셋의 포트이므로 M.2_2 나 M.2_3 에 꽂혀 있고, **CPU 슬롯 M.2_1 은 비어 있을 가능성이 크다.** SATA 포트 넷은 모두 쓰고 있으니 (B760 보드는 M.2_3 을 쓰면 SATA 포트 하나가 꺼지기도 한다), 새 드라이브는 **M.2_1** 이 가장 안전하다 (보드 설명서로 확인).
+
+어떤 드라이브를 살까 (M.2 **2280**, PCIe 4.0 : 5.0 드라이브는 4.0 으로만 돈다) :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>고르는 길</th><th>예</th><th>좋은 점 · 주의</th></tr></thead><tbody>
+<tr><td><strong>중고 기업용 M.2</strong> (실험용으로 추천)</td><td>Micron 7450 PRO (M.2 2280, 480 / 960 GB)</td><td><strong>네임스페이스 여러 개</strong> (1 번은 FreeBSD, 2 번은 지워도 되는 실험용), <strong>전원 차단 보호</strong> (실험 17 과 비교), SLC 캐시 꾀가 없는 고른 성능. <strong>22110 판은 안 들어간다</strong>, 뜨거우니 방열판, 사기 전에 SMART 의 percentage used. 받으면 <code>nvme id-ctrl</code> 의 <code>nn</code> 이 1 보다 큰지 확인</td></tr>
+<tr><td>새 소비자용</td><td>Crucial T500 (TLC, DRAM), WD SN770 (TLC, DRAM 없음), Samsung 990 EVO Plus</td><td>싸고 간단하다. 네임스페이스는 거의 늘 하나</td></tr>
+<tr><td><strong>피할 것</strong></td><td>같은 모델명으로 컨트롤러 · NAND 를 바꿔 파는 것 (예 : Kingston NV 시리즈, 일부 Crucial P 시리즈), PCIe 5.0 드라이브</td><td>실험 결과를 남과 비교할 수 없다. 5.0 은 이 슬롯에서 돈 낭비</td></tr>
+</tbody></table></div>
+
+(값은 자주 바뀌니 다나와 · 중고나라 · eBay 에서 그때 확인한다.)
+
+FreeBSD 를 깔 곳으로도 같은 답이다 : USB 로 붙인 870 EVO 나 T7 보다 M.2_1 의 NVMe 가 낫다. NVMe 대 SATA 의 차이보다 **USB 가 진짜 병목** 이기 때문이다 (FreeBSD 의 USB 저장 장치 드라이버 `umass` 는, 내가 아는 한 UAS 를 지원하지 않는다). 지금 있는 것 중에서 고르면 870 EVO 가 낫다 : 나중에 안쪽 SATA 포트로 옮기면 TRIM · SMART 가 브리지 없이 된다.
+
+### 15.5 시스템 NVMe (990 EVO) 에 써도 되나
+
+**어디에 쓰느냐에 달렸다.**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>쓰기</th><th>990 EVO 에서</th><th>이유</th></tr></thead><tbody>
+<tr><td><code>nvme write /dev/nvme0n1 …</code> (LBA 에 바로 쓰는 NVMe Write)</td><td><strong>절대 안 된다</strong></td><td>파일 시스템이 무엇을 두었든 그 섹터를 덮어쓴다 : OS, 내 파일</td></tr>
+<tr><td><code>dd</code> · <code>fio</code> · 내 C 도구로 <code>/dev/nvme0n1</code> 에</td><td><strong>절대 안 된다</strong></td><td>같다</td></tr>
+<tr><td><code>nvme format</code>, <code>delete-ns</code> · <code>create-ns</code>, <code>sanitize</code>, Secure Erase</td><td><strong>절대 안 된다</strong></td><td>드라이브 전체가 지워진다</td></tr>
+<tr><td><code>/</code> (ext4) 위의 <strong>파일</strong> 에 쓰기 (예 : <code>~/ssdtest/test.img</code>)</td><td><strong>된다</strong></td><td>ext4 가 그 파일의 블록 자리를 정하니 다른 것을 건드리지 않는다</td></tr>
+<tr><td><code>nvme id-ctrl</code>, <code>smart-log</code>, <code>list-ns</code></td><td><strong>된다</strong></td><td>읽기만 한다</td></tr>
+</tbody></table></div>
+
+```sh
+mkdir -p ~/ssdtest && truncate -s 8G ~/ssdtest/test.img
+fio --name=w --filename=$HOME/ssdtest/test.img --size=8G --rw=randwrite --bs=4k \
+    --direct=1 --iodepth=32 --ioengine=io_uring --runtime=30 --time_based
+rm ~/ssdtest/test.img
+```
+
+제약 : `/` 가 **97% 차 있다** (약 63 GB 남음) : 시험 파일은 몇 GB 로 하고 바로 지운다. 이렇게 재는 것은 ext4 + 990 EVO (SLC 캐시와 넓은 빈 공간) 이고, 시스템 디스크를 채우지 않고는 write cliff · steady state 까지 갈 수 없다. 몇 GB 짜리 시험의 마모는 무시해도 된다 (990 EVO 2TB 의 보증 쓰기량은 약 1,200 TB). 원시 LBA 에 쓰거나 일부러 닳게 하는 실험은 M.2_1 의 예비 드라이브에서 한다.
+
+## 16. SMART : 드라이브의 건강 기록
+
+**SMART** (Self-Monitoring, Analysis and Reporting Technology) 는 드라이브 펌웨어가 스스로 세는 건강 · 사용 기록이다 : 켜진 시간, 쓴 양, 오류, 온도. 컴퓨터는 그것을 읽기만 한다.
+
+### 16.1 SATA : 번호 붙은 속성 표
+
+```
+ID# ATTRIBUTE_NAME          VALUE WORST THRESH RAW_VALUE
+  9 Power_On_Hours            95    95    000   23456
+177 Wear_Leveling_Count       90    90    000   117
+241 Total_LBAs_Written        99    99    000   12345678901
+```
+
+- **RAW_VALUE** : 진짜 숫자 (시간, 섹터, 오류 수)
+- **VALUE / WORST** : 100 (또는 200) 에서 나빠질수록 내려가는 점수, WORST 는 지금까지의 최저
+- **THRESH** : VALUE 가 여기까지 내려가면 드라이브가 스스로 **'실패'** 를 알린다
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>ID</th><th>이름</th><th>뜻</th></tr></thead><tbody>
+<tr><td>5</td><td>Reallocated_Sector_Ct</td><td>예비로 바꾼 나쁜 블록</td></tr>
+<tr><td>9</td><td>Power_On_Hours</td><td>켜져 있던 시간</td></tr>
+<tr><td>177</td><td>Wear_Leveling_Count</td><td>평균 지움 횟수 (Samsung). 840 EVO 의 117 ≈ 수명의 약 10%</td></tr>
+<tr><td>179</td><td>Used_Rsvd_Blk_Cnt_Tot</td><td>써 버린 예비 블록 (13.1 절)</td></tr>
+<tr><td>187</td><td>Uncorrectable_Error_Cnt</td><td>ECC 로도 못 고친 읽기</td></tr>
+<tr><td>190 / 194</td><td>Temperature</td><td>°C</td></tr>
+<tr><td>199</td><td>UDMA_CRC_Error_Count</td><td><strong>케이블 · 링크 오류</strong> : 3 Gb/s 로 붙은 750 EVO (17.1 절) 에서 볼 만하다</td></tr>
+<tr><td>241</td><td>Total_LBAs_Written</td><td>호스트가 쓴 양. NAND 쓰기와 함께 <strong>WAF</strong> (실험 12)</td></tr>
+</tbody></table></div>
+
+속성의 번호와 뜻은 회사마다 조금씩 다르다.
+
+### 16.2 NVMe : 표준 health log 하나
+
+NVMe 는 회사마다 다른 표 대신, 모든 드라이브에 같은 칸을 가진 **health log 하나** 를 정했다.
+
+```
+critical_warning   : 0
+temperature        : 41 C
+available_spare    : 100%
+percentage_used    : 2%       ← 마모 : 100% = 보증 쓰기량을 다 씀
+data_units_written : ...      ← 1 단위 = 512,000 바이트
+media_errors       : 0
+unsafe_shutdowns   : 12       ← 깨끗한 종료 없이 전원이 끊긴 횟수
+```
+
+### 16.3 자가 진단과 읽는 명령
+
+드라이브에게 스스로 검사하게 할 수도 있다 : **short** (몇 분), **long** (전체 면을 읽는다). 실험 2 가 이것을 쓴다.
+
+```sh
+sudo smartctl -a /dev/sdb                  # SATA
+sudo smartctl -a /dev/nvme0                # NVMe
+sudo smartctl -a -d sat /dev/sdg           # USB 어댑터 뒤의 SATA (Toshiba, 870 EVO)
+sudo smartctl -a -d sntasmedia /dev/sdf    # USB 브리지 뒤의 NVMe (T7 : sntrealtek · sntjmicron 도 시도)
+sudo smartctl -t short /dev/sdb            # 자가 진단 시작
+```
+
+USB 메모리 (Samsung 128 GB 같은) 는 대개 **SMART 가 아예 없다.**
+
+### 16.4 한계
+
+SMART 는 **마모** 와 **커 가는 문제** (5, 179, 187, 197 이 오르기 시작) 를 잘 보여 준다. 하지만 많은 드라이브가 **SMART 의 경고 없이** 죽는다 : 컨트롤러 · 전자 부품의 갑작스러운 고장. 그래서 SMART 는 경고등이지 백업을 대신하지 않는다. `smartd` 를 켜 두면 중요한 값이 오를 때 알려 준다.
+
+## 17. 이 컴퓨터의 드라이브 점검 (2026.10.18)
+
+### 17.1 읽기 속도
+
+`hdparm -t --direct` : 각 디스크의 **맨 앞** 을 3 초 동안 `O_DIRECT` 로 읽는다 (읽기만 하므로 안전). 실험 중인 840 EVO 는 뺐다.
+
+```sh
+for d in nvme0n1 sdb sdc sdd sde sdf sdg; do printf "%-8s " $d; sudo hdparm -t --direct /dev/$d | tail -1; done
+```
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>디스크</th><th>모델</th><th>연결 · 링크</th><th>잰 값</th><th>기대</th><th>판정</th></tr></thead><tbody>
+<tr><td><code>nvme0n1</code></td><td>990 EVO 2TB</td><td>PCIe 4.0 x4</td><td><strong>2,373 MB/s</strong></td><td>약 5,000 (사양)</td><td>정상 : 아래</td></tr>
+<tr><td><code>sdb</code></td><td>750 EVO 500GB</td><td>SATA, <strong>3.0 Gb/s</strong></td><td><strong>257 MB/s</strong></td><td>3 Gb/s 링크면 약 280</td><td><strong>링크가 SATA 2 속도</strong></td></tr>
+<tr><td><code>sdc</code></td><td>WD 1TB HDD</td><td>SATA 6 Gb/s</td><td>185 MB/s</td><td>150–200</td><td>정상</td></tr>
+<tr><td><code>sdd</code></td><td>Seagate 2TB HDD</td><td>SATA 6 Gb/s</td><td>217 MB/s</td><td>약 200</td><td>정상</td></tr>
+<tr><td><code>sde</code></td><td>870 EVO (USB 어댑터)</td><td>USB 5 Gb/s, UAS</td><td>363 MB/s</td><td>400–450</td><td>거의 정상</td></tr>
+<tr><td><code>sdf</code></td><td>T7 1TB</td><td>USB 10 Gb/s, UAS</td><td>665 MB/s</td><td>최대 약 1,000</td><td>정상 : 아래</td></tr>
+<tr><td><code>sdg</code></td><td>Toshiba 2TB USB HDD</td><td>USB 5 Gb/s, usb-storage</td><td><strong>1.33 MB/s</strong></td><td>130–150</td><td><strong>다시 잴 것</strong></td></tr>
+</tbody></table></div>
+
+- **990 EVO 와 T7 이 사양보다 낮은 것은 정상이다.** `hdparm -t` 는 2 MiB 씩 **하나씩** (큐 깊이 1) 읽는다. 사양의 5,000 · 1,050 MB/s 는 읽기를 여러 개 동시에 걸어야 나온다 (실험 5, 2027 계획의 8월). 990 EVO 는 그 사이에도 시스템을 돌리고 있다
+- **750 EVO** : 257 MB/s 는 3 Gb/s SATA 링크의 천장 그대로다. 드라이브보다 링크 문제일 가능성이 크다 : 다른 SATA 케이블 · 포트로 바꾸고 `cat /sys/class/ata_link/link6/sata_spd` 가 6.0 Gbps 인지 확인한다. 그러면 500 MB/s 남짓이 나와야 한다. SMART 199 (CRC 오류) 도 본다
+- **Toshiba** : 커널 로그에 오류가 **없다.** 가장 그럴듯한 이유는 **잠들어 있었다** 는 것이다. USB HDD 는 쉬면 회전을 멈추고, 다시 도는 데 몇 초가 걸려 3 초 창의 대부분을 먹는다 (4 MB 만 읽었다). 두 번 이어서 재 보고, 둘째가 100–150 MB/s 면 정상이다. 둘 다 느리면 `smartctl -a -d sat` 으로 5 · 197 · 198 을 본다. 옛 `usb-storage` (BOT) 드라이버를 쓰는 것도 조금은 손해다
+
+### 17.2 T7 의 TRIM 살리기
+
+12.2 절에서 본 대로 T7 은 `DISC-MAX 0B` : TRIM 이 지나가지 않았다. 원인을 찾아 고친 과정이다.
+
+**① 원인 : 브리지는 되는데 Linux 가 믿지 않는다.** 브리지의 SCSI 정보 페이지를 읽으면 :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>페이지</th><th>값</th><th>뜻</th></tr></thead><tbody>
+<tr><td>VPD B2 : LBPU</td><td>1</td><td><strong>UNMAP 을 지원한다</strong></td></tr>
+<tr><td>VPD B0 : 최대 UNMAP 크기</td><td>134,217,728 섹터 (64 GiB), 설명자 1 개</td><td>한 번에 64 GiB 까지</td></tr>
+<tr><td>VPD B2 : provisioning type</td><td>0 ('fully provisioned')</td><td>그래서 Linux 는 조심해서 <code>provisioning_mode = full</code> 로 두고 TRIM 을 끈다</td></tr>
+</tbody></table></div>
+
+T7 과 많은 USB 브리지에서 알려진 일이다.
+
+**② 켜기 : udev 규칙.** T7 의 USB ID (`04e8:4001`) 로 찾아 `provisioning_mode` 를 `unmap` 으로 바꾼다. 어느 포트 · 이름으로 붙어도 된다.
+
+```sh
+echo 'ACTION=="add|change", ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="4001", SUBSYSTEM=="scsi_disk", ATTR{provisioning_mode}="unmap"' \
+  | sudo tee /etc/udev/rules.d/50-samsung-t7-trim.rules
+sudo udevadm control --reload && sudo udevadm trigger
+lsblk -d -o NAME,DISC-GRAN,DISC-MAX /dev/sdf      # DISC-MAX 0B → 4G (커널이 요청 하나를 4 GiB 로 자른다)
+```
+
+**③ 그런데 `fstrim` 이 안 된다 : 파일 시스템 쪽의 걸림 넷.**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>나온 것</th><th>이유</th><th>한 일</th></tr></thead><tbody>
+<tr><td><code>the discard operation is not supported</code></td><td>T7 은 NTFS 이고 Mint 는 <strong>ntfs-3g (FUSE, <code>fuseblk</code>)</strong> 로 붙인다 : FUSE 드라이버는 <code>FITRIM</code> 을 모른다 (실험 1 의 페이지 캐시 일도 같은 ntfs-3g)</td><td>커널의 NTFS 드라이버 <code>ntfs3</code> 로 다시 붙이기</td></tr>
+<tr><td><code>unknown filesystem type 'ntfs3'</code></td><td>모듈은 있지만 Mint 가 <code>/lib/modprobe.d/mint-blacklist-ntfs3.conf</code> 로 <strong>막아 두었다</strong> (ntfs3 의 문제 보고 때문에 ntfs-3g 를 쓰게). 블랙리스트는 저절로 올라오는 것만 막는다</td><td><code>sudo modprobe ntfs3</code> 로 직접 올리기 (재부팅하면 사라짐)</td></tr>
+<tr><td><code>wrong fs type, bad option, bad superblock …</code></td><td>커널 로그 : <code>volume is dirty and "force" flag is not set!</code> : 깨끗하게 내리지 않은 NTFS. ntfs-3g 는 그냥 붙이지만 ntfs3 는 거절한다</td><td><code>sudo ntfsfix -d /dev/sdf1</code> 로 표시만 지움 (Windows 의 <code>chkdsk /f</code> 가 더 안전)</td></tr>
+<tr><td><code>Operation not supported</code> (fstrim, 그리고 파일에 직접 <code>FITRIM</code> ioctl 을 걸어도)</td><td>드라이브는 오류가 없었다. ntfs3 는 <strong><code>discard</code> 마운트 옵션이 있어야</strong> TRIM 을 한다</td><td><code>-o discard</code> 로 붙이기</td></tr>
+</tbody></table></div>
+
+```sh
+sudo umount /dev/sdf1
+sudo modprobe ntfs3
+sudo mount -t ntfs3 -o discard /dev/sdf1 /mnt/t7
+sudo fstrim -v /mnt/t7          # 빈 312 GiB 를 TRIM : 약 4 분
+sudo umount /mnt/t7             # 뽑았다 꽂으면 다시 ntfs-3g 로
+```
+
+**④ 결과 : 312.3 GiB TRIM.** `fstrim` 은 끝날 때까지 아무것도 찍지 않아 멈춘 것처럼 보이지만 (상태 `D` : I/O 를 기다림), `/sys/block/sdf/stat` 의 discard 칸으로 보면 **5 초에 TRIM 요청 약 2,500 개, 약 6–7 GiB** (약 1.3 GiB/s) 가 흐르고 있었다. ntfs3 는 빈 틈마다 따로 (평균 약 2.5 MiB) TRIM 하고, 하나하나가 브리지에서 SCSI `UNMAP` → NVMe `Deallocate` 로 번역되기 때문에 몇 분이 걸린다.
+
+**앞으로** : udev 규칙이 남아 있어 드라이브 쪽 TRIM 은 늘 켜져 있다. ntfs-3g 는 스스로 TRIM 하지 않으므로, 한두 달에 한 번 (또는 파일을 많이 지운 뒤) 위의 다섯 줄을 되풀이한다 (`lsblk` 로 이름 확인, 다시 dirty 면 `ntfsfix -d` 먼저). T7 을 Windows 에서도 쓰면 Windows 의 '드라이브 최적화' 가 TRIM 한다. Linux 에서만 쓴다면 ext4 로 다시 만들면 Mint 의 `fstrim.timer` 가 매주 알아서 한다 (데이터를 먼저 옮긴다).
+
+### 17.3 USB 연결 점검
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr><th>장치</th><th>본 것</th><th>뜻 · 한 일</th></tr></thead><tbody>
+<tr><td>T7</td><td><code>speed 480</code> → 포트를 바꾼 뒤 <strong><code>10000</code></strong></td><td>USB 2.0 (약 40 MB/s) 에서 USB 3.2 Gen 2 (약 1,000 MB/s) 로. 장치 경로 <code>2-2.1</code> 의 <code>.1</code> 은 허브를 거친다는 뜻 (앞면 포트 · 모니터 허브) : 10 Gb/s 를 그대로 넘기므로 괜찮다</td></tr>
+<tr><td>Realtek USB Wi-Fi (RTL8192CU)</td><td>USB 2.0 허브 뒤에서 <strong>12 Mb/s</strong> (USB 1.1 속도), 부팅 뒤 <strong>17 번 이상</strong> 끊겼다 다시 붙음</td><td>USB 2.0 장치가 되풀이해서 끊기며 12 Mb/s 로 떨어지는 것은 그 연결의 신호가 나쁘다는 것 (앞면 포트, 긴 내부 케이블, 헐거운 꽂힘). 절전 (autosuspend) 은 꺼져 있었다. 메인보드 <strong>뒷면</strong> 포트로 옮기고, 짧은 연장선으로 케이스에서 떼어 두면 수신도 낫다</td></tr>
+<tr><td>Samsung USB 메모리 128 GB</td><td>'안 보인다' : 실제로는 <code>sde</code> 로 잡혔다. 64 MB EFI 파티션 하나뿐, 커널 경고 <code>Alternate GPT header not at the end of the disk</code></td><td>부팅 이미지를 <code>dd</code> 등으로 통째로 쓴 USB 다. 이미지의 파티션 표가 약 66 MB 짜리 디스크를 말하므로 나머지는 비어 보이고, 데스크톱은 EFI 파티션을 저절로 붙이지 않는다. 경고는 부팅 USB 에서는 해롭지 않다. 저장용으로 쓰려면 '디스크' 앱에서 다시 포맷 (이미지가 지워짐)</td></tr>
+</tbody></table></div>
+
 ## 요약
 
 - 840 EVO 120GB = 234,441,648 섹터 × 512 B = **120.03 GB = 111.79 GiB.** 같은 양을 다른 자로 잰 것이다
@@ -463,8 +801,12 @@ Windows 도 같은 사슬이다 : 이벤트 로그의 디스크 이벤트 **7** 
 - SSD 안의 NAND 는 2진이지만, FTL 이 안과 밖을 떼어 놓아서 밖에 보이는 섹터 수는 회사가 고를 수 있다
 - 그 섹터 수는 IDEMA 공식이 정한다. 상수는 10⁹ 바이트를 CHS 실린더 (1,008 섹터) 로 올림한 값이고, SSD · NVMe 도 호환성 때문에 그대로 따른다
 - NAND main 영역과 사용자 용량의 차이가 over-provisioning (이 드라이브는 약 14.5%) 이다. 페이지마다 붙은 스페어 영역 (ECC · 메타데이터) 은 OP 에 들어가지 않는다
-- 용량은 세 층으로 나뉜다 : **드라이브** (물건), **네임스페이스** (드라이브가 내보이는 디스크, NVMe), **파티션** (OS 가 디스크 안에 적은 표). 네임스페이스는 드라이브가 경계를 알고, 파티션은 모른다. 그래서 이름도 `nvme0n1p1` 처럼 파티션이 네임스페이스 아래에 온다
+- 용량은 세 층으로 나뉜다 : **드라이브** (물건), **네임스페이스** (드라이브가 내보이는 디스크, NVMe), **파티션** (OS 가 디스크 안에 적은 표). 네임스페이스는 드라이브가 경계를 알고, 파티션은 모른다. 그래서 이름도 `nvme0n1p1` 처럼 파티션이 네임스페이스 아래에 온다. Windows 탐색기는 파티션마다 드라이브 문자를 붙여 디스크가 여럿인 것처럼 보이지만, 디스크 관리에서는 디스크 하나다. 네임스페이스는 `nvme-cli` 로 만들고, 드라이브의 데이터가 모두 지워진다
 - USB 는 NVMe 를 모른다. USB 외장 NVMe 는 케이스 안의 브리지 칩이 SCSI 를 NVMe 로 번역하고, Linux 에는 `sdX` (SCSI disk) 로 보인다. SMART · TRIM · 속도는 브리지와 USB 링크에 달렸다
 - 드라이브가 고치지 못한 읽기 (SMART 187) 는 커널을 거쳐 `EIO` 로 올라간다. 섹터 하나의 값은 보통 파일 하나다 : 드라이브의 예비 블록, 파일 시스템의 두 벌 구조 · 체크섬 · 읽기 전용 전환, OS 다시 설치, RAID, SMART 감시, 백업이 겹겹이 막는다
+- SSD 를 더 깊이 알려면 코드를 고치고 작은 도구를 직접 쓴다. 필요한 것은 대부분 시스템 프로그래밍 (`O_DIRECT`, `fsync`, `io_uring`, `ioctl`) 이고, C/C++ 를 안다면 첫 쓸모 있는 도구까지 약 한 달이다. 새 코드는 먼저 `LAB_TESTDEV` 처럼 가짜 장치 (파일) 에서 돌리고, 숫자는 진짜 드라이브에서만 믿는다
+- NVMe 는 PCIe 위의, 플래시를 위해 만든 명령 체계다 : 순차 읽기는 SATA 의 약 10 배, 작은 읽기의 지연은 몇 분의 1. OS 디스크로는 SATA SSD 대비 '조금' 빠르다. 이 컴퓨터의 진짜 NVMe 는 990 EVO 하나뿐이고 (T7 · USB 메모리는 USB 라 NVMe 로 쓸 수 없다), NVMe 실험은 비어 있는 M.2_1 에 예비 드라이브를 꽂아서 한다. 시스템 NVMe 에는 파일로만 쓴다
+- SMART 는 드라이브가 스스로 세는 건강 기록이다 : SATA 는 회사마다 다른 번호 붙은 속성, NVMe 는 표준 health log 하나. 마모와 커 가는 문제를 보여 주지만 갑작스러운 고장은 예고하지 못한다
+- 이 컴퓨터의 점검 : 750 EVO 는 SATA 링크가 3 Gb/s 라 257 MB/s 에 묶여 있고, T7 은 udev 규칙 + ntfs3 (`discard`) 로 TRIM 을 살려 빈 312 GiB 를 TRIM 했으며, USB Wi-Fi 는 신호가 나빠 12 Mb/s 로 떨어지며 끊긴다
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/' | relative_url }}">← 헌 SSD 로 하는 실험</a><a href="{{ '/old-ssd-experiments/linux-commands/' | relative_url }}">SSD 를 다루는 Linux 명령 →</a></div>
