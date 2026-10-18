@@ -211,7 +211,7 @@ Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA
 <th>가설</th>
 <th>결과</th>
 </tr></thead><tbody>
-<tr><td>H3 오래된 데이터 때문에 자가 진단이 예상보다 오래 걸린다</td><td><strong>아니다</strong> : 70분 예상보다 7분 짧았다. 실험 3 (전체를 새로 씀) 뒤에 한 번 더 해서 '새 데이터' 의 시간과 비교한다</td></tr>
+<tr><td>H3 오래된 데이터 때문에 자가 진단이 오래 걸린다</td><td>드라이브가 말한 70분보다는 7분 짧았다. 그러나 <strong>실험 3 에서 새 데이터로 다시 하니 9.5분</strong> : 오래된 데이터의 자가 진단이 <strong>6.6배</strong> 길었다. 곧 <strong>그렇다</strong> (<a href="/old-ssd-experiments/3-slc-cache/">실험 3 의 결과</a>)</td></tr>
 <tr><td>H4 '믿을 수 없게 됨' 의 흔적이 로그에 있다</td><td><strong>아니다</strong> : 자가 진단도 오류 없이 끝났다</td></tr>
 </tbody></table></div>
 
