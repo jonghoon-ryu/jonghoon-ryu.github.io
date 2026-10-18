@@ -91,26 +91,66 @@ $ sudo ./lab.sh selftest long
 <tr><td><code>…-scan-fresh/scan.csv</code></td><td>새 데이터의 위치별 읽기 속도</td></tr>
 </tbody></table></div>
 
-## 결과 읽는 법
-
-```
-$ python3 plot.py slc.png ~/Ryu/old_ssd_results/*-slc/slc_bw.log=slc
-$ python3 plot.py idle.png ~/Ryu/old_ssd_results/*-slc-idle/idle{0,1,5,15}_bw.log
-$ python3 plot.py age-vs-fresh.png ~/Ryu/old_ssd_results/*-scan-old/scan.csv=old ~/Ryu/old_ssd_results/*-scan-fresh/scan.csv=fresh
-```
-
-1. **꺾이는 위치** (x 축 GB) = 버퍼 크기. 꺾이는 곳이 하나 이상이면 (예 : 버퍼 → TLC → 더 느린 구간) 그 수와 위치를 적는다.
-2. **낮은 쪽의 높이** = TLC 직접 쓰기 속도. 들쭉날쭉하면 버퍼를 비우는 일과 새 쓰기가 섞이는 것이다.
-3. **회복** : 그래프마다 처음 몇 GB 가 빠른지 읽어 쉰 시간별 막대로 만든다 (Claude 가 계산한다).
-4. **old vs fresh** : 같은 위치, 같은 연결 (가능하면) 에서 '나이' 만 다른 두 곡선.
-
-## 시뮬레이터와의 연결 (덤)
-
-시뮬레이터의 DRAM 캐시 토글은 쓰기를 RAM 에 받아 두는 것이고, SLC 캐시는 NAND 안의 빠른 영역이다. 둘 다 '처음엔 빠르다가 넘치면 원래 속도' 라는 같은 모양을 만든다. 이 결과의 버퍼 크기와 두 속도로 시뮬레이터에 SLC 영역 모델을 만들 수 있다.
-
 ## 결과
 
 <div class="result" markdown="1">
+### 1단계 : `slc` (드라이브 전체 순차 쓰기)
+
+2026.10.18 11:21, 결과 폴더 `20261018-112114-slc`. 전체 TRIM → 2분 쉼 → 1 MiB 순차 쓰기 QD8 로 120 GB 전체를 786초 동안.
+
+![순차 쓰기 속도](/old-ssd-experiments/3-slc-cache/slc.png)
+
+**교과서 같은 계단 하나**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>구간</th>
+<th>쓴 양</th>
+<th>속도</th>
+<th>뜻</th>
+</tr></thead><tbody>
+<tr><td>처음 약 6초</td><td>약 <strong>3.2 GB</strong></td><td><strong>533 MB/s</strong> (1초마다 533, 533, 533, 533, 533, 515)</td><td>SLC 버퍼 (TurboWrite) 에 쓰는 속도. 533 MB/s 는 SATA 3 의 한계 근처라, 버퍼 자체는 더 빠를 수도 있다</td></tr>
+<tr><td>그 뒤 끝까지 (약 780초)</td><td>약 116.8 GB</td><td><strong>약 150 MB/s</strong> (147 – 153, 거의 평평)</td><td>버퍼가 다 찬 뒤 TLC 에 바로 쓰는 속도</td></tr>
+<tr><td>전체 평균</td><td>120.03 GB / 786.6 s</td><td>152.6 MB/s |</td></tr>
+</tbody></table></div>
+
+화면의 fio 진행 줄 `w=144MiB/s` 는 같은 값이다 : 144 MiB/s × 1.049 = 151 MB/s (MiB 와 MB 의 차이는 [fio 사용법](/old-ssd-experiments/fio/) 3절).
+
+**지연** : 1 MiB 쓰기 하나의 평균 54.7 ms, 99% 71.8 ms, 최대 137.6 ms. Little 의 법칙으로 맞춰 보면 : 동시에 8개 ÷ 54.7 ms × 1 MiB ≈ 153 MB/s. 측정값과 같다.
+
+**SMART 앞뒤**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>속성</th>
+<th>앞</th>
+<th>뒤</th>
+<th>읽는 법</th>
+</tr></thead><tbody>
+<tr><td>241 Total_LBAs_Written</td><td>22,481,189,514</td><td>22,715,630,218</td><td>+234,440,704 × 512 B = <strong>120.03 GB</strong> : 정확히 드라이브 하나만큼 썼다</td></tr>
+<tr><td>177 Wear_Leveling_Count</td><td>117</td><td><strong>118</strong></td><td>블록마다 평균 1번 더 지웠다 : 드라이브 전체를 한 번 쓴 것과 맞다</td></tr>
+<tr><td>190 온도</td><td>32 °C</td><td><strong>48 °C</strong></td><td>13분 쓰기로 16 °C 올랐다 (정규화 값 100 − 48 = 52 가 지금까지의 최저 = 가장 뜨거웠던 때)</td></tr>
+<tr><td>5 · 179 · 181–183 · 187 · 195 · 199</td><td>0</td><td>0</td><td>쓰기 실패 · 오류 없음</td></tr>
+</tbody></table></div>
+
+`smartdiff.py` 의 WAF : 177 이 1 만 늘어서 약 1.15 (눈금이 커서 0 – 2.3 사이라는 것만 말할 수 있다). 순차 쓰기의 WAF 는 실험 12 에서 5번 써서 다시 잰다.
+
+**가설 확인**
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>가설</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>H1 버퍼는 약 3 GB 다</td><td><strong>맞다</strong> : 약 3.2 GB 에서 계단처럼 떨어진다 (1초 단위라 ±0.5 GB)</td></tr>
+<tr><td>H2 버퍼 밖 TLC 쓰기는 약 100–150 MB/s 다</td><td><strong>맞다, 위쪽 끝</strong> : 약 150 MB/s, 120 GB 내내 거의 흔들림 없이 평평</td></tr>
+<tr><td>H3 쉬면 버퍼가 다시 빈다</td><td>2단계 (<code>slc-idle</code>) 에서 확인</td></tr>
+</tbody></table></div>
+
+**실험 1 과 비교** : 이 드라이브는 **쓰기는 정상** 이다 (버퍼 533 MB/s, TLC 150 MB/s : 이 모델에 알려진 값과 비슷하다). 문제는 오래 둔 데이터를 **읽을 때** 뿐이었다 (약 9 MB/s). 이제 드라이브 전체가 막 쓴 데이터이므로, 같은 지도 (`scan fresh 8`) 를 다시 그리면 '데이터의 나이' 만 다른 비교가 된다.
+
+### 2단계 : `slc-idle` · 3단계 : `scan fresh 8` · 4단계 : `selftest long`
+
 아직 실행 전.
 </div>
 
