@@ -126,8 +126,9 @@ table.t code { font-size:0.82rem; }
 <tr><td>6 쓰기 크기 · 정렬</td><td><strong>끝</strong> (2026.10.18) : 4 KiB 보다 작게 써도 IOPS 는 같다 (매핑 단위 4 KiB), 512 B 어긋난 4 KiB 는 IOPS 절반 · 지연 두 배 : 비용은 건드린 4 KiB 단위 수. 8 KiB 부터 약 130 MB/s 에서 평평. <a href="/old-ssd-experiments/6-write-size/">결과</a></td></tr>
 <tr><td>7 쓰기 캐시 · FLUSH</td><td><strong>끝</strong> (2026.10.18) : 캐시 켬 4 KiB 쓰기 32 µs, FLUSH 하나 1.6 ms → 쓰기마다 fsync 하면 45배 느림 (27k → 604 IOPS), 캐시 끔도 같은 값 (618). FLUSH 를 무시하지 않는다. <a href="/old-ssd-experiments/7-flush/">결과</a></td></tr>
 <tr><td>8 Write cliff</td><td><strong>끝</strong> (2026.10.18, 81분) : 8만 IOPS (SLC 약 3 GB) → 3.6만 (125 GB 까지 평평) → 125 – 130 GB 에서 절벽 → steady state 약 6천 IOPS (24 MB/s). 절벽 자리로 본 GC 여유 약 5 – 10 GB (모델 8 GB). <a href="/old-ssd-experiments/8-write-cliff/">결과</a></td></tr>
-<tr><td>9 쉬는 동안 GC</td><td>다음 : <strong>실험 8 바로 뒤에</strong></td></tr>
-<tr><td>10 – 19</td><td>아직</td></tr>
+<tr><td>9 쉬는 동안 GC</td><td><strong>끝</strong> (2026.10.18) : 1분 이상 쉬면 처음 약 3.2 GB (SLC 버퍼 하나) 를 8만 IOPS 로, 그 뒤는 곧바로 steady state (약 5.7천). 쉬는 동안 버퍼만 비우고 (1분 80%, 5분 100%) 빈 블록을 미리 만들지는 않는다. <a href="/old-ssd-experiments/9-idle-gc/">결과</a></td></tr>
+<tr><td>10 Over-provisioning</td><td>다음 (span 80%, 그리고 선택으로 90% · 70%)</td></tr>
+<tr><td>11 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 
 <div class="warn" markdown="1">

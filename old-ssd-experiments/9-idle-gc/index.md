@@ -88,7 +88,39 @@ $ python3 plot.py idlegc.png $D/idle{0,1,5,15,30}_iops.log
 ## 결과
 
 <div class="result" markdown="1">
-아직 실행 전.
+2026.10.18 17:08 – 18:20, 결과 폴더 `20261018-170819-idlegc`. 실험 8 (16:57 에 끝남) 바로 뒤.
+
+![쉰 시간마다 2분 쓰기의 IOPS](/old-ssd-experiments/9-idle-gc/idlegc.png)
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>실행</th>
+<th>쉰 시간</th>
+<th>처음 몇 초</th>
+<th>빠르게 (steady 의 2배 넘게) 쓴 양</th>
+<th>2분 평균 IOPS</th>
+<th>마지막 30초 (steady)</th>
+</tr></thead><tbody>
+<tr><td><code>pre</code> (10분)</td><td>실험 8 뒤 약 11분</td><td><strong>8만 IOPS</strong> 10초</td><td>3.14 GB</td><td>6,576</td><td>5,062</td></tr>
+<tr><td><code>idle0</code></td><td><strong>0</strong></td><td>5.8k, 6.4k, 5.1k …</td><td><strong>0</strong></td><td>5,443</td><td>5,610</td></tr>
+<tr><td><code>idle1</code></td><td>1 분</td><td>59k, 80k, 80k …</td><td><strong>2.47 GB</strong></td><td>10,323</td><td>5,744</td></tr>
+<tr><td><code>idle5</code></td><td>5 분</td><td>80k …</td><td><strong>3.16 GB</strong></td><td>11,716</td><td>5,700</td></tr>
+<tr><td><code>idle15</code></td><td>15 분</td><td>80k …</td><td><strong>3.16 GB</strong></td><td>11,665</td><td>5,674</td></tr>
+<tr><td><code>idle30</code></td><td>30 분</td><td>80k …</td><td><strong>3.14 GB</strong></td><td>11,535</td><td>5,672</td></tr>
+</tbody></table></div>
+
+**H1 (쉬면 빨라진다) : 맞다.** 1분 이상 쉬면 다시 쓰기의 처음이 **8만 IOPS** (약 330 MB/s) 다. 쉬지 않으면 (`idle0`) 처음부터 steady state 의 약 5.5천 IOPS.
+
+**H2 (회복에는 한도가 있다) : 맞다, 그 한도는 'SLC 버퍼 하나'.** 빠르게 쓴 양이 5 · 15 · 30분 모두 **3.14 – 3.16 GB** 로 같다 : [실험 3](/old-ssd-experiments/3-slc-cache/) 에서 잰 SLC 버퍼의 크기 (약 3.2 GB) 그대로다. 1분이면 2.47 GB (버퍼의 약 80%) 가 돌아오고, 5분이면 다 돌아온다.
+
+**H3 (빠른 구간 = 미리 만든 빈 공간) : 아니다, 버퍼만 비운다.** 버퍼 3.2 GB 를 다 쓰면 IOPS 는 **곧바로 steady state (약 5.7천)** 로 떨어진다. 실험 8 의 '빈 블록에 TLC 로 바로 쓰기' 구간 (약 3.6만 IOPS) 은 다시 나타나지 않는다. 곧 이 드라이브는 쉬는 동안 :
+- SLC 버퍼의 내용을 TLC 로 옮겨 **버퍼를 비우고** (5분 안에 다),
+- 그 너머로 빈 TLC 블록을 **미리 만들어 두지는 않는다** (또는 아주 조금).
+그래서 쉰 시간이 아무리 길어도 '쓰기 폭주' 를 흡수하는 것은 버퍼 3.2 GB 까지다. 그 뒤의 쓰기는 늘 GC 와 함께 간다.
+
+**실험 3 과 비교** : 빈 드라이브 ([실험 3](/old-ssd-experiments/3-slc-cache/) 의 `slc-idle`) 에서는 버퍼가 **몇 초** 만에 다시 비었다 (쉬지 않은 0분도 3.2 GB 전부). 꽉 찬 steady state 에서는 **1분에 80%, 5분에 100%** 로 훨씬 느리다. 버퍼를 비우려면 내용을 TLC 의 빈 블록으로 옮겨야 하는데, 꽉 찬 드라이브에서는 그 빈 블록을 GC 로 먼저 만들어야 하기 때문으로 보인다.
+
+**실제로 쓸 데** : 이 드라이브를 거의 꽉 채워 쓰면, 몇 분에 한 번 오는 작은 쓰기 폭주 (3 GB 이하) 는 빠르게 받지만, 그보다 큰 쓰기는 steady state 의 약 25 MB/s 로 떨어진다. 데스크톱의 보통 쓰기는 대부분 3 GB 보다 작아서, 꽉 찬 드라이브도 평소에는 빠르게 느껴진다.
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/8-write-cliff/' | relative_url }}">← 8. Write cliff</a><a href="{{ '/old-ssd-experiments/10-over-provisioning/' | relative_url }}">10. Over-provisioning →</a></div>
