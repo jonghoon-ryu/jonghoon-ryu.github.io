@@ -92,7 +92,7 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 - **1차 완성 목표일은 10/11 이었지만, 기본적인 부분을 9/5~9/6 에 구현했다.** 계획한 12세션 중 3~12번(설계 제외)의 기본 구현이 이틀에 걸쳐 거의 연달아 진행됐고, 이후에는 새 기능이 아니라 **정확성 · 학습 효과 · 초심자 경험**을 다듬는 데 시간을 썼다.
 - **엔진은 계획대로 MQSim C++ 원본을 WASM 으로 컴파일해 그대로 쓴다.** 자체 재구현이 아니다. 대신 그 결과 원본 버그 30개를 찾아 고쳤다.
 - **계획에 없던 일이 계획된 일보다 많았다.** 버그 수정 · 유닛/회귀/브라우저 테스트 · 교육용 기능 · 원본에 없는 기능 추가(Cost-Benefit GC, TRIM) · 문서 · 평가 보드 조사.
-- 현재 상태 (2026-10-04): 세 프리셋(매핑 기본 · GC 시연 · 마모평준화 시연)이 실제 엔진에서 돌고, 초심자용 레슨 · 용어 설명 · 비교 실험실이 있다. [시뮬레이터 실행](/ftl-visual-simulator/run-simulator/)
+- 현재 상태 (2026-10-23): 세 프리셋(매핑 기본 · GC 시연 · 마모평준화 시연)이 실제 엔진에서 돌고, 초심자용 레슨 · 용어 설명 · 비교 실험실이 있다. 10/11 · 10/16 에는 직접 써 보며 나온 피드백(기본값 OP 20% · GC 임계값 30%, 읽기 30%, 로그 줄 단위 재생, 한 줄 되돌리기 ⏪)을 반영했다. 마지막 앱 커밋은 10/16. [시뮬레이터 실행](/ftl-visual-simulator/run-simulator/)
 
 <div style="margin-top: 60px;"></div>
 
@@ -113,7 +113,7 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 <tr><td>10. workload 컨트롤</td><td>10/9</td><td><b>9/6</b></td><td>접근 패턴 등 ([PR #18](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/18))</td></tr>
 <tr><td>11. 다듬기</td><td>10/10</td><td><b>9/6</b></td><td>범례 · 접근성 · 반응형 ([PR #19](https://github.com/jonghoon-ryu/ftl-visual-simulator-app/pull/19))</td></tr>
 <tr><td>12. 최종 테스트 · 배포</td><td>10/11</td><td>배포는 9/6, 이후 계속</td><td>"마감" 이 아니라 상시 배포가 됨 — push 마다 자동 배포</td></tr>
-<tr><td>13~16. 버퍼</td><td>10/17~10/25</td><td>9/19~9/24, 10/4 에 소진</td><td>Cost-Benefit GC · GMock 테스트 · 교육용 기능이 여기서 앞당겨 들어옴. Hybrid 매핑은 <b>하지 못함</b></td></tr>
+<tr><td>13~16. 버퍼</td><td>10/17~10/25</td><td>9/19~9/24, 10/4, 10/11, 10/16 에 사용</td><td>Cost-Benefit GC · GMock 테스트 · 교육용 기능이 여기서 앞당겨 들어옴. Hybrid 매핑은 <b>하지 못함</b></td></tr>
 </table>
 </div>
 
@@ -121,7 +121,7 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 
 ## 실제로 한 일 — 타임라인
 
-앱 저장소([ftl-visual-simulator-app](https://github.com/jonghoon-ryu/ftl-visual-simulator-app))의 커밋은 모두 142개이고, 날짜별로는 9/5 에 5개, 9/6 에 46개, 9/19 에 46개, 9/20 에 20개, 9/24 에 19개, 10/4 에 6개다.
+앱 저장소([ftl-visual-simulator-app](https://github.com/jonghoon-ryu/ftl-visual-simulator-app))의 커밋은 모두 171개이고, 날짜별로는 9/5 에 5개, 9/6 에 46개, 9/19 에 46개, 9/20 에 20개, 9/24 에 19개, 10/4 에 11개, 10/5 · 10/9 에 1개씩, 10/11 에 19개, 10/16 에 3개다.
 
 ### 9/5~9/6 — 뼈대를 이틀에 세우다
 
@@ -148,6 +148,15 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 - **Playwright 브라우저 테스트** 8개를 추가했고, 이 과정에서 "로드 직후 ▶ 가 취소되는 버그" 를 찾아 고쳤다.
 - 문서: 평가 보드 조사([Evaluation Board](/ftl-visual-simulator/reference/evaluation-board/) — 보드 추천 · 라즈베리파이 의견), MQSim 코드 분석을 [큰 그림](/ftl-visual-simulator/reference/mqsim-code-analysis/big-picture/)과 [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/)로 다시 쓰기, 계획·산출물 문서 정리, 그리고 이 사이트 전체를 현재 상태에 맞게 점검했다.
 
+### 10/5~10/16 — 직접 써 보며 다듬기
+
+- **엔진 수정**: 같은 모듈을 다시 실행하면 결과가 달라지던 문제, TRIM 이 DRAM 캐시를 무시하던 문제([버그 #29](/ftl-visual-simulator/reference/code-change/bug-list/)), OP 0% 에서 굶은 사용자 쓰기 뒤 GC 를 다시 확인하지 않아 쓰기가 영원히 멈추던 문제를 고쳤다.
+- **DRAM 캐시를 256 MB → 32 page 로** 줄였다. 캐시가 너무 커서 flash 변화가 한꺼번에 몰려 보이던 문제.
+- **기본값 변경**(Ryu 요청): Over-provisioning 20% · GC 임계값 30%, 읽기 비율 0% → 30%, GC 시연의 작업 범위 40%(25/40/60/80% 선택). 측정값을 인용하던 문구는 모두 다시 측정해 고쳤다.
+- **보기 쉽게**: 쓴 page 는 흰 테두리, 읽은 page 는 하늘색 테두리, 로그 줄 색으로 Read · Write · Erase 구분, "Program 중" 라벨, 칩별 "장치가 가득 찼어요" 안내, 한글 글꼴 깨짐 수정, 비교 실험실 패널 고정 스크롤.
+- **재생**: GC · 마모평준화 시연의 ▶ 를 로그 줄 단위로, 프리셋마다 속도 기억. 10/16 에 **로그 한 줄 되돌리기(⏪, ← 키)** 를 추가했다 — 엔진 메모리 스냅샷으로 정확히 한 줄 전 상태를 복원한다([Step-back](/ftl-visual-simulator/reference/step-back/)). 버튼 이름은 처음으로 / 자동 실행·일시정지 / < 1 step / 1 step > / 5 steps >>.
+- 마모평준화 시연: 빈 block 수 차트를 "실시간 차트" 탭으로 옮기고, cold/hot 데이터 열은 마모평준화 판단에 쓰이지 않는다는 설명을 붙였다. 사용법에 MQSim 출처와 MIT 라이선스 고지.
+
 ### 테스트가 늘어난 모습
 
 | 종류 | 위치 | 개수 | 막아 주는 것 |
@@ -155,7 +164,7 @@ FTL 시각화 시뮬레이터를 만들어 온 과정을 **실제로 일어난 �
 | 골든 회귀 | `engine/tests/golden/` | 시나리오 3 | hook 이나 수정이 원본의 시뮬레이션 결과를 바꾸는 일 |
 | GMock/GTest 유닛 | `engine/tests/unit/` | 14 | 특정 조건(임계값 · erase 차이)을 수백만 이벤트 없이 검사 |
 | TRIM 검사 | `engine/tests/trim/` | 7 | 추가한 TRIM 의 장부 정합성 |
-| 브라우저 스모크 | `e2e/` | 8 | 세 프리셋 · 비교 실험 · 인트로가 깨지지 않는지 |
+| 브라우저 스모크 | `e2e/` | 13 | 세 프리셋 · 비교 실험 · 인트로가 깨지지 않는지 |
 
 <div style="margin-top: 60px;"></div>
 
