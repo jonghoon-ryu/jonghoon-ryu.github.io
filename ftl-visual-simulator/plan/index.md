@@ -529,6 +529,11 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
     var fillEl = document.getElementById('progress-fill');
     var total = marks.length;
     var state = load();
+    // 끝난 세션은 기본으로 ✅ — 3번(설계, 생략)과 13~16번(버퍼)은 Ryu 가 직접 표시
+    var SESSION_DONE = ['1', '2', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+    SESSION_DONE.forEach(function (id) {
+      if (!(id in state)) state[id] = true;
+    });
 
     function render() {
       var done = 0;
@@ -565,6 +570,18 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
   // 해당 항목을 true 로 바꾸고, 필요하면 comment 를 덧붙인다.
   // key 형식 : 's{세션 번호}-i{그 세션 안에서 몇 번째 항목인지, Ryu/Claude 항목 통틀어 0부터}'
   var CLAUDE_DONE = {
+    's3-i2': { comment: '설계 문서 대신 실제 앱이 MVP 가 됨' },
+    's3-i3': true,
+    's3-i4': { comment: '설계표 대신 Session 4~6 에서 바로 구현' },
+    's3-i5': true,
+    's3-i6': true,
+    's3-i7': true,
+    's3-i8': { comment: 'setEventCallback 즉시 통지 방식으로 결정' },
+    's3-i9': true,
+    's3-i10': true,
+    's3-i11': true,
+    's3-i12': true,
+    's3-i13': true,
     's2-i3': true,
     's2-i4': true,
     's2-i5': true,
@@ -580,11 +597,31 @@ GC 알고리즘 자체는 MQSim 에 이미 구현되어 있음( `GC_and_WL_Unit_
     's4-i6': true,
     's4-i7': true,
     's4-i8': true,
+    's4-i9': { comment: '9/6 GMock/GTest 유닛 테스트 14개 도입' },
     's5-i4': true,
     's5-i5': true,
     's6-i4': true,
+    's6-i5': { comment: '해당 없음 — hook 대상에서 제외' },
     's6-i6': true,
-    's6-i7': true
+    's6-i7': true,
+    's7-i2': true,
+    's7-i3': true,
+    's7-i4': true,
+    's8-i2': true,
+    's8-i3': true,
+    's8-i4': true,
+    's8-i5': true,
+    's9-i2': { comment: '매핑 방식은 Page-level 고정 (Hybrid 미구현)' },
+    's9-i3': true,
+    's9-i4': true,
+    's10-i2': { comment: 'burst 크기 · read 비율은 일부러 뺌 (WorkloadPanel.tsx 주석)' },
+    's10-i3': true,
+    's10-i5': true,
+    's10-i6': true,
+    's11-i2': true,
+    's11-i3': { comment: 'Playwright 는 Chromium 만' },
+    's11-i4': true,
+    's12-i2': { comment: '배포는 push 마다 자동, 최종 테스트는 Playwright 13개' }
   };
 
   function load() {
