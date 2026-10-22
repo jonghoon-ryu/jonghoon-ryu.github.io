@@ -78,6 +78,15 @@ MQSim 은 시계를 1 ns 씩 똑딱이며 돌리지 않는다. **알람 목록**
     - 화면에 다 보이도록 block 수를 줄인 데모 규모 튜닝 — [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/)
     - 이 과정에서 원본의 버그 30개도 발견해서 수정 — [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)
 
+### 10/11 이후 (~10/23)
+
+1차 마감(10/11) 뒤에는 새 기능보다 **직접 써 보며 걸리는 곳을 고치는 일**이 이어졌다. 자세한 목록은 [개발 계획 — 10/5~10/16](/ftl-visual-simulator/plan/#1051016--직접-써-보며-다듬기).
+
+- **10/11** — 앱 커밋 19개. 기본값을 OP 20% · GC 임계값 30% · 읽기 30% 로 바꾸고, ▶ 를 로그 한 줄 단위로 천천히 재생하게 했다. DRAM 캐시를 32 page 로 줄여 flash 변화가 몰려 보이던 문제를 없앴고, 엔진 버그(재실행 결과가 달라짐, TRIM 이 캐시를 무시함, OP 0% 에서 쓰기가 멈춤)를 고쳤다.
+- **10/16** — **한 줄 되돌리기(⏪)** 추가. 엔진 메모리 스냅샷으로 바로 앞 상태를 정확히 복원한다 ([Step-back](/ftl-visual-simulator/reference/step-back/)). 재생 버튼 이름도 정리했다.
+- **10/23** — [개발 계획](/ftl-visual-simulator/plan/) 의 체크리스트를 실제 진행에 맞게 표시했다. Claude 가 할 일 가운데 남은 것은 설계 문서 · 와이어프레임(만들지 않음)과 선택 항목인 trace 파일 업로드뿐이다.
+- 아직 못 한 가장 큰 것은 그대로 **Hybrid(log-block) 매핑**이다.
+
 <div style="margin-top: 60px;"></div>
 
 ## 소회
