@@ -123,7 +123,7 @@ xv6 의 코드는 이 책이 설명하는 것들의 **구현** 이다.
     <tr><td>교재</td><td>Randal E. Bryant, David R. O'Hallaron, <em>Computer Systems: A Programmer's Perspective</em> (<strong>3rd ed.</strong>, x86-64) · <a href="http://csapp.cs.cmu.edu/3e/home.html">책 홈페이지</a><br>⚠️ "Global Edition" 은 Practice Problem 에 오류가 많다고 알려져 있다. 가능하면 북미판</td><td>책 구매</td></tr>
     <tr><td>강의</td><td><a href="https://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/schedule.html">CMU 15-213 Fall 2015</a> (저자 Bryant, O'Hallaron 직강) · 슬라이드 + 녹화 영상. 아래에서 <strong>L1–L27</strong> 은 이 강의 번호</td><td>무료</td></tr>
     <tr><td>랩</td><td><a href="http://csapp.cs.cmu.edu/3e/labs.html">CS:APP Lab Assignments</a> 의 <strong>Self-Study Handout</strong>: Data, Bomb, Attack, Cache, Shell, Malloc (+ 선택: Performance, Proxy)</td><td>무료</td></tr>
-    <tr><td>도구</td><td><code>gcc</code>, <code>gdb</code>, <code>objdump</code>, <code>readelf</code>, <code>valgrind</code>, <code>perf</code>, <a href="https://godbolt.org">Compiler Explorer</a><br>Data Lab 과 Malloc Lab 은 <code>-m32</code> 로 빌드하므로 <code>gcc-multilib</code> 필요</td><td>무료</td></tr>
+    <tr><td>도구</td><td><code>gcc</code>, <code>gdb</code> + <a href="https://github.com/hugsy/gef">GEF</a>, <code>objdump</code>, <code>readelf</code>, <code>valgrind</code>, <code>perf</code>, <a href="https://godbolt.org">Compiler Explorer</a><br>Data Lab 과 Malloc Lab 은 <code>-m32</code> 로 빌드하므로 <code>gcc-multilib</code> 필요</td><td>무료</td></tr>
   </tbody>
 </table>
 </div>
@@ -208,6 +208,8 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 - **📖 강의·읽기 (토 2h):** Ch.1 전체 (가볍게, 지도만 그리기) · 강의 **L1** Overview
 - **✏️ 연습·랩 (일 2h):** 환경 설정: `sudo apt install gcc-multilib gdb` (Data Lab 과 Malloc Lab 은 `-m32` 로 빌드), 랩 핸드아웃 7개 내려받기, 노트 폴더 만들기. `hello.c` 를 `gcc -Og -S` / `objdump -d` 로 열어 보기
+- 🛠 **GDB + [GEF](https://github.com/hugsy/gef)** (2026.10.23 설치 완료: `~/.gef-2026.01.py`, `~/.gdbinit`). `gdb ./hello` → `break main` → `run` → `stepi` 를 몇 번: 단계마다 레지스터·스택·코드가 한 화면에 나오고, 바뀐 레지스터는 색으로 표시된다. GEF 는 기본값이 Intel 문법이라 `~/.gdbinit` 에 `set disassembly-flavor att` 를 넣어 책과 같은 AT&T 로 맞춰 두었다
+- 💡 짧은 실험은 브라우저의 [x86-64 Playground](https://x64.halb.it/) 로도 된다 (GNU as, 단계 실행, 레지스터·메모리 보기)
 - 💡 Ch.1 은 책 전체의 예고편이다. 지금 다 이해할 필요 없다. 1년 뒤에 다시 읽으면 모든 문장이 이해된다
 
 </div>
