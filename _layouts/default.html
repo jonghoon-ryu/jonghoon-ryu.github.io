@@ -43,6 +43,14 @@
             </details>
           </li>
           <li>
+            <details class="nav-group"{% if page.url contains '/learning-cs/csapp/' %} open{% endif %}>
+              <summary><a href="{{ '/learning-cs/csapp/' | relative_url }}">CS:APP</a></summary>
+              <ul class="nav-subitems">
+                <li><a href="{{ '/learning-cs/csapp/study-plan/' | relative_url }}">1-Year Study Plan</a></li>
+              </ul>
+            </details>
+          </li>
+          <li>
             <details class="nav-group"{% if page.url contains '/xv6/' %} open{% endif %}>
               <summary><a href="{{ '/xv6/' | relative_url }}">xv6</a></summary>
               <ul class="nav-subitems">
