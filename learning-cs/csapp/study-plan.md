@@ -146,6 +146,15 @@ xv6 의 코드는 이 책이 설명하는 것들의 **구현** 이다.
 - "3.7.4 의 이 그림에서 왜 `%rbx` 를 push 하나" 처럼 구체적으로 질문
 - 교재의 문제 원문은 공개 블로그에 옮기지 않는다 (번호로만 언급)
 
+### 🧩 C++ 연결 (선택)
+
+Week 12 부터 일부 주에는 **C++ 연결** 줄이 있다. 일요일 마지막 10–15분, 그 주에 배운 것으로 C++ 기능 하나를 어셈블리로 들여다본다.
+
+- [godbolt.org](https://godbolt.org) 에서 작은 함수 하나만. `<iostream>` 같은 큰 헤더는 피한다
+- `-Og` (책과 같음) 와 `-O2` (실제 배포) 를 둘 다 본다
+- 어셈블리는 **한 컴파일러의 선택** 일 뿐, 언어가 보장하는 것은 아니다. 규칙은 표준·learncpp 로, 구현은 어셈블리로 확인한다
+- Week 12 (3.7 프로시저) 전에는 C++ 어셈블리가 잡음으로 보인다. 그 전에는 하지 않아도 된다
+
 <div style="margin-top: 100px;"></div>
 
 ## 전체 로드맵
@@ -339,6 +348,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 - **📖 강의·읽기 (토 2h):** Ch.**3.7** (런타임 스택, `call`/`ret`, 인자 레지스터, 지역 변수, callee/caller-saved, 재귀) · 강의 **L7** Machine-Level Programming III: Procedures
 - **✏️ 연습·랩 (일 2h):** 3.7절 Practice Problem. **GDB 실습:** 재귀 함수를 `stepi` 로 따라가며 `info registers`, `x/8gx $rsp` 로 스택 변화를 그림으로 그리기
 - 🔗 xv6 의 문맥 교환 (`swtch.S`) 은 이 절 하나로 읽힌다
+- 🧩 **C++ 연결 (선택, 10–15분):** 멤버 함수 `p.get()` 과 자유 함수 `get(&p)` 를 나란히 컴파일: `this` 는 `%rdi` 로 넘어가는 숨은 첫 인자다. `int&` 와 `int*` 인자도 같은 코드가 나오는지 확인
 
 </div>
 
@@ -350,6 +360,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 - **📖 강의·읽기 (토 2h):** Ch.**3.8–3.9** · 강의 **L8** Machine-Level Programming IV: Data
 - **✏️ 연습·랩 (일 2h):** 3.8–3.9절 Practice Problem. 구조체 필드 순서를 바꿔 `sizeof` 와 오프셋이 어떻게 변하는지 확인
+- 🧩 **C++ 연결 (선택, 10–15분):** 가상 함수가 하나 있는 클래스의 `sizeof` (vtable 포인터 8바이트 + 패딩) 와, `-Og` 에서 가상 호출이 `movq (%rdi), %rax` → `call *(%rax)` (간접 호출) 로 나오는 것 확인
 
 </div>
 
@@ -362,6 +373,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 - **📖 강의·읽기 (토 2h):** Ch.**3.10** (포인터 정리, GDB, 버퍼 오버플로, 스택 보호, 가변 크기 스택 프레임) · 강의 **L9** Machine-Level Programming V: Advanced Topics
 - **✏️ 연습·랩 (일 2h):** 3.10절 Practice Problem. 일부러 오버플로가 나는 프로그램을 만들고 `-fno-stack-protector` 유무로 차이 보기
 - 💡 Ch.**3.11** (부동소수점 어셈블리) 은 가볍게 훑기만. 필요해지면 나중에 본다
+- 🧩 **C++ 연결 (선택, 10–15분):** `std::array` 의 `a[i]` 와 `a.at(i)` 비교: `at()` 에만 `cmpq` + 예외 던지는 함수 호출 (경계 검사) 이 붙는다
 
 </div>
 
@@ -438,6 +450,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 - **📖 강의·읽기 (토 2h):** Ch.**5.1–5.6, 5.12–5.14** 위주로 훑기 (최적화 방해 요인, CPE, 메모리 앨리어싱, 병목 찾기) · 강의 **L10** Program Optimization
 - **✏️ 연습·랩 (일 2h):** 책의 `combine` 예제를 직접 돌려 `-O1` / `-O2` 와 루프 펼치기의 효과를 `perf stat` 으로 측정
 - 💡 Ch.**4** (Y86-64 프로세서 설계) 는 CMU 강의처럼 건너뛴다. 하드웨어 쪽이 궁금하면 여유 주간에 4.1, 4.4 만 읽는다
+- 🧩 **C++ 연결 (선택, 10–15분):** `std::vector<int>` 의 range-for 합계와 C 포인터 루프 합계를 `-O2` 로 비교: 추상화가 정말 비용 0 인지 직접 보기
 
 </div>
 
@@ -472,6 +485,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 - **📖 강의·읽기 (토 2h):** Ch.**6.5–6.7** (캐시 친화적 코드, 메모리 산, 행렬 곱셈 루프 순서)
 - **✏️ 연습·랩 (일 2h):** 행렬 곱셈 6가지 루프 순서를 직접 구현해 시간 측정. 책의 그래프와 비교
+- 🧩 **C++ 연결 (선택, 10–15분):** `std::vector<std::vector<int>>` 와 1차원 `std::vector<int>` (행 우선 인덱싱) 의 행렬 순회 시간 비교: 메모리 배치가 캐시에 미치는 영향
 
 </div>
 
@@ -524,6 +538,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 - **📖 강의·읽기 (토 2h):** Ch.**7.1–7.6** (컴파일러 드라이버, 재배치 가능 오브젝트, 심볼과 심볼 테이블, 심볼 해석, 정적 라이브러리) · 강의 **L13** Linking
 - **✏️ 연습·랩 (일 2h):** 7.1–7.6절 Practice Problem. `readelf -s`, `nm` 으로 내가 만든 `.o` 의 심볼 테이블 직접 보기
 - 🔗 C++ 강좌의 binary tools 장 에서 본 도구들을 여기서 제대로 쓴다
+- 🧩 **C++ 연결 (선택, 10–15분):** `nm a.o` 로 맹글링된 이름 (`_Z3addii`) 보기 → `nm -C` / `c++filt` 로 풀기. `extern "C"` 를 붙이면 이름이 어떻게 바뀌는지
 
 </div>
 
@@ -536,6 +551,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 - **📖 강의·읽기 (토 2h):** Ch.**7.7–7.14** (재배치, 실행 파일, 로딩, 공유 라이브러리, PIC, 라이브러리 끼워넣기)
 - **✏️ 연습·랩 (일 2h):** 7.7절 Practice Problem. `LD_PRELOAD` 로 `malloc` 끼워넣기 (7.13) 직접 해 보기
 - 🔗 xv6 의 `kernel.ld` 링커 스크립트를 읽을 준비가 된다
+- 🧩 **C++ 연결 (선택, 10–15분):** 함수 템플릿을 `int`, `double` 로 쓰고 `-O0` 오브젝트를 `nm -C` 로 보기: 인스턴스마다 별도 함수가 **W** (weak) 심볼로 생긴다. 여러 `.o` 에 같은 인스턴스가 있어도 링커가 하나만 남기는 이유
 
 </div>
 
@@ -565,6 +581,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 - **📖 강의·읽기 (토 2h):** Ch.**8.4** (프로세스 생성, 종료, 회수, `execve`, 프로그램 실행)
 - **✏️ 연습·랩 (일 2h):** 8.4절 Practice Problem (fork 출력 개수 맞히기 문제는 **프로세스 그래프를 그려서**). 아주 작은 셸 (`fork` + `execve` + `waitpid`) 직접 작성
+- 🧩 **C++ 연결 (선택, 10–15분):** 전역 객체의 소멸자를 만들고 `exit()` 와 `_exit()` 로 각각 끝내 보기: 어느 쪽에서 소멸자가 실행되는가
 
 </div>
 
@@ -577,6 +594,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 - **📖 강의·읽기 (토 2h):** Ch.**8.5–8.8** (시그널, 핸들러, 경쟁 상태, 비지역 점프, 프로세스 도구) · 강의 **L15** Exceptional Control Flow: Signals and Nonlocal Jumps
 - **✏️ 연습·랩 (일 2h):** 8.5절 Practice Problem. 안전한 시그널 핸들러 규칙 (async-signal-safe) 을 노트에 정리
 - 💡 Ch.**10** 앞부분 (10.1–10.4) 을 함께 훑어 두면 Shell Lab 의 I/O 리다이렉션 부분이 쉬워진다
+- 🧩 **C++ 연결 (선택, 10–15분):** 시그널 핸들러에서 써도 되는 C++ 타입은 `volatile std::sig_atomic_t` (또는 lock-free `std::atomic`). 핸들러 안에서 `std::cout` 을 쓰면 왜 위험한지 8.5.5 의 규칙으로 설명
 
 </div>
 
@@ -651,6 +669,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 - **📖 강의·읽기 (토 2h):** Ch.**9.9.1–9.9.6** (`malloc`/`free`, 단편화, 암시적 가용 리스트) · 강의 **L19** Dynamic Memory Allocation: Basic Concepts
 - **✏️ 연습·랩 (일 2h):** 9.9절 Practice Problem. 책의 암시적 리스트 할당기 (9.9.12) 를 소리 내어 읽듯이 한 줄씩 따라가기
+- 🧩 **C++ 연결 (선택, 10–15분):** `new int(5)` 를 컴파일하면 `call operator new(unsigned long)` 이 나온다. `operator new` 가 결국 `malloc` 을 부른다는 것을 GDB 에서 `break malloc` → `bt` (호출 스택) 로 확인
 
 </div>
 
@@ -747,6 +766,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 - **📖 강의·읽기 (토 2h):** Ch.**12.1–12.3** (프로세스, I/O 다중화 `select`, 스레드) · 강의 **L23** Concurrent Programming
 - **✏️ 연습·랩 (일 2h):** 12.1–12.3절 Practice Problem. 간단한 echo 서버를 스레드 버전으로 작성 (Ch.11 은 소켓 함수 부분만 필요할 때 참고)
+- 🧩 **C++ 연결 (선택, 10–15분):** 캡처가 있는 람다를 `std::thread` 에 넘기고 어셈블리 보기: 람다는 캡처를 필드로 가진 작은 구조체 + `operator()` 다. `std::thread` 아래에는 `pthread_create` 가 있다
 
 </div>
 
@@ -759,6 +779,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 - **📖 강의·읽기 (토 2h):** Ch.**12.4–12.5** (공유 변수, 경쟁, 세마포어로 상호 배제, 생산자-소비자, readers-writers) · 강의 **L24** Synchronization: Basics
 - **✏️ 연습·랩 (일 2h):** 12.5절 Practice Problem. `badcnt.c` 를 직접 돌려 경쟁 상태를 재현하고 세마포어로 고치기
 - 🔗 Spinlock/Mutex/Semaphore 입문서 와 같이 보면 좋다
+- 🧩 **C++ 연결 (선택, 10–15분):** `std::atomic<int>` 의 `g++` 가 `lock addl` 한 줄로 나오는 것 확인. `badcnt` 를 `std::atomic` 으로 고친 버전과 세마포어 버전의 속도 비교
 
 </div>
 
@@ -770,6 +791,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 - **📖 강의·읽기 (토 2h):** Ch.**12.6–12.7** (병렬 프로그램 성능, 스레드 안전성, 재진입성, 경쟁, 교착 상태) · 강의 **L25** Synchronization: Advanced, **L26** Thread-Level Parallelism
 - **✏️ 연습·랩 (일 2h):** 12.7절 Practice Problem. 교착 상태가 나는 프로그램을 일부러 만들고 진행 그래프 (progress graph) 로 설명하기
+- 🧩 **C++ 연결 (선택, 10–15분):** `std::atomic` 의 `store()` 를 기본 (seq_cst) 과 `memory_order_release` 로 비교: x86-64 에서 앞은 `xchg`, 뒤는 평범한 `mov`. 메모리 순서가 어셈블리에서 어떻게 보이는지
 
 </div>
 
