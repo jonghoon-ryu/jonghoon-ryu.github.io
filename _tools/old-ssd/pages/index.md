@@ -99,7 +99,7 @@ NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 �
 7 쓰기 캐시 · FLUSH | **끝** (2026.10.18) : 캐시 켬 4 KiB 쓰기 32 µs, FLUSH 하나 1.6 ms → 쓰기마다 fsync 하면 45배 느림 (27k → 604 IOPS), 캐시 끔도 같은 값 (618). FLUSH 를 무시하지 않는다. [결과](/old-ssd-experiments/7-flush/)
 8 Write cliff | **끝** (2026.10.18, 81분) : 8만 IOPS (SLC 약 3 GB) → 3.6만 (125 GB 까지 평평) → 125 – 130 GB 에서 절벽 → steady state 약 6천 IOPS (24 MB/s). 절벽 자리로 본 GC 여유 약 5 – 10 GB (모델 8 GB). [결과](/old-ssd-experiments/8-write-cliff/)
 9 쉬는 동안 GC | **끝** (2026.10.18) : 1분 이상 쉬면 처음 약 3.2 GB (SLC 버퍼 하나) 를 8만 IOPS 로, 그 뒤는 곧바로 steady state (약 5.7천). 쉬는 동안 버퍼만 비우고 (1분 80%, 5분 100%) 빈 블록을 미리 만들지는 않는다. [결과](/old-ssd-experiments/9-idle-gc/)
-10 Over-provisioning | span 80% **끝** (2026.10.18), 4배 **끝** (2026.10.23) : 절벽은 같은 자리 (약 127 GB). span 80% 는 약 300 GB 부터 steady 약 6,350 IOPS 로, span 100% 의 240 GB 값과 거의 같다 (모델은 3.6배). 다음 : `cliff 100 4` 로 177 과 steady 비를 같은 양으로. [결과](/old-ssd-experiments/10-over-provisioning/)
+10 Over-provisioning | span 80% · span 100% 를 4배 (480 GB) 로 **끝** (2026.10.23) : 절벽은 같은 자리 (약 128 GB). span 100% 는 약 350 GB 에서 한 번 더 떨어져 약 3,130 IOPS, span 80% 는 약 6,350 : 약 2배 (모델 3.6배). 177 도 +13 대 +7 로 약 2배. 다음 : 실험 12 `seqwaf`, `cliff 50 4`. [결과](/old-ssd-experiments/10-over-provisioning/)
 11 – 19 | 아직
 ```
 
