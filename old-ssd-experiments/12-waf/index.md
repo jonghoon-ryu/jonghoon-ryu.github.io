@@ -158,7 +158,7 @@ WAF ~ 1.14   (177 counts whole steps, so between 0.92 and 1.37)
 </tbody></table></div>
 
 **다음에 해 볼 것**
-- `cliff 50 4` : 이제 177 을 믿을 수 있으니, 여유를 아주 크게 했을 때 WAF 가 모델 (span 50% : 약 1.3) 에 가까워지는지 177 로 바로 잰다
+- ~~`cliff 50 4`~~ **했음 (2026.10.25)** : 절벽 뒤 WAF 약 1.2 (1.0 – 1.4), 모델 1.3 과 맞음. steady 15,600 IOPS (span 100% 의 4.9배). [실험 10 결과](/old-ssd-experiments/10-over-provisioning/)
 - [실험 11](/old-ssd-experiments/11-hot-cold/) (뜨거운 데이터) : 같은 177 기준으로 WAF 를 비교
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/11-hot-cold/' | relative_url }}">← 11. 뜨거운 데이터</a><a href="{{ '/old-ssd-experiments/13-interference/' | relative_url }}">13. 읽기 · 쓰기 간섭 →</a></div>
