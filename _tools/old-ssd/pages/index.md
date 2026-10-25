@@ -100,8 +100,9 @@ NAND | TLC (셀 하나에 3비트), SLC 버퍼 TurboWrite 약 3 GB (알려진 �
 8 Write cliff | **끝** (2026.10.18, 81분) : 8만 IOPS (SLC 약 3 GB) → 3.6만 (125 GB 까지 평평) → 125 – 130 GB 에서 절벽 → steady state 약 6천 IOPS (24 MB/s). 절벽 자리로 본 GC 여유 약 5 – 10 GB (모델 8 GB). [결과](/old-ssd-experiments/8-write-cliff/)
 9 쉬는 동안 GC | **끝** (2026.10.18) : 1분 이상 쉬면 처음 약 3.2 GB (SLC 버퍼 하나) 를 8만 IOPS 로, 그 뒤는 곧바로 steady state (약 5.7천). 쉬는 동안 버퍼만 비우고 (1분 80%, 5분 100%) 빈 블록을 미리 만들지는 않는다. [결과](/old-ssd-experiments/9-idle-gc/)
 10 Over-provisioning | span 80% · span 100% 를 4배 (480 GB) 로 **끝** (2026.10.23) : 절벽은 같은 자리 (약 128 GB). span 100% 는 약 350 GB 에서 한 번 더 떨어져 약 3,130 IOPS, span 80% 는 약 6,350 : 약 2배 (모델 3.6배). 177 도 +13 대 +7 로 약 2배. **span 50%, 4배** (2026.10.25, 102분) : 절벽은 또 약 128 GB, steady 약 15,600 IOPS (span 100% 의 4.9배), WAF (177) 약 1.2 로 모델 (1.3) 과 맞음. [결과](/old-ssd-experiments/10-over-provisioning/)
-12 WAF (SMART) | 순차 쓰기 **끝** (2026.10.25, 65분) : 600 GB 를 쓰는 동안 177 +5 → **WAF ≈ 1.14** (0.92 – 1.37). 속도는 꽉 찬 뒤에도 약 151 MB/s 로 평평 (절벽 없음). 177 은 제대로 센다 : 실험 10 의 '2.4배 어긋남' 은 'NAND 150 MB/s' 가정 탓이었고, GC 중의 NAND 쓰기는 약 60 MB/s. 다음 : 실험 11 `cliff 100 4 zipf:1.2`. [결과](/old-ssd-experiments/12-waf/)
-11, 13 – 19 | 아직
+12 WAF (SMART) | 순차 쓰기 **끝** (2026.10.25, 65분) : 600 GB 를 쓰는 동안 177 +5 → **WAF ≈ 1.14** (0.92 – 1.37). 속도는 꽉 찬 뒤에도 약 151 MB/s 로 평평 (절벽 없음). 177 은 제대로 센다 : 실험 10 의 '2.4배 어긋남' 은 'NAND 150 MB/s' 가정 탓이었고, GC 중의 NAND 쓰기는 약 60 MB/s.  [결과](/old-ssd-experiments/12-waf/)
+11 뜨거운 데이터 | zipf:1.2, 4배 **끝** (2026.10.25, 33분) : 절벽 없음, 63k → 52k IOPS (uniform 끝의 약 16배), WAF (177) 약 0.57 : 쓰기의 73% 가 1 MB 에 몰려 캐시가 덮어쓰기를 흡수. GC 시험으로는 너무 몰림 → 다음 : `cliff 100 4 zoned:80/20:20/80`. [결과](/old-ssd-experiments/11-hot-cold/)
+13 – 19 | 아직
 ```
 
 <div class="warn" markdown="1">
