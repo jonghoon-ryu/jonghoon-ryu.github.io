@@ -159,8 +159,84 @@ WAF ~ 0.57   (177 counts whole steps, so between 0.29 and 0.86)
 
 <div class="result" markdown="1">
 **다음에 해 볼 것**
-- `sudo ./lab.sh cliff 100 4 zoned:80/20:20/80` : 쓰기의 80% 가 24 GB (SLC 버퍼의 약 7배) 에, 20% 가 나머지 96 GB 에. 드라이브 전체가 쓰이니 절벽이 오고, 그 뒤 steady 와 WAF 를 uniform 과 바로 비교할 수 있다. 이것이 GC 의 hot/cold 시험이다
+- ~~`sudo ./lab.sh cliff 100 4 zoned:80/20:20/80`~~ **했음 (2026.10.25)** : 아래
 - (선택) zipf 를 약하게 (`zipf:0.8`) : 몰림의 정도를 바꾸며 '캐시 흡수' 에서 'GC' 로 넘어가는 자리 찾기
+</div>
+
+<div class="result" markdown="1">
+### zoned:80/20:20/80, 4배 (2026.10.25 16:30 – 18:50, 139분)
+
+결과 폴더 `20261025-163057-cliff-span100-zoned_80_20_20_80`. 쓰기의 80% 가 앞쪽 24 GB 에, 20% 가 나머지 96 GB 에. 총 480 GB.
+
+![uniform 100% · 80% · 50% 와 zoned 80/20 (모두 4배)](/old-ssd-experiments/11-hot-cold/zoned.png)
+
+```
+ 177 Wear_Leveling_Count                     164            168           +4
+ 190 Airflow_Temperature_Cel                  31             42          +11
+ 241 Total_LBAs_Written              30457203735    31394968599    +937764864
+
+host writes (241):       480.1 GB
+erase count (177):  +4  ->  NAND writes ~ 550 GB
+WAF ~ 1.15   (177 counts whole steps, so between 0.86 and 1.43)
+```
+</div>
+
+**절벽은 또 약 128 GB.** 그 뒤가 지금까지와 다르다 : **평평해지지 않고 끝까지 내려간다.** 절벽 바로 뒤에는 span 50% 와 거의 같은 약 15,500 IOPS, 240 GB 부터 천천히, 350 GB 부터 빠르게 내려가 끝에서 약 6,750 (아직 조금씩 내려가는 중).
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>쓴 양</th>
+<th>zoned 80/20</th>
+<th>uniform 100%</th>
+<th>uniform 50%</th>
+</tr></thead><tbody>
+<tr><td>140 – 160 GB</td><td>15,596</td><td>8,268</td><td>18,772</td></tr>
+<tr><td>200 – 240 GB</td><td>15,056</td><td>6,063</td><td>16,482</td></tr>
+<tr><td>280 – 320 GB</td><td>13,538</td><td>5,556</td><td>15,725</td></tr>
+<tr><td>360 – 400 GB</td><td>10,640</td><td>4,337</td><td>15,768</td></tr>
+<tr><td>440 – 470 GB</td><td>6,838</td><td>3,282</td><td>15,636</td></tr>
+<tr><td>470 – 480 GB</td><td><strong>6,755</strong></td><td><strong>3,171</strong></td><td><strong>15,603</strong></td></tr>
+</tbody></table></div>
+
+**왜 내려가나 : 차가운 쪽이 아직 채워지는 중이다.** TRIM 한 뒤 한 번도 쓰이지 않은 LBA 는 드라이브에게 '데이터 없음' 이다 : 그만큼이 여유 (OP) 로 쓰인다. 랜덤 쓰기에서 '한 번이라도 쓰인 곳' 의 양은 쓴 양 W 에 따라 범위 × (1 − e<sup>−W/범위</sup>) 로 는다. zoned 의 차가운 96 GB 는 쓰기의 20% 만 받으니 아주 천천히 찬다 :
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>쓴 양 W</th>
+<th>uniform 100%</th>
+<th>uniform 80%</th>
+<th>uniform 50%</th>
+<th>zoned 80/20 (뜨거운 24 + 차가운 96)</th>
+</tr></thead><tbody>
+<tr><td>128 GB (절벽)</td><td>79 GB</td><td>71 GB</td><td>53 GB</td><td>46 GB (24 + 22)</td></tr>
+<tr><td>240 GB</td><td>104 GB</td><td>88 GB</td><td>59 GB</td><td>62 GB (24 + 38)</td></tr>
+<tr><td>350 GB</td><td>114 GB</td><td>94 GB</td><td>60 GB</td><td>74 GB (24 + 50)</td></tr>
+<tr><td>480 GB</td><td>118 GB</td><td>95 GB</td><td>60 GB</td><td>85 GB (24 + 61)</td></tr>
+</tbody></table></div>
+
+이 표로 지금까지의 모양이 거의 다 설명된다 :
+- **zoned 가 처음에 span 50% 처럼 빠른 것** : 절벽 무렵 데이터가 든 곳이 약 46 GB 로, span 50% (53 GB) 보다도 적다.
+- **zoned 가 끝까지 내려가는 것** : 480 GB 에서도 차가운 96 GB 의 약 63% 만 쓰였다. 데이터가 든 곳이 85 GB 로 계속 늘고, 그만큼 여유가 계속 준다. 끝까지 쓰면 120 GB 가 다 차고, 그때 진짜 steady 가 나온다.
+- **덤 : uniform 100% 의 '두 번째 내리막' (약 350 GB)** ([실험 10](/old-ssd-experiments/10-over-provisioning/)) 도 같은 이유로 보인다. 350 GB 에서 데이터가 든 곳이 약 114 GB (95%) 로, 드라이브 안의 여유가 거의 숨겨 둔 몫만 남는 자리다. uniform 80% 가 약 300 GB 에서 평평해진 것도 그때 96 GB 범위가 약 95% 차서다. 모델로 맞춘 것이고, 직접 확인한 것은 아니다.
+
+**WAF (177) 는 약 1.2 (절벽 뒤, 1.0 – 1.4) 로 span 50% 와 같다.** 이 실행 대부분 동안 데이터가 든 곳이 span 50% 와 비슷했으니 맞는 값이다. 하지만 끝 무렵의 내리막은 177 의 거친 눈금 (+4) 으로는 보이지 않는다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>가설</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>H1 고르지 않으면 steady 가 빠르다</td><td>끝에서 uniform 의 약 2.1배. 하지만 <strong>steady 가 아니다</strong> : 아직 비교할 수 없다</td></tr>
+<tr><td>H2 WAF 가 낮다</td><td>약 1.2 (uniform 약 4.7). 다만 차가운 쪽이 덜 차서 생긴 몫이 섞여 있다</td></tr>
+<tr><td>H3 절벽이 늦게 온다</td><td><strong>아니다</strong> : 절벽은 약 128 GB 그대로. 절벽은 '쓴 양' 으로 정해진다 (실험 10 과 같다)</td></tr>
+</tbody></table></div>
+
+**배운 것 : '한 번도 쓰지 않은 곳' 이 여유로 쓰이는 한, 분포의 차이와 여유의 차이가 섞인다.** 공정한 hot/cold 시험은 드라이브 전체를 먼저 한 번 순차로 채워서 (모든 LBA 에 데이터), 차이가 오직 '어디에 몰려 쓰느냐' 에서만 나오게 해야 한다. 업계의 성능 시험 (SNIA PTS) 이 '프리컨디셔닝' 으로 드라이브를 먼저 채우는 이유가 이것이다.
+
+<div class="result" markdown="1">
+**다음에 해 볼 것** : `lab.sh cliff` 에 네 번째 인자 `fill` 을 더했다. TRIM 뒤 드라이브 전체를 128 KiB 순차로 한 번 채우고 (약 13분, WAF ≈ 1 은 실험 12), 그 다음 SMART 'before' 를 찍고 랜덤 쓰기를 시작한다.
+- `sudo ./lab.sh cliff 100 4 zoned:80/20:20/80 fill` : 꽉 찬 드라이브에서의 zoned
+- `sudo ./lab.sh cliff 100 4 random fill` : 같은 조건의 uniform (비교 기준)
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/10-over-provisioning/' | relative_url }}">← 10. Over-provisioning</a><a href="{{ '/old-ssd-experiments/12-waf/' | relative_url }}">12. WAF (SMART) →</a></div>

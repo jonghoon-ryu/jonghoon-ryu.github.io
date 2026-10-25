@@ -15,8 +15,9 @@
 #   sudo ./lab.sh pattern                  exp 5: does the data (zeros, random, compressible) change the speed?  ERASES
 #   sudo ./lab.sh wsize                    exp 6: write sizes 512 B .. 64 KiB, and misaligned 4 KiB  ERASES
 #   sudo ./lab.sh flush                    exp 7: write cache on/off and a FLUSH after every write  ERASES
-#   sudo ./lab.sh cliff [SPAN%] [TIMES] [DIST]  exp 8/10/11: 4 KiB random writes over SPAN% (100), TIMES x capacity (2),
-#                                          fio random_distribution DIST (random; e.g. zipf:1.2)  ERASES
+#   sudo ./lab.sh cliff [SPAN%] [TIMES] [DIST] [fill]  exp 8/10/11: 4 KiB random writes over SPAN% (100), TIMES x capacity (2),
+#                                          fio random_distribution DIST (random; e.g. zipf:1.2);
+#                                          "fill" = write the whole drive sequentially first (SMART 'before' is taken after it)  ERASES
 #   sudo ./lab.sh idlegc MIN...            exp 9: after cliff: idle MIN minutes, then 2 min of random writes  WRITES
 #   sudo ./lab.sh seqwaf [TIMES]           exp 12: sequential writes of the whole drive TIMES (5) times, WAF from SMART  ERASES
 #   sudo ./lab.sh mixed                    exp 13: read latency alone and while writes run    ERASES
@@ -222,15 +223,21 @@ trim)
     finish ;;
 cliff)
     need_root cliff; find_dev; not_mounted; need_trim
-    span=${1:-100}; times=${2:-2}; dist=${3:-random}
+    span=${1:-100}; times=${2:-2}; dist=${3:-random}; fill=${4:-}
     [ "$span" -ge 10 ] && [ "$span" -le 100 ] || die "SPAN% must be 10..100"
     [[ "$dist" =~ ^[a-z]+(:[0-9.:/,]+)?$ ]] || die "DIST '$dist' is not a fio random_distribution (random, zipf:1.2, zoned:80/20:20/80 ...)"
+    [ -z "$fill" ] || [ "$fill" = fill ] || die "4th argument must be 'fill' or nothing"
     confirm_erase
-    if [ "$dist" = random ]; then new_out "cliff-span${span}"; else new_out "cliff-span${span}-${dist//[:\/]/_}"; fi
+    name="cliff-span${span}"; [ "$dist" = random ] || name+="-${dist//[:\/]/_}"; [ -z "$fill" ] || name+="-fill"
+    new_out "$name"
     sbytes=$(mib_round $(( BYTES * span / 100 )))
     total=$(mib_round $(( BYTES * times )))
-    echo "span_bytes: $sbytes  io_bytes: $total" >> "$OUT/meta.txt"
+    echo "span_bytes: $sbytes  io_bytes: $total  fill: ${fill:-no}" >> "$OUT/meta.txt"
     discard_all
+    if [ -n "$fill" ]; then
+        note "fill: sequential 128 KiB writes of the whole drive, so every LBA holds data"
+        run_fio fill --rw=write --bs=128k --iodepth=16 --size=100%
+    fi
     smart before
     note "4 KiB random writes ($dist), QD32, over the first ${span}% ($(( sbytes / 1000000000 )) GB), $(( total / 1000000000 )) GB in total"
     run_fio cliff --rw=randwrite --bs=4k --iodepth=32 --size="$sbytes" --io_size="$total" \
