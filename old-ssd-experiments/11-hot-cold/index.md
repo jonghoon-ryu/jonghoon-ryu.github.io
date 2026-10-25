@@ -235,8 +235,10 @@ WAF ~ 1.15   (177 counts whole steps, so between 0.86 and 1.43)
 
 <div class="result" markdown="1">
 **다음에 해 볼 것** : `lab.sh cliff` 에 네 번째 인자 `fill` 을 더했다. TRIM 뒤 드라이브 전체를 128 KiB 순차로 한 번 채우고 (약 13분, WAF ≈ 1 은 실험 12), 그 다음 SMART 'before' 를 찍고 랜덤 쓰기를 시작한다.
-- `sudo ./lab.sh cliff 100 4 zoned:80/20:20/80 fill` : 꽉 찬 드라이브에서의 zoned
-- `sudo ./lab.sh cliff 100 4 random fill` : 같은 조건의 uniform (비교 기준)
+- `sudo ./lab.sh cliff 100 2 zoned:80/20:20/80 fill` : 꽉 찬 드라이브에서의 zoned (채우기 13분 + 약 2 – 3시간)
+- `sudo ./lab.sh cliff 100 2 random fill` : 같은 조건의 uniform (비교 기준, 약 5 – 6시간 : 밤새)
+
+채운 뒤에는 빈 곳이 숨긴 여유뿐이라 절벽이 거의 처음부터 온다. 그래서 4배 대신 2배 (240 GB) 로 steady 를 충분히 볼 수 있다. uniform 을 4배로 하면 약 3,100 IOPS (12.7 MB/s) 로 약 10시간이 걸린다.
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/10-over-provisioning/' | relative_url }}">← 10. Over-provisioning</a><a href="{{ '/old-ssd-experiments/12-waf/' | relative_url }}">12. WAF (SMART) →</a></div>
