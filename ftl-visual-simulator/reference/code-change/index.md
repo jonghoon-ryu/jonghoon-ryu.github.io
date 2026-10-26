@@ -12,7 +12,7 @@ permalink: /ftl-visual-simulator/reference/code-change/
 ## 하위 문서
 
 - [원본 MQSim 대비 변경 사항](/ftl-visual-simulator/reference/code-change/upstream-diff/) — 처음 가져온 원본(`90b0fb1`)과 지금 엔진을 비교해, 버그 수정 · 의도적 동작 변경 · 규모 튜닝 · 새 기능 · 계측/WASM · 테스트로 나눠 정리. **전체를 한눈에 보려면 여기부터.**
-- [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) — 원본에서 찾아 고친 버그 30개. 버그별 발견 경위와 디버깅 기록 ( 하위 문서 : [버그 목록표](/ftl-visual-simulator/reference/code-change/bug-list/table/) 에 전체 요약 )
+- [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) — 원본에서 찾아 고친 버그 31개. 버그별 발견 경위와 디버깅 기록 ( 하위 문서 : [버그 목록표](/ftl-visual-simulator/reference/code-change/bug-list/table/) 에 전체 요약 )
 - [튜닝된 코드 (Tweaked Code)](/ftl-visual-simulator/reference/code-change/tweaked-code/) — 버그는 아니지만, 원본이 가정하는 규모와 이 프로젝트의 화면 규모가 달라서 일부러 upstream 과 다르게 동작하도록 바꾼 곳
 
 <div style="margin-top: 60px;"></div>

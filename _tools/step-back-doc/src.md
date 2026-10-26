@@ -89,7 +89,7 @@ function restoreSnapshot(mod: MqsimModule, snap: MemorySnapshot) {
 }
 ```
 
-사본 하나는 매핑 기본 · GC 시연에서 약 2.3 ~ 2.6 MB, 마모평준화 시연에서 약 4.6 ~ 4.9 MB 이고, 복사는 1 ms 안팎이다. 최대 30 개까지 보관하므로 GC 시연에서도 100 MB 를 넘지 않는다.
+사본 하나는 매핑 기본 · GC 시연에서 약 2.2 ~ 2.4 MB, 마모평준화 시연에서 약 4.1 MB 이고, 복사는 1 ms 안팎이다. 최대 30 개까지 보관하므로 GC 시연에서도 100 MB 를 넘지 않는다.
 
 <div class="check" markdown="1">
 **빌드 설정 한 줄.** `HEAPU8` 은 기본적으로 모듈 밖에 공개되지 않아서, `engine/build-wasm.sh` 에 `-sEXPORTED_RUNTIME_METHODS=HEAPU8` 을 추가했다. 메모리가 자라면(`ALLOW_MEMORY_GROWTH`) Emscripten 이 새 버퍼로 `HEAPU8` 을 다시 만들어 주므로, 워커는 매번 `mod.HEAPU8` 을 새로 읽는다.

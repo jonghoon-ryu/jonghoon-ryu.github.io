@@ -60,7 +60,7 @@ pre {
 <div style="overflow-x:auto;">
 <table class="plan-calendar">
 <tr><th>종류</th><th>개수</th><th>시뮬레이션 결과에 영향</th><th>주로 바뀐 파일</th></tr>
-<tr><td>A. 원본의 버그 수정</td><td>30개(버그 목록표) + 표에 따로 없는 수정 4건</td><td>대부분 골든 불변. 작은 규모·특정 설정에서만 결과가 달라짐(원래는 크래시/멈춤/잘못된 값)</td><td><code>GC_and_WL_Unit_*</code>, <code>Address_Mapping_Unit_Page_Level</code>, <code>Flash_Block_Manager*</code>, <code>TSU_*</code>, <code>NVM_PHY_ONFI_NVDDR2</code>, <code>utils/</code></td></tr>
+<tr><td>A. 원본의 버그 수정</td><td>31개(버그 목록표) + 표에 따로 없는 수정 4건</td><td>대부분 골든 불변. 작은 규모·특정 설정에서만 결과가 달라짐(원래는 크래시/멈춤/잘못된 값)</td><td><code>GC_and_WL_Unit_*</code>, <code>Address_Mapping_Unit_Page_Level</code>, <code>Flash_Block_Manager*</code>, <code>TSU_*</code>, <code>NVM_PHY_ONFI_NVDDR2</code>, <code>utils/</code></td></tr>
 <tr><td>B. 의도적으로 upstream 과 다르게 바꾼 동작</td><td>4건</td><td>있음 — 데모 규모에서 원본 동작이 의미가 없거나 멈추는 경우만</td><td><code>GC_and_WL_Unit_Base</code>, <code>Flash_Block_Manager_Base</code>, <code>Address_Mapping_Unit_Page_Level</code></td></tr>
 <tr><td>C. 데모 규모 튜닝</td><td>1건</td><td>있음(의도)</td><td><code>SSD_Device.cpp</code></td></tr>
 <tr><td>D. 새 기능 (upstream 에 없음)</td><td>3건(Cost-Benefit GC, <code>Unmapped_Reads_Return_Zeros</code>, TRIM) + 통계/조회 추가</td><td>없음(기본값 꺼짐) — 앱이 켤 때만</td><td><code>GC_and_WL_Unit_Page_Level</code>, <code>Device_Parameter_Set</code>, <code>Address_Mapping_Unit_Page_Level</code></td></tr>
@@ -88,6 +88,7 @@ MQSim 원본은 리눅스 네이티브 CLI 한 번 실행(설정 읽기 → 끝�
 - **#7 DRAM 캐시 대기열의 use-after-free** (`Data_Cache_Manager_Flash_Advanced.cpp` 소멸자) — DRAM 이 가득 차서 기다리는 요청(`User_Request`)을 캐시 매니저 소멸자가 `delete` 했는데, 그 객체의 진짜 주인인 입력 스트림도 자기 소멸자에서 또 지웠다(이중 소유). 원본 CLI 는 항상 끝까지 실행한 뒤 종료해서 대기열이 비어 있으니 한 번도 안 터졌지만, 실행 도중에 설정을 바꾸는 순간 크래시. 캐시 매니저는 목록만 비우고 삭제는 주인에게 맡기도록 수정.
 - **#8 초기화 안 된 `Bandwidth` 필드** (`exec/IO_Flow_Parameter_Set.h`) — `BANDWIDTH` 생성기에서만 쓰는 값이라 XML 에 태그가 없으면 초기화되지 않는다. 새 프로세스에서는 우연히 0 이라 괜찮았지만, 같은 프로세스에서 재구성을 반복하면 이전 힙 값이 남아 `Host_System.cpp` 의 나눗셈이 0 으로 나누기가 됐다. 기본값 0 을 명시.
 - **#29 빈 공간을 기다리는 쓰기의 처리 순서가 힙 주소로 정해짐** (`Address_Mapping_Unit_Page_Level`, `Write_transactions_for_overfull_planes`) — plane 에 빈 page 가 모자라 기다리는 쓰기를 `std::set<NVM_Transaction_Flash_WR*>` 에 모아 두고 `begin()` 부터 풀어줬다. 포인터 순서라 "주소가 가장 낮은 쓰기" 가 먼저 나가는데, 그 주소는 할당기 상태에 따라 달라진다. 새 프로세스에서는 늘 같은 배치라 결과가 같았지만, 한 프로세스에서 같은 설정을 다시 돌리면(비교 실험실 worker, ▶ 재시작) GC 554 → 570 → 584 처럼 달라졌다. 도착 순서(FIFO) `std::list` 로 바꿔 가장 오래 기다린 쓰기부터 풀어준다(중복 방지는 `std::find` 로 유지). 기다리는 쓰기가 생겨야 드러나서, DRAM 캐시가 내보내기를 전혀 하지 않던 256 MB 시절에는 보이지 않았다. 골든 3/3 불변.
+- **#31 DRAM 캐시가 흡수한 트랜잭션의 메모리 누수** (`Data_Cache_Manager_Flash_Advanced.cpp`) — flash 트랜잭션은 PHY 가 작업을 끝낼 때(`broadcastTransactionServicedSignal`)만 `delete` 된다. 그런데 캐시에만 쓰고 flash 로 바로 내려보내지 않는 쓰기와, 캐시에서 전부 읽힌 읽기는 PHY 에 가지 않고 요청의 `Transaction_list` 에서 `erase` 만 됐다. 원본 CLI 는 한 번 돌고 종료하니 OS 가 회수해서 무관했지만, 한 모듈에서 반복 실행하면 쌓인다 — 기본 설정에서 실행당 약 1.6 MB, 256 MB 캐시면 약 380 MB 라 11번째 실행에서 4 GB WASM 힙이 바닥났다. `erase` 직후 `delete` 를 추가(LeakSanitizer: 1,666,075 → 13,475 byte/실행, 골든·전 테스트 출력 불변).
 - **(표에 없음) 주소 분할 유닛의 static 카운터가 재설정 안 됨** (`utils/Logical_Address_Partitioning_Unit.cpp`) — `Reset()` 이 `total_pda_no`/`total_lha_no` 를 0 으로 되돌리지 않아, 한 프로세스에서 두 번째 시뮬레이션을 만들면 이전 값이 누적됐다. 원본은 프로세스당 한 번만 실행하니 무관했던 문제. `Reset()` 에 두 줄 추가.
 
 <div style="margin-top: 40px;"></div>
@@ -216,7 +217,7 @@ flash 의 program(쓰기)·erase(지우기)는 read 보다 수십~수백 배 오
 
 ## 9. 정리
 
-- 원본 MQSim 은 **큰 SSD 를 한 번 끝까지 돌리는** 연구용 도구로서는 대부분 문제없이 동작한다 — 이 프로젝트가 찾은 버그 30개 중 상당수는 (a) 이식성(다른 컴파일러/표준 라이브러리), (b) 한 프로세스에서 반복 실행·중간 정지, (c) 수십 개 block 수준의 작은 규모, (d) 한 번도 켜본 적 없는 기능(suspend, 정적 WL 설정) 중 하나를 건드려야 드러났다.
+- 원본 MQSim 은 **큰 SSD 를 한 번 끝까지 돌리는** 연구용 도구로서는 대부분 문제없이 동작한다 — 이 프로젝트가 찾은 버그 31개 중 상당수는 (a) 이식성(다른 컴파일러/표준 라이브러리), (b) 한 프로세스에서 반복 실행·중간 정지, (c) 수십 개 block 수준의 작은 규모, (d) 한 번도 켜본 적 없는 기능(suspend, 정적 WL 설정) 중 하나를 건드려야 드러났다.
 - 그래도 "결과가 조용히 틀리는" 버그도 있었다 — 정적 WL 이 실제 마모와 무관하게 발동하거나(#6) 평생 한 번만 발동한 것(#18), suspend 가 한 번도 동작하지 않은 것(#14~17), WL 통계가 GC 로 섞인 것(#19~20). 이런 것들은 원본으로 논문 수치를 낸 경우에도 영향이 있을 수 있는 종류다.
 - 이 프로젝트의 변경은 대부분 upstream 샘플 결과를 바꾸지 않는다(골든 불변). 바꾸는 것은 B·C·D 의 의도적 변경뿐이고, 모두 코드 주석과 이 문서에 이유를 적었다.
 

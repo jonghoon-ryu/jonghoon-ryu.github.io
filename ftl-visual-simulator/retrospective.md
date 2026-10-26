@@ -76,7 +76,7 @@ MQSim 은 시계를 1 ns 씩 똑딱이며 돌리지 않는다. **알람 목록**
     - 새 기능 : Cost-Benefit GC, TRIM, `Unmapped_Reads_Return_Zeros` — [6절](/ftl-visual-simulator/reference/code-change/upstream-diff/)
     - 시뮬레이터를 위한 변경 — [7절](/ftl-visual-simulator/reference/code-change/upstream-diff/)
     - 화면에 다 보이도록 block 수를 줄인 데모 규모 튜닝 — [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/)
-    - 이 과정에서 원본의 버그 30개도 발견해서 수정 — [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)
+    - 이 과정에서 원본의 버그 31개도 발견해서 수정 — [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/)
 
 ### 10/11 이후 (~10/23)
 

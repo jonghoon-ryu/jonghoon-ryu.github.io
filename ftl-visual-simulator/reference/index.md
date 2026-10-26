@@ -17,7 +17,7 @@ permalink: /ftl-visual-simulator/reference/
   - [튜토리얼](/ftl-visual-simulator/reference/mqsim-code-analysis/tutorial/) — `./MQSim` 실행부터 함수 호출을 따라가는 11단계, FTL 중심
   - [쓰기 전에 읽으면 페이지가 소비되는 이유](/ftl-visual-simulator/reference/mqsim-code-analysis/read-before-write/) — 매핑 없는 주소를 읽을 때 일어나는 일
 - [Code Change](/ftl-visual-simulator/reference/code-change/) — 처음 가져온 원본과 지금 엔진의 모든 차이
-  - [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) — 원본에서 찾아 고친 버그 30개
+  - [버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) — 원본에서 찾아 고친 버그 31개
   - [튜닝된 코드](/ftl-visual-simulator/reference/code-change/tweaked-code/) — 버그는 아니지만 화면 규모에 맞게 일부러 바꾼 곳
   - [원본 MQSim 대비 변경 사항](/ftl-visual-simulator/reference/code-change/upstream-diff/) — 종류별로 정리한 전체 비교
 - [Evaluation Board](/ftl-visual-simulator/reference/evaluation-board/) — 실제 평가 보드에서 FTL 을 돌려 보는 방법 논의

@@ -26,7 +26,7 @@ table.plan-calendar th {
 
 # 버그 목록표
 
-[버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **30개** — 전부 수정해서 유지 중이다.
+[버그 목록](/ftl-visual-simulator/reference/code-change/bug-list/) 하위 문서들에 흩어져 있는 버그를 한 번에 훑어볼 수 있게 정리한 표. 지금까지 이 프로젝트에서 실제 MQSim 원본 코드에서 찾아낸 버그는 총 **31개** — 전부 수정해서 유지 중이다.
 
 <div style="margin-top: 60px;"></div>
 
@@ -293,6 +293,14 @@ table.plan-calendar th {
   <td>Ryu 의 "OP 대신 GC 임계값으로 조절하면?" 질문에 OP × 임계값을 측정하다가, OP 0% + 임계값 50% 만 멈추는 이유를 추적 (2026-10-11)</td>
   <td>예 (네이티브도 같은 지점에서 멈춤)</td>
 </tr>
+<tr>
+  <td>31</td>
+  <td>DRAM 캐시가 흡수한 flash 트랜잭션(캐시에만 쓴 쓰기, 캐시에서 전부 읽힌 읽기)을 목록에서 빼기만 하고 <code>delete</code> 하지 않음 — 실행마다 메모리 누수 (기본 설정 약 1.6 MB, 256 MB 캐시면 약 380 MB)</td>
+  <td><code>ssd/Data_Cache_Manager_Flash_Advanced.cpp</code> (<code>process_new_user_request</code>, <code>write_to_destage_buffer</code>)</td>
+  <td>메모리 누수</td>
+  <td>최종 점검에서 <code>engine/tests/cache/claims.mts</code> 가 256 MB 캐시('old') 로 12번째 실행에서 <code>CppException</code> 으로 죽어서 — 실행마다 WASM 힙이 약 380 MB 씩 늘어 4 GB 한계에 닿음, LeakSanitizer 로 위치 확인 (2026-10-26)</td>
+  <td>예 (한 모듈·프로세스에서 여러 번 실행할 때 누적)</td>
+</tr>
 </table>
 </div>
 
@@ -316,6 +324,7 @@ table.plan-calendar th {
 <tr><td>로직(조용한 정지/크래시 사슬)</td><td>8개(#21-28)</td><td>#14-17 처럼 하나를 고쳐야 다음이 드러나는 사슬 — #22-27은 실제 SSD 규모의 block 수에선 거의 안 드러나고, 이 프로젝트의 작은 데모 규모에서만 확률적으로 나타남</td></tr>
 <tr><td>로직(잃어버린 깨우기)</td><td>1개(#30)</td><td>#24 와 같은 "아무도 GC 를 다시 부르지 않음" 계열 — 이번에는 victim 이 될 block 이 굶은 사용자 쓰기 때문에 잠깐 '안전하지 않음' 이었던 순간에 마지막 확인이 지나감</td></tr>
 <tr><td>로직(비결정성)</td><td>1개(#29)</td><td>원본 CLI 는 프로세스당 한 번만 실행해서 힙 배치가 늘 같았음 — 한 프로세스에서 반복 실행하는 이 프로젝트의 비교 실험실·재시작이 처음 노출시킴. 쓰기가 빈 공간을 기다려야(캐시가 실제로 내보내야) 드러남</td></tr>
+<tr><td>메모리 누수</td><td>1개(#31)</td><td>트랜잭션은 PHY 가 flash 작업을 끝낼 때만 지워지는데, 캐시가 흡수한 트랜잭션은 PHY 에 가지 않음 — 원본 CLI 는 한 번 돌고 종료해서 OS 가 회수, 한 모듈에서 반복 실행하는 비교 실험실·재시작에서 누적</td></tr>
 </table>
 </div>
 
@@ -339,6 +348,7 @@ table.plan-calendar th {
 - **#27**: #25 를 고치면서 의심한 것을 4배 길이 실행에서 큐 길이를 직접 찍어 확인
 - **#30**: OP 0% 에서 기기가 멈추는 게 OP 탓인지 확인하려고 GC 임계값별로 돌려 보니 임계값 50% 에서만 멈춤 → 멈춘 순간 Chip 1 의 block 상태를 덤프해 "전부 invalid 인데 프로그램 진행 중" 인 block 을 발견 → 사용자 쓰기 하나하나의 할당·큐·발행·완료 시각을 추적해, 지워진 게 아니라 urgent 모드에서 약 0.47초 굶었다는 것을 확인. (중간에 디버그 출력을 넣는 스크립트가 GC 확인 줄을 두 번 넣는 실수를 해서 "출력만 넣어도 결과가 바뀐다" 는 잘못된 단서를 쫓기도 했음 — ASan/UBSan/Valgrind 모두 깨끗했고, 네이티브와 WASM 결과는 같았다.)
 - **#29**: Ryu 가 "flash 변화가 몰아서 온다" 고 지적해서 DRAM 캐시를 현실적인 크기(32 page)로 줄였더니, 같은 설정을 한 WASM 모듈에서 다시 돌릴 때마다 GC 횟수가 달라짐 — 새 모듈에서는 항상 같아서 힙 상태 의존을 의심, 포인터 키 컨테이너를 찾아 확인. 고친 뒤 3번 반복 + 새 모듈 2번이 모두 같음(<code>engine/tests/cache/determinism.mts</code>)
+- **#31**: 최종 점검으로 모든 테스트를 다시 돌리다가 <code>claims.mts</code> 만 <code>CppException</code> 으로 죽음 → 같은 설정을 새 모듈에서 돌리면 멀쩡해서 앞선 실행이 남긴 상태를 의심 → 실행마다 힙 크기를 찍어 보니 약 380 MB 씩 늘어 4 GB 에서 할당 실패 → 네이티브 빌드를 LeakSanitizer 로 돌려 누수의 99% 가 <code>segment_user_request</code> 가 만든 트랜잭션임을 확인. 고친 뒤 실행당 누수 1,666,075 → 13,475 byte, 모든 테스트 출력이 바이트 단위로 같음
 
 <div style="margin-top: 60px;"></div>
 
