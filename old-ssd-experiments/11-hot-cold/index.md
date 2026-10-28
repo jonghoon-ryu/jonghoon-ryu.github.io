@@ -241,4 +241,58 @@ WAF ~ 1.15   (177 counts whole steps, so between 0.86 and 1.43)
 채운 뒤에는 빈 곳이 숨긴 여유뿐이라 절벽이 거의 처음부터 온다. 그래서 4배 대신 2배 (240 GB) 로 steady 를 충분히 볼 수 있다. uniform 을 4배로 하면 약 3,100 IOPS (12.7 MB/s) 로 약 10시간이 걸린다.
 </div>
 
+### zoned:80/20:20/80, 먼저 채운 뒤 2배 (2026.10.28 09:28 – 16:33, 채우기 15분 + 410분)
+
+<div class="result" markdown="1">
+결과 폴더 `20261028-092826-cliff-span100-zoned_80_20_20_80-fill`. TRIM → 드라이브 전체를 128 KiB 순차로 채움 (154 MB/s, 13분) → SMART 'before' → 4 KiB 랜덤 쓰기 QD32, 쓰기의 80% 를 앞쪽 24 GB 에, 20% 를 나머지 96 GB 에, 총 240 GB.
+
+![zoned 80/20 을 채운 뒤 (2배) 와 TRIM 뒤 (4배), uniform 100% (TRIM 뒤, 4배)](/old-ssd-experiments/11-hot-cold/zoned-fill.png)
+
+```
+ 177 Wear_Leveling_Count                     169            188          +19
+ 241 Total_LBAs_Written              31629410071    32098291479   +468881408
+
+host writes (241):       240.1 GB
+erase count (177):  +19  ->  NAND writes ~ 2611 GB
+WAF ~ 10.88   (177 counts whole steps, so between 10.31 and 11.45)
+```
+</div>
+
+**예상과 반대다. 몰아 쓰기가 오히려 느리고, WAF 는 지금까지 본 가장 큰 값이다.** 평균 2,384 IOPS (9.8 MB/s), WAF 약 10.9 (10.3 – 11.5). TRIM 뒤 uniform 100% 의 끝 (3,171 IOPS, WAF 약 4.7) 보다 나쁘다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>쓴 양</th>
+<th>IOPS (10 GB 평균)</th>
+<th>일어난 일</th>
+</tr></thead><tbody>
+<tr><td>0 – 8 GB</td><td>약 37,000</td><td>채운 뒤 남은 빈 블록 (숨긴 여유) 을 다 쓸 때까지. TRIM 뒤에 보이던 80k 짜리 첫 몇 초 (SLC) 는 없다 : 채우기가 SLC 를 막 다 썼다</td></tr>
+<tr><td>10 – 20 GB</td><td>5,659</td><td>첫 단계 : GC 가 시작. 아직 순차로 채운 블록에서 무효 페이지를 모으는 중</td></tr>
+<tr><td>30 – 120 GB</td><td><strong>약 1,900 – 2,100</strong></td><td>바닥</td></tr>
+<tr><td>130 – 190 GB</td><td>2,106 → 2,606</td><td>천천히 회복</td></tr>
+<tr><td>200 – 240 GB</td><td>2,578 → 2,418</td><td>다시 조금 내려감 : 아직 steady 가 아니다</td></tr>
+</tbody></table></div>
+
+**절벽은 거의 처음부터 (약 8 GB)** 온다 : 절벽은 '쓴 양' 이 빈 블록을 다 쓰는 순간이라는 실험 10 의 결론 그대로다. 채운 드라이브에는 숨긴 여유밖에 없다.
+
+**왜 몰아 쓰기가 더 나쁜가 (가설) : 차가운 데이터가 여유를 붙잡는다.** 이 드라이브의 GC 가 '유효 페이지가 가장 적은 블록' 을 고르는 (greedy) 방식이고, 뜨거운 데이터와 차가운 데이터를 따로 모으지 않는다고 하자. 호스트가 쓰는 블록마다 두 가지가 섞인다. 뜨거운 페이지는 곧 무효가 되고, 차가운 페이지는 남는다. 그러면 '대부분 차가운' 블록이 생긴다. 이 블록에는 무효 페이지가 조금씩 (예를 들어 10 – 20%) 있지만, greedy 는 무효가 더 많은 블록을 고르니 이 블록은 오래 고르지 않는다. 그 무효 페이지만큼의 여유가 **갇혀서** 쓸 수 없다. 남은 적은 여유로 뜨거운 데이터를 돌리니, 고른 블록에도 유효 페이지가 많고 복사가 는다. 분석 모델 논문 (Desnoyers 2012) 도 '분리 없는 greedy 에서는 hot/cold 트래픽이 uniform 보다 WAF 가 높다' 고 보고한다. 지난 실험의 '몰리면 빠르다' 는 한 번도 쓰지 않은 LBA 가 여유로 쓰여서였다.
+
+**130 GB 부터의 회복 (가설) : GC 가 저절로 분리를 만든다.** GC 가 옮기는 유효 페이지는 대부분 차가운 페이지다. GC 가 옮긴 페이지를 호스트 쓰기와 다른 블록에 모은다면, 시간이 지나며 '차가운 페이지만 든 블록' 이 생긴다 : 갇혔던 여유가 조금씩 풀린다. 약 120 GB (드라이브 한 번) 를 쓴 뒤에야 시작된 것과 맞는다. 끝 무렵 다시 조금 내려가는 것은 차가운 96 GB 에 아직 덮어쓰기가 늘고 있기 때문일 수 있다 : 240 GB 에서 차가운 쪽은 48 GB (0.5배) 를 받아, 약 39% (1 − e<sup>−0.5</sup>) 만 한 번 이상 덮어썼다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>가설</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>H1 고르지 않으면 steady 가 빠르다</td><td><strong>아니다</strong> (이번 조건에서) : 끝 약 2,450 IOPS. 채운 uniform 결과가 나와야 정확히 비교된다</td></tr>
+<tr><td>H2 WAF 가 낮다</td><td><strong>아니다</strong> : 약 10.9. 채우지 않은 zoned (약 1.2) 와 uniform (약 4.7) 보다 높다</td></tr>
+<tr><td>H3 절벽이 늦게 온다</td><td><strong>아니다</strong> : 채운 드라이브에서는 약 8 GB 에서 곧바로</td></tr>
+</tbody></table></div>
+
+**배운 것 : '몰아 쓰면 WAF 가 낮다' 는 FTL 이 뜨거운 데이터와 차가운 데이터를 나눌 때의 이야기다.** 나누지 않는 FTL 에서는 차가운 데이터가 블록마다 섞여서 여유를 붙잡고, 오히려 uniform 보다 나쁠 수 있다. 실제 SSD 가 hot/cold 분리 (스트림, 나이별 블록 등) 에 공을 들이는 이유다. FTL 시뮬레이터의 GC 정책 비교에서도 같은 모양을 볼 수 있다.
+
+<div class="result" markdown="1">
+**다음** : `sudo ./lab.sh cliff 100 2 random fill` (약 6 – 7시간, 밤새 : zoned 가 6.8시간). 같은 조건 (채운 뒤 2배) 의 uniform. 이 결과가 나와야 H1 과 H2 를 확정할 수 있다. 위 가설대로라면 uniform 이 zoned 보다 빠르고, WAF 는 모델값 약 7.8 근처일 것이다.
+</div>
+
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/10-over-provisioning/' | relative_url }}">← 10. Over-provisioning</a><a href="{{ '/old-ssd-experiments/12-waf/' | relative_url }}">12. WAF (SMART) →</a></div>
