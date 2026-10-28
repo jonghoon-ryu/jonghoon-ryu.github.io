@@ -292,7 +292,59 @@ WAF ~ 10.88   (177 counts whole steps, so between 10.31 and 11.45)
 **배운 것 : '몰아 쓰면 WAF 가 낮다' 는 FTL 이 뜨거운 데이터와 차가운 데이터를 나눌 때의 이야기다.** 나누지 않는 FTL 에서는 차가운 데이터가 블록마다 섞여서 여유를 붙잡고, 오히려 uniform 보다 나쁠 수 있다. 실제 SSD 가 hot/cold 분리 (스트림, 나이별 블록 등) 에 공을 들이는 이유다. FTL 시뮬레이터의 GC 정책 비교에서도 같은 모양을 볼 수 있다.
 
 <div class="result" markdown="1">
-**다음** : `sudo ./lab.sh cliff 100 2 random fill` (약 6 – 7시간, 밤새 : zoned 가 6.8시간). 같은 조건 (채운 뒤 2배) 의 uniform. 이 결과가 나와야 H1 과 H2 를 확정할 수 있다. 위 가설대로라면 uniform 이 zoned 보다 빠르고, WAF 는 모델값 약 7.8 근처일 것이다.
+**다음** : 같은 조건 (먼저 채운 뒤) 의 uniform. 이 결과가 나와야 H1 과 H2 를 확정할 수 있다. 위 가설대로라면 uniform 이 zoned 보다 빠르고, WAF 는 모델값 약 7.8 근처일 것이다. 2배는 6 – 7시간이라 1배로 했다 (아래).
+</div>
+
+### uniform, 먼저 채운 뒤 1배 (2026.10.28 16:44 – 19:30, 채우기 13분 + 152분)
+
+<div class="result" markdown="1">
+결과 폴더 `20261028-164439-cliff-span100-fill`. 위 zoned 와 같은 순서 (TRIM → 순차로 채움 → SMART → 랜덤 쓰기) 에 분포만 고르게 (random), 총 120 GB. 밤새 컴퓨터를 켜 두지 않으려고 2배 대신 1배 : 쓴 양이 같은 곳끼리 비교한다.
+
+![먼저 채운 뒤 : zoned 80/20 (2배) 와 uniform (1배)](/old-ssd-experiments/11-hot-cold/fill-compare.png)
+
+```
+ 241 Total_LBAs_Written              32332732951    32567173655   +234440704
+
+host writes (241):       120.0 GB
+erase count (177):  +8  ->  NAND writes ~ 1100 GB
+WAF ~ 9.16   (177 counts whole steps, so between 8.02 and 10.31)
+```
+</div>
+
+**가설대로 uniform 이 빠르다.** 평균 3,211 IOPS (13.2 MB/s), 같은 쓴 양에서 zoned 의 약 1.5배.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>쓴 양</th>
+<th>uniform</th>
+<th>zoned 80/20</th>
+<th>uniform / zoned</th>
+</tr></thead><tbody>
+<tr><td>0 – 8 GB</td><td>약 37,000</td><td>약 37,000</td><td>같다 (빈 블록)</td></tr>
+<tr><td>10 – 20 GB</td><td>3,017</td><td><strong>5,659</strong></td><td>0.53</td></tr>
+<tr><td>30 – 40 GB</td><td>3,181</td><td>1,860</td><td>1.7</td></tr>
+<tr><td>60 – 70 GB</td><td>3,043</td><td>2,092</td><td>1.5</td></tr>
+<tr><td>110 – 120 GB</td><td>2,778</td><td>1,962</td><td>1.4</td></tr>
+</tbody></table></div>
+
+**WAF (177) 는 약 9.2 (8.0 – 10.3)**, zoned 의 약 10.9 (240 GB 전체) 보다 낮다. 177 이 +8 만 올라 눈금이 거칠지만, 모델값 약 7.8 보다 조금 높은 쪽이다. uniform 도 끝까지 조금씩 내려가니 (3,200 → 2,740) 아직 완전한 steady 는 아니다.
+
+**덤 : zoned 의 10 – 22 GB 짧은 언덕 (5,700) 이 가설을 받쳐 준다.** 채우기는 순차였으니, 뜨거운 24 GB 의 LBA 는 처음에 **자기들끼리 같은 블록에** 들어 있다 : 우연히 hot/cold 가 완벽하게 나뉜 상태다. 이 블록들은 덮어쓰기로 금방 거의 다 무효가 되어 GC 가 싸다 : 그래서 uniform 보다 빠르다. 그런데 새로 쓰는 블록에는 뜨거운 것 80% 와 차가운 것 20% 가 섞인다. 뜨거운 24 GB 를 거의 한 번 덮어쓸 무렵 (약 22 GB) 처음의 분리가 다 사라지고, 그때부터 uniform 보다 느려진다. **분리되어 있을 때는 몰아 쓰기가 빠르고, 섞이면 느리다** 를 한 실행 안에서 둘 다 본 셈이다.
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>가설</th>
+<th>결과 (먼저 채운 뒤)</th>
+</tr></thead><tbody>
+<tr><td>H1 고르지 않으면 steady 가 빠르다</td><td><strong>아니다</strong> : zoned 가 uniform 의 약 0.7배 (30 – 120 GB)</td></tr>
+<tr><td>H2 WAF 가 낮다</td><td><strong>아니다</strong> : zoned 약 10.9, uniform 약 9.2</td></tr>
+<tr><td>H3 절벽이 늦게 온다</td><td><strong>아니다</strong> : 둘 다 약 8 GB 에서</td></tr>
+</tbody></table></div>
+
+**실험 11 결론 : 이 드라이브는 뜨거운 데이터와 차가운 데이터를 나누지 않는 것으로 보인다.** 몰아 쓰기가 이득이 되는 것은 (1) 한 번도 쓰지 않은 LBA 가 여유로 남아 있거나 (TRIM 뒤 zoned), (2) 데이터가 우연히 나뉘어 놓여 있을 때 (채운 직후의 언덕) 뿐이었다. 섞인 뒤에는 차가운 데이터가 여유를 붙잡아 uniform 보다 느리다.
+
+<div class="result" markdown="1">
+**다음에 해 볼 수 있는 것 (선택)** : uniform 의 두 번째 120 GB 를 TRIM · 채우기 없이 이어서 쓰는 옵션을 `lab.sh` 에 넣으면, 하루 걸러 나누어 2배까지 볼 수 있다 (실험 9 : 쉬는 동안에는 SLC 만 비워진다). 아니면 실험 11 은 여기서 끝내고 실험 13 (읽기 · 쓰기 섞기) 으로.
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/10-over-provisioning/' | relative_url }}">← 10. Over-provisioning</a><a href="{{ '/old-ssd-experiments/12-waf/' | relative_url }}">12. WAF (SMART) →</a></div>
