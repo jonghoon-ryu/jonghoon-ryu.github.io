@@ -71,7 +71,7 @@ table.t code { font-size:0.82rem; }
 <tr><td>10</td><td><a href="/old-ssd-experiments/10-over-provisioning/">Over-provisioning</a></td><td>덜 쓰면 steady state 가 몇 배 빨라지나</td><td>예</td><td>밤새 × 2–4</td></tr>
 <tr><td>11</td><td><a href="/old-ssd-experiments/11-hot-cold/">뜨거운 데이터</a></td><td>쓰기가 일부에 몰리면 WAF 가 낮아지나</td><td>예</td><td>밤새 × 1–2</td></tr>
 <tr><td>12</td><td><a href="/old-ssd-experiments/12-waf/">WAF (SMART)</a></td><td>드라이브가 센 값으로 WAF 추정 : 순차 vs 랜덤</td><td>예</td><td>2시간 + 앞의 기록</td></tr>
-<tr><td>13</td><td><a href="/old-ssd-experiments/13-interference/">읽기 · 쓰기 간섭</a></td><td>쓰기가 돌 때 읽기의 꼬리 지연</td><td>예</td><td>40분</td></tr>
+<tr><td>13</td><td><a href="/old-ssd-experiments/13-interference/">읽기 · 쓰기 간섭</a></td><td>쓰기가 돌 때 읽기의 꼬리 지연</td><td>예</td><td>30분</td></tr>
 <tr><td>14</td><td><a href="/old-ssd-experiments/14-secure-erase/">Secure Erase</a></td><td>드라이브가 스스로 지우는 시간, FOB 로 돌아오나</td><td>예</td><td>1시간</td></tr>
 <tr><td>15</td><td><a href="/old-ssd-experiments/15-read-disturb/">Read disturb</a></td><td>같은 곳을 수억 번 읽으면</td><td>예</td><td>밤새</td></tr>
 <tr><td>16</td><td><a href="/old-ssd-experiments/16-retention/">Retention</a></td><td>전원 없이 몇 주 둔 데이터 (통제된 실험 1)</td><td>예</td><td>2–4주 기다림</td></tr>
@@ -130,7 +130,8 @@ table.t code { font-size:0.82rem; }
 <tr><td>10 Over-provisioning</td><td>span 80% · span 100% 를 4배 (480 GB) 로 <strong>끝</strong> (2026.10.23) : 절벽은 같은 자리 (약 128 GB). span 100% 는 약 350 GB 에서 한 번 더 떨어져 약 3,130 IOPS, span 80% 는 약 6,350 : 약 2배 (모델 3.6배). 177 도 +13 대 +7 로 약 2배. <strong>span 50%, 4배</strong> (2026.10.25, 102분) : 절벽은 또 약 128 GB, steady 약 15,600 IOPS (span 100% 의 4.9배), WAF (177) 약 1.2 로 모델 (1.3) 과 맞음. <a href="/old-ssd-experiments/10-over-provisioning/">결과</a></td></tr>
 <tr><td>12 WAF (SMART)</td><td>순차 쓰기 <strong>끝</strong> (2026.10.25, 65분) : 600 GB 를 쓰는 동안 177 +5 → <strong>WAF ≈ 1.14</strong> (0.92 – 1.37). 속도는 꽉 찬 뒤에도 약 151 MB/s 로 평평 (절벽 없음). 177 은 제대로 센다 : 실험 10 의 '2.4배 어긋남' 은 'NAND 150 MB/s' 가정 탓이었고, GC 중의 NAND 쓰기는 약 60 MB/s.  <a href="/old-ssd-experiments/12-waf/">결과</a></td></tr>
 <tr><td>11 뜨거운 데이터</td><td>zipf:1.2, 4배 <strong>끝</strong> (2026.10.25, 33분) : 절벽 없음, 63k → 52k IOPS (uniform 끝의 약 16배), WAF (177) 약 0.57 : 쓰기의 73% 가 1 MB 에 몰려 캐시가 덮어쓰기를 흡수. GC 시험으로는 너무 몰림. <strong>zoned 80/20, 4배</strong> (139분) : 절벽은 또 약 128 GB, 그 뒤 약 15,500 에서 끝 6,750 까지 계속 내려감 : 차가운 96 GB 가 아직 채워지는 중 (480 GB 에서 63%), 한 번도 쓰지 않은 곳이 여유로 쓰인다. <strong>zoned, 먼저 채운 뒤 2배</strong> (2026.10.28, 6.8시간) : 예상과 반대. 절벽은 약 8 GB 에서 곧바로, 바닥 약 1,900 → 끝 약 2,450 IOPS, WAF (177) 약 10.9 : 분리 없는 greedy GC 에서는 차가운 데이터가 여유를 붙잡아 uniform 보다 나쁠 수 있다 (가설). <strong>uniform, 먼저 채운 뒤 1배</strong> (2.5시간) : 약 3,200 → 2,740 IOPS (같은 쓴 양에서 zoned 의 약 1.5배), WAF 약 9.2 : 이 드라이브는 hot/cold 를 나누지 않는 것으로 보인다. <a href="/old-ssd-experiments/11-hot-cold/">결과</a></td></tr>
-<tr><td>13 – 19</td><td>아직</td></tr>
+<tr><td>13 읽기 · 쓰기 간섭</td><td><strong>끝</strong> (2026.11.01, 31분) : 4 KiB 읽기 (QD1) 평균 124 µs → 랜덤 4 KiB 쓰기 QD32 와 함께 4.3 ms, <strong>1 MiB 순차 쓰기 QD8 과 함께 207 ms</strong> (99.9% 684 ms, 5 IOPS). 예상과 반대로 순차가 약 50배 나쁘다 : 읽기는 드라이브 줄에 앞서 쌓인 쓰기를 다 기다리고 (읽기 평균 ≈ 쓰기 평균), 기다림 = 쌓인 바이트 ÷ 쓰기 속도 (128 KiB 대 8 MiB). <a href="/old-ssd-experiments/13-interference/">결과</a></td></tr>
+<tr><td>14 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 
 <div class="warn" markdown="1">
