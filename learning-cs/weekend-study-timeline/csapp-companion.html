@@ -1,0 +1,1119 @@
+---
+layout: default
+title: CS:APP Companion
+permalink: /learning-cs/weekend-study-timeline/csapp-companion/
+---
+{% raw %}
+<style>
+.cc table{display:block;overflow-x:auto;border-collapse:collapse;font-size:14px}
+.cc th,.cc td{padding:6px 9px;border:1px solid #d8dee6;vertical-align:top}
+.cc blockquote{margin:14px 0;padding:8px 14px;background:#eef3f6;border-left:3px solid #0f6b78}
+.cc .callout{display:block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#0f6b78}
+</style>
+<div class="cc">
+<h1>🧭 CS:APP Companion: Reading Computer Systems: A Programmer&#x27;s Perspective with This Library</h1>
+
+
+<blockquote>
+<p><span class="callout note">Note</span> <strong>What this is:</strong>
+a map from every chapter and lab of Bryant and O’Hallaron’s <em>Computer
+Systems: A Programmer’s Perspective</em> (CS:APP, 3rd edition, 2015) to
+the chapters of this library that prepare for it, run alongside it, or
+go further. It contains no material from the book: section topics are
+named in our own words, so keep the book open beside this page.
+<strong>How to use it:</strong> find the CS:APP chapter you are about to
+read, skim the <em>before</em> column, read the book with the
+<em>alongside</em> chapters open, then do the lab. Links open the
+library’s chapters in this reader; links marked ↗ open a separate
+page.</p>
+</blockquote>
+<blockquote>
+<p><span class="callout tip">Tip</span> <strong>Three things before you
+start.</strong> (1) Prefer the North American edition: the practice
+problems of the Global Edition were rewritten by another publisher and
+are known to contain many errors. (2) The labs are the heart of the
+course. CMU publishes self-study versions of all of them, with handouts
+and autograders, on the book’s site (csapp.cs.cmu.edu, <em>Labs</em>),
+and the CMU 15-213 lectures that follow the book are online. (3) Do each
+chapter’s practice problems before looking at their solutions at the end
+of the chapter.</p>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th>Legend</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>🟢</td>
+<td>Read before the CS:APP chapter</td>
+</tr>
+<tr class="even">
+<td>📖</td>
+<td>Read alongside it</td>
+</tr>
+<tr class="odd">
+<td>🔵</td>
+<td>Goes further than the book; after it, or when curious</td>
+</tr>
+<tr class="even">
+<td>🟣</td>
+<td>The same idea on another machine (Arm), for comparison</td>
+</tr>
+<tr class="odd">
+<td>🧪</td>
+<td>Lab</td>
+</tr>
+</tbody>
+</table>
+<h2 id="-the-map-at-a-glance">🗺 The map at a glance</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>CS:APP chapter</th>
+<th>🟢 Before</th>
+<th>📖 Alongside</th>
+<th>🧪 Lab</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1 A Tour of Computer Systems</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T1" target="_blank" rel="noopener">T1</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T3" target="_blank" rel="noopener">T3</a> Steps 1–8</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O5" target="_blank" rel="noopener">O5</a> (Amdahl’s law)</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>2 Representing and Manipulating Information</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-15" target="_blank" rel="noopener">Ch. 6</a></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X5" target="_blank" rel="noopener">X5</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-51" target="_blank" rel="noopener">Ch. 24</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X14" target="_blank" rel="noopener">X14</a> (IEEE 754)</td>
+<td>Data Lab</td>
+</tr>
+<tr class="odd">
+<td>3 Machine-Level Representation of Programs</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X3" target="_blank" rel="noopener">X3</a>–<a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X11" target="_blank" rel="noopener">X11</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X14" target="_blank" rel="noopener">X14</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a> (gdb)</td>
+<td>Bomb Lab, Attack Lab</td>
+</tr>
+<tr class="even">
+<td>4 Processor Architecture</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a>–<a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X9" target="_blank" rel="noopener">X9</a></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X17" target="_blank" rel="noopener">X17</a></td>
+<td>Architecture Lab</td>
+</tr>
+<tr class="odd">
+<td>5 Optimizing Program Performance</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X7" target="_blank" rel="noopener">X7</a></td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X14" target="_blank" rel="noopener">X14</a></td>
+<td>(Architecture Lab, Part C)</td>
+</tr>
+<tr class="even">
+<td>6 The Memory Hierarchy</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S1" target="_blank" rel="noopener">How an SSD Works</a> Parts 1–2</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-53" target="_blank" rel="noopener">Ch. 25</a></td>
+<td>Cache Lab</td>
+</tr>
+<tr class="odd">
+<td>7 Linking</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-22" target="_blank" rel="noopener">Ch. 10</a></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X11" target="_blank" rel="noopener">X11</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E19" target="_blank" rel="noopener">ELF from the
+Inside ↗</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a></td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>8 Exceptional Control Flow</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O1" target="_blank" rel="noopener">Processes
+primer ↗</a></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O13" target="_blank" rel="noopener">O13</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O7" target="_blank" rel="noopener">O7</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-50" target="_blank" rel="noopener">Ch. 23</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X13" target="_blank" rel="noopener">X13</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X16" target="_blank" rel="noopener">X16</a></td>
+<td>Shell Lab</td>
+</tr>
+<tr class="odd">
+<td>9 Virtual Memory</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-6" target="_blank" rel="noopener">Ch. 3</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-48" target="_blank" rel="noopener">Ch. 21</a></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O20" target="_blank" rel="noopener">O20</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X16" target="_blank" rel="noopener">X16</a></td>
+<td>Malloc Lab</td>
+</tr>
+<tr class="even">
+<td>10 System-Level I/O</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S14" target="_blank" rel="noopener">S14</a> Steps 1–2</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S18" target="_blank" rel="noopener">S18</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O22" target="_blank" rel="noopener">O22</a> Step 4 (short
+counts), <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-F1" target="_blank" rel="noopener">How
+File Systems Work ↗</a></td>
+<td>(Shell and Proxy Labs)</td>
+</tr>
+<tr class="odd">
+<td>11 Network Programming</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O17" target="_blank" rel="noopener">O17</a></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O22" target="_blank" rel="noopener">O22</a></td>
+<td>Proxy Lab</td>
+</tr>
+<tr class="even">
+<td>12 Concurrent Programming</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O3" target="_blank" rel="noopener">Spinlocks
+primer ↗</a></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O22" target="_blank" rel="noopener">O22</a> Steps 7–8, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-96" target="_blank" rel="noopener">Ch. 40</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O9" target="_blank" rel="noopener">O9</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O11" target="_blank" rel="noopener">O11</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O15" target="_blank" rel="noopener">O15</a>,
+<a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O17" target="_blank" rel="noopener">O17</a></td>
+<td>Proxy Lab</td>
+</tr>
+</tbody>
+</table>
+<h2 id="-how-to-study-one-csapp-chapter">✅ How to study one CS:APP
+chapter</h2>
+<ol type="1">
+<li><strong>Before:</strong> read the 🟢 chapters, or only their
+summaries and cheat sheets if you know the topic.</li>
+<li><strong>Read the book</strong> one section at a time, with the 📖
+chapters open. Do every practice problem on paper first.</li>
+<li><strong>Run it.</strong> Type the book’s small examples, compile
+them with <code>gcc -Og -S</code>, and compare your <code>.s</code> file
+with the book’s listing. GCC 13 often produces different code from the
+book’s GCC 4.8; working out why is excellent practice. <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T3" target="_blank" rel="noopener">T3</a> explains the options and <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a>,
+Step 9 the two assembly syntaxes.</li>
+<li><strong>Lab.</strong> Start it as soon as the chapter’s core
+sections are read; it will send you back to the book.</li>
+<li><strong>Further:</strong> the 🔵 chapters, once the lab is
+done.</li>
+</ol>
+<blockquote>
+<p><span class="callout important">Important</span>
+<strong>Syntax.</strong> CS:APP, the <strong>x86-64</strong> tab and the
+fold-out listings of the <strong>C++ course</strong> all use
+<strong>AT&amp;T syntax</strong> (<code>movq %rsp, %rbp</code>, source
+first), which is also what GCC, <code>objdump -d</code> and GDB print by
+default. Intel’s manuals and some tools use <strong>Intel
+syntax</strong> (<code>mov rbp, rsp</code>, destination first); <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a>, Step 9 shows both side by side, and
+<code>objdump -d -M intel</code> or GDB’s
+<code>set disassembly-flavor intel</code> switch to it.</p>
+</blockquote>
+<h2 id="chapter-1--a-tour-of-computer-systems">Chapter 1 — A Tour of
+Computer Systems</h2>
+<p><strong>The book:</strong> one <code>hello</code> program followed
+from source text to running process: the compilation system, the
+hardware that runs it, caches, the operating system’s abstractions
+(processes, virtual memory, files), networks, and Amdahl’s law.
+Everything here returns in later chapters, so read it quickly.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Source to executable: preprocessor, compiler, assembler, linker</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a> (the four stages from <code>.c</code> to
+executable), <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T3" target="_blank" rel="noopener">T3</a> Steps 1–8 (the driver)</td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>The shell and running programs</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T1" target="_blank" rel="noopener">T1</a></td>
+<td>🟢</td>
+</tr>
+<tr class="odd">
+<td>Processes, threads, context switches</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O1" target="_blank" rel="noopener">Processes,
+Threads, Jobs and Tasks ↗</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Storage devices in the hierarchy</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S1" target="_blank" rel="noopener">How an SSD Works</a></td>
+<td>🔵</td>
+</tr>
+<tr class="odd">
+<td>Amdahl’s law, concurrency versus parallelism</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O5" target="_blank" rel="noopener">O5</a> (speed-up curves measured on 20 hardware
+threads)</td>
+<td>🔵</td>
+</tr>
+</tbody>
+</table>
+<h2 id="chapter-2--representing-and-manipulating-information">Chapter 2
+— Representing and Manipulating Information</h2>
+<p><strong>The book:</strong> bits, bytes, hexadecimal and byte order;
+unsigned and two’s-complement integers and the conversions between them;
+integer arithmetic, overflow, and multiplication and division by shifts;
+IEEE 754 floating point and rounding.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hex, sizes, byte order</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a> (its first steps)</td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Integer types, limits, overflow, bitwise operators</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-15" target="_blank" rel="noopener">Ch. 6</a></td>
+<td>🟢</td>
+</tr>
+<tr class="odd">
+<td>Signed/unsigned conversions, the casts that cause them</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-51" target="_blank" rel="noopener">Ch. 24</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Arithmetic and the flags, shifts, division by a constant as
+multiplication</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X5" target="_blank" rel="noopener">X5</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>IEEE 754 bit by bit, rounding, NaN</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X14" target="_blank" rel="noopener">X14</a> (IEEE 754)</td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Integer overflow as a security bug</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-117" target="_blank" rel="noopener">Ch. 49</a> (CERT integer rules)</td>
+<td>🔵</td>
+</tr>
+<tr class="odd">
+<td>The same arithmetic on Arm</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-R2" target="_blank" rel="noopener">R2</a></td>
+<td>🟣</td>
+</tr>
+</tbody>
+</table>
+<p>🧪 <strong>Data Lab.</strong> Bit puzzles written with a small set of
+operators and no control flow (for example, absolute value or “is this a
+power of two” without <code>if</code>). Helps most: <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-15" target="_blank" rel="noopener">Ch.
+6</a>’s bitwise steps and <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X5" target="_blank" rel="noopener">X5</a>’s shifts.
+<em>Tip:</em> write each answer as a truth table for the sign bit first;
+most puzzles are about how the sign behaves.</p>
+<h2 id="chapter-3--machine-level-representation-of-programs">Chapter 3 —
+Machine-Level Representation of Programs</h2>
+<p><strong>The book:</strong> the chapter the course is built around.
+x86-64 assembly as GCC produces it: data movement and addressing,
+arithmetic, condition codes and control flow, procedures and the stack,
+arrays and structs, pointers in machine code, GDB, buffer overflows and
+their defences, and floating-point code. The <strong>x86-64 tab was
+written to accompany it</strong>: X1–X10 cover the same ground as the
+book’s Sections 3.1–3.7, in the same syntax, with every example run on a
+current CPU.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Program encodings, reading <code>.s</code> files,
+<code>objdump</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a></td>
+<td>🟢</td>
+</tr>
+<tr class="even">
+<td>Registers, operand forms, <code>mov</code>, <code>lea</code>,
+<code>push</code>/<code>pop</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X3" target="_blank" rel="noopener">X3</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Arithmetic and logic, condition codes</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X5" target="_blank" rel="noopener">X5</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td><code>cmp</code>/<code>test</code>, jumps, <code>cmov</code>, loops,
+<code>switch</code> and jump tables</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X7" target="_blank" rel="noopener">X7</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td><code>call</code>/<code>ret</code>, the calling convention, stack
+frames, recursion</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X9" target="_blank" rel="noopener">X9</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Arrays, structs, alignment, unions</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X11" target="_blank" rel="noopener">X11</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-53" target="_blank" rel="noopener">Ch. 25</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-51" target="_blank" rel="noopener">Ch. 24</a> (unions)</td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Pointers and function pointers in machine code</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-6" target="_blank" rel="noopener">Ch. 3</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-17" target="_blank" rel="noopener">Ch. 7</a></td>
+<td>🟢</td>
+</tr>
+<tr class="even">
+<td>GDB</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a> Steps 7–8 and Part IV</td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Buffer overflows, stack protector, ASLR, non-executable stack</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-117" target="_blank" rel="noopener">Ch. 49</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a>
+(AddressSanitizer), <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E19" target="_blank" rel="noopener">ELF from the
+Inside ↗</a> (PIE and ASLR)</td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Floating-point code, SSE/AVX registers</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X14" target="_blank" rel="noopener">X14</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>C++ from below: references, <code>this</code>, virtual calls</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X9" target="_blank" rel="noopener">X9</a> Step 13, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-59" target="_blank" rel="noopener">Ch. 26</a></td>
+<td>🔵</td>
+</tr>
+<tr class="even">
+<td>The same chapter on Arm</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-R2" target="_blank" rel="noopener">R2</a>–<a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-R8" target="_blank" rel="noopener">R8</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-A1" target="_blank" rel="noopener">A1</a></td>
+<td>🟣</td>
+</tr>
+</tbody>
+</table>
+<p>🧪 <strong>Bomb Lab.</strong> A program with six “phases”; each wants
+a secret input, and the only way to find it is to read the machine code.
+Prepare with <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X7" target="_blank" rel="noopener">X7</a> (jump tables appear in one phase),
+<a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X9" target="_blank" rel="noopener">X9</a> and <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a>’s GDB steps.
+<em>Tip:</em> set a breakpoint on the function that “explodes” before
+anything else, and use <code>x/s</code> to look at strings the code
+compares with.</p>
+<p>🧪 <strong>Attack Lab.</strong> Exploit two programs with buffer
+overflows: first by injecting code, then with return-oriented
+programming against a non-executable stack. Prepare with <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X9" target="_blank" rel="noopener">X9</a> (where the return address lives), <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a> (instruction encoding, for writing bytes by hand)
+and <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-117" target="_blank" rel="noopener">Ch. 49</a> (why the defences exist). <em>Tip:</em>
+draw the stack frame of the vulnerable function, byte by byte, before
+writing any exploit string.</p>
+<h2 id="chapter-4--processor-architecture">Chapter 4 — Processor
+Architecture</h2>
+<p><strong>The book:</strong> a small instruction set, Y86-64, then a
+sequential processor, pipelining, hazards and forwarding, described in a
+hardware control language.</p>
+<p><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X17" target="_blank" rel="noopener">X17</a> is the library’s chapter for this one: the
+Y86-64 instruction set and its encodings, an assembler, a sequential
+processor printed stage by stage, and a five-stage pipeline in C++ with
+stalling, forwarding, the load/use hazard, branch prediction and the
+cost of <code>ret</code>, checked against the sequential processor with
+random programs. It describes the processors in C++ rather than the
+book’s HCL, so read the book for HCL and the hardware view, and X17 to
+run and trace the same ideas. Related: <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X7" target="_blank" rel="noopener">X7</a>’s
+branch-prediction measurement, and <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E2" target="_blank" rel="noopener">Inside the Arm
+Architecture ↗</a> for RISC versus CISC and instruction encodings.</p>
+<p>🧪 <strong>Architecture Lab.</strong> Extend the Y86-64 processor and
+optimise a copy loop on it. Prepare with <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X17" target="_blank" rel="noopener">X17</a>: its
+<em>Try it yourself</em> adds <code>iaddq</code>, the lab’s first task,
+to a sequential and a pipelined processor written in C++, and Step 10’s
+random-program test is a good way to check your own changes.</p>
+<h2 id="chapter-5--optimizing-program-performance">Chapter 5 —
+Optimizing Program Performance</h2>
+<p><strong>The book:</strong> what stops a compiler (aliasing, side
+effects), measuring in cycles per element, loop unrolling, multiple
+accumulators and reassociation, the limits set by latency and
+throughput, branch misprediction, and profiling.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Benchmarks the optimiser deletes, <code>-O0</code> versus
+<code>-O2</code>, the as-if rule</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a> (<code>-O0</code> versus
+<code>-O2</code>)</td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Branch prediction and <code>cmov</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X7" target="_blank" rel="noopener">X7</a> (about 10× on random data), <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Vectorised loops, float sums that need permission to reorder</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X14" target="_blank" rel="noopener">X14</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Profiling with callgrind</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Measuring CPU-bound work and threads</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O5" target="_blank" rel="noopener">O5</a></td>
+<td>🔵</td>
+</tr>
+</tbody>
+</table>
+<h2 id="chapter-6--the-memory-hierarchy">Chapter 6 — The Memory
+Hierarchy</h2>
+<p><strong>The book:</strong> storage technologies (SRAM, DRAM, disks
+and SSDs), locality, the hierarchy, cache organisation (sets, lines,
+tags, associativity), writing cache-friendly code, and the “memory
+mountain”.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SSDs: cells, pages, blocks, the flash translation layer</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S1" target="_blank" rel="noopener">How an SSD Works</a></td>
+<td>🔵</td>
+</tr>
+<tr class="even">
+<td>The L1/L2/L3/DRAM latency curve, rows versus columns, AoS versus
+SoA, cachegrind</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>False sharing</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a></td>
+<td>🔵</td>
+</tr>
+<tr class="even">
+<td>Object size, alignment and padding</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-53" target="_blank" rel="noopener">Ch. 25</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Containers and locality (<code>vector</code> versus node-based)</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-84" target="_blank" rel="noopener">Ch. 35</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a></td>
+<td>🔵</td>
+</tr>
+<tr class="even">
+<td>Caches and TCMs on a real-time core</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-R12" target="_blank" rel="noopener">R12</a></td>
+<td>🟣</td>
+</tr>
+</tbody>
+</table>
+<p>🧪 <strong>Cache Lab.</strong> Write a cache simulator that replays
+memory traces, then a matrix transpose with as few misses as possible.
+Prepare with the book’s Section 6.4 and <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a> (rows versus columns). <em>Tip:</em> for the transpose, work out
+on paper which elements of A and B map to the same set; most misses on
+the diagonal come from that.</p>
+<h2 id="chapter-7--linking">Chapter 7 — Linking</h2>
+<p><strong>The book:</strong> object files, symbols and symbol
+resolution, static libraries, relocation, executable files and loading,
+shared libraries and dynamic linking, position-independent code, library
+interpositioning.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Translation units, linkage, headers, ODR</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-22" target="_blank" rel="noopener">Ch. 10</a></td>
+<td>🟢</td>
+</tr>
+<tr class="even">
+<td>Sections, symbols, relocations, static versus dynamic linking, PLT
+and GOT, name mangling</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X11" target="_blank" rel="noopener">X11</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Every part of an ELF file, relocations computed by hand, the dynamic
+linker</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E19" target="_blank" rel="noopener">ELF from
+the Inside: x86-64 ↗</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td><code>nm</code>, <code>ldd</code>, <code>readelf</code>,
+libraries</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T3" target="_blank" rel="noopener">T3</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Static initialisation order</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-49" target="_blank" rel="noopener">Ch. 22</a></td>
+<td>🔵</td>
+</tr>
+<tr class="even">
+<td>Linking without an operating system: linker scripts, load and run
+addresses</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-R9" target="_blank" rel="noopener">R9</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E26" target="_blank" rel="noopener">Startup Code
+from Zero: Cortex-M ↗</a></td>
+<td>🟣</td>
+</tr>
+</tbody>
+</table>
+<h2 id="chapter-8--exceptional-control-flow">Chapter 8 — Exceptional
+Control Flow</h2>
+<p><strong>The book:</strong> exceptions (interrupts, traps, faults,
+aborts), processes, system calls and their errors,
+<code>fork</code>/<code>exec</code>/<code>wait</code>, signals and their
+handlers, nonlocal jumps.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Program, process and thread; <code>fork()</code> with real
+output</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O1" target="_blank" rel="noopener">Processes,
+Threads, Jobs and Tasks ↗</a></td>
+<td>🟢</td>
+</tr>
+<tr class="even">
+<td>Interrupts, system calls, user and kernel mode, page faults becoming
+signals, <code>EINTR</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O13" target="_blank" rel="noopener">O13</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>The <code>syscall</code> instruction, programs without libc</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X13" target="_blank" rel="noopener">X13</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Process states, zombies and orphans</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O7" target="_blank" rel="noopener">O7</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td><code>exit</code>, <code>atexit</code>, environment variables,
+signals in C++</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-50" target="_blank" rel="noopener">Ch. 23</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>CPU exceptions behind signals, a context switch</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X16" target="_blank" rel="noopener">X16</a></td>
+<td>🔵</td>
+</tr>
+<tr class="odd">
+<td>Exceptions and modes on Arm</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-R11" target="_blank" rel="noopener">R11</a></td>
+<td>🟣</td>
+</tr>
+</tbody>
+</table>
+<p>🧪 <strong>Shell Lab.</strong> Write a small Unix shell with job
+control: foreground and background jobs, <code>SIGCHLD</code>,
+<code>SIGINT</code>, <code>SIGTSTP</code>. Prepare with <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O7" target="_blank" rel="noopener">O7</a> (zombies) and <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-50" target="_blank" rel="noopener">Ch. 23</a>
+(signals). <em>Tip:</em> block <code>SIGCHLD</code> around adding a job
+to the job list; the race it prevents is the lab’s main lesson.</p>
+<h2 id="chapter-9--virtual-memory">Chapter 9 — Virtual Memory</h2>
+<p><strong>The book:</strong> address spaces, page tables and the TLB,
+multi-level page tables, the Core i7 and Linux memory systems, memory
+mapping (<code>mmap</code>, copy-on-write), dynamic memory allocation
+(implicit and explicit free lists, segregated fits), garbage collection,
+and memory bugs.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pointers, the heap, <code>new</code>/<code>delete</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-6" target="_blank" rel="noopener">Ch. 3</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-48" target="_blank" rel="noopener">Ch. 21</a></td>
+<td>🟢</td>
+</tr>
+<tr class="even">
+<td>Address spaces, page tables and the TLB, demand paging, the zero
+page, copy-on-write, <code>mmap</code>, how <code>malloc</code> uses
+<code>brk</code> and <code>mmap</code>, overcommit,
+<code>SIGSEGV</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O20" target="_blank" rel="noopener">O20</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Paging and page faults counted from user space</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X16" target="_blank" rel="noopener">X16</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O13" target="_blank" rel="noopener">O13</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td><code>mmap</code> versus <code>read</code>, the page cache</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-F1" target="_blank" rel="noopener">How File
+Systems Work ↗</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S18" target="_blank" rel="noopener">S18</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Page faults in a benchmark (P- versus E-cores)</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a></td>
+<td>🔵</td>
+</tr>
+<tr class="even">
+<td>Allocators, <code>std::pmr</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-84" target="_blank" rel="noopener">Ch. 35</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a></td>
+<td>🔵</td>
+</tr>
+<tr class="odd">
+<td><code>new</code> on bare metal (a bump allocator)</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E6" target="_blank" rel="noopener">E6 ↗</a></td>
+<td>🔵</td>
+</tr>
+<tr class="even">
+<td>Memory bugs and the tools that catch them</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a> (valgrind, ASan), <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-117" target="_blank" rel="noopener">Ch.
+49</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>MMU versus MPU</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E2" target="_blank" rel="noopener">Inside
+the Arm Architecture ↗</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-R12" target="_blank" rel="noopener">R12</a></td>
+<td>🟣</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O20" target="_blank" rel="noopener">O20</a> is this library’s virtual-memory chapter,
+written to go with this one: thirteen programs that show a process’s
+map, a virtual address turned into a physical frame, the page tables’
+own memory, the TLB measured, demand paging, the zero page,
+copy-on-write, major faults, <code>mmap</code> of a file, how glibc’s
+<code>malloc</code> uses <code>brk</code> and <code>mmap</code>,
+overcommit and <code>SIGSEGV</code>. Read its Steps 1–4 with the book’s
+9.1–9.6, Steps 6–10 with 9.7–9.8, and Step 11 just before the Malloc
+Lab.</p>
+<p>🧪 <strong>Malloc Lab.</strong> Write <code>malloc</code>,
+<code>free</code> and <code>realloc</code>, judged on both speed and
+memory use. Prepare with the book’s Section 9.9, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O20" target="_blank" rel="noopener">O20</a>
+Step 11, then <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-48" target="_blank" rel="noopener">Ch. 21</a>; <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E6" target="_blank" rel="noopener">E6 ↗</a> Step 30 shows the simplest bare-metal allocator to compare with. <em>Tip:</em> write a heap checker (every
+block’s header matches its footer, no two free blocks are adjacent,
+every free block is on the list) before optimising; <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-107" target="_blank" rel="noopener">Ch.
+45</a>’s <code>vector</code> internals show the same discipline.</p>
+<h2 id="chapter-10--system-level-io">Chapter 10 — System-Level I/O</h2>
+<p><strong>The book:</strong> Unix I/O, files and directories,
+<code>open</code>/<code>read</code>/<code>write</code>, short counts and
+robust I/O, file metadata, how descriptors are shared, I/O redirection,
+and standard I/O versus Unix I/O.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>File descriptors and the three kernel tables, device files</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S14" target="_blank" rel="noopener">S14</a> Steps 1–2</td>
+<td>🟢</td>
+</tr>
+<tr class="even">
+<td>System calls, <code>errno</code>, short reads, the page cache,
+<code>fsync</code>, <code>O_DIRECT</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S18" target="_blank" rel="noopener">S18</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Inodes, directories, offsets, sharing descriptors, saving a file
+safely</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-F1" target="_blank" rel="noopener">How File
+Systems Work ↗</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Redirection and pipes in the shell</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T1" target="_blank" rel="noopener">T1</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Streams versus system calls in C++</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-92" target="_blank" rel="noopener">Ch. 38</a></td>
+<td>🔵</td>
+</tr>
+<tr class="even">
+<td>Asynchronous I/O</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-S12" target="_blank" rel="noopener">io_uring
+from Zero ↗</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O19" target="_blank" rel="noopener">O19</a></td>
+<td>🔵</td>
+</tr>
+</tbody>
+</table>
+<h2 id="chapter-11--network-programming">Chapter 11 — Network
+Programming</h2>
+<p><strong>The book:</strong> the client–server model, IP addresses and
+DNS, the sockets interface, HTTP and a tiny web server.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Blocking and non-blocking sockets, an iterative server, thread per
+connection, <code>epoll</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O17" target="_blank" rel="noopener">O17</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Callbacks and event loops</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O19" target="_blank" rel="noopener">O19</a></td>
+<td>🔵</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O22" target="_blank" rel="noopener">O22</a> is the library’s network-programming
+chapter, written to go with this one: byte order,
+<code>getaddrinfo</code>, the socket calls, short counts and robust I/O,
+a tiny web server with static and dynamic content, the common errors,
+and a caching proxy. <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O17" target="_blank" rel="noopener">O17</a> then measures the same kind
+of servers with <code>select</code>, <code>poll</code> and
+<code>epoll</code>.</p>
+<h2 id="chapter-12--concurrent-programming">Chapter 12 — Concurrent
+Programming</h2>
+<p><strong>The book:</strong> concurrency with processes, with I/O
+multiplexing and with threads; shared variables, semaphores,
+producer–consumer and readers–writers, prethreading, thread safety and
+reentrancy, races and deadlocks, and parallel speed-up.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Library</th>
+<th>Kind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Races, spinlocks, mutexes, semaphores, producer–consumer</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O3" target="_blank" rel="noopener">Spinlocks,
+Mutexes and Semaphores ↗</a></td>
+<td>🟢</td>
+</tr>
+<tr class="even">
+<td>Threads, mutexes, condition variables, futures and atomics in
+C++</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-96" target="_blank" rel="noopener">Ch. 40</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Monitors and condition variables</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O9" target="_blank" rel="noopener">O9</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Deadlock</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O11" target="_blank" rel="noopener">O11</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Thread pools (the book’s prethreading)</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O15" target="_blank" rel="noopener">O15</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>I/O multiplexing with <code>select</code>, <code>poll</code> and
+<code>epoll</code></td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O17" target="_blank" rel="noopener">O17</a></td>
+<td>📖</td>
+</tr>
+<tr class="odd">
+<td>Speed-up and how many threads</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O5" target="_blank" rel="noopener">O5</a></td>
+<td>📖</td>
+</tr>
+<tr class="even">
+<td>Atomics and memory ordering in assembly</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X16" target="_blank" rel="noopener">X16</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-R13" target="_blank" rel="noopener">R13</a></td>
+<td>🔵</td>
+</tr>
+</tbody>
+</table>
+<p>🧪 <strong>Proxy Lab.</strong> A web proxy: sequential first, then
+concurrent, then with a cache shared between threads. Prepare with <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O22" target="_blank" rel="noopener">O22</a>, whose Step 8 is a small caching proxy of the
+same shape, then <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O17" target="_blank" rel="noopener">O17</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O15" target="_blank" rel="noopener">O15</a> and <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-96" target="_blank" rel="noopener">Ch. 40</a>. <em>Tip:</em> use the readers–writers pattern
+(or <code>std::shared_mutex</code> if you write it in C++) for the
+cache; most bugs are a reader and an evicting writer touching one
+entry.</p>
+<h2 id="-the-labs-at-a-glance">🧪 The labs at a glance</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Lab</th>
+<th>CS:APP</th>
+<th>Prepare with</th>
+<th>Hours (typical)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data Lab</td>
+<td>2</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-15" target="_blank" rel="noopener">Ch. 6</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X5" target="_blank" rel="noopener">X5</a></td>
+<td>10–15</td>
+</tr>
+<tr class="even">
+<td>Bomb Lab</td>
+<td>3.1–3.7</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X1" target="_blank" rel="noopener">X1</a>–<a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X9" target="_blank" rel="noopener">X9</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-T6" target="_blank" rel="noopener">T6</a></td>
+<td>15–20</td>
+</tr>
+<tr class="odd">
+<td>Attack Lab</td>
+<td>3.7–3.10</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X9" target="_blank" rel="noopener">X9</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-117" target="_blank" rel="noopener">Ch. 49</a></td>
+<td>10–15</td>
+</tr>
+<tr class="even">
+<td>Architecture Lab</td>
+<td>4–5</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-X17" target="_blank" rel="noopener">X17</a></td>
+<td>15–20</td>
+</tr>
+<tr class="odd">
+<td>Cache Lab</td>
+<td>6</td>
+<td><a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-perf1" target="_blank" rel="noopener">Performance C++
+↗</a></td>
+<td>10–15</td>
+</tr>
+<tr class="even">
+<td>Shell Lab</td>
+<td>8</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O7" target="_blank" rel="noopener">O7</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O13" target="_blank" rel="noopener">O13</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-50" target="_blank" rel="noopener">Ch. 23</a></td>
+<td>15–20</td>
+</tr>
+<tr class="odd">
+<td>Malloc Lab</td>
+<td>9</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O20" target="_blank" rel="noopener">O20</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-48" target="_blank" rel="noopener">Ch. 21</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-E6" target="_blank" rel="noopener">E6
+↗</a></td>
+<td>30–40</td>
+</tr>
+<tr class="even">
+<td>Proxy Lab</td>
+<td>10–12</td>
+<td><a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O22" target="_blank" rel="noopener">O22</a>, <a href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-O15" target="_blank" rel="noopener">O15</a>, <a
+href="https://claude.ai/artifact/BXE7vPD251jT5Xc3kc3BeS#doc-96" target="_blank" rel="noopener">Ch. 40</a></td>
+<td>20–25</td>
+</tr>
+</tbody>
+</table>
+<p>The hours are rough estimates for a reader working alone. The CMU
+self-study handouts include each lab’s writeup; the autograders run on
+Linux x86-64, so the same machine you use for this library works.</p>
+<h2 id="-a-pace-that-works">📅 A pace that works</h2>
+<p>About <strong>5–8 hours a week</strong> gives the whole book with its
+labs in roughly <strong>five to six months</strong>:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Weeks</th>
+<th>Read</th>
+<th>Lab</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1–2</td>
+<td>Ch. 1, Ch. 2</td>
+<td>Data Lab</td>
+</tr>
+<tr class="even">
+<td>3–6</td>
+<td>Ch. 3 (with X1–X12)</td>
+<td>Bomb Lab, then Attack Lab</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Ch. 4 (skim 4.1–4.3)</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>8–9</td>
+<td>Ch. 5</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>10–11</td>
+<td>Ch. 6</td>
+<td>Cache Lab</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>Ch. 7</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>13–15</td>
+<td>Ch. 8</td>
+<td>Shell Lab</td>
+</tr>
+<tr class="even">
+<td>16–19</td>
+<td>Ch. 9</td>
+<td>Malloc Lab</td>
+</tr>
+<tr class="odd">
+<td>20–23</td>
+<td>Ch. 10–12</td>
+<td>Proxy Lab</td>
+</tr>
+</tbody>
+</table>
+<h2 id="-references">📚 References</h2>
+<ul>
+<li>R. E. Bryant and D. R. O’Hallaron, <em>Computer Systems: A
+Programmer’s Perspective</em>, 3rd edition, Pearson, 2015. Book site
+with the self-study labs, errata and student resources:
+csapp.cs.cmu.edu.</li>
+<li>Carnegie Mellon University, 15-213/18-213 <em>Introduction to
+Computer Systems</em>: lecture slides and recorded lectures following
+the book.</li>
+<li>The chapters of this library linked above; each lists its own
+sources at its end.</li>
+</ul>
+
+</div>
+{% endraw %}

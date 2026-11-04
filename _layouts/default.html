@@ -19,7 +19,14 @@
       <nav class="sidebar">
         <h1 class="sidebar-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
         <ul class="sidebar-nav">
-          <li><a href="{{ '/learning-cs/weekend-study-timeline/' | relative_url }}">Weekend Study Timeline</a></li>
+          <li>
+            <details class="nav-group"{% if page.url contains '/learning-cs/weekend-study-timeline/' %} open{% endif %}>
+              <summary><a href="{{ '/learning-cs/weekend-study-timeline/' | relative_url }}">Weekend Study Timeline</a></summary>
+              <ul class="nav-subitems">
+                <li><a href="{{ '/learning-cs/weekend-study-timeline/csapp-companion/' | relative_url }}">CS:APP Companion</a></li>
+              </ul>
+            </details>
+          </li>
           <li>
             <details class="nav-group"{% if page.url contains '/learning-cs/open-problems/' %} open{% endif %}>
               <summary><a href="{{ '/learning-cs/open-problems/' | relative_url }}">Open Problems</a></summary>
