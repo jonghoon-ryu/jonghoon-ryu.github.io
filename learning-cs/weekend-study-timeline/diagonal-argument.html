@@ -29,6 +29,7 @@ permalink: /learning-cs/weekend-study-timeline/diagonal-argument/
 <tr><td>Are the real numbers the continuum?</td><td>They are the standard mathematical model of it. Other models exist.</td><td><a href="#same">8</a></td></tr>
 <tr><td>Are real numbers the same as points?</td><td>No. Matching them one to one is an assumption, and it needs a chosen origin and unit.</td><td><a href="#points">9</a></td></tr>
 <tr><td>How can unnamed numbers exist?</td><td>That depends on what "exist" means. The proof itself does not force them.</td><td><a href="#names">11</a></td></tr>
+<tr><td>What do others argue?</td><td>Three articles, with comments.</td><td><a href="#articles">15</a></td></tr>
 </table></div>
 
 <h2 id="size">1. What "how many" means for infinite sets</h2>
@@ -232,7 +233,25 @@ y differs from every x in its own position</code></pre>
 <details><summary>5. The Cantor set has size 𝔠 and length 0. Which of the three meanings of continuum does it satisfy?</summary><p>Only the size. It has gaps, so it is no continuum as a structure or as an idea.</p></details>
 <details><summary>6. Does the diagonal argument prove that a number with no name exists?</summary><p>No. It shows every list misses something, and the number it builds has a description in terms of that list. The further step needs the classical idea that all digit sequences exist.</p></details>
 
-<h2 id="sources">15. Sources</h2>
+<h2 id="articles">15. Three articles worth reading</h2>
+<p>These three pages started this tutorial. The comments are opinions from Claude, the AI that helped write this page, and you may well disagree. None of the three says the diagonal proof is wrong: Spector does not discuss it, and Lee uses it.</p>
+
+<h3><a href="https://www.themathpage.com/aCalc/apoint.htm">Lawrence Spector, "Is a line really composed of points?"</a></h3>
+<p><strong>What it says.</strong> A line is not made of points. Infinitely many zero-length points cannot add up to a positive length, and time cannot be made of instants, or nothing could move. He concludes that "Points exist potentially", like the pitches on a guitar string that exist only when played.</p>
+<p><strong>Where it is strong.</strong> It asks a question that many textbooks skip, and it stands in a tradition going back to Aristotle. It is right that "composed" means something unusual in set theory, since a line is not built from points the way a wall is built from bricks.</p>
+<p><strong>Where I disagree.</strong> The charge that the theory divides by 0 misses its target. Measure theory never adds up the points, as <a href="#zero">Section 10</a> shows. The motion argument is also weaker than it looks: calculus treats motion as a function of time, and velocity as a limit, so a moving thing needs no "motion within an instant". And "Calculus has no need for anything more" goes too far. Calculus needs something like completeness, because over the fractions alone x² − 2 goes from negative to positive without ever being 0. His picture is a fair philosophy of the line, but it is not yet a replacement theory.</p>
+
+<h3><a href="https://www.themathpage.com/aCalc/irrational-numbers.htm">Lawrence Spector, "Rational and irrational numbers"</a></h3>
+<p><strong>What it says.</strong> We know irrational numbers only through rational approximations. "The decimal for an irrational number is always inexact", and a decimal that never ends is "nothing but a thought". For such a decimal to count as a number at all, there must be a rule that computes each digit.</p>
+<p><strong>Where it is strong.</strong> It is a healthy reminder that nobody has ever written down an infinite decimal. Its demand for a rule is close to the constructive view of <a href="#names">Section 11</a>, and it comes close to the answer to "how can unnamed numbers exist?": on this view, they do not.</p>
+<p><strong>Where I disagree.</strong> It treats the decimal as if it were the number. A decimal is only one way of writing a number. √2 is known exactly: it is the positive solution of x² = 2, and the ratio of a square's diagonal to its side. What is inexact is a finite decimal for it. Also, the dividing line between rational and irrational is repetition, not pattern: 0.101001000100001… has an obvious pattern and is irrational.</p>
+
+<h3><a href="https://ptolemy.org/~eal/pnerd/blog/are-real-numbers-real">Edward A. Lee, "Are Real Numbers Real?"</a></h3>
+<p><strong>What it says.</strong> Lee reviews Gregory Chaitin's case against the reals: Borel's single number that encodes all knowledge, the limits on what any noisy channel can tell us, and Richard's paradox. He accepts these results, but rejects Chaitin's conclusion that the world is discrete. In his view that hypothesis cannot be falsified, so it is not science.</p>
+<p><strong>Where it is strong.</strong> This is the best of the three. It separates what we can know from what exists, and it does not claim more than it can show. It also takes the diagonal argument and the gap between countable languages and the uncountable continuum seriously.</p>
+<p><strong>Where I disagree.</strong> The test cuts both ways. If digital physics cannot be falsified, neither can the claim that physical reality is truly continuous, and Lee's own defence ends in a Platonic heaven and "a matter of faith". That is an honest ending, but it makes the two sides level, with neither one winning. His reading of Richard's paradox could also be sharper. I would say it shows that "definable" cannot be defined inside the same language, a precise result that holds for formal languages too, rather than a defect of written language.</p>
+
+<h2 id="sources">16. Sources</h2>
 <ul>
 <li>G. Cantor, "Über eine elementare Frage der Mannigfaltigkeitslehre" (1891); "Über eine Eigenschaft des Inbegriffes aller reellen algebraischen Zahlen" (1874)</li>
 <li>R. Dedekind, <em>Stetigkeit und irrationale Zahlen</em> (1872); English in <em>Essays on the Theory of Numbers</em></li>
@@ -240,8 +259,7 @@ y differs from every x in its own position</code></pre>
 <li>M. Sipser, <em>Introduction to the Theory of Computation</em>, Ch.4.2 and Ch.9.1</li>
 <li>E. Bishop, <em>Foundations of Constructive Analysis</em> (1967); A. Robinson, <em>Non-standard Analysis</em> (1966); J. L. Bell, <em>A Primer of Infinitesimal Analysis</em></li>
 <li>J. D. Hamkins, D. Linetsky, J. Reitz, "Pointwise definable models of set theory", <em>Journal of Symbolic Logic</em> (2013)</li>
-<li>L. Spector, <a href="https://www.themathpage.com/aCalc/apoint.htm">"Is a line really composed of points?"</a> and <a href="https://www.themathpage.com/aCalc/irrational-numbers.htm">"Rational and irrational numbers"</a></li>
-<li>E. A. Lee, <a href="https://ptolemy.org/~eal/pnerd/blog/are-real-numbers-real">"Are Real Numbers Real?"</a> (2017); G. Chaitin, "How Real are Real Numbers?" (2004)</li>
+<li>The three articles of <a href="#articles">Section 15</a>; G. Chaitin, "How Real are Real Numbers?" (2004)</li>
 </ul>
 </div>
 {% endraw %}
