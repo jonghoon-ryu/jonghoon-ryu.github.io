@@ -1,0 +1,243 @@
+---
+layout: default
+title: Do Real Numbers Exist?
+permalink: /learning-cs/weekend-study-timeline/real-numbers/
+---
+{% raw %}
+<style>
+.da .lede{color:#5d6763}
+.da .tw{overflow-x:auto;margin:16px 0}
+.da .tw table{display:table;width:100%;margin:0}
+#main_content .da td,#main_content .da th{font-size:15px;line-height:1.5}
+.da figure{margin:20px 0}
+#main_content .da figure svg{border:1px solid #dfe3dd;border-radius:8px}
+.da figcaption{font-size:14px;color:#5d6763;text-align:center;margin-top:6px}
+.da pre{overflow-x:auto}
+#main_content .da pre.out{border-left-color:#a6521c!important}
+.da .st{margin:16px 0;padding:10px 16px;background:#fff;border:1px solid #dfe3dd;border-left:3px solid #1f6f5c;border-radius:0 6px 6px 0}
+#main_content .da .st p{margin:0}
+.da .qed{float:right;color:#5d6763}
+.da details{margin:8px 0;padding:8px 12px;background:#fff;border:1px solid #dfe3dd;border-radius:6px}
+.da summary{cursor:pointer;font-weight:600;font-size:16px;line-height:1.5}
+#main_content .da details p{margin:8px 0 0;font-size:16px;line-height:1.6}
+</style>
+<div class="da">
+<h1>Do Real Numbers Exist?</h1>
+<p class="lede">How the real numbers are built, what "exists" means inside mathematics, how much of ℝ anyone can reach, and what the main philosophies say. This tutorial continues <a href="/learning-cs/weekend-study-timeline/diagonal-argument/">The Diagonal Argument</a>.</p>
+
+<div class="tw"><table>
+<tr><th>Question</th><th>Short answer</th><th>Section</th></tr>
+<tr><td>Do they exist in mathematics?</td><td>Yes. Set theory proves that a complete ordered field exists, and it is unique.</td><td><a href="#cuts">4</a>–<a href="#unique">7</a></td></tr>
+<tr><td>Is that proof absolute?</td><td>No. It is relative to the axioms, and the axioms cannot prove their own consistency.</td><td><a href="#relative">8</a></td></tr>
+<tr><td>Can we reach every real?</td><td>No. Only countably many can ever be described.</td><td><a href="#reach">9</a></td></tr>
+<tr><td>Can analysis work without them?</td><td>Much of it can, in a changed form. Constructive reals are one way.</td><td><a href="#constructive">10</a></td></tr>
+<tr><td>Are they real in the world?</td><td>Nobody knows. Physics uses them as a model, and no measurement can confirm them.</td><td><a href="#physics">12</a></td></tr>
+</table></div>
+
+<h2 id="meanings">1. Three meanings of "exists"</h2>
+<p>Most arguments about the reals go in circles because the two sides mean different things by "exists". It helps to separate three senses.</p>
+<div class="tw"><table>
+<tr><th>Sense</th><th>What it asks</th><th>Example</th></tr>
+<tr><td>Inside a theory</td><td>Does the theory prove ∃x …?</td><td>ZF set theory proves that a complete ordered field exists</td></tr>
+<tr><td>By construction</td><td>Can we produce it, or compute it to any accuracy?</td><td>√2 yes; a typical real no</td></tr>
+<tr><td>In reality</td><td>Is it there, apart from our theories?</td><td>Is a length in the world exactly a real number?</td></tr>
+</table></div>
+<p>A yes in one sense does not give a yes in another. Sections 2–8 work in the first sense, Sections 9–10 in the second, and Sections 11–13 in the third.</p>
+
+<h2 id="need">2. Why the rationals are not enough</h2>
+<p>The Greeks found that the diagonal of a square has no common measure with its side. In modern terms:</p>
+<div class="st"><p><strong>Theorem 1.</strong> No rational number x satisfies x² = 2.</p></div>
+<p><em>Proof.</em> Suppose x = p/q in lowest terms with p² = 2q². Then p² is even, so p is even, say p = 2r. Then 4r² = 2q², so q² = 2r² and q is even too. That contradicts lowest terms. <span class="qed">∎</span></p>
+<p>So geometry has a length with no rational number. This is more than a curiosity, because the gap breaks a basic expectation about graphs: a continuous curve that goes from below the axis to above it should cross the axis. The function x² − 2 is negative at 1 and positive at 2, and over ℚ it never equals 0. The real numbers are invented to make such crossings happen.</p>
+
+<h2 id="want">3. What we want: a complete ordered field</h2>
+<p>Before building anything, say what the result must do.</p>
+<div class="st"><p><strong>Definition 2.</strong> An <strong>ordered field</strong> is a set with +, ·, and &lt; obeying the usual rules of arithmetic and order. A set S has <strong>upper bound</strong> b if s ≤ b for all s ∈ S. A number c is the <strong>least upper bound</strong> of S, written sup S, if c is an upper bound and c ≤ b for every upper bound b. An ordered field is <strong>complete</strong> if every non-empty subset with an upper bound has a least upper bound.</p></div>
+<p>ℚ is an ordered field, and <a href="/learning-cs/weekend-study-timeline/diagonal-argument/#continuum">Proposition 14 of The Diagonal Argument</a> shows it is not complete. Completeness is exactly what repairs the crossing problem.</p>
+<div class="st"><p><strong>Theorem 3 (intermediate value theorem).</strong> In a complete ordered field, let f be continuous on [a, b] with f(a) &lt; 0 &lt; f(b). Then f(c) = 0 for some c.</p></div>
+<p><em>Proof.</em> Let S = {x ∈ [a, b] : f(x) &lt; 0}. S contains a and is bounded by b, so c = sup S exists. If f(c) &lt; 0, continuity keeps f negative a little to the right of c, so c is not an upper bound. If f(c) &gt; 0, continuity keeps f positive a little to the left of c, so a smaller number is an upper bound. Hence f(c) = 0. <span class="qed">∎</span></p>
+<p>The question is now precise: <strong>does a complete ordered field exist?</strong> Axioms alone do not answer it, because a list of wishes can be contradictory. The next three sections answer it by building one from the rationals.</p>
+
+<h2 id="cuts">4. Construction 1: Dedekind cuts</h2>
+<p>Dedekind's idea of 1872: a place on the line is known by how it splits the rationals. So let the split itself be the number.</p>
+<figure><svg viewBox="0 0 680 112" role="img" aria-label="The rationals cut into a lower set and an upper set with no rational at the cut" style="width:100%;height:auto;display:block"><rect x="40" y="52" width="320" height="14" fill="#e3efe9" stroke="#1f6f5c"/><rect x="360" y="52" width="280" height="14" fill="#f4ece5" stroke="#a6521c"/><text x="200" y="40" text-anchor="middle" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="15" fill="#1f6f5c">L: rationals x with x ≤ 0 or x² &lt; 2</text><text x="500" y="40" text-anchor="middle" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="15" fill="#a6521c">the rest: x &gt; 0 and x² &gt; 2</text><line x1="360" y1="44" x2="360" y2="78" stroke="#1c2321" stroke-width="2"/><text x="360" y="98" text-anchor="middle" font-family="IBM Plex Mono,ui-monospace,Menlo,monospace" font-size="14" fill="#1c2321">no rational here</text><line x1="280" y1="66" x2="280" y2="72" stroke="#5d6763"/><line x1="336" y1="66" x2="336" y2="72" stroke="#5d6763"/><line x1="384" y1="66" x2="384" y2="72" stroke="#5d6763"/><line x1="440" y1="66" x2="440" y2="72" stroke="#5d6763"/></svg><figcaption>A cut splits the rationals. For √2 the split has no rational at its boundary, and the cut itself becomes the new number.</figcaption></figure>
+<div class="st"><p><strong>Definition 4.</strong> A <strong>Dedekind cut</strong> is a set L ⊂ ℚ that is non-empty, is not all of ℚ, is closed downward (if x ∈ L and y &lt; x then y ∈ L), and has no greatest element. Let ℝ be the set of all cuts. Order cuts by L ≤ M when L ⊆ M, and add them by L + M = {a + b : a ∈ L, b ∈ M}. Multiplication is defined for positive cuts by products of positive members, and extended by signs. A rational q is identified with the cut {x ∈ ℚ : x &lt; q}.</p></div>
+<p>√2 is the cut L = {x ∈ ℚ : x ≤ 0 or x² &lt; 2}. It has no greatest element: for s &gt; 0 with s² &lt; 2, the rational s′ = (2s + 2)/(s + 2) is larger and still has s′² &lt; 2. Notice that this cut is a finite rule. It sorts any rational using integer arithmetic alone:</p>
+<pre><code>// cut.cpp -- sqrt(2) as a Dedekind cut: a rule that sorts every rational, using integers only
+#include &lt;cstdio&gt;
+
+// is p/q (q &gt; 0) in the lower set L = { x : x &lt;= 0 or x*x &lt; 2 } ?
+bool in_L(long p, long q) { return p &lt;= 0 || p * p &lt; 2 * q * q; }
+
+int main() {
+    const long tests[][2] = {{1, 1}, {7, 5}, {141, 100}, {1414, 1000}, {1415, 1000}, {71, 50}, {3, 2}};
+    for (auto&amp; t : tests)
+        std::printf("%5ld/%-5ld %s\n", t[0], t[1], in_L(t[0], t[1]) ? "below sqrt(2)" : "above sqrt(2)");
+}</code></pre>
+<pre class="out"><code>$ g++ -std=c++17 -Wall -Wextra cut.cpp -o cut &amp;&amp; ./cut
+    1/1     below sqrt(2)
+    7/5     below sqrt(2)
+  141/100   below sqrt(2)
+ 1414/1000  below sqrt(2)
+ 1415/1000  above sqrt(2)
+   71/50    above sqrt(2)
+    3/2     above sqrt(2)</code></pre>
+<p>Checking the field rules is long but routine. The key property has a very short proof.</p>
+<div class="st"><p><strong>Theorem 5.</strong> The set of cuts is complete: a non-empty set 𝒮 of cuts with an upper bound M has least upper bound U = ⋃𝒮.</p></div>
+<p><em>Proof.</em> U is a cut. It is non-empty because 𝒮 is. It is not ℚ because U ⊆ M ≠ ℚ. It is closed downward because each member of 𝒮 is. It has no greatest element, because any x ∈ U lies in some L ∈ 𝒮, and L contains something larger. U is an upper bound because L ⊆ U for each L ∈ 𝒮. If M′ is any upper bound, then each L ⊆ M′, so U ⊆ M′. <span class="qed">∎</span></p>
+<p><strong>Where the existence claim hides.</strong> Each cut is an infinite set, and the phrase "the set of <em>all</em> cuts" is a subset of the power set of ℚ. That needs the power set axiom, and it includes cuts that no rule describes. Theorem 5 relies on this: a union of arbitrary cuts must be a cut in the collection. If you keep only cuts given by rules, the proof no longer works as written. Section 9 returns to this point.</p>
+
+<h2 id="cauchy">5. Construction 2: Cauchy sequences</h2>
+<p>Cantor, Heine and Méray took another route in 1872: a number is what a sequence of better and better approximations is approaching.</p>
+<div class="st"><p><strong>Definition 6.</strong> A sequence (xₙ) of rationals is <strong>Cauchy</strong> if for every rational ε &gt; 0 there is N with |xₘ − xₙ| &lt; ε for all m, n ≥ N. Two Cauchy sequences are <strong>equivalent</strong> if xₙ − yₙ → 0. A real number is an equivalence class, and arithmetic is done term by term.</p></div>
+<p>Equivalence is needed because many sequences approach the same place. Here is one for √2, in exact fractions, from x′ = (x + 2/x)/2:</p>
+<pre><code>// newton.cpp -- a Cauchy sequence of rationals for sqrt(2): x' = (x + 2/x) / 2, in exact fractions
+#include &lt;cstdio&gt;
+
+using big = __int128;
+void show(big v) {                      // printf has no %d for __int128
+    if (v &lt; 0) { std::putchar('-'); v = -v; }
+    if (v &gt;= 10) show(v / 10);
+    std::putchar('0' + int(v % 10));
+}
+
+int main() {
+    big p = 1, q = 1;                   // x = p/q
+    for (int n = 1; n &lt;= 6; ++n) {
+        std::printf("x%d = ", n); show(p); std::putchar('/'); show(q);
+        std::printf("   x^2 - 2 = "); show(p * p - 2 * q * q); std::putchar('/'); show(q * q);
+        std::printf("   about %.3g\n", double(p * p - 2 * q * q) / double(q * q));
+        big np = p * p + 2 * q * q, nq = 2 * p * q;   // (p/q + 2q/p) / 2
+        p = np; q = nq;
+    }
+}</code></pre>
+<pre class="out"><code>$ g++ -std=c++17 -Wall -Wextra newton.cpp -o newton &amp;&amp; ./newton
+x1 = 1/1   x^2 - 2 = -1/1   about -1
+x2 = 3/2   x^2 - 2 = 1/4   about 0.25
+x3 = 17/12   x^2 - 2 = 1/144   about 0.00694
+x4 = 577/408   x^2 - 2 = 1/166464   about 6.01e-06
+x5 = 665857/470832   x^2 - 2 = 1/221682772224   about 4.51e-12
+x6 = 886731088897/627013566048   x^2 - 2 = 1/393146012008229658338304   about 2.54e-24</code></pre>
+<p>Every term is a fraction, and by Theorem 1 no term is √2. The sequence converges very fast, because x′² − 2 = ((x² − 2)/(2x))², so the error is roughly squared at each step. The output shows the pattern: 1/4 gives 1/144, and that gives 1/166464.</p>
+<div class="st"><p><strong>Theorem 7.</strong> The equivalence classes of rational Cauchy sequences form a complete ordered field.</p></div>
+<p><em>Sketch.</em> Sums and products of Cauchy sequences are Cauchy. A sequence that does not tend to 0 is eventually bounded away from 0, so it has an inverse, which gives a field. A class is positive if its terms are eventually above some positive rational. For completeness, bisect from an upper bound and a lower bound of S: the midpoints form a Cauchy sequence whose class is sup S. <span class="qed">∎</span></p>
+
+<h2 id="decimals">6. Construction 3: decimals, and why they are awkward</h2>
+<p>Decimals look like the obvious definition: a real is an integer with an infinite digit sequence, with 0.4999… identified with 0.5. The definition works, but arithmetic is awkward. To add, you start from the right, and an infinite decimal has no right end.</p>
+<p>Take x = 0.3333… and y = 0.6666…. What is the first digit of x + y? If the digits stay 3 and 6 forever, the sum is 0.9999… = 1. If one later digit rises, the sum passes 1, and if one falls, the sum stays below 1. <strong>No finite number of digits decides even the first digit.</strong> This is a preview of Section 10: real numbers given only by approximations resist exact decisions.</p>
+
+<h2 id="unique">7. All constructions agree</h2>
+<div class="st"><p><strong>Theorem 8.</strong> Any two complete ordered fields are isomorphic: there is exactly one bijection between them that preserves +, · and &lt;.</p></div>
+<p><em>Sketch.</em> Every ordered field contains a copy of ℚ. Completeness forces the Archimedean property, so each element x is determined by the rationals below it. Send x in the first field to the supremum, in the second field, of those same rationals. This map preserves the operations, and any such map must equal it. <span class="qed">∎</span></p>
+<p>So there is only one complete ordered field, up to renaming. Is √2 "really" a set of rationals, or a class of sequences? Theorem 8 says the question has no mathematical content. Only the structure matters. This is the idea behind <strong>structuralism</strong>, and it goes back to Benacerraf's 1965 argument that numbers are not particular objects at all.</p>
+
+<h2 id="relative">8. What this existence proof does and does not show</h2>
+<p>Sections 4–7 prove: <strong>ZF set theory proves that a complete ordered field exists, and that it is unique.</strong> That is a real theorem, and it is the standard meaning of "the reals exist". It has three limits.</p>
+<p><strong>It is relative.</strong> The proof moves the question from ℝ to set theory. If ZF is inconsistent, the theorem means nothing. By Gödel's second incompleteness theorem, ZF cannot prove its own consistency, if it is consistent. So there is no absolute proof from within, and confidence rests on a century of use with no contradiction found.</p>
+<p><strong>"All subsets" does heavy work.</strong> Completeness speaks of every subset of ℝ, a second-order statement. First-order statements cannot capture it. Tarski showed that the first-order theory of ℝ as an ordered field is complete and decidable, and that the real algebraic numbers, a countable set, satisfy exactly the same first-order sentences. So no first-order sentence about + , · and &lt; can tell ℝ from that countable field.</p>
+<p><strong>"Uncountable" is relative too.</strong> By the Löwenheim–Skolem theorem, if ZF has a model, it has a countable one. Inside that model, ℝ is uncountable, because the model contains no bijection between its ℕ and its ℝ. From outside, its ℝ has only countably many members. This is Skolem's paradox. It is no contradiction, but it shows that the meaning of "all subsets" is not fixed by the first-order axioms alone.</p>
+
+<h2 id="reach">9. How much of ℝ can anyone reach?</h2>
+<figure><svg viewBox="0 0 720 232" role="img" aria-label="Five layers from the fractions to all reals: every layer above the last is countable" style="width:100%;height:auto;display:block"><rect x="30" y="16" width="150" height="34" rx="4" fill="#e3efe9" stroke="#1f6f5c"/><text x="42" y="38" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1c2321">ℚ</text><text x="440" y="31" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="13" fill="#1c2321">fractions</text><text x="440" y="47" font-family="IBM Plex Mono,ui-monospace,Menlo,monospace" font-size="12" fill="#5d6763">1/3, −7/2</text><rect x="30" y="60" width="230" height="34" rx="4" fill="#e3efe9" stroke="#1f6f5c"/><text x="42" y="82" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1c2321">Algebraic</text><text x="440" y="75" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="13" fill="#1c2321">roots of integer polynomials</text><text x="440" y="91" font-family="IBM Plex Mono,ui-monospace,Menlo,monospace" font-size="12" fill="#5d6763">√2, the golden ratio</text><rect x="30" y="104" width="310" height="34" rx="4" fill="#e3efe9" stroke="#1f6f5c"/><text x="42" y="126" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1c2321">Computable</text><text x="440" y="119" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="13" fill="#1c2321">a program prints the digits</text><text x="440" y="135" font-family="IBM Plex Mono,ui-monospace,Menlo,monospace" font-size="12" fill="#5d6763">π, e</text><rect x="30" y="148" width="390" height="34" rx="4" fill="#e3efe9" stroke="#1f6f5c"/><text x="42" y="170" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1c2321">Definable</text><text x="440" y="163" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="13" fill="#1c2321">a formula pins it down</text><text x="440" y="179" font-family="IBM Plex Mono,ui-monospace,Menlo,monospace" font-size="12" fill="#5d6763">the halting number h</text><rect x="30" y="192" width="390" height="34" rx="4" fill="#f4ece5" stroke="#a6521c"/><text x="42" y="214" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="14" font-weight="600" fill="#a6521c">All reals</text><text x="440" y="207" font-family="IBM Plex Sans,system-ui,sans-serif" font-size="13" fill="#a6521c">everything else: nothing can name them</text><text x="440" y="223" font-family="IBM Plex Mono,ui-monospace,Menlo,monospace" font-size="12" fill="#5d6763">no example can be given</text></svg><figcaption>The layers of ℝ, drawn schematically. The widths do not show size.</figcaption></figure>
+<p>Every layer but the last is countable, because each member has a finite description. (The last-but-one layer is counted from outside the language.) By <a href="/learning-cs/weekend-study-timeline/diagonal-argument/#proof">the diagonal argument</a>, the reals are not, so in the classical picture almost every real lies in the last layer.</p>
+<p>A real is <strong>computable</strong> if a program, given n, prints an approximation within 10⁻ⁿ. All numbers used in practice are computable. Two facts mark the limits of this layer.</p>
+<p><strong>Definable but not computable.</strong> Number all programs, and let h = Σ 2⁻ⁿ, summed over the n for which program n halts on empty input. This is a perfectly precise definition, but computing h would solve the halting problem. Chaitin's Ω is a more refined number of this kind.</p>
+<p><strong>The computable reals are not complete.</strong> Specker showed in 1949 that there is a computable, increasing, bounded sequence of rationals whose limit is not computable. So the computable reals have gaps in the classical sense. This is why you cannot simply replace ℝ by the computable reals and keep the same theorems. You have to change the theorems too, which is what constructive analysis does.</p>
+
+<h2 id="constructive">10. The constructive reals</h2>
+<p>Constructive mathematics reads "there exists" as "we can construct". A proof of an existence claim must contain a method. Bishop's version needs no philosophy beyond that, and classical mathematics counts as a model of it, so every constructive theorem is also a classical one.</p>
+<div class="st"><p><strong>Definition 9 (Bishop).</strong> A <strong>real number</strong> is a sequence (xₙ) of rationals with |xₘ − xₙ| ≤ 1/m + 1/n for all m, n ∈ ℕ. The convergence rate is part of the definition, so the sequence itself tells you how accurate each term is.</p></div>
+<p>Some classical statements cannot be proved in this sense, for a clear reason. Let (aₙ) be a binary sequence and put x = Σ aₙ2⁻ⁿ. To decide "x = 0 or x ≠ 0" you must decide whether every aₙ is 0. Let aₙ = 1 if the even number 2n + 2 is a counterexample to Goldbach's conjecture, and aₙ = 0 otherwise. Then deciding x = 0 would settle Goldbach. A general method would give the <strong>limited principle of omniscience</strong> (LPO): for every binary sequence, either all terms are 0 or some term is 1. Constructive mathematics does not accept LPO.</p>
+<div class="tw"><table>
+<tr><th>Classical statement</th><th>Constructive status</th></tr>
+<tr><td>Every x has x = 0 or x ≠ 0</td><td>Implies LPO, so it is not provable</td></tr>
+<tr><td>Intermediate value theorem (Theorem 3)</td><td>Implies a weaker omniscience principle, LLPO. The provable form says: for every ε &gt; 0 there is an x with |f(x)| &lt; ε. Under extra conditions, such as f being locally non-zero, an exact root exists.</td></tr>
+<tr><td>Every bounded non-empty set has a least upper bound</td><td>Equivalent to the law of excluded middle. It holds for sets that are "upper-order located", a condition that gives a way to approximate the bound.</td></tr>
+</table></div>
+<p>The replacements are often what an engineer wants anyway. The approximate intermediate value theorem is what a root-finding program can actually deliver.</p>
+<p>Brouwer's intuitionism goes further. It allows free choice sequences that are never finished, and it proves that every function from ℝ to ℝ is continuous. That contradicts classical mathematics, so unlike Bishop's system it is a rival theory, not a part of the classical one. Markov's recursive school takes reals to be given by algorithms, and in that setting LPO is refuted.</p>
+
+<h2 id="positions">11. What the philosophies say</h2>
+<div class="tw"><table>
+<tr><th>Position</th><th>Do the reals exist?</th><th>Who</th></tr>
+<tr><td>Platonism</td><td>Yes: abstract objects, outside space and time, independent of us</td><td>Gödel</td></tr>
+<tr><td>Formalism</td><td>The question is about a consistent formal system, nothing more</td><td>Hilbert</td></tr>
+<tr><td>Structuralism</td><td>The structure exists; individual numbers are only positions in it</td><td>Benacerraf, Shapiro</td></tr>
+<tr><td>Predicativism</td><td>Those definable without quantifying over all reals. ℕ is accepted, "all subsets" is not.</td><td>Weyl (1918), Feferman</td></tr>
+<tr><td>Constructivism</td><td>Those we can construct</td><td>Bishop</td></tr>
+<tr><td>Intuitionism</td><td>Those constructible in the mind, including unfinished choice sequences</td><td>Brouwer</td></tr>
+<tr><td>Fictionalism</td><td>No. Mathematics is a useful story, and it need not be true.</td><td>Field</td></tr>
+<tr><td>Finitism</td><td>No completed infinite objects, so no reals as usually understood</td><td>Kronecker; Wildberger</td></tr>
+</table></div>
+<p><strong>The best argument for existence</strong> is the Quine–Putnam indispensability argument. Whatever is indispensable to our best science is likely to be true, and mathematics is indispensable to science. So we should accept the objects it talks about.</p>
+<p><strong>The best argument against platonism</strong> comes from Benacerraf (1973), as sharpened by Field. Mathematicians are reliable, so there must be some explanation of that reliability. If numbers are outside space and time and cause nothing, no explanation seems possible.</p>
+
+<h2 id="physics">12. Are real numbers in the world?</h2>
+<p>Physics writes its laws with real numbers, which tempts us to think space and time are made of them. There are reasons for caution.</p>
+<ul>
+<li>Every measurement has finite precision, so no experiment can show that a quantity has infinitely many meaningful digits.</li>
+<li>A real number can hold unlimited information. Borel noted that one number could encode the answers to all yes-or-no questions. Nicolas Gisin has argued that this makes classical physics look more deterministic than it is, and has proposed physics with finite-information quantities.</li>
+<li>Chaitin has suggested that reality may be discrete. Edward Lee replies that this cannot be tested either.</li>
+</ul>
+<p>On the other side, the continuum models work with extraordinary success, and quantum theory is formulated over real and complex numbers. Models that work do not settle the question, though, because a discrete world could look continuous at our scale, as water does. At present this is open, and it may stay open.</p>
+
+<h2 id="wildberger">13. Wildberger's objections</h2>
+<p>N. J. Wildberger is the best-known current critic, in posts such as <a href="https://njwildberger.com/2012/08/26/the-continuum-problem/">"The problem of the continuum"</a> and <a href="https://njwildberger.com/2012/12/02/difficulties-with-real-numbers/">"Difficulties with real numbers"</a>. In a comment on the first post he says plainly: "I don't believe in "irrational numbers" at all." His main arguments:</p>
+<ul>
+<li>Cuts, Cauchy sequences and continued fractions all talk about infinite objects without saying how to specify them.</li>
+<li>An infinite sequence can only be given by a rule, so a theory of reals needs a prior theory of algorithms, which he says we lack.</li>
+<li>Nobody can exhibit an uncomputable real, although measure theory says they are almost all of [0, 1].</li>
+<li>"Let α be a real number" pretends to choose something that cannot be chosen.</li>
+<li>Axiomatics removed the duty to define objects before using them.</li>
+</ul>
+<p>These comments, like those in the next section, are from Claude.</p>
+<p><strong>Where he is right.</strong> The specification problem is real, and it is exactly the layer picture of Section 9. It is also true that textbooks often pass over this, and that "the set of all cuts" asks for far more than any rule delivers.</p>
+<p><strong>Where I disagree.</strong> A theory of algorithms exists: Turing and Church gave one in 1936, and Bishop's analysis handles specification with care. "Let α be a real number" does not choose anything. It is how we say "for all α", and a proof that uses only the axioms works for all of them. On uncomputable reals, the halting number h of Section 9 has an exact definition. If "example" means "a program", then the claim that there are no examples is true by definition, and it is the theorem of computability theory rather than an objection to it. Finally, the classical theory does not hide its assumptions: they are the axioms of Section 8. They can be rejected, but the rejection needs a replacement that covers analysis. Wildberger's work on rational trigonometry and algebraic calculus is interesting, and it has a long way to go to do that.</p>
+
+<h2 id="view">14. A view</h2>
+<p>Going back to the three senses of Section 1:</p>
+<ul>
+<li><strong>Inside a theory, yes.</strong> This is a theorem, relative to ZF. Anyone who works in that theory may say "ℝ exists" without embarrassment.</li>
+<li><strong>By construction, partly.</strong> Every real that has ever been used is in the countable layers. The rest are a consequence of the phrase "all subsets".</li>
+<li><strong>In reality, unknown.</strong> No measurement can decide it, and neither can any proof.</li>
+</ul>
+<p>The classical reals are best seen as an idealisation, like a frictionless plane. They have no gaps, so theorems are short. Whether they exist in the third sense matters less to using them than the debate suggests, though it matters a great deal to what mathematics is about.</p>
+
+<h2 id="history">15. History</h2>
+<div class="tw"><table>
+<tr><th>When</th><th>Event</th></tr>
+<tr><td>~400 BC</td><td>Greek discovery of incommensurable lengths; Eudoxus's theory of proportion</td></tr>
+<tr><td>1585</td><td>Stevin popularises decimal fractions in Europe</td></tr>
+<tr><td>1872</td><td>Dedekind's cuts; Cantor, Heine and Méray's Cauchy sequences</td></tr>
+<tr><td>1918</td><td>Weyl's <em>Das Kontinuum</em>: predicative analysis</td></tr>
+<tr><td>1920s</td><td>Brouwer's intuitionism against Hilbert's formalism</td></tr>
+<tr><td>1931</td><td>Gödel's incompleteness theorems</td></tr>
+<tr><td>1936</td><td>Turing's computable numbers</td></tr>
+<tr><td>1949</td><td>Specker's sequence</td></tr>
+<tr><td>1967</td><td>Bishop's <em>Foundations of Constructive Analysis</em></td></tr>
+</table></div>
+
+<h2 id="check">16. Check yourself</h2>
+<details><summary>1. In Theorem 5, where is the phrase "all cuts" used?</summary><p>U = ⋃𝒮 must itself be in the collection. Since 𝒮 can be any bounded set of cuts, the collection must contain every such union.</p></details>
+<details><summary>2. Check x′² − 2 = ((x² − 2)/(2x))² for x = 3/2.</summary><p>x′ = 17/12, so x′² − 2 = 1/144. On the right, x² − 2 = 1/4 and 2x = 3, so (1/12)² = 1/144.</p></details>
+<details><summary>3. Why doesn't Theorem 8 contradict Skolem's paradox?</summary><p>Theorem 8 is proved inside a model of set theory: within that model, the complete ordered field is unique. Different models can disagree on which subsets exist, so they can have different collections of reals.</p></details>
+<details><summary>4. Is every computable real algebraic?</summary><p>No. π and e are computable and not algebraic.</p></details>
+<details><summary>5. Why is "x = 0 or x ≠ 0" fine for rationals, constructively?</summary><p>A rational is given by two integers, and deciding whether an integer is 0 takes finite work.</p></details>
+<details><summary>6. Which sense of "exists" does each of these use: Theorem 5; Bishop's Definition 9; the indispensability argument?</summary><p>Inside a theory; by construction; in reality.</p></details>
+
+<h2 id="sources">17. Sources</h2>
+<ul>
+<li>R. Dedekind, <em>Stetigkeit und irrationale Zahlen</em> (1872)</li>
+<li>W. Rudin, <em>Principles of Mathematical Analysis</em>, appendix to Ch.1 (construction by cuts)</li>
+<li>E. Bishop, <em>Foundations of Constructive Analysis</em> (1967); E. Bishop and D. Bridges, <em>Constructive Analysis</em> (1985)</li>
+<li>D. Bridges, E. Palmgren, H. Ishihara, <a href="https://plato.stanford.edu/entries/mathematics-constructive/">"Constructive Mathematics"</a>, <em>Stanford Encyclopedia of Philosophy</em></li>
+<li>Ø. Linnebo, <a href="https://plato.stanford.edu/entries/platonism-mathematics/">"Platonism in the Philosophy of Mathematics"</a>, <em>Stanford Encyclopedia of Philosophy</em></li>
+<li>P. Benacerraf, "What Numbers Could Not Be" (1965); "Mathematical Truth" (1973); H. Field, <em>Science Without Numbers</em> (1980)</li>
+<li>H. Weyl, <em>Das Kontinuum</em> (1918); E. Specker, "Nicht konstruktiv beweisbare Sätze der Analysis" (1949)</li>
+<li>A. Turing, "On Computable Numbers" (1936); G. Chaitin, "How Real are Real Numbers?" (2004)</li>
+<li>N. Gisin, "Real Numbers are the Hidden Variables of Classical Mechanics", <em>Quantum Studies: Mathematics and Foundations</em> (2020)</li>
+<li>N. J. Wildberger, <a href="https://njwildberger.com/2012/08/26/the-continuum-problem/">"The problem of the continuum"</a>, <a href="https://njwildberger.com/2012/12/02/difficulties-with-real-numbers/">"Difficulties with real numbers"</a>, <a href="https://njwildberger.com/2015/12/07/let-alpha-be-a-real-number/">"Let alpha be a real number"</a>, <a href="https://njwildberger.com/2016/01/01/uncomputable-decimals-and-measure-theory-is-it-nonsense/">"Uncomputable decimals and measure theory"</a></li>
+<li>E. A. Lee, <a href="https://ptolemy.org/~eal/pnerd/blog/are-real-numbers-real">"Are Real Numbers Real?"</a> (2017)</li>
+</ul>
+</div>
+{% endraw %}
