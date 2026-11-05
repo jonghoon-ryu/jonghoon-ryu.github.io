@@ -77,6 +77,29 @@ int main() {
 <p>Different digits usually mean different numbers, but not always. 0.5000… and 0.4999… are the same number. A careless proof that says "change each digit to anything else" could produce a y that equals a number on the list while differing from its written digits.</p>
 <p>That is why the rule uses only 5 and 6. Two decimal forms happen only when one form ends in all 0s and the other in all 9s. y has no 0s or 9s, so y has only one form, and neither form of any xₙ can match it. If xₙ has two forms, use the form that appears in the list for the diagonal digit: y still differs from it at digit n, and the other form ends in 0s or 9s, which y never does.</p>
 
+<h3 id="binary">The same proof with 0, 1 sequences</h3>
+<p>Many books avoid the trap completely. They run the diagonal on sequences of 0s and 1s, where it has no decimal problem, and only then move to numbers. This is also closer to how Cantor wrote it in 1891.</p>
+<p><strong>Step 1: the sequences are uncountable.</strong> Let S be the set of all infinite sequences of 0s and 1s. Take any list s₁, s₂, s₃, … of members of S, and flip the diagonal:</p>
+<pre><code>s₁ = 0 1 1 0 1 …
+s₂ = 1 1 0 0 0 …
+s₃ = 0 0 0 1 1 …
+s₄ = 1 0 1 1 0 …
+s₅ = 0 1 0 0 1 …
+
+t  = 1 0 1 0 0 …      t(n) = 1 − sₙ(n)</code></pre>
+<p>t differs from sₙ at position n, so t is not on the list. Here different entries really do mean different sequences, so there is nothing to patch.</p>
+<p><strong>Step 2: map the sequences into the reals.</strong> Read each sequence as a decimal that uses only the digits 0 and 1:</p>
+<pre><code>f(s) = 0.s(1)s(2)s(3)…      for example  f(0, 1, 1, 0, 1, …) = 0.01101…</code></pre>
+<p>Different sequences give different numbers. Suppose s and t first differ at position k. That makes a difference of 10⁻ᵏ, and all the later digits together can change the value by at most 10⁻ᵏ/9, which is smaller. So f(s) ≠ f(t).</p>
+<p>Base 10 matters here. Reading the digits in base 2 would fail, because 0.0111…₂ and 0.1000…₂ are the same number, and the trap would come back.</p>
+<p><strong>Step 3: conclude.</strong> Suppose the reals could be listed. Go down that list, keep only the numbers of the form f(s), and replace each by its s. Since f never sends two sequences to one number, this lists all of S, which Step 1 says is impossible. So the reals are uncountable.</p>
+<p><strong>Why the map goes to the reals and not the rationals.</strong> The rationals are countable (Section 2), so S cannot be mapped into them without two sequences landing on the same fraction. Rationals do appear in two other places, which may be what you remember:</p>
+<ul>
+<li><strong>Some sequences land on rationals.</strong> Under f, a sequence that eventually repeats gives a rational: (1, 0, 1, 0, …) gives 0.1010… = 10/99. A sequence that never repeats gives an irrational.</li>
+<li><strong>Each real gives a 0, 1 sequence over the rationals.</strong> List the rationals q₁, q₂, q₃, … and give a real r the sequence with 1 at position n if qₙ &lt; r, and 0 otherwise. This is Dedekind's cut written as a sequence. Two different reals have a rational between them, so they get different sequences.</li>
+</ul>
+<p>The second map runs in the opposite direction to f, so each set fits inside the other. By the Schröder–Bernstein theorem, ℝ and S have exactly the same size, which is why 𝔠 = 2<sup>ℵ₀</sup> in Section 7.</p>
+
 <h2 id="run">5. Run it</h2>
 <p>A computer can only hold a finite list, so this is a demonstration, not a proof. It does show the recipe working on actual decimals, and the list includes the trap from Section 4.</p>
 <pre><code>// diagonal.cpp -- build a number that is not on a given list of decimals
