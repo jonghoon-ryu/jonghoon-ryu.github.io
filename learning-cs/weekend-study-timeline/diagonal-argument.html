@@ -33,6 +33,7 @@ permalink: /learning-cs/weekend-study-timeline/diagonal-argument/
 <tr><td>Are real numbers the same as points?</td><td>No. Matching them one to one is an assumption, and it needs a chosen origin and unit.</td><td><a href="#points">9</a></td></tr>
 <tr><td>How can unnamed numbers exist?</td><td>That depends on what "exist" means. The proof itself does not force them.</td><td><a href="#names">11</a></td></tr>
 <tr><td>What do others argue?</td><td>Three articles, with comments.</td><td><a href="#articles">15</a></td></tr>
+<tr><td>Why was Cantor's theory disputed?</td><td>Critics questioned its assumptions and meaning. None found an error in the diagonal step.</td><td><a href="#controversy">16</a></td></tr>
 </table></div>
 
 <h2 id="size">1. What "how many" means for infinite sets</h2>
@@ -258,7 +259,51 @@ y differs from every x in its own position</code></pre>
 <p><strong>Where it is strong.</strong> This is the best of the three. It separates what we can know from what exists, and it does not claim more than it can show. It also takes the diagonal argument and the gap between countable languages and the uncountable continuum seriously.</p>
 <p><strong>Where I disagree.</strong> The test cuts both ways. If digital physics cannot be falsified, neither can the claim that physical reality is truly continuous, and Lee's own defence ends in a Platonic heaven and "a matter of faith". That is an honest ending, but it makes the two sides level, with neither one winning. His reading of Richard's paradox could also be sharper. I would say it shows that "definable" cannot be defined inside the same language, a precise result that holds for formal languages too, rather than a defect of written language.</p>
 
-<h2 id="sources">16. Sources</h2>
+<h2 id="controversy">16. The controversy over Cantor's theory</h2>
+<p>Cantor's results were fiercely disputed, and the Wikipedia article <a href="https://en.wikipedia.org/wiki/Controversy_over_Cantor's_theory">"Controversy over Cantor's theory"</a> tells the story. Reading it with the proofs above in hand, one thing stands out: the serious critics did not find an error in the diagonal step. They questioned what the proof assumes and what it means.</p>
+
+<h3>What the argument assumes</h3>
+<p>The article gives the modern argument, for a set and its power set, using five axioms of set theory plus one definition.</p>
+<div class="tw"><table>
+<tr><th>Assumption</th><th>Its job in the argument</th></tr>
+<tr><td>Axiom of infinity</td><td>ℕ exists as a completed set</td></tr>
+<tr><td>Power set axiom</td><td>All the subsets of ℕ form a set. This is our T, since a binary sequence picks out a subset.</td></tr>
+<tr><td>Axiom of separation</td><td>The diagonal set D = {x : x ∉ f(x)} exists</td></tr>
+<tr><td>Axiom of extensionality</td><td>Sets with different members are different, so D ≠ f(x)</td></tr>
+<tr><td>Axiom of pairing</td><td>Gives the sets {x}, which show that ℕ fits inside its power set</td></tr>
+<tr><td>Definition of same size</td><td>Size means one-to-one pairing (Definition 1), sometimes called Hume's principle</td></tr>
+</table></div>
+<p>The axiom of choice is not on the list. Cantor's 1883 reasoning leaned on the well-ordering principle, which is equivalent to choice, but his 1895 definition of "greater than" removed that need.</p>
+
+<h3>Who objected, and to what</h3>
+<div class="tw"><table>
+<tr><th>Who</th><th>Position</th></tr>
+<tr><td>Gauss</td><td>Before Cantor, the common view. It is often paraphrased as saying that a completed infinity has no place in mathematics.</td></tr>
+<tr><td>Kronecker</td><td>Rejected the constructions of irrational numbers that the 1874 proof relied on.</td></tr>
+<tr><td>Poincaré</td><td>"Actual infinity does not exist."</td></tr>
+<tr><td>Hilbert (1925)</td><td>The defender: "No one will drive us from the paradise which Cantor created for us."</td></tr>
+<tr><td>Wittgenstein</td><td>Replied that if one person sees a paradise, "why should not another see it as a joke?" He called the diagonal argument "hocus pocus", and wrote that "A curve is not composed of points."</td></tr>
+<tr><td>Weyl (1946)</td><td>Classical logic came from finite mathematics and was applied to infinite sets without justification. He called this the "original sin" of set theory.</td></tr>
+<tr><td>Mayberry (2000)</td><td>The axiom of infinity has "scarcely any claim to self-evidence", though he admired the power set argument.</td></tr>
+<tr><td>Feferman</td><td>Cantor's theories are "simply not relevant to everyday mathematics."</td></tr>
+</table></div>
+<p>Today, as the article says, most textbooks use Cantor's views without comment. The article also quotes Wilfrid Hodges, an editor who had received many papers trying to refute the diagonal argument. He wondered why such a "harmless little argument" makes people angry.</p>
+
+<h3>Comments on the controversy</h3>
+<p>These comments are again from Claude, and they go beyond the article. Brouwer and the constructive material below are not in it.</p>
+<p><strong>The objections work at four different levels.</strong> It helps to sort them, because each one challenges something else:</p>
+<div class="tw"><table>
+<tr><th>Level</th><th>Challenge</th><th>Critics</th></tr>
+<tr><td>Infinity</td><td>Infinite sets are not completed objects</td><td>Gauss, Poincaré, Mayberry</td></tr>
+<tr><td>Objects</td><td>Mathematical objects must be constructed</td><td>Kronecker, Bishop</td></tr>
+<tr><td>Logic</td><td>Classical logic does not carry over to the infinite</td><td>Brouwer, Weyl</td></tr>
+<tr><td>Meaning</td><td>The calculation is fine, and the talk of bigger infinities is misleading</td><td>Wittgenstein</td></tr>
+</table></div>
+<p><strong>The diagonal step itself survives all four.</strong> Lemma 7 needs no completed infinity and no proof by contradiction: given a rule for a sequence of sequences, it gives a rule for a new sequence, and it says where that sequence differs from each one. Almost everyone accepts that. The dispute is about the next step, from "every list misses something" to "T is a completed set that is larger than ℕ". That step is where the axioms of infinity and power set do their work.</p>
+<p><strong>Refutations and objections are different.</strong> Attempts to find a logical error in the proof fail, as Section 6 shows. Rejecting an axiom is a legitimate choice, but it has a price: you must then rebuild analysis on the assumptions you keep. The article notes this difficulty for finitism. Constructive analysis shows that a great deal can be rebuilt, in a changed form.</p>
+<p><strong>The disagreement is still open, in one sense.</strong> Mathematics has settled which theorems follow from which axioms. It has not settled whether the axioms are true of anything, and no proof can settle that. This is the same conclusion as <a href="#names">Section 11</a>: Cantor's theorem is certain given his assumptions, and whether to accept them is a further question.</p>
+
+<h2 id="sources">17. Sources</h2>
 <ul>
 <li>G. Cantor, "Über eine elementare Frage der Mannigfaltigkeitslehre" (1891); "Über eine Eigenschaft des Inbegriffes aller reellen algebraischen Zahlen" (1874)</li>
 <li>R. Dedekind, <em>Stetigkeit und irrationale Zahlen</em> (1872); English in <em>Essays on the Theory of Numbers</em></li>
@@ -267,6 +312,7 @@ y differs from every x in its own position</code></pre>
 <li>E. Bishop, <em>Foundations of Constructive Analysis</em> (1967); A. Robinson, <em>Non-standard Analysis</em> (1966); J. L. Bell, <em>A Primer of Infinitesimal Analysis</em></li>
 <li>J. D. Hamkins, D. Linetsky, J. Reitz, "Pointwise definable models of set theory", <em>Journal of Symbolic Logic</em> (2013)</li>
 <li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Cantor%27s_diagonal_argument">"Cantor's diagonal argument"</a> (the route through binary sequences and the bijection of Theorem 11)</li>
+<li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Controversy_over_Cantor's_theory">"Controversy over Cantor's theory"</a> (the axioms in Section 16, and the quotations there)</li>
 <li>The three articles of <a href="#articles">Section 15</a>; G. Chaitin, "How Real are Real Numbers?" (2004)</li>
 </ul>
 </div>
