@@ -143,7 +143,7 @@ permalink: /learning-cs/weekend-study-timeline/
 <div class="calkey"><span><i style="background:var(--a-soft)"></i>Study weekend</span><span><i style="background:var(--ok)"></i>Finished</span><span><i style="box-shadow:inset 0 0 0 1px var(--now)"></i>Today</span></div></div>
 <div class="pane" id="pane"></div>
 </section>
-<div class="bar"><button type="button" id="now">Go to this week</button><button type="button" id="undone" aria-pressed="false">Hide finished weeks</button><button type="button" id="notes" aria-pressed="false">Hide tips</button><span class="prog" id="prog"></span></div>
+<div class="bar"><button type="button" id="now">Go to this week</button><button type="button" id="undone" aria-pressed="false">Hide finished weeks</button><button type="button" id="notes">Hide tips</button><span class="prog" id="prog"></span></div>
 <div class="lanehead"><span></span><span class="a">CS:APP</span><span class="b">Computation Theory &amp; Gödel</span><span class="c">C++ revisit</span></div>
 <div id="weeks"></div>
 </div>
@@ -201,7 +201,7 @@ function go(n){const hide=document.getElementById('undone');if(hide.getAttribute
 strip.addEventListener('click',e=>{const n=e.target.dataset.go;if(n)go(n);});
 document.getElementById('now').onclick=()=>go(CUR);
 document.getElementById('undone').onclick=e=>{const b=e.currentTarget;b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');paint();};
-document.getElementById('notes').onclick=e=>{const b=e.currentTarget,on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);box.classList.toggle('hide-extra',on);};
+document.getElementById('notes').onclick=e=>{const b=e.currentTarget,edge=b.parentElement.getBoundingClientRect().bottom,a=[...box.querySelectorAll('.head,.day,.fin,.nt')].find(x=>x.getBoundingClientRect().bottom>edge),top=a&&a.getBoundingClientRect().top,on=box.classList.toggle('hide-extra');b.textContent=on?'Show tips':'Hide tips';if(a)scrollBy({top:a.getBoundingClientRect().top-top,behavior:'instant'});};
 // finish calendar: a date shows the plans it can be set on; ticking a plan writes that date as its finish date.
 const pad=x=>String(x).padStart(2,'0'),iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,TODAY=iso(new Date());
 const parts=s=>s.split('-').map(Number);
