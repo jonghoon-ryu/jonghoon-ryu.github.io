@@ -74,7 +74,7 @@ table.plan-calendar th {
 
 # CS:APP — 1년 학습 계획
 
-**2026년 11월 7일 (토) 시작 · 52주 · 매주 토요일 2시간 + 일요일 2시간**
+**2026년 11월 14일 (토) 시작 · 52주 · 매주 토요일 2시간 + 일요일 2시간**
 
 주말 시간 배분: **토요일·일요일 각각 = 이 계획 2시간 + [계산 이론 & Gödel](/learning-cs/computation-theory/study-plan/) 2시간**.
 [xv6 C++ 변환](/xv6/plan/) 리뷰는 이 계획을 마친 뒤로 미뤘다.
@@ -164,15 +164,15 @@ Week 12 부터 일부 주에는 **C++ 연결** 줄이 있다. 일요일 마지�
   <colgroup><col style="width:36%"><col style="width:26%"><col style="width:38%"></colgroup>
   <thead><tr><th>단계</th><th>기간</th><th>내용</th></tr></thead>
   <tbody>
-      <tr><td>Phase 0 · 준비</td><td>Week 1<br>2026.11.7</td><td>환경 설정 + 전체 지도</td></tr>
-      <tr><td>Phase 1 · 데이터 표현 (Ch.2)</td><td>Week 2–7<br>2026.11.14 ~ 2026.12.19</td><td>비트, 정수, 부동소수점 + Data Lab</td></tr>
-      <tr><td>Phase 2 · 기계 수준 프로그램 = 어셈블리 (Ch.3)</td><td>Week 8–19<br>2026.12.26 ~ 2027.3.13</td><td>x86-64 어셈블리 읽기 + Bomb Lab + Attack Lab</td></tr>
-      <tr><td>Phase 3 · 성능과 메모리 계층 (Ch.5–6)</td><td>Week 20–26<br>2027.3.20 ~ 2027.5.1</td><td>최적화 맛보기, 캐시 + Cache Lab</td></tr>
-      <tr><td>Phase 4 · 링킹 (Ch.7)</td><td>Week 27–28<br>2027.5.8 ~ 2027.5.15</td><td>오브젝트 파일, 심볼, 재배치</td></tr>
-      <tr><td>Phase 5 · 예외적 제어 흐름 (Ch.8)</td><td>Week 29–34<br>2027.5.22 ~ 2027.6.26</td><td>예외, 프로세스, 시그널 + Shell Lab</td></tr>
-      <tr><td>Phase 6 · 가상 메모리 (Ch.9)</td><td>Week 35–43<br>2027.7.3 ~ 2027.8.28</td><td>페이지 테이블, mmap, malloc + Malloc Lab</td></tr>
-      <tr><td>Phase 7 · 시스템 I/O 와 동시성 (Ch.10, 12)</td><td>Week 44–48<br>2027.9.4 ~ 2027.10.2</td><td>파일 디스크립터, 스레드, 동기화</td></tr>
-      <tr><td>여유 주간 + 회고</td><td>Week 49–52<br>2027.10.9 ~ 2027.10.30</td><td>밀린 것 따라잡기, 선택 주제, xv6 로 넘어갈 준비</td></tr>
+      <tr><td>Phase 0 · 준비</td><td>Week 1<br>2026.11.14</td><td>환경 설정 + 전체 지도</td></tr>
+      <tr><td>Phase 1 · 데이터 표현 (Ch.2)</td><td>Week 2–7<br>2026.11.21 ~ 2026.12.26</td><td>비트, 정수, 부동소수점 + Data Lab</td></tr>
+      <tr><td>Phase 2 · 기계 수준 프로그램 = 어셈블리 (Ch.3)</td><td>Week 8–19<br>2027.1.2 ~ 2027.3.20</td><td>x86-64 어셈블리 읽기 + Bomb Lab + Attack Lab</td></tr>
+      <tr><td>Phase 3 · 성능과 메모리 계층 (Ch.5–6)</td><td>Week 20–26<br>2027.3.27 ~ 2027.5.8</td><td>최적화 맛보기, 캐시 + Cache Lab</td></tr>
+      <tr><td>Phase 4 · 링킹 (Ch.7)</td><td>Week 27–28<br>2027.5.15 ~ 2027.5.22</td><td>오브젝트 파일, 심볼, 재배치</td></tr>
+      <tr><td>Phase 5 · 예외적 제어 흐름 (Ch.8)</td><td>Week 29–34<br>2027.5.29 ~ 2027.7.3</td><td>예외, 프로세스, 시그널 + Shell Lab</td></tr>
+      <tr><td>Phase 6 · 가상 메모리 (Ch.9)</td><td>Week 35–43<br>2027.7.10 ~ 2027.9.4</td><td>페이지 테이블, mmap, malloc + Malloc Lab</td></tr>
+      <tr><td>Phase 7 · 시스템 I/O 와 동시성 (Ch.10, 12)</td><td>Week 44–48<br>2027.9.11 ~ 2027.10.9</td><td>파일 디스크립터, 스레드, 동기화</td></tr>
+      <tr><td>여유 주간 + 회고</td><td>Week 49–52<br>2027.10.16 ~ 2027.11.6</td><td>밀린 것 따라잡기, 선택 주제, xv6 로 넘어갈 준비</td></tr>
   </tbody>
 </table>
 </div>
@@ -198,11 +198,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## Phase 0 · 준비
 
-*Week 1 · 2026.11.7 · 환경 설정 + 전체 지도*
+*Week 1 · 2026.11.14 · 환경 설정 + 전체 지도*
 
 <div class="session" data-session="1" markdown="1">
 
-### Week 1 · 2026.11.7–8 (토·일) — 환경 설정 + 컴퓨터 시스템 여행
+### Week 1 · 2026.11.14–15 (토·일) — 환경 설정 + 컴퓨터 시스템 여행
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="1"> 완료</label>
 
@@ -218,11 +218,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## Phase 1 · 데이터 표현 (Ch.2)
 
-*Week 2–7 · 2026.11.14 ~ 2026.12.19 · 비트, 정수, 부동소수점 + Data Lab*
+*Week 2–7 · 2026.11.21 ~ 2026.12.26 · 비트, 정수, 부동소수점 + Data Lab*
 
 <div class="session" data-session="2" markdown="1">
 
-### Week 2 · 2026.11.14–15 (토·일) — 비트, 바이트, 정보의 저장
+### Week 2 · 2026.11.21–22 (토·일) — 비트, 바이트, 정보의 저장
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="2"> 완료</label>
 
@@ -233,7 +233,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="3" markdown="1">
 
-### Week 3 · 2026.11.21–22 (토·일) — 정수: unsigned 와 2의 보수
+### Week 3 · 2026.11.28–29 (토·일) — 정수: unsigned 와 2의 보수
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="3"> 완료</label>
 
@@ -245,7 +245,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="4" markdown="1">
 
-### Week 4 · 2026.11.28–29 (토·일) — 부동소수점
+### Week 4 · 2026.12.5–6 (토·일) — 부동소수점
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="4"> 완료</label>
 
@@ -257,7 +257,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="5" markdown="1">
 
-### Week 5 · 2026.12.5–6 (토·일) — 🧪 Data Lab (1)
+### Week 5 · 2026.12.12–13 (토·일) — 🧪 Data Lab (1)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="5"> 완료</label>
 
@@ -269,7 +269,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="6" markdown="1">
 
-### Week 6 · 2026.12.12–13 (토·일) — 🧪 Data Lab (2)
+### Week 6 · 2026.12.19–20 (토·일) — 🧪 Data Lab (2)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="6"> 완료</label>
 
@@ -281,7 +281,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="7" markdown="1">
 
-### Week 7 · 2026.12.19–20 (토·일) — Phase 1 정리 / 여유 주간
+### Week 7 · 2026.12.26–27 (토·일) — Phase 1 정리 / 여유 주간
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="7"> 완료</label>
 
@@ -294,11 +294,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## Phase 2 · 기계 수준 프로그램 = 어셈블리 (Ch.3)
 
-*Week 8–19 · 2026.12.26 ~ 2027.3.13 · x86-64 어셈블리 읽기 + Bomb Lab + Attack Lab*
+*Week 8–19 · 2027.1.2 ~ 2027.3.20 · x86-64 어셈블리 읽기 + Bomb Lab + Attack Lab*
 
 <div class="session" data-session="8" markdown="1">
 
-### Week 8 · 2026.12.26–27 (토·일) — 어셈블리 첫걸음: 레지스터와 mov
+### Week 8 · 2027.1.2–3 (토·일) — 어셈블리 첫걸음: 레지스터와 mov
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="8"> 완료</label>
 
@@ -310,7 +310,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="9" markdown="1">
 
-### Week 9 · 2027.1.2–3 (토·일) — 산술·논리 연산과 lea
+### Week 9 · 2027.1.9–10 (토·일) — 산술·논리 연산과 lea
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="9"> 완료</label>
 
@@ -321,7 +321,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="10" markdown="1">
 
-### Week 10 · 2027.1.9–10 (토·일) — 제어 (1): 조건 코드와 분기
+### Week 10 · 2027.1.16–17 (토·일) — 제어 (1): 조건 코드와 분기
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="10"> 완료</label>
 
@@ -332,7 +332,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="11" markdown="1">
 
-### Week 11 · 2027.1.16–17 (토·일) — 제어 (2): 반복문과 switch
+### Week 11 · 2027.1.23–24 (토·일) — 제어 (2): 반복문과 switch
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="11"> 완료</label>
 
@@ -343,7 +343,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="12" markdown="1">
 
-### Week 12 · 2027.1.23–24 (토·일) — 프로시저: 스택 프레임
+### Week 12 · 2027.1.30–31 (토·일) — 프로시저: 스택 프레임
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="12"> 완료</label>
 
@@ -356,7 +356,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="13" markdown="1">
 
-### Week 13 · 2027.1.30–31 (토·일) — 배열, 구조체, 공용체, 정렬
+### Week 13 · 2027.2.6–7 (토·일) — 배열, 구조체, 공용체, 정렬
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="13"> 완료</label>
 
@@ -368,7 +368,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="14" markdown="1">
 
-### Week 14 · 2027.2.6–7 (토·일) — 포인터, GDB, 버퍼 오버플로
+### Week 14 · 2027.2.13–14 (토·일) — 포인터, GDB, 버퍼 오버플로
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="14"> 완료</label>
 
@@ -381,7 +381,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="15" markdown="1">
 
-### Week 15 · 2027.2.13–14 (토·일) — 🧪 Bomb Lab (1)
+### Week 15 · 2027.2.20–21 (토·일) — 🧪 Bomb Lab (1)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="15"> 완료</label>
 
@@ -393,7 +393,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="16" markdown="1">
 
-### Week 16 · 2027.2.20–21 (토·일) — 🧪 Bomb Lab (2)
+### Week 16 · 2027.2.27–28 (토·일) — 🧪 Bomb Lab (2)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="16"> 완료</label>
 
@@ -405,7 +405,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="17" markdown="1">
 
-### Week 17 · 2027.2.27–28 (토·일) — 🧪 Attack Lab (1): 코드 주입
+### Week 17 · 2027.3.6–7 (토·일) — 🧪 Attack Lab (1): 코드 주입
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="17"> 완료</label>
 
@@ -416,7 +416,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="18" markdown="1">
 
-### Week 18 · 2027.3.6–7 (토·일) — 🧪 Attack Lab (2): ROP
+### Week 18 · 2027.3.13–14 (토·일) — 🧪 Attack Lab (2): ROP
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="18"> 완료</label>
 
@@ -428,7 +428,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="19" markdown="1">
 
-### Week 19 · 2027.3.13–14 (토·일) — Phase 2 정리 / 여유 주간
+### Week 19 · 2027.3.20–21 (토·일) — Phase 2 정리 / 여유 주간
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="19"> 완료</label>
 
@@ -441,11 +441,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## Phase 3 · 성능과 메모리 계층 (Ch.5–6)
 
-*Week 20–26 · 2027.3.20 ~ 2027.5.1 · 최적화 맛보기, 캐시 + Cache Lab*
+*Week 20–26 · 2027.3.27 ~ 2027.5.8 · 최적화 맛보기, 캐시 + Cache Lab*
 
 <div class="session" data-session="20" markdown="1">
 
-### Week 20 · 2027.3.20–21 (토·일) — 프로그램 성능 최적화 (맛보기)
+### Week 20 · 2027.3.27–28 (토·일) — 프로그램 성능 최적화 (맛보기)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="20"> 완료</label>
 
@@ -458,7 +458,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="21" markdown="1">
 
-### Week 21 · 2027.3.27–28 (토·일) — 저장 장치와 지역성
+### Week 21 · 2027.4.3–4 (토·일) — 저장 장치와 지역성
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="21"> 완료</label>
 
@@ -470,7 +470,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="22" markdown="1">
 
-### Week 22 · 2027.4.3–4 (토·일) — 캐시 메모리
+### Week 22 · 2027.4.10–11 (토·일) — 캐시 메모리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="22"> 완료</label>
 
@@ -481,7 +481,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="23" markdown="1">
 
-### Week 23 · 2027.4.10–11 (토·일) — 캐시 친화적인 코드
+### Week 23 · 2027.4.17–18 (토·일) — 캐시 친화적인 코드
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="23"> 완료</label>
 
@@ -493,7 +493,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="24" markdown="1">
 
-### Week 24 · 2027.4.17–18 (토·일) — 🧪 Cache Lab (1): 캐시 시뮬레이터
+### Week 24 · 2027.4.24–25 (토·일) — 🧪 Cache Lab (1): 캐시 시뮬레이터
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="24"> 완료</label>
 
@@ -504,7 +504,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="25" markdown="1">
 
-### Week 25 · 2027.4.24–25 (토·일) — 🧪 Cache Lab (2): 행렬 전치 최적화
+### Week 25 · 2027.5.1–2 (토·일) — 🧪 Cache Lab (2): 행렬 전치 최적화
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="25"> 완료</label>
 
@@ -516,7 +516,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="26" markdown="1">
 
-### Week 26 · 2027.5.1–2 (토·일) — Phase 3 정리 / 여유 주간
+### Week 26 · 2027.5.8–9 (토·일) — Phase 3 정리 / 여유 주간
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="26"> 완료</label>
 
@@ -529,11 +529,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## Phase 4 · 링킹 (Ch.7)
 
-*Week 27–28 · 2027.5.8 ~ 2027.5.15 · 오브젝트 파일, 심볼, 재배치*
+*Week 27–28 · 2027.5.15 ~ 2027.5.22 · 오브젝트 파일, 심볼, 재배치*
 
 <div class="session" data-session="27" markdown="1">
 
-### Week 27 · 2027.5.8–9 (토·일) — 링킹 (1): 오브젝트 파일과 심볼
+### Week 27 · 2027.5.15–16 (토·일) — 링킹 (1): 오브젝트 파일과 심볼
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="27"> 완료</label>
 
@@ -546,7 +546,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="28" markdown="1">
 
-### Week 28 · 2027.5.15–16 (토·일) — 링킹 (2): 재배치, 로딩, 동적 링킹
+### Week 28 · 2027.5.22–23 (토·일) — 링킹 (2): 재배치, 로딩, 동적 링킹
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="28"> 완료</label>
 
@@ -561,11 +561,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## Phase 5 · 예외적 제어 흐름 (Ch.8)
 
-*Week 29–34 · 2027.5.22 ~ 2027.6.26 · 예외, 프로세스, 시그널 + Shell Lab*
+*Week 29–34 · 2027.5.29 ~ 2027.7.3 · 예외, 프로세스, 시그널 + Shell Lab*
 
 <div class="session" data-session="29" markdown="1">
 
-### Week 29 · 2027.5.22–23 (토·일) — 예외와 프로세스
+### Week 29 · 2027.5.29–30 (토·일) — 예외와 프로세스
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="29"> 완료</label>
 
@@ -577,7 +577,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="30" markdown="1">
 
-### Week 30 · 2027.5.29–30 (토·일) — 프로세스 제어: fork, wait, execve
+### Week 30 · 2027.6.5–6 (토·일) — 프로세스 제어: fork, wait, execve
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="30"> 완료</label>
 
@@ -589,7 +589,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="31" markdown="1">
 
-### Week 31 · 2027.6.5–6 (토·일) — 시그널
+### Week 31 · 2027.6.12–13 (토·일) — 시그널
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="31"> 완료</label>
 
@@ -602,7 +602,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="32" markdown="1">
 
-### Week 32 · 2027.6.12–13 (토·일) — 🧪 Shell Lab (1)
+### Week 32 · 2027.6.19–20 (토·일) — 🧪 Shell Lab (1)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="32"> 완료</label>
 
@@ -613,7 +613,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="33" markdown="1">
 
-### Week 33 · 2027.6.19–20 (토·일) — 🧪 Shell Lab (2)
+### Week 33 · 2027.6.26–27 (토·일) — 🧪 Shell Lab (2)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="33"> 완료</label>
 
@@ -625,7 +625,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="34" markdown="1">
 
-### Week 34 · 2027.6.26–27 (토·일) — Phase 5 정리 / 여유 주간
+### Week 34 · 2027.7.3–4 (토·일) — Phase 5 정리 / 여유 주간
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="34"> 완료</label>
 
@@ -638,11 +638,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## Phase 6 · 가상 메모리 (Ch.9)
 
-*Week 35–43 · 2027.7.3 ~ 2027.8.28 · 페이지 테이블, mmap, malloc + Malloc Lab*
+*Week 35–43 · 2027.7.10 ~ 2027.9.4 · 페이지 테이블, mmap, malloc + Malloc Lab*
 
 <div class="session" data-session="35" markdown="1">
 
-### Week 35 · 2027.7.3–4 (토·일) — 가상 메모리 개념
+### Week 35 · 2027.7.10–11 (토·일) — 가상 메모리 개념
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="35"> 완료</label>
 
@@ -654,7 +654,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="36" markdown="1">
 
-### Week 36 · 2027.7.10–11 (토·일) — 실제 시스템의 VM: Core i7 / Linux, mmap
+### Week 36 · 2027.7.17–18 (토·일) — 실제 시스템의 VM: Core i7 / Linux, mmap
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="36"> 완료</label>
 
@@ -665,7 +665,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="37" markdown="1">
 
-### Week 37 · 2027.7.17–18 (토·일) — 동적 메모리 할당 (1)
+### Week 37 · 2027.7.24–25 (토·일) — 동적 메모리 할당 (1)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="37"> 완료</label>
 
@@ -677,7 +677,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="38" markdown="1">
 
-### Week 38 · 2027.7.24–25 (토·일) — 동적 메모리 할당 (2)
+### Week 38 · 2027.7.31–8.1 (토·일) — 동적 메모리 할당 (2)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="38"> 완료</label>
 
@@ -688,7 +688,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="39" markdown="1">
 
-### Week 39 · 2027.7.31–8.1 (토·일) — 🧪 Malloc Lab (1)
+### Week 39 · 2027.8.7–8 (토·일) — 🧪 Malloc Lab (1)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="39"> 완료</label>
 
@@ -699,7 +699,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="40" markdown="1">
 
-### Week 40 · 2027.8.7–8 (토·일) — 🧪 Malloc Lab (2)
+### Week 40 · 2027.8.14–15 (토·일) — 🧪 Malloc Lab (2)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="40"> 완료</label>
 
@@ -710,7 +710,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="41" markdown="1">
 
-### Week 41 · 2027.8.14–15 (토·일) — 🧪 Malloc Lab (3)
+### Week 41 · 2027.8.21–22 (토·일) — 🧪 Malloc Lab (3)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="41"> 완료</label>
 
@@ -721,7 +721,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="42" markdown="1">
 
-### Week 42 · 2027.8.21–22 (토·일) — 🧪 Malloc Lab (4)
+### Week 42 · 2027.8.28–29 (토·일) — 🧪 Malloc Lab (4)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="42"> 완료</label>
 
@@ -733,7 +733,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="43" markdown="1">
 
-### Week 43 · 2027.8.28–29 (토·일) — Phase 6 정리 / 여유 주간
+### Week 43 · 2027.9.4–5 (토·일) — Phase 6 정리 / 여유 주간
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="43"> 완료</label>
 
@@ -746,11 +746,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## Phase 7 · 시스템 I/O 와 동시성 (Ch.10, 12)
 
-*Week 44–48 · 2027.9.4 ~ 2027.10.2 · 파일 디스크립터, 스레드, 동기화*
+*Week 44–48 · 2027.9.11 ~ 2027.10.9 · 파일 디스크립터, 스레드, 동기화*
 
 <div class="session" data-session="44" markdown="1">
 
-### Week 44 · 2027.9.4–5 (토·일) — 시스템 수준 I/O
+### Week 44 · 2027.9.11–12 (토·일) — 시스템 수준 I/O
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="44"> 완료</label>
 
@@ -762,7 +762,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="45" markdown="1">
 
-### Week 45 · 2027.9.11–12 (토·일) — 동시성 프로그래밍: 세 가지 방법
+### Week 45 · 2027.9.18–19 (토·일) — 동시성 프로그래밍: 세 가지 방법
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="45"> 완료</label>
 
@@ -774,7 +774,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="46" markdown="1">
 
-### Week 46 · 2027.9.18–19 (토·일) — 공유 변수와 세마포어
+### Week 46 · 2027.9.25–26 (토·일) — 공유 변수와 세마포어
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="46"> 완료</label>
 
@@ -787,7 +787,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="47" markdown="1">
 
-### Week 47 · 2027.9.25–26 (토·일) — 병렬성과 동시성의 함정
+### Week 47 · 2027.10.2–3 (토·일) — 병렬성과 동시성의 함정
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="47"> 완료</label>
 
@@ -799,7 +799,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="48" markdown="1">
 
-### Week 48 · 2027.10.2–3 (토·일) — Phase 7 정리 / 여유 주간
+### Week 48 · 2027.10.9–10 (토·일) — Phase 7 정리 / 여유 주간
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="48"> 완료</label>
 
@@ -812,11 +812,11 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 ## 여유 주간 + 회고
 
-*Week 49–52 · 2027.10.9 ~ 2027.10.30 · 밀린 것 따라잡기, 선택 주제, xv6 로 넘어갈 준비*
+*Week 49–52 · 2027.10.16 ~ 2027.11.6 · 밀린 것 따라잡기, 선택 주제, xv6 로 넘어갈 준비*
 
 <div class="session" data-session="49" markdown="1">
 
-### Week 49 · 2027.10.9–10 (토·일) — 여유 주간 1 / 선택: 네트워크 프로그래밍
+### Week 49 · 2027.10.16–17 (토·일) — 여유 주간 1 / 선택: 네트워크 프로그래밍
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="49"> 완료</label>
 
@@ -827,7 +827,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="50" markdown="1">
 
-### Week 50 · 2027.10.16–17 (토·일) — 여유 주간 2 / 선택: Proxy Lab
+### Week 50 · 2027.10.23–24 (토·일) — 여유 주간 2 / 선택: Proxy Lab
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="50"> 완료</label>
 
@@ -838,7 +838,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="51" markdown="1">
 
-### Week 51 · 2027.10.23–24 (토·일) — 여유 주간 3 / xv6 로 넘어갈 준비
+### Week 51 · 2027.10.30–31 (토·일) — 여유 주간 3 / xv6 로 넘어갈 준비
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="51"> 완료</label>
 
@@ -849,7 +849,7 @@ Ch.3, Ch.8, Ch.9 와 Bomb / Shell / Malloc Lab 은 xv6 와 직접 연결되므�
 
 <div class="session" data-session="52" markdown="1">
 
-### Week 52 · 2027.10.30–31 (토·일) — 1년 회고
+### Week 52 · 2027.11.6–7 (토·일) — 1년 회고
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="52"> 완료</label>
 

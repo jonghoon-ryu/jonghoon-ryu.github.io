@@ -74,7 +74,7 @@ table.plan-calendar th {
 
 # 계산 이론 & Gödel 불완전성 정리 — 1년 학습 계획
 
-**2026년 11월 7일 (토) 시작 · 52주 · 매주 토요일 2시간 + 일요일 2시간**
+**2026년 11월 14일 (토) 시작 · 52주 · 매주 토요일 2시간 + 일요일 2시간**
 
 주말 시간 배분: **토요일·일요일 각각 = 이 계획 2시간 + [CS:APP](/learning-cs/csapp/study-plan/) 2시간**. ([xv6 C++ 변환](/xv6/plan/) 리뷰는 CS:APP 을 마친 뒤로 미뤘다.)
 
@@ -141,12 +141,12 @@ Sipser 강의로 계산 이론을 공부하고, 그 위에서 Gödel 의 불완�
   <colgroup><col style="width:32%"><col style="width:30%"><col style="width:38%"></colgroup>
   <thead><tr><th>단계</th><th>기간</th><th>내용</th></tr></thead>
   <tbody>
-      <tr><td>Phase 0 · 수학 준비</td><td>Week 1–3<br>2026.11.7 ~ 2026.11.21</td><td>대각선 논법까지</td></tr>
-      <tr><td>Phase 1 · 계산 가능성 (Sipser 1부)</td><td>Week 4–18<br>2026.11.28 ~ 2027.3.6</td><td>오토마타 → 튜링 기계 → 정지 문제 → 재귀 정리</td></tr>
-      <tr><td>Phase 2 · 1차 논리 복습</td><td>Week 19–26<br>2027.3.13 ~ 2027.5.1</td><td>Leary & Kristiansen Ch.1–3</td></tr>
-      <tr><td>Phase 3 · 불완전성 정리</td><td>Week 27–39<br>2027.5.8 ~ 2027.7.31</td><td>Gödel Without (Too Many) Tears 전체</td></tr>
-      <tr><td>Phase 4 · 계산 복잡도 (Sipser 2부)</td><td>Week 40–48<br>2027.8.7 ~ 2027.10.2</td><td>P, NP, PSPACE, L, NL</td></tr>
-      <tr><td>여유 주간 + 회고</td><td>Week 49–52<br>2027.10.9 ~ 2027.10.30</td><td>밀린 것 따라잡기, 선택 주제</td></tr>
+      <tr><td>Phase 0 · 수학 준비</td><td>Week 1–3<br>2026.11.14 ~ 2026.11.28</td><td>대각선 논법까지</td></tr>
+      <tr><td>Phase 1 · 계산 가능성 (Sipser 1부)</td><td>Week 4–18<br>2026.12.5 ~ 2027.3.13</td><td>오토마타 → 튜링 기계 → 정지 문제 → 재귀 정리</td></tr>
+      <tr><td>Phase 2 · 1차 논리 복습</td><td>Week 19–26<br>2027.3.20 ~ 2027.5.8</td><td>Leary & Kristiansen Ch.1–3</td></tr>
+      <tr><td>Phase 3 · 불완전성 정리</td><td>Week 27–39<br>2027.5.15 ~ 2027.8.7</td><td>Gödel Without (Too Many) Tears 전체</td></tr>
+      <tr><td>Phase 4 · 계산 복잡도 (Sipser 2부)</td><td>Week 40–48<br>2027.8.14 ~ 2027.10.9</td><td>P, NP, PSPACE, L, NL</td></tr>
+      <tr><td>여유 주간 + 회고</td><td>Week 49–52<br>2027.10.16 ~ 2027.11.6</td><td>밀린 것 따라잡기, 선택 주제</td></tr>
   </tbody>
 </table>
 </div>
@@ -170,11 +170,11 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 ## Phase 0 · 수학 준비
 
-*Week 1–3 · 2026.11.7 ~ 2026.11.21 · 대각선 논법까지*
+*Week 1–3 · 2026.11.14 ~ 2026.11.28 · 대각선 논법까지*
 
 <div class="session" data-session="1" markdown="1">
 
-### Week 1 · 2026.11.7–8 (토·일) — 오리엔테이션 + 집합·함수·그래프
+### Week 1 · 2026.11.14–15 (토·일) — 오리엔테이션 + 집합·함수·그래프
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="1"> 완료</label>
 
@@ -186,7 +186,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="2" markdown="1">
 
-### Week 2 · 2026.11.14–15 (토·일) — 증명 기법: 직접·귀류·귀납
+### Week 2 · 2026.11.21–22 (토·일) — 증명 기법: 직접·귀류·귀납
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="2"> 완료</label>
 
@@ -197,7 +197,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="3" markdown="1">
 
-### Week 3 · 2026.11.21–22 (토·일) — 가산성과 대각선 논법
+### Week 3 · 2026.11.28–29 (토·일) — 가산성과 대각선 논법
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="3"> 완료</label>
 
@@ -211,11 +211,11 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 ## Phase 1 · 계산 가능성 (Sipser 1부)
 
-*Week 4–18 · 2026.11.28 ~ 2027.3.6 · 오토마타 → 튜링 기계 → 정지 문제 → 재귀 정리*
+*Week 4–18 · 2026.12.5 ~ 2027.3.13 · 오토마타 → 튜링 기계 → 정지 문제 → 재귀 정리*
 
 <div class="session" data-session="4" markdown="1">
 
-### Week 4 · 2026.11.28–29 (토·일) — 유한 오토마타, 정규 언어
+### Week 4 · 2026.12.5–6 (토·일) — 유한 오토마타, 정규 언어
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="4"> 완료</label>
 
@@ -226,7 +226,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="5" markdown="1">
 
-### Week 5 · 2026.12.5–6 (토·일) — 비결정성, 닫힘 성질
+### Week 5 · 2026.12.12–13 (토·일) — 비결정성, 닫힘 성질
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="5"> 완료</label>
 
@@ -237,7 +237,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="6" markdown="1">
 
-### Week 6 · 2026.12.12–13 (토·일) — 펌핑 보조정리, FA → 정규식
+### Week 6 · 2026.12.19–20 (토·일) — 펌핑 보조정리, FA → 정규식
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="6"> 완료</label>
 
@@ -248,7 +248,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="7" markdown="1">
 
-### Week 7 · 2026.12.19–20 (토·일) — Ch.1 정리 + 코딩
+### Week 7 · 2026.12.26–27 (토·일) — Ch.1 정리 + 코딩
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="7"> 완료</label>
 
@@ -260,7 +260,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="8" markdown="1">
 
-### Week 8 · 2026.12.26–27 (토·일) — 문맥 자유 문법, 푸시다운 오토마타
+### Week 8 · 2027.1.2–3 (토·일) — 문맥 자유 문법, 푸시다운 오토마타
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="8"> 완료</label>
 
@@ -271,7 +271,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="9" markdown="1">
 
-### Week 9 · 2027.1.2–3 (토·일) — CF 펌핑 보조정리 → 튜링 기계 입문
+### Week 9 · 2027.1.9–10 (토·일) — CF 펌핑 보조정리 → 튜링 기계 입문
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="9"> 완료</label>
 
@@ -282,7 +282,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="10" markdown="1">
 
-### Week 10 · 2027.1.9–10 (토·일) — 튜링 기계
+### Week 10 · 2027.1.16–17 (토·일) — 튜링 기계
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="10"> 완료</label>
 
@@ -293,7 +293,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="11" markdown="1">
 
-### Week 11 · 2027.1.16–17 (토·일) — Church–Turing 논제 + 코딩
+### Week 11 · 2027.1.23–24 (토·일) — Church–Turing 논제 + 코딩
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="11"> 완료</label>
 
@@ -304,7 +304,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="12" markdown="1">
 
-### Week 12 · 2027.1.23–24 (토·일) — 결정 가능 언어
+### Week 12 · 2027.1.30–31 (토·일) — 결정 가능 언어
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="12"> 완료</label>
 
@@ -315,7 +315,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="13" markdown="1">
 
-### Week 13 · 2027.1.30–31 (토·일) — 결정 불가능성: 정지 문제
+### Week 13 · 2027.2.6–7 (토·일) — 결정 불가능성: 정지 문제
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="13"> 완료</label>
 
@@ -327,7 +327,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="14" markdown="1">
 
-### Week 14 · 2027.2.6–7 (토·일) — 환원 가능성
+### Week 14 · 2027.2.13–14 (토·일) — 환원 가능성
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="14"> 완료</label>
 
@@ -338,7 +338,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="15" markdown="1">
 
-### Week 15 · 2027.2.13–14 (토·일) — 계산 이력 방법, PCP
+### Week 15 · 2027.2.20–21 (토·일) — 계산 이력 방법, PCP
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="15"> 완료</label>
 
@@ -349,7 +349,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="16" markdown="1">
 
-### Week 16 · 2027.2.20–21 (토·일) — 재귀 정리: 자기 자신을 아는 기계
+### Week 16 · 2027.2.27–28 (토·일) — 재귀 정리: 자기 자신을 아는 기계
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="16"> 완료</label>
 
@@ -360,7 +360,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="17" markdown="1">
 
-### Week 17 · 2027.2.27–28 (토·일) — 논리 이론의 결정 가능성 ★ Gödel 과의 첫 만남
+### Week 17 · 2027.3.6–7 (토·일) — 논리 이론의 결정 가능성 ★ Gödel 과의 첫 만남
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="17"> 완료</label>
 
@@ -372,7 +372,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="18" markdown="1">
 
-### Week 18 · 2027.3.6–7 (토·일) — Phase 1 복습 / 여유 주간
+### Week 18 · 2027.3.13–14 (토·일) — Phase 1 복습 / 여유 주간
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="18"> 완료</label>
 
@@ -386,11 +386,11 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 ## Phase 2 · 1차 논리 복습
 
-*Week 19–26 · 2027.3.13 ~ 2027.5.1 · Leary & Kristiansen Ch.1–3*
+*Week 19–26 · 2027.3.20 ~ 2027.5.8 · Leary & Kristiansen Ch.1–3*
 
 <div class="session" data-session="19" markdown="1">
 
-### Week 19 · 2027.3.13–14 (토·일) — 1차 논리: 언어, 항, 논리식
+### Week 19 · 2027.3.20–21 (토·일) — 1차 논리: 언어, 항, 논리식
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="19"> 완료</label>
 
@@ -401,7 +401,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="20" markdown="1">
 
-### Week 20 · 2027.3.20–21 (토·일) — 구조와 참 (⊨)
+### Week 20 · 2027.3.27–28 (토·일) — 구조와 참 (⊨)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="20"> 완료</label>
 
@@ -413,7 +413,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="21" markdown="1">
 
-### Week 21 · 2027.3.27–28 (토·일) — 치환, 논리적 함의
+### Week 21 · 2027.4.3–4 (토·일) — 치환, 논리적 함의
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="21"> 완료</label>
 
@@ -424,7 +424,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="22" markdown="1">
 
-### Week 22 · 2027.4.3–4 (토·일) — 연역 (⊢)
+### Week 22 · 2027.4.10–11 (토·일) — 연역 (⊢)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="22"> 완료</label>
 
@@ -436,7 +436,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="23" markdown="1">
 
-### Week 23 · 2027.4.10–11 (토·일) — 건전성, 비논리 공리
+### Week 23 · 2027.4.17–18 (토·일) — 건전성, 비논리 공리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="23"> 완료</label>
 
@@ -447,7 +447,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="24" markdown="1">
 
-### Week 24 · 2027.4.17–18 (토·일) — 완전성 정리
+### Week 24 · 2027.4.24–25 (토·일) — 완전성 정리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="24"> 완료</label>
 
@@ -458,7 +458,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="25" markdown="1">
 
-### Week 25 · 2027.4.24–25 (토·일) — 컴팩트성, 비표준 모형
+### Week 25 · 2027.5.1–2 (토·일) — 컴팩트성, 비표준 모형
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="25"> 완료</label>
 
@@ -469,7 +469,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="26" markdown="1">
 
-### Week 26 · 2027.5.1–2 (토·일) — Phase 2 복습 / 여유 주간
+### Week 26 · 2027.5.8–9 (토·일) — Phase 2 복습 / 여유 주간
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="26"> 완료</label>
 
@@ -483,11 +483,11 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 ## Phase 3 · 불완전성 정리
 
-*Week 27–39 · 2027.5.8 ~ 2027.7.31 · Gödel Without (Too Many) Tears 전체*
+*Week 27–39 · 2027.5.15 ~ 2027.8.7 · Gödel Without (Too Many) Tears 전체*
 
 <div class="session" data-session="27" markdown="1">
 
-### Week 27 · 2027.5.8–9 (토·일) — 불완전성이란 무엇인가
+### Week 27 · 2027.5.15–16 (토·일) — 불완전성이란 무엇인가
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="27"> 완료</label>
 
@@ -499,7 +499,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="28" markdown="1">
 
-### Week 28 · 2027.5.15–16 (토·일) — 증명 개요, 결정 불가능성과의 관계
+### Week 28 · 2027.5.22–23 (토·일) — 증명 개요, 결정 불가능성과의 관계
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="28"> 완료</label>
 
@@ -510,7 +510,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="29" markdown="1">
 
-### Week 29 · 2027.5.22–23 (토·일) — 약한 산술 체계: BA, Q
+### Week 29 · 2027.5.29–30 (토·일) — 약한 산술 체계: BA, Q
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="29"> 완료</label>
 
@@ -521,7 +521,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="30" markdown="1">
 
-### Week 30 · 2027.5.29–30 (토·일) — Peano 산술, 양화사 복잡도
+### Week 30 · 2027.6.5–6 (토·일) — Peano 산술, 양화사 복잡도
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="30"> 완료</label>
 
@@ -532,7 +532,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="31" markdown="1">
 
-### Week 31 · 2027.6.5–6 (토·일) — 원시 재귀 함수
+### Week 31 · 2027.6.12–13 (토·일) — 원시 재귀 함수
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="31"> 완료</label>
 
@@ -544,7 +544,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="32" markdown="1">
 
-### Week 32 · 2027.6.12–13 (토·일) — 원시 재귀 함수의 표현과 포착
+### Week 32 · 2027.6.19–20 (토·일) — 원시 재귀 함수의 표현과 포착
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="32"> 완료</label>
 
@@ -555,7 +555,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="33" markdown="1">
 
-### Week 33 · 2027.6.19–20 (토·일) — 구문의 산술화: Gödel 번호
+### Week 33 · 2027.6.26–27 (토·일) — 구문의 산술화: Gödel 번호
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="33"> 완료</label>
 
@@ -567,7 +567,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="34" markdown="1">
 
-### Week 34 · 2027.6.26–27 (토·일) — 제1 불완전성 정리
+### Week 34 · 2027.7.3–4 (토·일) — 제1 불완전성 정리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="34"> 완료</label>
 
@@ -578,7 +578,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="35" markdown="1">
 
-### Week 35 · 2027.7.3–4 (토·일) — 대각화 보조정리
+### Week 35 · 2027.7.10–11 (토·일) — 대각화 보조정리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="35"> 완료</label>
 
@@ -590,7 +590,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="36" markdown="1">
 
-### Week 36 · 2027.7.10–11 (토·일) — Rosser 정리, Tarski 정리
+### Week 36 · 2027.7.17–18 (토·일) — Rosser 정리, Tarski 정리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="36"> 완료</label>
 
@@ -601,7 +601,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="37" markdown="1">
 
-### Week 37 · 2027.7.17–18 (토·일) — 재귀 함수, 정지 문제 (다시)
+### Week 37 · 2027.7.24–25 (토·일) — 재귀 함수, 정지 문제 (다시)
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="37"> 완료</label>
 
@@ -612,7 +612,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="38" markdown="1">
 
-### Week 38 · 2027.7.24–25 (토·일) — 제2 불완전성 정리
+### Week 38 · 2027.7.31–8.1 (토·일) — 제2 불완전성 정리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="38"> 완료</label>
 
@@ -623,7 +623,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="39" markdown="1">
 
-### Week 39 · 2027.7.31–8.1 (토·일) — Phase 3 마무리: 나만의 증명 스케치
+### Week 39 · 2027.8.7–8 (토·일) — Phase 3 마무리: 나만의 증명 스케치
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="39"> 완료</label>
 
@@ -638,11 +638,11 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 ## Phase 4 · 계산 복잡도 (Sipser 2부)
 
-*Week 40–48 · 2027.8.7 ~ 2027.10.2 · P, NP, PSPACE, L, NL*
+*Week 40–48 · 2027.8.14 ~ 2027.10.9 · P, NP, PSPACE, L, NL*
 
 <div class="session" data-session="40" markdown="1">
 
-### Week 40 · 2027.8.7–8 (토·일) — 시간 복잡도
+### Week 40 · 2027.8.14–15 (토·일) — 시간 복잡도
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="40"> 완료</label>
 
@@ -653,7 +653,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="41" markdown="1">
 
-### Week 41 · 2027.8.14–15 (토·일) — P 와 NP
+### Week 41 · 2027.8.21–22 (토·일) — P 와 NP
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="41"> 완료</label>
 
@@ -664,7 +664,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="42" markdown="1">
 
-### Week 42 · 2027.8.21–22 (토·일) — NP-완전성
+### Week 42 · 2027.8.28–29 (토·일) — NP-완전성
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="42"> 완료</label>
 
@@ -675,7 +675,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="43" markdown="1">
 
-### Week 43 · 2027.8.28–29 (토·일) — Cook–Levin 정리
+### Week 43 · 2027.9.4–5 (토·일) — Cook–Levin 정리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="43"> 완료</label>
 
@@ -687,7 +687,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="44" markdown="1">
 
-### Week 44 · 2027.9.4–5 (토·일) — NP-완전 문제 모음
+### Week 44 · 2027.9.11–12 (토·일) — NP-완전 문제 모음
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="44"> 완료</label>
 
@@ -699,7 +699,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="45" markdown="1">
 
-### Week 45 · 2027.9.11–12 (토·일) — 공간 복잡도, Savitch 정리
+### Week 45 · 2027.9.18–19 (토·일) — 공간 복잡도, Savitch 정리
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="45"> 완료</label>
 
@@ -710,7 +710,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="46" markdown="1">
 
-### Week 46 · 2027.9.18–19 (토·일) — PSPACE-완전성, 게임
+### Week 46 · 2027.9.25–26 (토·일) — PSPACE-완전성, 게임
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="46"> 완료</label>
 
@@ -721,7 +721,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="47" markdown="1">
 
-### Week 47 · 2027.9.25–26 (토·일) — L 과 NL
+### Week 47 · 2027.10.2–3 (토·일) — L 과 NL
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="47"> 완료</label>
 
@@ -732,7 +732,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="48" markdown="1">
 
-### Week 48 · 2027.10.2–3 (토·일) — 계층 정리, 오라클
+### Week 48 · 2027.10.9–10 (토·일) — 계층 정리, 오라클
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="48"> 완료</label>
 
@@ -746,11 +746,11 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 ## 여유 주간 + 회고
 
-*Week 49–52 · 2027.10.9 ~ 2027.10.30 · 밀린 것 따라잡기, 선택 주제*
+*Week 49–52 · 2027.10.16 ~ 2027.11.6 · 밀린 것 따라잡기, 선택 주제*
 
 <div class="session" data-session="49" markdown="1">
 
-### Week 49 · 2027.10.9–10 (토·일) — 여유 주간 1
+### Week 49 · 2027.10.16–17 (토·일) — 여유 주간 1
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="49"> 완료</label>
 
@@ -761,7 +761,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="50" markdown="1">
 
-### Week 50 · 2027.10.16–17 (토·일) — 여유 주간 2 / 선택: 확률적 계산
+### Week 50 · 2027.10.23–24 (토·일) — 여유 주간 2 / 선택: 확률적 계산
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="50"> 완료</label>
 
@@ -772,7 +772,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="51" markdown="1">
 
-### Week 51 · 2027.10.23–24 (토·일) — 여유 주간 3 / 선택: 대화형 증명
+### Week 51 · 2027.10.30–31 (토·일) — 여유 주간 3 / 선택: 대화형 증명
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="51"> 완료</label>
 
@@ -783,7 +783,7 @@ Sipser Ch.6 (재귀 정리 + 논리 이론) 이 곧바로 Gödel 로 이어지�
 
 <div class="session" data-session="52" markdown="1">
 
-### Week 52 · 2027.10.30–31 (토·일) — 1년 회고
+### Week 52 · 2027.11.6–7 (토·일) — 1년 회고
 
 <label class="session-check"><input type="checkbox" class="session-checkbox" data-session="52"> 완료</label>
 
