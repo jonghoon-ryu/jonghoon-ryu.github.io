@@ -30,11 +30,19 @@
 #   sudo ./lab.sh pl-check RESULT_DIR      exp 17: after power comes back: which acknowledged writes survived (no writes)
 #   sudo ./lab.sh endurance [HOURS]        exp 18: random writes until the drive fails or HOURS pass (default 720)  ERASES
 #
+#   sudo ./lab.sh --500gb COMMAND ...      the 840 EVO 500GB instead, READ-ONLY: only check, smart, scan, oldfiles, reread.
+#                                          Use a sample with scan (scan old 8): a full scan of old data takes many hours.
+#
 # The drive is found by its serial number, never by /dev/sdX (that name changes between USB and SATA).
 # Results go to $RESULTS/<date>-<name>/ (default /home/ryuj/Ryu/old_ssd_results).
 set -euo pipefail
 
-readonly SERIAL=S1D6NSAFB40389K   # the old 840 EVO 120GB; edit here (not via the environment) for another drive
+SERIAL=S1D6NSAFB40389K            # the old 840 EVO 120GB; edit here (not via the environment) for another drive
+READONLY_DRIVE=; TAG=
+if [ "${1:-}" = --500gb ]; then    # the second drive: read-only commands only, see the allowlist below
+    SERIAL=S1DHNSAF685299B; READONLY_DRIVE=1; TAG=500gb-; shift
+fi
+readonly SERIAL READONLY_DRIVE TAG
 RESULTS=${RESULTS:-/home/ryuj/Ryu/old_ssd_results}
 FIO=${FIO:-fio}
 ENGINE=${ENGINE:-libaio}
@@ -85,6 +93,7 @@ need_trim() {
 }
 
 confirm_erase() {
+    [ -z "$READONLY_DRIVE" ] || die "this drive is read-only here — refusing to erase it"
     echo
     [ -n "${LAB_TESTDEV:-}" ] || lsblk -o NAME,MODEL,SERIAL,SIZE,TRAN "$DEV"
     echo
@@ -95,7 +104,7 @@ confirm_erase() {
 }
 
 new_out() {
-    OUT="$RESULTS/$(date +%Y%m%d-%H%M%S)-$1"
+    OUT="$RESULTS/$(date +%Y%m%d-%H%M%S)-$TAG$1"
     mkdir -p "$OUT"
     {
         echo "experiment: $1"
@@ -119,6 +128,7 @@ smart() {   # smart LABEL : text + JSON snapshot into $OUT
 }
 
 discard_all() {
+    [ -z "$READONLY_DRIVE" ] || die "this drive is read-only here — refusing to TRIM it"
     note "blkdiscard $DEV (TRIM every LBA)"
     if [ -n "${LAB_TESTDEV:-}" ]; then fallocate --punch-hole -o 0 -l "$BYTES" "$DEV"; else blkdiscard -f "$DEV"; fi   # -f: newer blkdiscard refuses a disk with a partition table; confirm_erase already asked
     note "let the drive settle for ${SETTLE:-120} s"
@@ -138,6 +148,7 @@ mib_round() { echo $(( $1 / 1048576 * 1048576 )); }
 
 run_fio() {   # run_fio NAME fio-args... : common options, logs every second, JSON report
     local name=$1; shift
+    [ -z "$READONLY_DRIVE" ] || set -- --readonly "$@"   # fio itself then refuses any write
     $FIO --name="$name" --filename="$DEV" --direct=1 --ioengine="$ENGINE" \
          --group_reporting --per_job_logs=0 --log_avg_msec=1000 \
          --write_bw_log="$OUT/$name" --write_iops_log="$OUT/$name" --write_lat_log="$OUT/$name" \
@@ -147,6 +158,13 @@ run_fio() {   # run_fio NAME fio-args... : common options, logs every second, JS
 
 ARGS=("$@")
 cmd=${1:-}; shift || true
+
+if [ -n "$READONLY_DRIVE" ]; then
+    case "$cmd" in
+        check|smart|scan|oldfiles|reread) ;;
+        *) die "'$cmd' is not allowed with --500gb (read-only: check, smart, scan, oldfiles, reread)" ;;
+    esac
+fi
 
 case "$cmd" in
 check)
@@ -302,8 +320,8 @@ ret-check)
 reread)
     need_root reread; find_dev
     [ -f "${1:-}/fileage.csv" ] || die "usage: $0 reread RESULT_DIR_OF_oldfiles"
-    mnt=$(findmnt -nro TARGET "$(readlink -f "$DEV")3" | head -1)
-    [ -n "$mnt" ] || die "partition 3 of $DEV is not mounted (setup page, step 5)"
+    mnt=$(lsblk -nro MOUNTPOINTS "$DEV" | grep . | head -1 || true)
+    [ -n "$mnt" ] || die "no partition of $DEV is mounted (setup page, step 5)"
     OUT=$1
     python3 "$HERE/fileage.py" "$mnt" "$OUT/fileage-reread.csv" --reread-from "$OUT/fileage.csv"
     finish ;;
