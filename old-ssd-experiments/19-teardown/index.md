@@ -68,4 +68,4 @@ DRAM 계산 : 4 KiB 페이지마다 4바이트 주소를 하나씩 두는 매핑
 아직 실행 전.
 </div>
 
-<div class="step-nav"><a href="{{ '/old-ssd-experiments/18-endurance/' | relative_url }}">← 18. 끝까지 쓰기</a><span></span></div>
+<div class="step-nav"><a href="{{ '/old-ssd-experiments/18-endurance/' | relative_url }}">← 18. 끝까지 쓰기</a><a href="{{ '/old-ssd-experiments/20-second-drive/' | relative_url }}">20. 두 번째 드라이브 (500GB) →</a></div>

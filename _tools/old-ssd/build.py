@@ -41,6 +41,7 @@ PAGES = [  # slug, sidebar / nav title
     ("17-power-loss", "17. 전원 차단"),
     ("18-endurance", "18. 끝까지 쓰기"),
     ("19-teardown", "19. 열어 보기"),
+    ("20-second-drive", "20. 두 번째 드라이브 (500GB)"),
 ]
 
 
