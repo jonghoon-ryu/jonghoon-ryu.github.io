@@ -16,8 +16,8 @@ atime only proves a read when the mount kept access times (relatime, the default
 under noatime still lands in "old". The last write before --since (printed) is a proxy for when the drive
 was last powered: from then until --since it sat unpowered.
 
-For every file of at least --min-mib under ROOT, "written" = the later of the NTFS creation time
-(xattr system.ntfs_crtime, given by the ntfs-3g driver) and the modification time: the last time its
+For every file of at least --min-mib under ROOT, "written" = the later of the creation time
+(NTFS: xattr system.ntfs_crtime from the ntfs-3g driver; ext4 and others: the birth time, stat %W) and the modification time: the last time its
 data was put on this drive. Up to --per-year files are picked from each year (random, fixed seed),
 the page cache for each file is dropped with posix_fadvise(DONTNEED) so the read really goes to the
 drive, the first --per-file-mib of the file are read in 1 MiB requests, and one CSV row is written:
@@ -46,7 +46,7 @@ the same = it did not (or not yet).
 
 Mount the volume read-only first (see the setup page), so not even access times are written.
 """
-import argparse, collections, csv, datetime, os, random, struct, sys, time
+import argparse, collections, csv, datetime, os, random, struct, subprocess, sys, time
 
 MIB = 1 << 20
 NTFS_EPOCH = datetime.datetime(1601, 1, 1)
@@ -59,9 +59,21 @@ def written_time(path, st):
         ct = NTFS_EPOCH + datetime.timedelta(microseconds=struct.unpack("<Q", v[:8])[0] / 10)
         ct = ct.replace(tzinfo=datetime.timezone.utc).astimezone().replace(tzinfo=None)
         t = max(t, ct)
-    except OSError:
-        pass
+    except OSError:   # not ntfs-3g: ext4 and others keep a birth time (statx), which Python 3.12 cannot read
+        bt = birth_time(path)
+        if bt:
+            t = max(t, bt)
     return t
+
+
+def birth_time(path):
+    """File creation time on this file system (ext4: inode crtime) via GNU stat %W, or None if unknown."""
+    try:
+        out = subprocess.run(["stat", "-c", "%W", "--", path], capture_output=True, text=True, timeout=10)
+        w = int(out.stdout.strip())
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return None
+    return datetime.datetime.fromtimestamp(w) if w > 0 else None
 
 
 def main():
