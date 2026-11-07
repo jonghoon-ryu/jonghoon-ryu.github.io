@@ -135,7 +135,7 @@ table.t code { font-size:0.82rem; }
 <tr><td>15 Read disturb</td><td>2시간 <strong>끝</strong> (2026.11.07, 2시간 38분) : 앞 1 MiB 를 5.66억 번 읽어도 <strong>나쁜 블록 0</strong>. 예상한 주기적 튐은 없고, 약 1,465만 번째 읽기 (166초) 에서 41 – 54 ms 멈춘 뒤 상태가 바뀌어 돌아오지 않는다 : 88,800 → 약 78,500 IOPS, 약 1초에 한 번 무작위로 약 11 ms 멈춤. 후속 시험 (13분, 읽기만) : 드라이브 전체는 2,699만 번 읽어도 평평 → 원인은 같은 곳의 되풀이. QD1 125 µs → RAM 캐시 아님. 새 1 MiB 는 약 173만 번에서 바뀌고 (예측은 1,465만), 멈춤은 시간이 아니라 약 10만 번마다. <strong>후속 시험 2</strong> : 새로 쓴 앞 1 MiB 도 처음부터 느리고 멈춤 (2초째부터, 약 77,400 IOPS) → 드라이브가 기억하는 것은 데이터가 아니라 LBA 범위로 보인다. read reclaim 인지와 이웃 열화는 미확인. <a href="/old-ssd-experiments/15-read-disturb/">결과</a></td></tr>
 <tr><td>16 Retention</td><td><strong>보관 중</strong> (2026.11.07 17:32 에 씀, 13분, 155 MB/s). 2026.11.21 – 12.05 사이에 <code>ret-check</code>. <a href="/old-ssd-experiments/16-retention/">페이지</a></td></tr>
 <tr><td>17 – 19</td><td>아직</td></tr>
-<tr><td>20 두 번째 드라이브 (500GB)</td><td>읽기만 (2026.11.07, USB) : 파일 39개, 약 400일 된 파일 36.7 MB/s, 약 240일 된 파일 97.9 MB/s : 120GB SSD (모두 약 4.6 MB/s, 나이와 무관) 와 달리 나이에 따라 느려진다. 펌웨어가 다르다 (EXT0BB6Q 대 EXT0CB6Q). <a href="/old-ssd-experiments/20-second-drive/">결과</a></td></tr>
+<tr><td>20 두 번째 드라이브 (500GB)</td><td>읽기만 (2026.11.07, USB) : 파일 39개, 약 400일 된 파일 36.7 MB/s, 약 240일 된 파일 97.9 MB/s : 120GB SSD (모두 약 4.6 MB/s, 나이와 무관) 와 달리 나이에 따라 느려진다. 다시 읽으면 최근 파일은 200 MB/s 이상 (첫 읽기에 고쳐 쓴 것으로 보임). 스캔 데이터 중앙값 59.2 MB/s (120GB : 8.9), '모두 0' 인 곳의 절반 이상도 느리다 (0 을 실제로 써 둔 곳). 펌웨어가 다르다 (EXT0BB6Q 대 EXT0CB6Q). <strong>끝.</strong> <a href="/old-ssd-experiments/20-second-drive/">결과</a></td></tr>
 </tbody></table></div>
 
 <div class="warn" markdown="1">
