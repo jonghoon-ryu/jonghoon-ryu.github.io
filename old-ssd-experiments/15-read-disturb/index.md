@@ -163,7 +163,13 @@ $ column -s, -t $D/summary.csv
 
 ### 다음
 
-읽기만 하는 짧은 후속 시험으로 H1 · H4 를 좁힐 수 있다 (드라이브에 지금 무늬가 남아 있다) :
+읽기만 하는 짧은 후속 시험으로 H1 · H4 를 좁힐 수 있다 (드라이브에 지금 무늬가 남아 있다). 약 13분, 쓰기 없음 (fio `--readonly`) :
+
+```
+$ sudo ./lab.sh hammer-check
+```
+
+아래 순서대로 돈다. 대조군을 새 곳 두드리기보다 먼저 돌려, 두드리기의 영향을 받지 않게 한다.
 
 <div style="overflow-x:auto;"><table class="t">
 <thead><tr>
@@ -171,9 +177,9 @@ $ column -s, -t $D/summary.csv
 <th>시간</th>
 <th>답하는 질문</th>
 </tr></thead><tbody>
-<tr><td>앞 1 MiB, QD1, 1분</td><td>1분</td><td>H4 : 약 60 µs 대면 NAND 를 안 읽는 쪽, 약 100 µs 면 NAND</td></tr>
-<tr><td>다른 곳의 새 1 MiB, QD32, 5분</td><td>5분</td><td>H1 : 다시 약 1,465만 번에서 바뀌면 블록마다 세는 횟수</td></tr>
-<tr><td>드라이브 전체 랜덤, QD32, 5분</td><td>5분</td><td>대조군 : 멈춤이 없으면 '같은 곳을 읽어서' 가 맞다</td></tr>
+<tr><td>앞 1 MiB, QD1</td><td>1분</td><td>H4 : 약 60 µs 대면 NAND 를 안 읽는 쪽, 약 100 µs 면 NAND</td></tr>
+<tr><td>드라이브 전체 랜덤, QD32</td><td>5분</td><td>대조군 : 멈춤이 없으면 '같은 곳을 읽어서' 가 맞다</td></tr>
+<tr><td>50 GiB 자리의 새 1 MiB, QD32</td><td>5분</td><td>H1 : 다시 약 1,465만 번에서 바뀌면 블록마다 세는 횟수</td></tr>
 </tbody></table></div>
 </div>
 

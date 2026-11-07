@@ -23,6 +23,7 @@
 #   sudo ./lab.sh mixed                    exp 13: read latency alone and while writes run    ERASES
 #   sudo ./lab.sh secerase [enhanced]      exp 14: ATA SECURITY ERASE UNIT, timed, then checked  ERASES
 #   sudo ./lab.sh disturb [HOURS]          exp 15: read the same 1 MiB for HOURS (6), then check the neighbours  ERASES
+#   sudo ./lab.sh hammer-check [FRESH_GIB] exp 15 follow-up: first 1 MiB at QD1, whole drive at QD32, a fresh 1 MiB at QD32 (no writes)
 #   sudo ./lab.sh ret-write                exp 16: write a checked pattern before storing the drive unpowered  ERASES
 #   sudo ./lab.sh ret-check                exp 16: read it back after weeks (scan + verify, no writes)
 #   sudo ./lab.sh pl-write [GB]            exp 17: write numbered records until the power is cut (or GB, then idle)  ERASES
@@ -254,6 +255,26 @@ seqwaf)
     note "sequential 128 KiB writes of the whole drive, $times times"
     run_fio seq --rw=write --bs=128k --iodepth=16 --size=100% --loops="$times"
     smart after
+    finish ;;
+hammer-check)
+    need_root hammer-check; find_dev
+    gib=${1:-50}                 # the fresh 1 MiB: an area exp 15 did not hammer
+    secs=${LAB_SECS:-300}        # shorter only for self-tests
+    (( gib * 1073741824 + 1048576 <= BYTES )) || die "offset ${gib} GiB is past the end of the drive"
+    new_out hammer-check
+    echo "fresh_offset_gib: $gib  secs: $secs" >> "$OUT/meta.txt"
+    ro=(--readonly --log_max_value=1 --rw=randread --bs=4k --randrepeat=0 --time_based)   # --readonly: fio refuses any write
+    smart before
+    note "1) first 1 MiB at QD1 for 60 s: NAND (about 100 us) or not (about 60 us)?"
+    run_fio qd1-first "${ro[@]}" --iodepth=1 --size=1M --runtime=60
+    sleep "${SETTLE:-60}"
+    note "2) control, BEFORE the fresh hammer so it cannot be affected by it: whole drive at QD32, $secs s"
+    run_fio whole "${ro[@]}" --iodepth=32 --size=100% --norandommap --runtime="$secs"
+    sleep "${SETTLE:-60}"
+    note "3) a fresh 1 MiB at $gib GiB at QD32, $secs s: does the change come again at about 14.65M reads?"
+    run_fio fresh "${ro[@]}" --iodepth=32 --size=1M --offset="${gib}G" --runtime="$secs"
+    smart after
+    summary
     finish ;;
 ret-write)
     need_root ret-write; find_dev; not_mounted; confirm_erase
