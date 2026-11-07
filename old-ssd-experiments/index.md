@@ -133,7 +133,8 @@ table.t code { font-size:0.82rem; }
 <tr><td>13 읽기 · 쓰기 간섭</td><td><strong>끝</strong> (2026.11.01, 31분) : 4 KiB 읽기 (QD1) 평균 124 µs → 랜덤 4 KiB 쓰기 QD32 와 함께 4.3 ms, <strong>1 MiB 순차 쓰기 QD8 과 함께 207 ms</strong> (99.9% 684 ms, 5 IOPS). 예상과 반대로 순차가 약 50배 나쁘다 : 읽기는 드라이브 줄에 앞서 쌓인 쓰기를 다 기다리고 (읽기 평균 ≈ 쓰기 평균), 기다림 = 쌓인 바이트 ÷ 쓰기 속도 (128 KiB 대 8 MiB). <a href="/old-ssd-experiments/13-interference/">결과</a></td></tr>
 <tr><td>14 Secure Erase</td><td><code>normal</code> <strong>끝</strong> (2026.11.01, 97분) : 지우기 <strong>3초</strong> (드라이브가 말한 시간 2분), 표본 448곳 모두 0, 쓰기는 약 2,900 → 약 37,000 IOPS 로 TRIM 뒤의 실험 8 과 구별되지 않는다. 177 그대로 : 그 3초에 블록을 지우지 않았다 (매핑 초기화로 보인다, 키 교체는 호스트에서 확인 불가). 뜻밖의 결과 : 랜덤 쓰기를 겪은 드라이브를 TRIM 없이 순차로 덮어쓰면 약 24 MB/s. <code>enhanced</code> 는 아직. <a href="/old-ssd-experiments/14-secure-erase/">결과</a></td></tr>
 <tr><td>15 Read disturb</td><td>2시간 <strong>끝</strong> (2026.11.07, 2시간 38분) : 앞 1 MiB 를 5.66억 번 읽어도 <strong>나쁜 블록 0</strong>. 예상한 주기적 튐은 없고, 약 1,465만 번째 읽기 (166초) 에서 41 – 54 ms 멈춘 뒤 상태가 바뀌어 돌아오지 않는다 : 88,800 → 약 78,500 IOPS, 약 1초에 한 번 무작위로 약 11 ms 멈춤. 후속 시험 (13분, 읽기만) : 드라이브 전체는 2,699만 번 읽어도 평평 → 원인은 같은 곳의 되풀이. QD1 125 µs → RAM 캐시 아님. 새 1 MiB 는 약 173만 번에서 바뀌고 (예측은 1,465만), 멈춤은 시간이 아니라 약 10만 번마다. read reclaim 인지와 이웃 열화는 미확인. <a href="/old-ssd-experiments/15-read-disturb/">결과</a></td></tr>
-<tr><td>16 – 19</td><td>아직</td></tr>
+<tr><td>16 Retention</td><td><strong>보관 중</strong> (2026.11.07 17:32 에 씀, 13분, 155 MB/s). 2026.11.21 – 12.05 사이에 <code>ret-check</code>. <a href="/old-ssd-experiments/16-retention/">페이지</a></td></tr>
+<tr><td>17 – 19</td><td>아직</td></tr>
 </tbody></table></div>
 
 <div class="warn" markdown="1">

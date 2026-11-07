@@ -99,7 +99,20 @@ $ python3 smartdiff.py $(ls -d $R/*-ret-check | tail -1)
 ## 결과
 
 <div class="result" markdown="1">
-아직 실행 전.
+**보관 중.** 2026.11.07 17:19 – 17:32 (13분), 결과 폴더 `20261107-171907-ret-write`. 120.0 GB 를 평균 155 MB/s 로 썼고 오류 0, SMART 187 · 195 는 기준선 108 그대로, 177 은 205 → 206 (WAF 약 1.15, 177 은 정수로만 올라 0 – 2.29).
+
+<div style="overflow-x:auto;"><table class="t">
+<thead><tr>
+<th>항목</th>
+<th>값</th>
+</tr></thead><tbody>
+<tr><td>쓴 시각</td><td>2026.11.07 17:32</td></tr>
+<tr><td>확인 시기</td><td>2주 : 2026.11.21 부터, 4주 : 2026.12.05 까지</td></tr>
+<tr><td>닳은 정도</td><td>177 = 206 (실험 0 에서는 117)</td></tr>
+<tr><td>결과</td><td>아직 없음 : <code>ret-check</code> 뒤에 채운다</td></tr>
+</tbody></table></div>
+
+곁가지 : 같은 순차 쓰기가 이번에는 처음 약 14 GiB 뒤로 약 145 MiB/s 로 평평했다. 바로 앞에 순차로 쓴 무늬를 덮어썼기 때문이다. 랜덤 쓰기 뒤에 TRIM 없이 덮어쓴 [실험 14](/old-ssd-experiments/14-secure-erase/) 의 약 24 MB/s 와 대비된다.
 </div>
 
 <div class="step-nav"><a href="{{ '/old-ssd-experiments/15-read-disturb/' | relative_url }}">← 15. Read disturb</a><a href="{{ '/old-ssd-experiments/17-power-loss/' | relative_url }}">17. 전원 차단 →</a></div>
