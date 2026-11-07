@@ -73,7 +73,7 @@ $ sudo ./lab.sh ret-check
 
 ```
 $ R=~/Ryu/old_ssd_results
-$ python3 plot.py ret.png $R/*-scan-fresh/scan.csv=fresh $R/*-ret-check/scan.csv=weeks $R/*-scan-old/scan.csv=years
+$ python3 plot.py ret.png $R/*-scan-ret-day0/scan.csv=day0 $R/*-ret-check/scan.csv=weeks $R/*-scan-old/scan.csv=years
 $ cat $R/*-ret-check/verify-summary.txt
 $ python3 smartdiff.py $(ls -d $R/*-ret-check | tail -1)
 ```
@@ -90,8 +90,11 @@ $ python3 smartdiff.py $(ls -d $R/*-ret-check | tail -1)
 쓴 시각 | 2026.11.07 17:32
 확인 시기 | 2주 : 2026.11.21 부터, 4주 : 2026.12.05 까지
 닳은 정도 | 177 = 206 (실험 0 에서는 117)
+0일 스캔 | 2026.11.07 17:35, 전체 448구간 (111.8 GiB) : 평균 452.5 MB/s, 431 – 484 MB/s, 가장 느린 읽기 10.7 ms (99% 3.2 ms)
 결과 | 아직 없음 : `ret-check` 뒤에 채운다
 ```
+
+**0일 기준선.** 결과 폴더 `20261107-173551-scan-ret-day0`. 앞에서 뒤까지 고르고 (14 GiB 구간 평균 모두 451 – 456 MB/s), 모든 구간이 0 이 아닌 데이터를 읽었다. 실험 3 의 fresh 스캔 (10.18, 평균 439.8 MB/s) 보다 조금 빠르니, 그동안 약 88 번 더 닳았어도 (177 : 118 → 206) 막 쓴 데이터의 읽기 속도는 나빠지지 않았다. 몇 주 뒤의 `ret-check` 는 이 곡선과 비교한다.
 
 곁가지 : 같은 순차 쓰기가 이번에는 처음 약 14 GiB 뒤로 약 145 MiB/s 로 평평했다. 바로 앞에 순차로 쓴 무늬를 덮어썼기 때문이다. 랜덤 쓰기 뒤에 TRIM 없이 덮어쓴 [실험 14](/old-ssd-experiments/14-secure-erase/) 의 약 24 MB/s 와 대비된다.
 </div>
